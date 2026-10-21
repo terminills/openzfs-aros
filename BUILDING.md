@@ -19,6 +19,12 @@ layouts. Configure the corresponding `AROS_*` variables for your environment;
 some historical image/overlay helpers also require path adaptation. Dependencies
 and platform overlays are not automatically bootstrapped from a stock nightly.
 
+**Match the SDK to the runtime.** A PC/SMP-linked Manager is not a hosted-AROS
+test binary. For hosted UI tests, set `AROS_SDK` to the hosted build's Developer
+directory and use compatible dependencies. For PC/SMP QEMU tests, use that
+target's SDK. `build-manager-native.sh` requires an explicit SDK rather than
+silently choosing PC/SMP. Keep the two output binaries separate.
+
 ## Build sequence
 
 1. Read [engine requirements](aros/engine/BUILDING.md) and the platform notes.

@@ -2,7 +2,8 @@
 set -euo pipefail
 repo=$(cd -- "$(dirname -- "$0")/../.." && pwd)
 cd "$repo"
-sdk=${AROS_SDK:-/opt/aros-workspace/aros-amiwest-nightly-release/bin/pc-x86_64-smp/AROS/Developer}
+: "${AROS_SDK:?set AROS_SDK to the SDK matching the target runtime (hosted and PC/SMP are not interchangeable)}"
+sdk=$AROS_SDK
 cc=${AROS_CC:-/opt/aros-workspace/aros-adt-crosstools/x86_64-aros-gcc}
 pthread=${AROS_PRIVATE_PTHREAD:-$repo/build-aros/pthread-consistent.s3r1CHla/libpthread.a}
 pthread_include=${AROS_PTHREAD_INCLUDE:-$repo/build-aros/pthread-consistent.s3r1CHla/source}

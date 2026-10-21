@@ -42,12 +42,20 @@ using an explicitly configured x86-64 SDK and matching private pthread archive.
 The resulting executable SHA-256 is
 `0798042fe8f867d1721d613c7a61de3711089c909d1e26849395f1fbd47e0506`.
 
-A separate isolated hosted test using an older development runtime failed
-before the Manager opened: AROS reported a bus/address-error alert in
-`Exec_43_RemHead`, with a null-address trap. This is a failed compatibility test,
-not successful hosted validation. The cause has not yet been isolated; do not
-assume arbitrary SDK/runtime combinations are interchangeable. The earlier
-qualified native package results do not establish that this combination works.
+A separate isolated hosted test failed before the PC/SMP-linked Manager opened:
+AROS reported a bus/address-error alert in `Exec_43_RemHead`, with a null-address
+trap. The same binary also failed in a second historical hosted runtime.
+
+Rebuilding the same public source with the hosted SDK, keeping the compiler,
+pthread archive, and second runtime unchanged, produced a Manager that opened
+and displayed the expected service-unavailable response. The older qualified
+Manager also opened in that runtime. This isolates the observed failure to the
+SDK/link configuration; it is not evidence of an application-source regression.
+The precise low-level ABI mismatch has not been traced. The hosted executable
+SHA-256 is `adb58f9246b22645e2197dfff0207c8b8ec56c41ab9383a2ac79745ed0ce67f7`.
+
+The build helper now requires an explicit SDK. This hosted startup check does
+not qualify the PC/SMP binary, service operations, or filesystem behavior.
 
 The test used a private runtime copy, no storage service, and no physical disks.
 Source syntax checks covered 99 shell scripts and 16 Python files; four metadata
