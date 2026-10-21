@@ -1,0 +1,68 @@
+--- packet.c
++++ packet.c
+@@ -18,1 +18,3 @@
+-#include <devices/inputevent.h>
++#include <devices/inputevent.h>
++#include <devices/trackdisk.h>
++#include <exec/errors.h>
+@@ -31,1 +33,20 @@
+-void ProcessPackets(struct Globals *glob)
++/* Query for each mutating packet: media protection can change without a
++ * handler restart. Legacy devices without this command retain their behavior.
++ * Other query failures must not authorize cached metadata changes. */
++static LONG DeviceWriteStatus(struct Globals *glob)
++{
++    struct IOStdReq *io = &glob->diskioreq->iotd_Req;
++    io->io_Command = TD_PROTSTATUS;
++    io->io_Data = NULL;
++    io->io_Length = 0;
++    io->io_Actual = 0;
++    io->io_Flags = 0;
++    LONG error = DoIO((struct IORequest *)io);
++    if (error == IOERR_NOCMD)
++        return 0;
++    if (error)
++        return ERROR_DEVICE_NOT_MOUNTED;
++    return io->io_Actual ? ERROR_DISK_WRITE_PROTECTED : 0;
++}
++
++void ProcessPackets(struct Globals *glob)
+@@ -43,2 +64,27 @@
+-        switch (pkt->dp_Type)
+-        {
++        /* Refuse mutations before they dirty FAT's write-back cache. */
++        switch (pkt->dp_Type)
++        {
++        case ACTION_FINDOUTPUT:
++        case ACTION_FINDUPDATE:
++        case ACTION_WRITE:
++        case ACTION_SET_FILE_SIZE:
++        case ACTION_RENAME_DISK:
++        case ACTION_FORMAT:
++        case ACTION_DELETE_OBJECT:
++        case ACTION_RENAME_OBJECT:
++        case ACTION_CREATE_DIR:
++        case ACTION_SET_PROTECT:
++        case ACTION_SET_DATE:
++            err = DeviceWriteStatus(glob);
++            if (err)
++            {
++                if (pkt->dp_Type == ACTION_WRITE ||
++                    pkt->dp_Type == ACTION_SET_FILE_SIZE)
++                    res = -1;
++                goto reply;
++            }
++            break;
++        }
++
++        switch (pkt->dp_Type)
++        {
+@@ -436,1 +482,3 @@
+-                FillDiskInfo(id, glob);
++                FillDiskInfo(id, glob);
++                if (DeviceWriteStatus(glob) == ERROR_DISK_WRITE_PROTECTED)
++                    id->id_DiskState = ID_WRITE_PROTECTED;
+@@ -835,1 +883,2 @@
+-        if (pkt != NULL)
++reply:
++        if (pkt != NULL)

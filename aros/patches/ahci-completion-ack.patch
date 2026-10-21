@@ -1,0 +1,19 @@
+--- a/rom/devs/ahci/ahci.c
++++ b/rom/devs/ahci/ahci.c
+@@ -2781,1 +2781,9 @@
+-    if (ap->ap_sactive) {
++    /* Acknowledge observed NCQ completion before sampling SACT. Clearing
++     * SDBS after the snapshot can discard a completion which arrived in
++     * between, leaving a completed slot active in software until timeout.
++     * A completion after this acknowledgement remains pending for the
++     * next interrupt; one before the snapshot is visible in SACT. */
++    if (is & (AHCI_PREG_IS_SDBS | AHCI_PREG_IS_IPMS))
++            ahci_pwrite(ap, AHCI_PREG_IS,
++                        is & (AHCI_PREG_IS_SDBS | AHCI_PREG_IS_IPMS));
++    if (ap->ap_sactive) {
+@@ -3061,2 +3069,0 @@
+-            ahci_pwrite(ap, AHCI_PREG_IS,
+-                            AHCI_PREG_IS_SDBS | AHCI_PREG_IS_IPMS);
+@@ -3066,2 +3072,0 @@
+-                            ahci_pwrite(ap, AHCI_PREG_IS,
+-                                            AHCI_PREG_IS_SDBS);

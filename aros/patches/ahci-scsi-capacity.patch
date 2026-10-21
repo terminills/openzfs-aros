@@ -1,0 +1,82 @@
+--- a/rom/devs/ahci/ahci_scsi.c
++++ b/rom/devs/ahci/ahci_scsi.c
+@@ -353,3 +353,55 @@
+-    xa = ahci_ata_get_xfer(ap, at);
+-
+-    switch(cdb->generic.opcode) {
++    /* Capacity replies are synthesized from IDENTIFY, not ATA transfers.
++     * Never use the caller's CDB as the response buffer. */
++    if (scsi->scsi_Command && scsi->scsi_CmdLength &&
++        (scsi->scsi_Command[0] == 0x25 || scsi->scsi_Command[0] == 0x9e)) {
++        const UBYTE *cmd = scsi->scsi_Command;
++        UBYTE reply[32] = {0};
++        ULONG length, allocation, i;
++        BOOL extended = cmd[0] == 0x9e;
++        scsi->scsi_Actual = 0;
++        scsi->scsi_CmdActual = 0;
++        scsi->scsi_Status = 0;
++        scsi->scsi_SenseActual = 0;
++        IOStdReq(io)->io_Actual = sizeof(*scsi);
++        io->io_Error = IOERR_BADLENGTH;
++        if (scsi->scsi_CmdLength != (extended ? 16 : 10))
++            return TRUE;
++        io->io_Error = IOERR_NOCMD;
++        /* Only whole-device capacity (PMI=0, LBA=0) is supported. */
++        if (extended) {
++            if (cmd[1] != 0x10 || cmd[14] || cmd[15])
++                return TRUE;
++            for (i = 2; i < 10; ++i)
++                if (cmd[i]) return TRUE;
++            allocation = ((ULONG)cmd[10] << 24) | ((ULONG)cmd[11] << 16) | ((ULONG)cmd[12] << 8) | cmd[13];
++            length = allocation < sizeof(reply) ? allocation : sizeof(reply);
++        } else {
++            for (i = 1; i < 10; ++i)
++                if (cmd[i]) return TRUE;
++            length = 8;
++        }
++        io->io_Error = IOERR_BADLENGTH;
++        if (!(scsi->scsi_Flags & SCSIF_READ) ||
++            scsi->scsi_Length < length || (length && !scsi->scsi_Data) ||
++            !at->at_capacity || !at->at_identify.sector_size)
++            return TRUE;
++        capacity = at->at_capacity - 1;
++        if (extended) {
++            for (i = 0; i < 8; ++i)
++                reply[i] = capacity >> (56 - 8 * i);
++            scsi_ulto4b(at->at_identify.sector_size, reply + 8);
++        } else {
++            if (capacity > 0xffffffffULL) capacity = 0xffffffffULL;
++            scsi_ulto4b((u_int32_t)capacity, reply);
++            scsi_ulto4b(at->at_identify.sector_size, reply + 4);
++        }
++        if (length) CopyMem(reply, scsi->scsi_Data, length);
++        scsi->scsi_Actual = length;
++        scsi->scsi_CmdActual = scsi->scsi_CmdLength;
++        io->io_Error = 0;
++        return TRUE;
++    }
++
++    xa = ahci_ata_get_xfer(ap, at);
++
++    switch(cdb->generic.opcode) {
+@@ -408,19 +408,1 @@
+-    case SCSI_DA_READ_CAPACITY:
+-        done = TRUE;
+-        if (rdata_len < sizeof(rdata->read_capacity_data)) {
+-            io->io_Error = IOERR_BADLENGTH;
+-            break;
+-        }
+-
+-        capacity = at->at_capacity;
+-
+-        memset(rdata, 0, rdata_len);
+-        rdata_len = sizeof(rdata->read_capacity_data);
+-        if (capacity > 0xFFFFFFFFU)
+-            capacity = 0xFFFFFFFFU;
+-        memset(&rdata->read_capacity_data, 0, rdata_len);
+-        scsi_ulto4b((u_int32_t)capacity - 1,
+-                rdata->read_capacity_data.addr);
+-        scsi_ulto4b(512, rdata->read_capacity_data.length);
+-        break;
+-    case SCSI_DA_SYNCHRONIZE_CACHE:
++    case SCSI_DA_SYNCHRONIZE_CACHE:

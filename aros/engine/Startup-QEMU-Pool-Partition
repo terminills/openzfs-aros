@@ -1,0 +1,13 @@
+FailAt 21
+MakeDir RAM:T RAM:ENV
+Assign T: RAM:T
+Assign ENV: RAM:ENV
+Assign ENVARC: SYS:Prefs/Env-Archive
+Assign LIBS: SYS:Classes ADD
+Assign WANDERER: SYS:System/Wanderer
+Path C: SYS:Tools ADD
+Stack 1048576
+C:IPrefs
+C:OpenZFSQEMUPoolTest DISPOSABLE-PARTITION >RAM:pool-test.log
+SYS:System/Wanderer/Wanderer
+EndCLI

@@ -1,0 +1,20 @@
+--- a/setioerr.c
++++ b/setioerr.c
+@@ -6,6 +6,7 @@
+ #include <proto/exec.h>
+ #include "dos_intern.h"
+ 
++extern struct ExecBase *SysBase;
+ #include <aros/debug.h>
+ 
+ /*****************************************************************************
+@@ -58,6 +59,9 @@
+     old = me->pr_Result2;
+     me->pr_Result2 = result;
+ 
++    if(result==333)
++        bug("[OZ-ioerr333] task=%p name=%s old=%ld caller=%p setter=%p\n",
++            me,me->pr_Task.tc_Node.ln_Name,old,__builtin_return_address(0),Dos_77_SetIoErr);
+     return old;
+ 
+     AROS_LIBFUNC_EXIT

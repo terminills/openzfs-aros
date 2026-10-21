@@ -1,0 +1,13 @@
+--- main.c
++++ main.c
+@@ -894,6 +894,10 @@
+             }
+ 
+             afsSecEndPacket(handler);
++            /* ACTION_DIE is replied once, after AFS_free below. Replying
++             * here as well reuses the caller's already returned packet. */
++            if (dead)
++                break;
+             replypkt2(dp, ok, res2);
+         }
+     }

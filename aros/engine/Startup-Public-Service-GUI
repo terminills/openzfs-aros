@@ -1,0 +1,19 @@
+FailAt 20
+MakeDir RAM:T RAM:ENV RAM:ENVARC RAM:Clipboards
+Assign T: RAM:T
+Assign ENV: RAM:ENV
+Assign ENVARC: RAM:ENVARC
+Assign CLIPS: RAM:Clipboards
+Assign LIBS: SYS:Classes ADD
+Assign KEYMAPS: DEVS:Keymaps
+Assign LOCALE: SYS:Locale
+Assign FONTS: SYS:Fonts
+Stack 1048576
+C:IPrefs
+Run >T:service-first.log C:OpenZFSServiceNative
+C:OpenZFSPublicServiceTest
+Run >T:service-second.log C:OpenZFSServiceNative
+C:OpenZFSPublicServiceTest
+C:OpenZFSPublicServiceTest STARTUP
+C:OpenZFSPublicServiceTest GUI
+EndCLI

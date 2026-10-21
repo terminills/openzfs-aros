@@ -1,0 +1,12 @@
+FailAt 10
+MakeDir RAM:T RAM:ENV
+Assign T: RAM:T
+Assign ENV: RAM:ENV
+Stack 1048576
+SetEnv OPENZFS_TEST_LARGE_FILES 1
+C:OpenZFSPoolTest mirror >SYS:raid-mirror-create.log
+C:OpenZFSPoolTest raidz1 >SYS:raid-raidz1-create.log
+C:OpenZFSPoolTest raidz2 >SYS:raid-raidz2-create.log
+C:OpenZFSPoolTest raidz3 >SYS:raid-raidz3-create.log
+Echo "RAID large fixture matrix created" >SYS:raid-created.marker
+EndCLI

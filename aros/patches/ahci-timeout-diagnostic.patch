@@ -1,0 +1,19 @@
+--- a/rom/devs/ahci/ahci.c
++++ b/rom/devs/ahci/ahci.c
+@@ -54,1 +54,2 @@
+-#include <string.h>
++#include <string.h>
++#include <aros/debug.h>
+@@ -4040,1 +4040,11 @@
+-    at = ccb->ccb_xa.at;
++    at = ccb->ccb_xa.at;
++    bug("AHCI timeout slot=%d state=%d opcode=%02x flags=%08x "
++        "active=%08x sactive=%08x expired=%08x run=%08x "
++        "ci=%08x sact=%08x is=%08x tfd=%08x cmd=%08x serial=%u\n",
++        ccb->ccb_slot, xa->state, xa->fis->command, xa->flags,
++        ap->ap_active, ap->ap_sactive, ap->ap_expired, ap->ap_run_flags,
++        ahci_pread(ap, AHCI_PREG_CI), ahci_pread(ap, AHCI_PREG_SACT),
++        ahci_pread(ap, AHCI_PREG_IS), ahci_pread(ap, AHCI_PREG_TFD),
++        ahci_pread(ap, AHCI_PREG_CMD), xa->serial);
++    /* Private failure-only observation. No retries, timeout extension,
++     * scheduler changes, or production logging are introduced here. */

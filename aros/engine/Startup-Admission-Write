@@ -1,0 +1,8 @@
+FailAt 21
+MakeDir RAM:T RAM:ENV
+Assign T: RAM:T
+Assign ENV: RAM:ENV
+Stack 1048576
+Run >T:admission-service.log C:OpenZFSAdmissionServiceHarness WRITE
+C:OpenZFSAdmissionServiceTest WRITE
+EndCLI

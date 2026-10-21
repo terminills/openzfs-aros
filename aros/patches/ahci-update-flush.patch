@@ -1,0 +1,64 @@
+--- a/rom/devs/ahci/ahci_io.c
++++ b/rom/devs/ahci/ahci_io.c
+@@ -416,4 +416,14 @@
+-    case CMD_UPDATE:
+-        // FIXME: Implement cache flush
+-        done = TRUE;
+-        break;
++    case CMD_UPDATE:
++        /* Submit a real asynchronous flush and retain the original request
++         * until device completion. The temporary CDB is consumed inline. */
++        if (ap->ap_type != ATA_PORT_T_DISK)
++            goto bad_cmd;
++        {
++            UBYTE command[10] = {SCSI_DA_SYNCHRONIZE_CACHE};
++            struct SCSICmd sync = {0};
++            sync.scsi_Command = command;
++            sync.scsi_CmdLength = sizeof(command);
++            IOStdReq(io)->io_Actual = 0;
++            done = ahci_scsi_disk_io(io, &sync);
++        }
++        break;
+--- a/rom/devs/ahci/ahci.c
++++ b/rom/devs/ahci/ahci.c
+@@ -2604,5 +2604,5 @@
+             ahci_pwrite(ap, AHCI_PREG_CI, 1 << ccb->ccb_slot);
+             if ((ap->ap_run_flags &
+-                    (ATA_F_EXCLUSIVE | ATA_F_AUTOSENSE)) == 0) {
++                    (ATA_F_EXCLUSIVE | ATA_F_AUTOSENSE)) != 0) {
+                 break;
+             }
+--- a/rom/devs/ahci/ahci_scsi.c
++++ b/rom/devs/ahci/ahci_scsi.c
+@@ -433,10 +433,21 @@
+-        fis = xa->fis;
+-        fis->flags = ATA_H2D_FLAGS_CMD;
+-        fis->command = ATA_C_FLUSH_CACHE;
+-        fis->device = 0;
+-        if (xa->timeout < 45000)
+-            xa->timeout = 45000;
+-        xa->datalen = 0;
+-        xa->flags = 0;
+-        xa->complete = ahci_io_complete;
+-        break;
++        {
++            UWORD commands = le16toh(at->at_identify.cmdset83);
++            /* IDENTIFY word 83 is valid only with bits 15:14 == 01.
++             * Never acknowledge durability on an unsupported device. */
++            if ((commands & 0xc000) != 0x4000 || !(commands & 0x3000)) {
++                io->io_Error = IOERR_NOCMD;
++                done = TRUE;
++                break;
++            }
++            fis = xa->fis;
++            fis->flags = ATA_H2D_FLAGS_CMD;
++            fis->command = (commands & 0x2000) ?
++                ATA_C_FLUSH_CACHE_EXT : ATA_C_FLUSH_CACHE;
++            fis->device = 0;
++            xa->timeout = 45000;
++            xa->data = NULL;
++            xa->datalen = 0;
++            xa->flags = ATA_F_EXCLUSIVE;
++            xa->complete = ahci_io_complete;
++        }
++        break;

@@ -1,0 +1,11 @@
+FailAt 10
+MakeDir RAM:T RAM:ENV
+Assign T: RAM:T
+Assign ENV: RAM:ENV
+Stack 1048576
+C:OpenZFSPoolTest mirror >SYS:raidwrite-mirror-create.log
+C:OpenZFSPoolTest raidz1 >SYS:raidwrite-raidz1-create.log
+C:OpenZFSPoolTest raidz2 >SYS:raidwrite-raidz2-create.log
+C:OpenZFSPoolTest raidz3 >SYS:raidwrite-raidz3-create.log
+Echo "RAID write fixture matrix created" >SYS:raidwrite-created.marker
+EndCLI

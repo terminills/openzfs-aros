@@ -1,0 +1,10 @@
+FailAt 21
+MakeDir RAM:T RAM:ENV
+Assign T: RAM:T
+Assign ENV: RAM:ENV
+Assign USBCLASSES: SYS:Classes/USB
+Stack 1048576
+C:AddUSBClasses QUIET
+Wait 3
+C:OpenZFSNativeImportTest
+EndCLI

@@ -1,0 +1,55 @@
+--- a/util/thread-pool.c
++++ b/util/thread-pool.c
+@@ -22,6 +22,7 @@
+ #include "trace.h"
+ #include "block/thread-pool.h"
+ #include "qemu/main-loop.h"
++#include "qemu/timer.h"
+ 
+ static void do_spawn_thread(ThreadPoolAio *pool);
+ 
+@@ -108,7 +109,12 @@
+         req->state = THREAD_ACTIVE;
+         qemu_mutex_unlock(&pool->lock);
+ 
++        void *trace_opaque = req->common.opaque;
++        trace_thread_pool_worker_start(pool, req, trace_opaque,
++                                       trace_event_get_state(TRACE_THREAD_POOL_WORKER_START) ? qemu_clock_get_ns(QEMU_CLOCK_REALTIME) : 0);
+         ret = req->func(req->arg);
++        trace_thread_pool_worker_return(pool, req, trace_opaque, ret,
++                                        trace_event_get_state(TRACE_THREAD_POOL_WORKER_RETURN) ? qemu_clock_get_ns(QEMU_CLOCK_REALTIME) : 0);
+ 
+         req->ret = ret;
+         /* Write ret before state.  */
+@@ -116,6 +122,9 @@
+         req->state = THREAD_DONE;
+ 
+         qemu_bh_schedule(pool->completion_bh);
++        /* The callback may already have freed req: log only saved values. */
++        trace_thread_pool_worker_notified(pool, req, trace_opaque,
++                                          trace_event_get_state(TRACE_THREAD_POOL_WORKER_NOTIFIED) ? qemu_clock_get_ns(QEMU_CLOCK_REALTIME) : 0);
+         qemu_mutex_lock(&pool->lock);
+     }
+ 
+@@ -184,6 +193,8 @@
+             continue;
+         }
+ 
++        trace_thread_pool_worker_delivered(pool, elem, elem->common.opaque,
++                                           trace_event_get_state(TRACE_THREAD_POOL_WORKER_DELIVERED) ? qemu_clock_get_ns(QEMU_CLOCK_REALTIME) : 0);
+         trace_thread_pool_complete_aio(pool, elem, elem->common.opaque,
+                                        elem->ret);
+         QLIST_REMOVE(elem, all);
+--- a/util/trace-events
++++ b/util/trace-events
+@@ -14,6 +14,10 @@
+ reentrant_aio(void *ctx, const char *name) "ctx %p name %s"
+ 
+ # thread-pool.c
++thread_pool_worker_start(void *pool, void *req, void *opaque, int64_t ns) "pool %p req %p opaque %p ns %"PRId64
++thread_pool_worker_return(void *pool, void *req, void *opaque, int ret, int64_t ns) "pool %p req %p opaque %p ret %d ns %"PRId64
++thread_pool_worker_notified(void *pool, void *req, void *opaque, int64_t ns) "pool %p req %p opaque %p ns %"PRId64
++thread_pool_worker_delivered(void *pool, void *req, void *opaque, int64_t ns) "pool %p req %p opaque %p ns %"PRId64
+ thread_pool_submit_aio(void *pool, void *req, void *opaque) "pool %p req %p opaque %p"
+ thread_pool_complete_aio(void *pool, void *req, void *opaque, int ret) "pool %p req %p opaque %p ret %d"
+ thread_pool_cancel_aio(void *req, void *opaque) "req %p opaque %p"

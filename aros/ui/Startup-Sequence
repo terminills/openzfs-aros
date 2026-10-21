@@ -1,0 +1,23 @@
+FailAt 21
+MakeDir RAM:T RAM:ENV RAM:Clipboards
+Assign T: RAM:T
+Assign ENV: RAM:ENV
+Assign ENVARC: SYS:Prefs/Env-Archive
+Assign CLIPS: RAM:Clipboards
+Assign LIBS: SYS:Classes ADD
+Assign KEYMAPS: DEVS:Keymaps
+Assign LOCALE: SYS:Locale
+Assign FONTS: SYS:Fonts
+Assign WANDERER: SYS:System/Wanderer
+Path C: SYS:Tools ADD
+C:IPrefs
+C:OpenZFSAPITest ABSENT >SYS:api-absent.log
+Run >SYS:api-service.log C:OpenZFSService
+Wait 1
+C:OpenZFSAPITest >SYS:api-roundtrip.log
+Run >SYS:api-timeout-service.log C:OpenZFSService TEST-DROP
+Wait 1
+C:OpenZFSAPITest TIMEOUT >SYS:api-timeout.log
+Run >SYS:manager.log SYS:Tools/OpenZFSManager
+SYS:System/Wanderer/Wanderer
+EndCLI

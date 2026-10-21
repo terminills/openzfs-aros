@@ -1,0 +1,7 @@
+FailAt 20
+MakeDir RAM:T RAM:ENV
+Assign T: RAM:T
+Assign ENV: RAM:ENV
+Stack 1048576
+C:OpenZFSDevicePathTest
+EndCLI

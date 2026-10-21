@@ -1,0 +1,49 @@
+--- a/loadseg.c
++++ b/loadseg.c
+@@ -158,6 +158,46 @@
+ 
+     if (file)
+     {
++        /* Check the opened object, not a second pathname lookup. The
++         * filesystem reports mount-wide noexec through effective protection. */
++#ifdef AROS_LOADER_PROBE
++        extern struct ExecBase *SysBase;
++        bug("[loader-policy] name=%s fh=%p before allocation\n", name, BADDR(file));
++#endif
++        struct FileInfoBlock *fib = AllocDosObject(DOS_FIB, NULL);
++        BOOL allowed = FALSE;
++        err = ERROR_NO_FREE_STORE;
++        if (fib)
++        {
++#ifdef AROS_LOADER_PROBE
++            bug("[loader-policy] name=%s before ExamineFH\n", name);
++#endif
++            if (ExamineFH(file, fib))
++            {
++#ifdef AROS_LOADER_PROBE
++                bug("[loader-policy] name=%s examined protection=%lx\n", name, fib->fib_Protection);
++#endif
++                LONG prot = fib->fib_Protection;
++                allowed = !(prot & FIBF_EXECUTE) ||
++                    (prot & (FIBF_GRP_EXECUTE | FIBF_OTR_EXECUTE));
++                /* This is the all-identities execute veto, not a new
++                 * MuFS ACL decision. Existing filesystem/security checks
++                 * still govern opening the file. */
++                err = ERROR_READ_PROTECTED;
++            }
++            else
++                err = IoErr();
++            FreeDosObject(DOS_FIB, fib);
++        }
++#ifdef AROS_LOADER_PROBE
++        bug("[loader-policy] name=%s allowed=%d error=%ld\n", name, allowed, err);
++#endif
++        if (!allowed)
++        {
++            Close(file);
++            SetIoErr(err);
++            return BNULL;
++        }
+         D(bug("[LoadSeg] Loading '%s'...\n", name));
+ 
+         SetVBuf(file, NULL, BUF_FULL, 4096);

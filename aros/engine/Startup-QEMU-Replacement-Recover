@@ -1,0 +1,9 @@
+FailAt 21
+MakeDir RAM:T RAM:ENV
+Assign T: RAM:T
+Assign ENV: RAM:ENV
+Assign ENVARC: SYS:Prefs/Env-Archive
+Assign LIBS: SYS:Classes ADD
+Stack 1048576
+C:OpenZFSQEMUPoolTest REPLACEMENT-RECOVER
+EndCLI

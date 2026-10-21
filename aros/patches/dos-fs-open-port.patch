@@ -1,0 +1,24 @@
+diff --git a/rom/dos/fs_driver.c b/rom/dos/fs_driver.c
+--- a/rom/dos/fs_driver.c
++++ b/rom/dos/fs_driver.c
+@@ -53,6 +53,10 @@
+     if (!bstrname)
+         return ERROR_NO_FREE_STORE;
+ 
++    /* A soft-link retry reuses this handle, possibly on another filesystem.
++     * Only the current successful handler may select its serving port. */
++    handle->fh_Type = NULL;
++
+     status = dopacket3(DOSBase, &error, port, action, MKBADDR(handle), lock, bstrname);
+     FREEC2BSTR(bstrname);
+ 
+@@ -61,6 +65,8 @@
+      * not care leave it alone and keep talking on the port we used here.
+      */
+-    if (!handle->fh_Type)
++    if (!status)
++        handle->fh_Type = NULL;
++    else if (!handle->fh_Type)
+         handle->fh_Type = port;
+     return status ? 0 : error;
+ }

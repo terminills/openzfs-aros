@@ -1,0 +1,11 @@
+--- a/rom/devs/ata/scsiemu.c
++++ b/rom/devs/ata/scsiemu.c
+@@ -67,7 +67,7 @@
+     *outlen = len < 36 ? len : 36;
+     SetMem(out + 8, ' ', 8 + 16 + 4);
+     CopyMem(unit->au_Model, out + 8, strlen(unit->au_Model) > 16 + 8 ? 16 + 8 : strlen(unit->au_Model));
+-    CopyMem(unit->au_FirmwareRev, out + 8 + 16, strlen(unit->au_FirmwareRev) > 4 ? 4 : strlen(unit->au_FirmwareRev));
++    CopyMem(unit->au_FirmwareRev, out + 8 + 8 + 16, strlen(unit->au_FirmwareRev) > 4 ? 4 : strlen(unit->au_FirmwareRev));
+     return 0;
+ }
+ 

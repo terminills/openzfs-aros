@@ -1,0 +1,20 @@
+FailAt 21
+MakeDir RAM:T RAM:ENV
+Assign T: RAM:T
+Assign ENV: RAM:ENV
+Assign ENVARC: SYS:Prefs/Env-Archive
+Assign LIBS: SYS:Classes ADD
+Assign WANDERER: SYS:System/Wanderer
+Path C: SYS:Tools ADD
+Stack 262144
+C:IPrefs
+Run >SYS:verify-service.log C:OpenZFSServiceNative TEST-NATIVE
+Wait 10
+C:OpenZFSWriteTest VERIFY >SYS:verify-snapshot.log
+Wait 5
+C:OpenZFSSnapshotReadTest >SYS:snapshot-bytes.log
+Run >SYS:management-live.log C:OpenZFSServiceNative
+Wait 10
+Run >SYS:management-ui.log C:OpenZFSManagerNative
+SYS:System/Wanderer/Wanderer
+EndCLI

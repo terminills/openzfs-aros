@@ -1,0 +1,8 @@
+FailAt 21
+Stack 1048576
+MakeDir RAM:OpenZFS-Test-ENV
+MakeDir RAM:OpenZFS-Test-ENVARC
+Assign ENV: RAM:OpenZFS-Test-ENV
+Assign ENVARC: RAM:OpenZFS-Test-ENVARC
+C:OpenZFSPreferencesTest
+EndCLI

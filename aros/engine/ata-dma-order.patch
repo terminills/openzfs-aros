@@ -1,0 +1,28 @@
+--- a/rom/devs/ata/lowlevel.c
++++ b/rom/devs/ata/lowlevel.c
+@@ -679,7 +679,6 @@
+                 return IOERR_ABORTED;
+ 
+             ata_IRQSetHandler(unit, &ata_IRQDMAReadWrite, NULL, 0, 0);
+-            DMA_Start(bus);
+             break;
+ 
+         case CM_DMAWrite:
+@@ -687,7 +686,6 @@
+                 return IOERR_ABORTED;
+ 
+             ata_IRQSetHandler(unit, &ata_IRQDMAReadWrite, NULL, 0, 0);
+-            DMA_Start(bus);
+             break;
+ 
+         case CM_NoData:
+@@ -706,6 +704,9 @@
+     DATA(bug("[ATA%02ld] %s: Sending command\n", unit->au_UnitNum, __func__);)
+ 
+     PIO_Out(bus, block->command, ata_Command);
++    /* Arm the command before starting the prepared bus-master transfer. */
++    if (block->method == CM_DMARead || block->method == CM_DMAWrite)
++        DMA_Start(bus);
+     DATA(bug("[ATA%02ld] %s: waiting 400ns (bus ab_Base = 0x%p) ..\n", unit->au_UnitNum, __func__, bus->ab_Base);)
+     ata_WaitNano(400, bus->ab_Base);
+     //ata_WaitTO(unit->au_Bus->ab_Timer, 0, 1, 0);

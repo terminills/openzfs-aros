@@ -1,0 +1,87 @@
+--- a/pipe-handler.h
++++ b/pipe-handler.h
+@@ -93,6 +93,8 @@
+ PIPEDATA;
+ 
+ #define   OPEN_FOR_READ    (1 << 0)
++#define   READER_DISCONNECTED (1 << 2)
++extern int FailOnReaderClose;
+ #define   OPEN_FOR_WRITE   (1 << 1)     /* flags for pipedata struct */
+ 
+ 
+@@ -188,4 +190,3 @@
+ #ifndef MODE_READONLY
+ # define   MODE_READONLY    MODE_OLDFILE
+ #endif /*  MODE_READONLY */
+-
+--- a/pipe-handler.c
++++ b/pipe-handler.c
+@@ -135,6 +135,9 @@
+ */
+ 
+ char               HandlerName[30];
++/* Private prototype: scalar Startup=1 opts into terminal reader disconnect.
++ * Startup=0 retains historical named-pipe reopen behavior. */
++int FailOnReaderClose;
+ struct DeviceNode  *DevNode   =  NULL;
+ struct MsgPort     *PipePort  =  NULL;
+ 
+@@ -182,6 +185,7 @@
+     goto QUIT;
+ 
+   BSTRtoCstr (BPTRtoCptr (StartPkt->dp_Arg1), HandlerName, sizeof (HandlerName));
++  FailOnReaderClose = StartPkt->dp_Arg2 == 1;
+   for (cp= HandlerName; *cp != '\0'; ++cp)
+     if (*cp == ':')      /* remainder of handler's first refernece follows */
+       { *cp= '\0';
+--- a/pipecreate.c
++++ b/pipecreate.c
+@@ -149,6 +149,8 @@
+ 
+ 
+   handle= (struct FileHandle *) BPTRtoCptr (pkt->dp_Arg1);
++  if (pipe && (pipe->flags & READER_DISCONNECTED))
++    { pkt->dp_Res2=ERROR_INVALID_LOCK; goto OPENREPLY; }
+ 
+   if ((pipekey= (PIPEKEY *) AllocMem (sizeof (PIPEKEY), ALLOCMEM_FLAGS)) == NULL)
+     { pkt->dp_Res2= ERROR_NO_FREE_STORE;
+@@ -343,7 +345,9 @@
+   pipe= pipekey->pipe;
+ 
+   if ((pipekey->iotype == PIPEREAD) || (pipekey->iotype == PIPERW))
+-    pipe->flags &= ~OPEN_FOR_READ;
++    { pipe->flags &= ~OPEN_FOR_READ;
++      if (FailOnReaderClose) pipe->flags |= READER_DISCONNECTED;
++    }
+ 
+   if ((pipekey->iotype == PIPEWRITE) || (pipekey->iotype == PIPERW))
+     pipe->flags &= ~OPEN_FOR_WRITE;
+--- a/pipesched.c
++++ b/pipesched.c
+@@ -169,6 +169,7 @@
+ 
+ 
+       while ( (! (PipebufFull (pipe->buf))) &&
++              (!(pipe->flags & READER_DISCONNECTED)) &&
+               ((wd= (WAITINGDATA *) FirstItem (&pipe->writerlist)) != NULL) )
+         { amt= MoveToPipebuf (pipe->buf, wd->pktinfo.pipewait.buf, wd->pktinfo.pipewait.len);
+ 
+@@ -184,7 +185,17 @@
+     }
+ 
+ 
+-  if ( PipebufEmpty (pipe->buf)                &&
++  if (pipe->flags & READER_DISCONNECTED)
++    { while ((wd=(WAITINGDATA *)FirstItem(&pipe->writerlist)) != NULL)
++        { struct DosPacket *failed=wd->pkt;
++          IPTR transferred=failed->dp_Arg3-wd->pktinfo.pipewait.len;
++          Delete(&pipe->writerlist,(PIPELISTNODE *)wd);
++          failed->dp_Res1=transferred?transferred:-1;
++          failed->dp_Res2=transferred?0:ERROR_INVALID_LOCK;
++          QuickReplyPkt(failed);FreeMem(wd,sizeof(WAITINGDATA));
++        }
++    }
++  if ( (PipebufEmpty (pipe->buf) || (pipe->flags & READER_DISCONNECTED)) &&
+        (! (pipe->flags & OPEN_FOR_WRITE))      &&
+        (FirstItem (&pipe->writerlist) == NULL)    )     /* then EOF */
+     { while ((wd= (WAITINGDATA *) FirstItem (&pipe->readerlist)) != NULL)

@@ -1,0 +1,8 @@
+FailAt 10
+MakeDir RAM:T RAM:ENV
+Assign T: RAM:T
+Assign ENV: RAM:ENV
+Stack 1048576
+C:OpenZFSRAIDReadTest >SYS:raid-cold-read.log
+Echo "Large RAID cold reader finished" >SYS:raid-read.marker
+EndCLI

@@ -1,0 +1,29 @@
+--- a/rom/devs/ata/lowlevel.c
++++ b/rom/devs/ata/lowlevel.c
+@@ -652,7 +652,6 @@
+                 return IOERR_ABORTED;
+ 
+             ata_IRQSetHandler(unit, &ata_IRQDMAReadWrite, NULL, 0, 0);
+-            DMA_Start(bus);
+             break;
+ 
+         case CM_DMAWrite:
+@@ -660,7 +659,6 @@
+                 return IOERR_ABORTED;
+ 
+             ata_IRQSetHandler(unit, &ata_IRQDMAReadWrite, NULL, 0, 0);
+-            DMA_Start(bus);
+             break;
+ 
+         case CM_NoData:
+@@ -679,6 +677,10 @@
+     DATA(bug("[ATA%02ld] %s: Sending command\n", unit->au_UnitNum, __func__);)
+ 
+     PIO_Out(bus, block->command, ata_Command);
++    /* Prepare PRDs/handler first, issue the ATA command, then enable the
++     * bus-master engine. Keep this experiment separate from ATAPI packets. */
++    if (block->method == CM_DMARead || block->method == CM_DMAWrite)
++        DMA_Start(bus);
+     DATA(bug("[ATA%02ld] %s: waiting 400ns (bus ab_Base = 0x%p) ..\n", unit->au_UnitNum, __func__, bus->ab_Base);)
+     ata_WaitNano(400, bus->ab_Base);
+     //ata_WaitTO(unit->au_Bus->ab_Timer, 0, 1, 0);

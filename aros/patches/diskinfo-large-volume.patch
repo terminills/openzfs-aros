@@ -1,0 +1,33 @@
+--- a/support.c
++++ b/support.c
+@@ -70,7 +70,7 @@
+     ULONG percentage;
+ 
+     if (totalblocks != 0)
+-        percentage = 100 * blocks / totalblocks;
++        percentage = (ULONG)((UQUAD)100 * blocks / totalblocks);
+     else
+         percentage = 100;
+ 
+--- a/diskinfo.c
++++ b/diskinfo.c
+@@ -85,7 +85,8 @@
+     ID_HSIERRA_DISK,
+     ID_ISO9660_DISK,
+     ID_ISO9660RR_DISK,
+-    ID_ISO9660JOL_DISK
++    ID_ISO9660JOL_DISK,
++    0x5a465301UL /* Native upstream OpenZFS handler; not private ZFS v3. */
+ };
+ 
+ static CONST_STRPTR disktypelist[] =
+@@ -133,7 +134,8 @@
+     "High Sierra CDFS",
+     "ISO9660 CDFS",
+     "ISO9660 + RockRidge CDFS",
+-    "ISO9660 + Joliet CDFS"
++    "ISO9660 + Joliet CDFS",
++    "OpenZFS"
+ };
+ 
+ /*** Instance data **********************************************************/

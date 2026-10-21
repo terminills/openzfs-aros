@@ -1,0 +1,16 @@
+FileSystem     = L:fat-handler
+Device         = ata.device
+Unit           = 3
+Flags          = 0
+LowCyl         = 0
+HighCyl        = 1048575
+Surfaces       = 1
+BlocksPerTrack = 1
+BlockSize      = 512
+Buffers        = 64
+BufMemType     = 1
+Stacksize      = 32768
+Priority       = 5
+GlobVec        = -1
+DosType        = 0x46415400
+Activate       = 1

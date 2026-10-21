@@ -1,0 +1,285 @@
+#!/usr/bin/env bash
+set -euo pipefail
+repo=$(cd -- "$(dirname -- "$0")/../.." && pwd)
+cd "$repo"
+base=${AROS_TEST_ISO:-/opt/aros-workspace/aros-amiwest-nightly-release/distfiles/aros-smp-pc-x86_64.iso}
+dos=${AROS_TEST_DOS_OVERLAY:?private DOS overlay required}
+ata=${AROS_TEST_ATA_OVERLAY:?private ATA overlay required}
+posix=${AROS_TEST_POSIX_LIBRARY:?private POSIX library required}
+service=${AROS_TEST_SERVICE_BINARY:?public service executable required}
+client=${AROS_TEST_CLIENT_BINARY:-build-aros/OpenZFSPublicServiceTest}
+gui=${AROS_PUBLIC_GUI:-0}
+cpus=${AROS_TEST_CPUS:-2}
+qemu=${AROS_TEST_QEMU:-qemu-system-x86_64}
+ide_trace=${AROS_TEST_IDE_TRACE:-0}
+worker_trace=${AROS_TEST_WORKER_TRACE:-0}
+[[ $worker_trace == 0 || $worker_trace == 1 ]]
+host_read_trace=${AROS_TEST_HOST_READ_TRACE:-0}
+[[ $host_read_trace == 0 || $host_read_trace == 1 ]]
+disk_aio=${AROS_TEST_DISK_AIO:-default}
+case "$disk_aio" in
+    default) disk_aio_option= ;;
+    threads|io_uring) disk_aio_option=",aio=$disk_aio" ;;
+    *) echo 'AROS_TEST_DISK_AIO must be default, threads or io_uring' >&2; exit 2 ;;
+esac
+[[ $ide_trace == 0 || $ide_trace == 1 ]]
+[[ $cpus =~ ^[1-8]$ ]] || { echo 'AROS_TEST_CPUS must be 1 through 8' >&2; exit 2; }
+prefix=public-service-run
+startup=aros/engine/Startup-Public-Service
+duration=600
+extra_maps=()
+if [[ ${AROS_TEST_LOADER_POLICY:-0} == 1 ]];then
+    extra_maps+=(-map aros/engine/public-service-test-only /openzfs-loader-policy-test)
+fi
+extra_drives=()
+partitions=${AROS_TEST_REQUIRE_PARTITIONS:-0}
+ahci_query=${AROS_TEST_AHCI_QUERY:-0}
+[[ $ahci_query == 0 || ( $ahci_query == 1 && $partitions == 1 ) ]]
+sector_quirk=${AROS_TEST_SECTOR_QUIRK:-0}
+[[ $sector_quirk == 0 || $sector_quirk == 1 ]] || exit 2
+[[ $sector_quirk == 0 || $partitions == 1 ]] || exit 2
+label_source=${AROS_TEST_LABEL_FIXTURE:-}
+if [[ -n $label_source ]];then
+    [[ $partitions == 1 && ${AROS_TEST_REQUIRE_INIT:-0} == 1 ]] || {
+        echo 'Label fixture requires PARTITIONS and INIT tests' >&2; exit 2; }
+    label_source=$(realpath -e -- "$label_source")
+    case "$label_source" in
+        "$repo"/build-aros/qemu-run.*/disk[01].raw) ;;
+        *) echo 'Only an existing disposable QEMU pool fixture is accepted' >&2; exit 2;;
+    esac
+    [[ -f $label_source && $(stat -c %s -- "$label_source") == 536870912 ]] || exit 2
+fi
+[[ $partitions == 0 || $partitions == 1 ]] || { echo 'AROS_TEST_REQUIRE_PARTITIONS must be 0 or 1' >&2; exit 2; }
+if [[ $gui == 1 ]];then
+    prefix=native-gui-run
+    startup=aros/engine/Startup-Public-Service-GUI
+    duration=1800
+fi
+run=$(mktemp -d "$repo/build-aros/$prefix.XXXXXXXX")
+echo "Evidence: $run"
+qemu_path=$(command -v "$qemu")
+"$qemu" --version > "$run/qemu-version.txt"
+sha256sum "$(realpath -e "$qemu_path")" > "$run/qemu-binary.sha256"
+printf '%s\n' "$cpus" > "$run/cpus.txt"
+printf '%s\n' "$disk_aio" > "$run/disk-aio.txt"
+trace_args=()
+launcher=()
+if [[ $host_read_trace == 1 ]];then
+    command -v strace > "$run/strace-path.txt"
+    strace --version > "$run/strace-version.txt"
+    # -D leaves QEMU as the shell's child, preserving the existing PID-based
+    # cleanup. Trace only host read calls, not guest memory or credentials.
+    launcher=(strace -D -f --seccomp-bpf -ttt -T -e trace=pread64,preadv,preadv2
+        -e raw=pread64,preadv,preadv2 -o "$run/host-reads.log")
+fi
+if [[ $ide_trace == 1 || $worker_trace == 1 ]];then
+    if [[ $ide_trace == 1 ]];then
+        cp aros/engine/qemu-ide-trace-events "$run/ide-trace-events"
+    else
+        # Worker-only tracing avoids the much busier IDE/AIO trace stream.
+        : > "$run/ide-trace-events"
+    fi
+    if [[ $worker_trace == 1 ]];then
+        "$qemu" -trace help > "$run/qemu-trace-events.txt" 2>&1
+        for event in thread_pool_worker_start thread_pool_worker_return thread_pool_worker_notified thread_pool_worker_delivered;do
+            rg -q "^$event$" "$run/qemu-trace-events.txt" || { echo "QEMU lacks $event" >&2; exit 2; }
+            echo "$event" >> "$run/ide-trace-events"
+        done
+        cp aros/engine/qemu-worker-trace.patch "$run/"
+    fi
+    sha256sum "$run/ide-trace-events" > "$run/trace-inputs.sha256"
+    if [[ $worker_trace == 1 ]];then
+        sha256sum "$run/qemu-worker-trace.patch" >> "$run/trace-inputs.sha256"
+    fi
+    trace_args=(-trace "events=$run/ide-trace-events,file=$run/ide-trace.log")
+fi
+cp "$service" "$run/OpenZFSServiceNative"
+cp "$client" "$run/OpenZFSPublicServiceTest"
+cp "$startup" "$run/Startup-Sequence"
+if [[ $gui == 1 ]];then
+    cp "${AROS_TEST_MANAGER_BINARY:?native Manager required for GUI test}" "$run/OpenZFSManagerNative"
+    extra_maps+=(-map "$run/OpenZFSManagerNative" /C/OpenZFSManagerNative)
+    sha256sum "$run/OpenZFSManagerNative" >"$run/gui-inputs.sha256"
+fi
+if [[ $partitions == 1 ]];then
+    sdk=${AROS_SDK:-/opt/aros-workspace/aros-amiwest-nightly-release/bin/pc-x86_64-smp/AROS/Developer}
+    python3 aros/platform/make-partition-fixture.py mbr "$run/partition.raw"
+    qemu-img create -f raw "$run/blank.raw" 256M
+    sha256sum "$run/partition.raw" "$run/blank.raw" > "$run/disks-before.sha256"
+    sha256sum "${sdk%/Developer}/Libs/partition.library" aros/platform/make-partition-fixture.py > "$run/partition-inputs.sha256"
+    extra_maps+=(-map "${sdk%/Developer}/Libs/partition.library" /Libs/partition.library
+        -map aros/engine/public-service-test-only /openzfs-partition-test-only)
+    extra_drives=(-drive "file=$run/partition.raw,format=raw,if=ide,index=0,snapshot=on$disk_aio_option"
+        -drive "file=$run/blank.raw,format=raw,if=ide,index=1,snapshot=on$disk_aio_option")
+    if [[ $sector_quirk == 1 ]];then
+        extra_drives+=(-global 'ide-hd.model=ATA     ADATA SSD S396 3')
+        extra_maps+=(-map aros/engine/public-service-test-only /openzfs-sector-quirk-test)
+    fi
+fi
+if [[ -n $label_source ]];then
+    sha256sum "$label_source" >"$run/label-original.sha256"
+    cp --reflink=auto --sparse=always -- "$label_source" "$run/labeled.raw"
+    sha256sum -c "$run/label-original.sha256" >"$run/label-copy-check.txt"
+    original_hash=$(sha256sum "$label_source");copy_hash=$(sha256sum "$run/labeled.raw")
+    [[ ${original_hash%% *} == "${copy_hash%% *}" ]] || exit 1
+    sha256sum "$run/labeled.raw" >>"$run/disks-before.sha256"
+    extra_maps+=(-map aros/engine/public-service-test-only /openzfs-label-test-only)
+    extra_drives+=(-drive "file=$run/labeled.raw,format=raw,if=ide,index=3,snapshot=on$disk_aio_option")
+fi
+if [[ $ahci_query == 1 ]];then
+    qemu-img create -f raw "$run/ahci.raw" 64M
+    sgdisk --clear --new=1:2048:0 --typecode=1:BF01 "$run/ahci.raw" >"$run/ahci-gpt.log" 2>&1
+    sha256sum "$run/ahci.raw" >>"$run/disks-before.sha256"
+    extra_maps+=(-map aros/engine/public-service-test-only /openzfs-ahci-query-test)
+    extra_drives+=(-device ich9-ahci,id=ozahci
+        -drive "file=$run/ahci.raw,format=raw,if=none,id=ahci-query,snapshot=on$disk_aio_option"
+        -device ide-hd,drive=ahci-query,bus=ozahci.0)
+fi
+cp -a aros/engine/security-fixture "$run/security-fixture"
+tar -czf "$run/aros-source.tar.gz" aros/engine aros/ui aros/zpl aros/cli aros/platform \
+    module/zfs/zfs_onexit.c include/sys/zfs_onexit.h lib/libzutil/zutil_import.c include/libzutil.h
+git rev-parse HEAD >"$run/source.txt"
+git diff --binary >"$run/source.patch"
+sha256sum "$base" "$run/OpenZFSServiceNative" "$run/OpenZFSPublicServiceTest" \
+    "$dos/aros-base.pkg.xz" "$ata/aros-bsp.pkg.xz" "$posix" \
+    build-aros/hosted/Libs/z1.library >"$run/inputs.sha256"
+xorriso -indev "$base" -outdev "$run/test.iso" \
+    -map aros/engine/grub-qemu-test.cfg /boot/grub/grub.cfg \
+    -map "$dos/aros-base.pkg.xz" /boot/aros-base.pkg.xz \
+    -map "$ata/aros-bsp.pkg.xz" /boot/pc-smp/aros-bsp.pkg.xz \
+    -map "$posix" /Libs/posixc.library \
+    -map build-aros/hosted/Libs/z1.library /Libs/z1.library \
+    -map "$run/security-fixture" /Security \
+    -map "$run/OpenZFSServiceNative" /C/OpenZFSServiceNative \
+    -map "$run/OpenZFSPublicServiceTest" /C/OpenZFSPublicServiceTest \
+    "${extra_maps[@]}" \
+    -map aros/engine/public-service-test-only /openzfs-service-test-only \
+    -map "$run/Startup-Sequence" /S/Startup-Sequence \
+    -boot_image any discard -boot_image grub bin_path=/boot/grub/i386-pc/eltorito.img \
+    -boot_image grub boot_info_table=on -boot_image grub grub2_boot_info=on >"$run/pack.log" 2>&1
+"${launcher[@]}" "$qemu" -name "openzfs-public-service-$$" -machine pc,accel=kvm -cpu host -smp "$cpus" -m 2048 \
+    "${trace_args[@]}" \
+    -drive "file=$run/test.iso,media=cdrom,if=ide,index=2,readonly=on" \
+    "${extra_drives[@]}" \
+    -vga std -display none -nic none -boot d -no-reboot -no-shutdown \
+    -device qemu-xhci -device usb-tablet -qmp "unix:$run/qmp.sock,server=on,wait=off" \
+    -serial "file:$run/serial.log" -monitor "unix:$run/monitor,server=on,wait=off" >"$run/qemu.log" 2>&1 &
+pid=$!
+capture_failure(){
+    [[ ${AROS_TEST_CAPTURE_FAILURE:-0} == 1 ]] || return 0
+    # Only this harness-owned QEMU, and only after a confirmed test failure.
+    # Observation errors must not hide the original failure or skip cleanup.
+    printf 'info blockstats\ninfo block\nstop\ninfo blockstats\n' | timeout 5 socat - "UNIX-CONNECT:$run/monitor" > "$run/failure-monitor.log" 2>&1 || true
+    timeout 20 gdb -q -batch -ex 'set pagination off' -ex 'thread apply all bt' \
+        -ex detach -p "$pid" > "$run/failure-host-backtrace.log" 2>&1 || true
+}
+cleanup(){ if kill -0 "$pid" 2>/dev/null;then kill "$pid";wait "$pid" || true;fi; }
+trap cleanup EXIT
+deadline=$((SECONDS+duration))
+while :;do
+    if [[ -f "$run/serial.log" ]];then
+        # Preserve raw bytes; strip only the standard AROS kernel line prefix.
+        sed -E 's/^[[:xdigit:]]{16} 0x[[:xdigit:]]{16} \| [0-9]+ \| //' "$run/serial.log" > "$run/serial-results.log"
+        if rg -q '^RESULT .*FAIL|Public service test line=[1-9][0-9]*|\[PF-DBG\]|^ASSERT at' "$run/serial-results.log";then capture_failure;exit 1;fi
+        count=$(rg -c '^RESULT public service lifecycle PASS' "$run/serial-results.log" || true)
+        sessions=$(rg -c '^Public authenticated sessions ownership, capacity, stale handles and shutdown guard PASS' "$run/serial-results.log" || true)
+        reaped=$(rg -c '^Public task-exit session reclamation PASS cycles=4 sessions=32' "$run/serial-results.log" || true)
+        controls=$(rg -c '^Public native control descriptors PASS capacity=64 ownership=1 stale=1 session-cleanup=1' "$run/serial-results.log" || true)
+        if [[ $count == 3 && $sessions == 2 && $reaped == 2 ]] &&
+           { [[ ${AROS_TEST_REQUIRE_INVENTORY_WORKER:-0} != 1 ]] ||
+             rg -q '^RESULT native inventory worker PASS delayed=1 busy-free=1 success=1 denied=1 malformed=10 absent=1 unchanged=1' "$run/serial-results.log"; } &&
+           { [[ ${AROS_TEST_REQUIRE_CONTROL:-0} != 1 ]] ||
+             { [[ $controls == 2 ]] && rg -q '^Public upstream ioctl transport PASS stats=1 configs=1 resize=1 bounds=1 stale=1' "$run/serial-results.log" &&
+               rg -q '^Public upstream snapshot ioctls PASS create=1 hold=1 onexit=1 release=1 destroy=1 schema=1' "$run/serial-results.log" &&
+               rg -q '^Public upstream snapshot authorization PASS changed-user=1 own-session-denied=1 no-mutation=1' "$run/serial-results.log" &&
+               rg -q '^Public upstream libzfs_core PASS snapshot=1 temporary-hold=1 destroy=1 reopen=1' "$run/serial-results.log" &&
+               rg -q '^Public upstream dataset ioctls PASS create=1 clone=1 rollback=1 volume=1 handler-ready=1' "$run/serial-results.log" &&
+               rg -q '^Public upstream enumeration PASS dataset=1 snapshot=1 properties=1 end=1' "$run/serial-results.log"; }; } &&
+           rg -q '^Public native mount snapshot PASS empty=1 writable=1 readonly=1 retired-absent=1 bounds=1' "$run/serial-results.log" &&
+           rg -q '^Public native path dataset PASS file=1 alias=1 unrelated=1 absent=1 bounds=1' "$run/serial-results.log" &&
+           rg -q '^Public native root resolution PASS alias=1 file-rejected=1 unrelated=1 absent=1' "$run/serial-results.log" &&
+           { [[ ${AROS_TEST_REQUIRE_MOUNT_CACHE:-0} != 1 ]] || {
+               [[ $(rg -c 'Public upstream mount cache PASS state=empty iterations=32' "$run/serial-results.log" || true) == 3 ]] &&
+               rg -q 'Public upstream mount cache PASS state=OZPUBLIC: iterations=32' "$run/serial-results.log" &&
+               rg -q 'Public upstream mount cache PASS state=OZPUBLICRO: iterations=32' "$run/serial-results.log"; }; } &&
+           rg -q '^Public native supported tables PASS feature=1 properties=3 unknown=1 missing=1' "$run/serial-results.log" &&
+           rg -q '^Public native engine version PASS query=1 upstream=1 bounds=1 missing=1' "$run/serial-results.log" &&
+           rg -q '^Public native mount policy PASS properties=4 transitions=8 missing=1 absent=1' "$run/serial-results.log" &&
+           rg -q '^Public native shares object PASS absent=1 unmounted=1 missing=1 invalid=1' "$run/serial-results.log" &&
+           rg -q '^Public native mount control PASS writable=1 readonly=1 busy=1 duplicate=1 absent=1 invalid=1' "$run/serial-results.log" &&
+           { [[ ${AROS_TEST_REQUIRE_INIT:-0} != 1 ]] || {
+               rg -q 'Public upstream libzfs init PASS cycles=80 simultaneous=2' "$run/serial-results.log" &&
+               rg -q "Public native CPU topology PASS cpus=$cpus queries=128" "$run/serial-results.log" &&
+               rg -q 'Public native init diagnostics PASS missing=1 denied=1 protocol=1 settings=1 memory=1' "$run/serial-results.log" &&
+               rg -q 'Public upstream hostid PASS service-identity=1 client-environment-ignored=1' "$run/serial-results.log" &&
+               rg -q 'Public upstream property ioctls PASS set=4 inherit=4 fresh-read=8 denied-set=1 denied-inherit=1 no-mutation=1' "$run/serial-results.log" &&
+               rg -q 'Public upstream property sources PASS received=1 local-precedence=1 revert-received=1 invalid-value=1 invalid-source=1' "$run/serial-results.log" &&
+               rg -q 'Public upstream snapshot lifecycle PASS busy-preserved=1 detach=1 destroy=1 absent=1' "$run/serial-results.log" &&
+               rg -q '^Public upstream promotion PASS denied=1 unchanged=1 conflict=1 promote=1 origins=1 repeat-invalid=1 cleanup=1' "$run/serial-results.log" &&
+               rg -q '^Public upstream promotion mount guard PASS busy=1 endpoint-retained=1 origin-unchanged=1' "$run/serial-results.log" &&
+               rg -q '^Public upstream readonly promotion PASS reimport=1 denied=1 origins-unchanged=1 snapshot-guid=1' "$run/serial-results.log" &&
+               grep -q '^Public upstream file flush PASS write=1 reopen=1 invalid=1 closed=1 readonly=1' "$run/serial-results.log" &&
+               [[ $(rg -c '^Public upstream pool sync PASS phase=[012] ordinary=1 forced=1 errno=' "$run/serial-results.log") == 3 ]] &&
+               rg -q '^Public upstream bookmark lifecycle PASS create=1 duplicate=1 guid=1 list=1 survives-snapshot=1 destroy=1 absent=1' "$run/serial-results.log" &&
+               rg -q '^Public upstream bookmark authorization PASS own-session=1 create-denied=1 destroy-denied=1 unchanged=1' "$run/serial-results.log" &&
+               rg -q '^Public upstream bookmark delegation PASS grant=1 fresh-acl=1 delegated-create=1 delegated-destroy=1 revoke=1 denied-again=1' "$run/serial-results.log" &&
+               rg -q 'Public upstream shares object PASS native-metadata=1 absent=1' "$run/serial-results.log" &&
+               rg -q 'Public upstream file discovery PASS members=2 identity=1 mismatch=1 directory=1 missing=1' "$run/serial-results.log" &&
+               [[ $(rg -c 'Public upstream file vdev PASS phase=[012] members=2 force-policy=1 missing=1 directory=1 query-failure=1' "$run/serial-results.log" || true) == 3 ]] &&
+               rg -q 'Public upstream enclosure unsupported PASS phase=0 query=1 on=1 off=1' "$run/serial-results.log" &&
+               rg -q 'Public upstream enclosure unsupported PASS phase=2 query=1 on=1 off=1' "$run/serial-results.log" &&
+               rg -q '^Public upstream pool property authorization PASS own-session-denied=1 fresh-read=1 no-mutation=1' "$run/serial-results.log" &&
+               rg -q '^Public upstream upgrade notice PASS phase=0 unset=1 configured=1 no-boot-write=1 readonly-denied=0' "$run/serial-results.log" &&
+               rg -q '^Public upstream upgrade notice PASS phase=2 unset=1 configured=0 no-boot-write=1 readonly-denied=1' "$run/serial-results.log" &&
+               rg -q 'Public upstream mount adapter PASS real-handle=1 mount=1 unmount=1 unsupported=1 duplicate=1' "$run/serial-results.log" &&
+               rg -q 'Public upstream init failure cleanup PASS cycles=80 survivor=1 errno=EINVAL' "$run/serial-results.log"; }; } &&
+           { [[ $partitions != 1 ]] || {
+               rg -q '^Public native partition RPC PASS cycles=16 exact-extents=1 slots=1 bounds=1 malformed=1 denied=1 restored=1 unchanged-output=1' "$run/serial-results.log" &&
+               rg -q '^Public native inquiry PASS denied=0 absent=1 malformed=1 unchanged=1' "$run/serial-results.log" &&
+               rg -q '^Public native inquiry PASS denied=1 unchanged=1' "$run/serial-results.log" &&
+               { [[ $ahci_query == 0 ]] || {
+                   rg -q '^Public AHCI inquiry PASS denied=0 identity=1 geometry=1' "$run/serial-results.log" &&
+                   rg -q '^Public AHCI inquiry PASS denied=1 unchanged=1' "$run/serial-results.log";
+               }; } &&
+               rg -q '^Public native inventory PASS denied=0 cycles=8 units=1 optical=1 identity=1 malformed=1 absent=1' "$run/serial-results.log" &&
+               rg -q '^Public native inventory PASS denied=1 unchanged=1' "$run/serial-results.log" &&
+               { [[ ${AROS_TEST_REQUIRE_INIT:-0} != 1 ]] || {
+                   rg -q "^Public native sector quirk PASS match=$sector_quirk partition=1 absent=1 unchanged=1" "$run/serial-results.log" &&
+                   rg -q '^Public native DOS preflight PASS inactive=1 whole=1 partition=1 force-denied=1' "$run/serial-results.log" &&
+                   rg -q '^Public native DOS claim RPC PASS denied=0 missing=1 malformed=1' "$run/serial-results.log" &&
+                   rg -q '^Public native DOS claim RPC PASS denied=1' "$run/serial-results.log" &&
+                   rg -q '^Public native device preflight PASS denied=0 blank=1 type=1 missing=1 malformed=1' "$run/serial-results.log" &&
+                   rg -q '^Public native device preflight PASS denied=1 force-denied=1' "$run/serial-results.log" &&
+                   rg -q '^Public native default discovery PASS denied=1 no-cache=1' "$run/serial-results.log"; }; } &&
+               [[ $(rg -c '^Public native device read PASS denied=0 mbr=1 blank=8 last-sector=1 max=1 bounds=1 unchanged=1' "$run/serial-results.log" || true) == 2 ]] &&
+               [[ $(rg -c '^Public native device read PASS denied=1 unchanged=1' "$run/serial-results.log" || true) == 1 ]]; }; } &&
+           { [[ -z $label_source ]] || {
+               [[ $(rg -c '^Public native default discovery PASS registered=1 partitions=1 optical-excluded=1 pool=1 shortname=1 bounded=1' "$run/serial-results.log" || true) == 2 ]] &&
+               [[ $(rg -c '^Public native device preflight PASS exported=1 force=1 query-failure=1 whole-children=1' "$run/serial-results.log" || true) == 2 ]] &&
+               [[ $(rg -c '^Public native retained device PASS denied=0 lifetime=1' "$run/serial-results.log" || true) == 2 ]] &&
+               [[ $(rg -c '^Public native retained device PASS denied=1 lifetime=1' "$run/serial-results.log" || true) == 1 ]] &&
+               [[ $(rg -c '^Public native scanner session budget PASS one-slot=1 parent-owned=1 cleanup=1 exhausted-error=1' "$run/serial-results.log" || true) == 2 ]] &&
+               [[ $(rg -c 'Public upstream native labeled discovery PASS labels=4 repeats=4 identity=1 hook=1 mismatch=1 extent=1' "$run/serial-results.log" || true) == 2 ]] &&
+               [[ $(rg -c 'Public upstream native labels PASS denied=1 access-flag=1' "$run/serial-results.log" || true) == 1 ]] &&
+               [[ $(rg -c 'Public upstream native scanner PASS denied=0 explicit=1 duplicate=1 malformed=1' "$run/serial-results.log" || true) == 2 ]] &&
+               [[ $(rg -c 'Public upstream native in-use policy PASS exported=1 query-failure=1 blank=1 missing=1' "$run/serial-results.log" || true) == 2 ]] &&
+               [[ $(rg -c 'Public upstream auxiliary query failure PASS spare=1 cache=1' "$run/serial-results.log" || true) == 2 ]] &&
+               [[ $(rg -c 'Public native read repetition PASS cycles=32 alternating=1 identity=1' "$run/serial-results.log" || true) == 2 ]] &&
+               [[ $(rg -c 'Public upstream native scanner PASS denied=1 explicit=1 duplicate=1 malformed=1' "$run/serial-results.log" || true) == 1 ]]; }; } &&
+           { [[ ${AROS_TEST_LOADER_POLICY:-0} != 1 ]] ||
+             rg -q '^RESULT native loader execution policy PASS' "$run/serial-results.log"; } &&
+           rg -q '^RESULT public service storage PASS' "$run/serial-results.log";then break;fi
+    fi
+    if ! kill -0 "$pid" 2>/dev/null || ((SECONDS>=deadline));then echo "Timeout/exit: $run" >&2;exit 1;fi
+    sleep 1
+done
+if [[ -n $label_source ]];then
+    printf 'info blockstats\n' | socat - "UNIX-CONNECT:$run/monitor" >"$run/label-blockstats.txt"
+    rg -q '^ide1-hd1: .*wr_bytes=0 .*wr_operations=0 ' "$run/label-blockstats.txt"
+fi
+printf 'quit\n' | socat - "UNIX-CONNECT:$run/monitor" >/dev/null
+wait "$pid"
+trap - EXIT
+if [[ $partitions == 1 ]];then sha256sum -c "$run/disks-before.sha256" > "$run/disks-after-check.txt";fi
+if [[ -n $label_source ]];then sha256sum -c "$run/label-original.sha256" >"$run/label-original-after-check.txt";fi
+echo "PASS: public service lifecycles and RAM-backed mirror DOS round trip. Evidence: $run"

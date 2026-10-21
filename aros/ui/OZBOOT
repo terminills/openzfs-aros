@@ -1,0 +1,16 @@
+FileSystem     = L:sfs-handler
+Device         = ata.device
+Unit           = 0
+Flags          = 0
+LowCyl         = 0
+HighCyl        = 65535
+Surfaces       = 1
+BlocksPerTrack = 1
+BlockSize      = 512
+Buffers        = 64
+BufMemType     = 1
+Stacksize      = 65536
+Priority       = 5
+GlobVec        = -1
+DosType        = 0x53465300
+Activate       = 1

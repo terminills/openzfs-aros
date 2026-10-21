@@ -1,0 +1,38 @@
+Assign T: RAM:
+C:OpenZFSCLIPlatformTest
+C:OpenZFSArgumentsTest
+C:OpenZFSProcessTest
+C:OpenZFSOutputTest
+If EXISTS C:OpenZFSUpstreamProcessTest
+    Stack 262144
+    C:OpenZFSUpstreamProcessTest
+EndIf
+C:OpenZFSEnvironmentTest
+C:OpenZFSPositionedIOTest
+Stack 262144
+C:OpenZFSProgressWaitTest
+C:OpenZFSTitleTest
+If EXISTS C:OpenZFSPipeTest
+    Mount DEVS:DOSDrivers/PIPE
+    C:OpenZFSPipeTest
+EndIf
+If EXISTS C:OpenZFSControlFileTest
+    Stack 262144
+    C:OpenZFSControlFileTest
+EndIf
+If EXISTS C:OpenZFSIoctlCopyTest
+    Stack 262144
+    C:OpenZFSIoctlCopyTest
+EndIf
+If EXISTS C:OpenZFSMountReferenceTest
+    Stack 262144
+    C:OpenZFSMountReferenceTest
+EndIf
+If EXISTS C:OpenZFSSessionCleanupTest
+    Stack 262144
+    C:OpenZFSSessionCleanupTest
+EndIf
+If EXISTS C:OpenZFSCompatibilityTest
+    Stack 262144
+    C:OpenZFSCompatibilityTest
+EndIf

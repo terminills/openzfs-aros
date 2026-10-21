@@ -1,0 +1,23 @@
+FailAt 21
+MakeDir RAM:T RAM:ENV RAM:Clipboards
+Assign T: RAM:T
+Assign ENV: RAM:ENV
+Assign ENVARC: SYS:Prefs/Env-Archive
+Assign CLIPS: RAM:Clipboards
+Assign LIBS: SYS:Classes ADD
+Assign KEYMAPS: DEVS:Keymaps
+Assign LOCALE: SYS:Locale
+Assign FONTS: SYS:Fonts
+Assign WANDERER: SYS:System/Wanderer
+Path C: SYS:Tools ADD
+Stack 262144
+C:IPrefs
+If NOT EXISTS SYS:import-fixture.log
+  C:OpenZFSPoolTest >SYS:import-fixture.log
+EndIf
+Run >SYS:mount-service.log C:OpenZFSServiceNative TEST-NATIVE
+Wait 10
+C:OpenZFSMountTest >SYS:mount-test.log
+Run >SYS:mount-ui.log C:OpenZFSManagerNative TEST-NATIVE
+SYS:System/Wanderer/Wanderer
+EndCLI

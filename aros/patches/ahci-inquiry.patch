@@ -1,0 +1,168 @@
+--- a/rom/devs/ahci/ahci_scsi.c
++++ b/rom/devs/ahci/ahci_scsi.c
+@@ -266,53 +266,57 @@
+-static BYTE ahci_scsi_page_inquiry(struct ahci_port *ap, struct ata_port *at, struct SCSICmd *scsi)
+-{
+-    union {
+-        struct scsi_vpd_supported_page_list    list;
+-        struct scsi_vpd_unit_serial_number    serno;
+-        UBYTE                    buf[256];
+-    } page;
+-    scsi_cdb_t cdb;
+-    int i;
+-    int j;
+-    int len;
+-
+-    cdb = (APTR)scsi->scsi_Command;
+-
+-    switch(cdb->inquiry.page_code) {
+-    case SVPD_SUPPORTED_PAGE_LIST:
+-        i = 0;
+-        page.list.device = T_DIRECT;
+-        page.list.page_code = SVPD_SUPPORTED_PAGE_LIST;
+-        page.list.list[i++] = SVPD_SUPPORTED_PAGE_LIST;
+-        page.list.list[i++] = SVPD_UNIT_SERIAL_NUMBER;
+-        page.list.length = i;
+-        len = offsetof(struct scsi_vpd_supported_page_list, list[3]);
+-        break;
+-    case SVPD_UNIT_SERIAL_NUMBER:
+-        i = 0;
+-        j = sizeof(at->at_identify.serial);
+-        for (i = 0; i < j && at->at_identify.serial[i] == ' '; ++i)
+-            ;
+-        while (j > i && at->at_identify.serial[j-1] == ' ')
+-            --j;
+-        page.serno.device = T_DIRECT;
+-        page.serno.page_code = SVPD_UNIT_SERIAL_NUMBER;
+-        page.serno.length = j - i;
+-        CopyMem(at->at_identify.serial + i,
+-              page.serno.serial_num, j - i);
+-        len = offsetof(struct scsi_vpd_unit_serial_number,
+-                   serial_num[j-i]);
+-        break;
+-    default:
+-        return IOERR_NOCMD;
+-        break;
+-    }
+-
+-    if (len > scsi->scsi_Length)
+-        return IOERR_BADLENGTH;
+-
+-    memset(scsi->scsi_Data + len, 0, scsi->scsi_Length - len);
+-    CopyMem(&page, scsi->scsi_Data, len);
+-    scsi->scsi_Actual = len;
+-
+-    return 0;
+-}
++static BYTE ahci_scsi_inquiry(struct ata_port *at, struct SCSICmd *scsi)
++{
++    const UBYTE *cmd = scsi->scsi_Command;
++    UBYTE reply[96] = {0};
++    ULONG length, allocation, start, end;
++
++    scsi->scsi_Actual = 0;
++    scsi->scsi_CmdActual = 0;
++    scsi->scsi_Status = 0;
++    scsi->scsi_SenseActual = 0;
++    if (scsi->scsi_CmdLength != 6)
++        return IOERR_BADLENGTH;
++    if ((cmd[1] & ~1) || cmd[5])
++        return IOERR_NOCMD;
++    allocation = ((ULONG)cmd[3] << 8) | cmd[4];
++    if (cmd[1] & 1) {
++        reply[1] = cmd[2];
++        switch (cmd[2]) {
++        case SVPD_SUPPORTED_PAGE_LIST:
++            reply[3] = 2;
++            reply[4] = SVPD_SUPPORTED_PAGE_LIST;
++            reply[5] = SVPD_UNIT_SERIAL_NUMBER;
++            length = 6;
++            break;
++        case SVPD_UNIT_SERIAL_NUMBER:
++            start = 0;
++            end = sizeof(at->at_identify.serial);
++            while (start < end && at->at_identify.serial[start] == ' ') ++start;
++            while (end > start && at->at_identify.serial[end - 1] == ' ') --end;
++            reply[3] = end - start;
++            CopyMem(at->at_identify.serial + start, reply + 4, end - start);
++            length = 4 + end - start;
++            break;
++        default:
++            return IOERR_NOCMD;
++        }
++    } else {
++        if (cmd[2]) return IOERR_NOCMD;
++        reply[0] = T_DIRECT;
++        reply[1] = (le16toh(at->at_identify.config) & 0x80) ? 0x80 : 0;
++        reply[2] = SCSI_REV_SPC2;
++        reply[3] = 2;
++        reply[4] = 31;
++        CopyMem("SATA    ", reply + 8, 8);
++        CopyMem(at->at_identify.model, reply + 16, 16);
++        CopyMem(at->at_identify.firmware, reply + 32, 4);
++        length = 36;
++    }
++    if (length > allocation) length = allocation;
++    if (!(scsi->scsi_Flags & SCSIF_READ) || scsi->scsi_Length < length ||
++        (length && !scsi->scsi_Data))
++        return IOERR_BADLENGTH;
++    if (length) CopyMem(reply, scsi->scsi_Data, length);
++    scsi->scsi_Actual = length;
++    scsi->scsi_CmdActual = scsi->scsi_CmdLength;
++    return 0;
++}
+@@ -340,5 +340,0 @@
+-    union {
+-        struct scsi_inquiry_data inquiry_data;
+-        struct scsi_read_capacity_data read_capacity_data;
+-    } *rdata = (APTR)scsi->scsi_Command;
+-    ULONG rdata_len = scsi->scsi_CmdLength;
+@@ -367,42 +367,4 @@
+-    case SCSI_INQUIRY:
+-        done = TRUE;
+-        /*
+-         * Inquiry supported features
+-         *
+-         * [opcode, byte2, page_code, length, control]
+-         */
+-        if (cdb->inquiry.byte2 & SI_EVPD) {
+-            io->io_Error = ahci_scsi_page_inquiry(ap, at, scsi);
+-        } else {
+-            memset(rdata, 0, rdata_len);
+-            if (rdata_len < SHORT_INQUIRY_LENGTH) {
+-                io->io_Error = IOERR_BADLENGTH;
+-                break;
+-            }
+-            if (rdata_len > sizeof(rdata->inquiry_data))
+-                rdata_len = sizeof(rdata->inquiry_data);
+-            rdata->inquiry_data.device = T_DIRECT;
+-            /* Mark as removable if ATA has the 'removable' tag */
+-            rdata->inquiry_data.dev_qual2 = (at->at_identify.config ? 0x80 : 0);
+-            rdata->inquiry_data.version = SCSI_REV_SPC2;
+-            rdata->inquiry_data.response_format = 2;
+-            rdata->inquiry_data.additional_length = 32;
+-
+-            /*
+-             * Use the vendor specific area to set the TRIM status
+-             */
+-            if (at->at_identify.support_dsm) {
+-                rdata->inquiry_data.vendor_specific[0] =
+-                    at->at_identify.support_dsm &ATA_SUPPORT_DSM_TRIM;
+-                rdata->inquiry_data.vendor_specific[1] =
+-                    at->at_identify.max_dsm_blocks;
+-            }
+-            CopyMem("SATA    ", rdata->inquiry_data.vendor, 8);
+-            CopyMem(at->at_identify.model,
+-                  rdata->inquiry_data.product,
+-                  sizeof(rdata->inquiry_data.product));
+-            CopyMem(at->at_identify.firmware,
+-                  rdata->inquiry_data.revision,
+-                  sizeof(rdata->inquiry_data.revision));
+-        }
+-        break;
++    case SCSI_INQUIRY:
++        done = TRUE;
++        io->io_Error = ahci_scsi_inquiry(at, scsi);
++        break;
+@@ -451,1 +451,0 @@
+-        rdata_len = 0;

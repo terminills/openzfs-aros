@@ -1,0 +1,8 @@
+FailAt 21
+MakeDir RAM:T RAM:ENV
+Assign T: RAM:T
+Assign ENV: RAM:ENV
+Assign ENVARC: SYS:Prefs/Env-Archive
+Stack 1048576
+C:OpenZFSQEMUReopenTest
+EndCLI

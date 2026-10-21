@@ -1,0 +1,8 @@
+--- a/rom/devs/ahci/ahci_io.c
++++ b/rom/devs/ahci/ahci_io.c
+@@ -196,4 +196,4 @@
+-    const UWORD NSDSupported[] = {
++    static const UWORD NSDSupported[] = {
+         CMD_READ,
+         CMD_WRITE,
+         CMD_UPDATE,

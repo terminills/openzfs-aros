@@ -1,0 +1,10 @@
+FailAt 21
+MakeDir RAM:T RAM:ENV
+Assign T: RAM:T
+Assign ENV: RAM:ENV
+Assign ENVARC: SYS:Prefs/Env-Archive
+Assign LIBS: SYS:Classes ADD
+Path C: SYS:Tools ADD
+Stack 1048576
+C:OpenZFSQEMUPoolTest DISPOSABLE-RAIDZ3 >RAM:pool-test.log
+EndCLI

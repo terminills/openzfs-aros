@@ -1,0 +1,17 @@
+--- a/rom/security/secAccess_Control.c
++++ b/rom/security/secAccess_Control.c
+@@ -74,9 +74,14 @@
+                 vol = v;
+                 break;
+             }
++        /* The rescan path frees native volume records under VolumesSem.
++         * Keep the selected record alive until policy has consumed it.
++         * IsAllowed and secGetRelationshipA do not acquire VolumesSem. */
++        LONG result = IsAllowed(secBase, vol, task, objectowner, objectprot, access_type);
+         ReleaseSemaphore(&secBase->VolumesSem);
++        return result;
+     }
+     return IsAllowed(secBase, vol, task, objectowner, objectprot, access_type);
+ 
+     AROS_LIBFUNC_EXIT
+ } /* secAccess_Control */

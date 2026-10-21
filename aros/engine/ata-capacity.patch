@@ -1,0 +1,38 @@
+--- a/rom/devs/ata/scsiemu.c
++++ b/rom/devs/ata/scsiemu.c
+@@ -152,6 +152,25 @@
+     return 0;
+ }
+ 
++static UBYTE scsi_readcapacity16(struct ata_Unit *unit, struct SCSICmd *cmd, ULONG *outlen)
++{
++    UBYTE *c = cmd->scsi_Command, *out = (UBYTE *)cmd->scsi_Data;
++    UQUAD blocks = unit->au_Capacity48 ? unit->au_Capacity48 : unit->au_Capacity;
++    if (cmd->scsi_CmdLength != 16 || c[1] != 0x10 || c[14] != 0 ||
++        !blocks || !out || cmd->scsi_Length < 32 || rl(c + 10) < 32)
++        return 0xff;
++    /* PMI=0 requires a zero requested LBA. */
++    for (unsigned i = 2; i < 10; i++)
++        if (c[i]) return 0xff;
++    for (unsigned i = 0; i < 32; i++) out[i] = 0;
++    UQUAD last = blocks - 1;
++    wl(out, (ULONG)(last >> 32));
++    wl(out + 4, (ULONG)last);
++    wl(out + 8, 1UL << unit->au_SectorShift);
++    *outlen = 32;
++    return 0;
++}
++
+ BYTE SCSIEmu(struct ata_Unit *unit, struct SCSICmd *cmd)
+ {
+     struct Library *UtilityBase = unit->au_Bus->ab_Base->ata_UtilityBase;
+@@ -229,6 +248,9 @@
+         case 0x25: /* READ CAPACITY */
+         err = scsi_readcapacity(unit, cmd, &scsi_len);
+         break;
++        case 0x9e: /* SERVICE ACTION IN(16): READ CAPACITY(16) */
++        err = scsi_readcapacity16(unit, cmd, &scsi_len);
++        break;
+ 
+         case 0x1d: /* SEND DIAGNOSTICS */
+         case 0x35: /* SYNCHRONIZE CACHE */

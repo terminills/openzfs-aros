@@ -1,0 +1,47 @@
+--- a/runcommand.c
++++ b/runcommand.c
+@@ -13,6 +13,7 @@
+ #include <dos/stdio.h>
+ 
+ #include "dos_intern.h"
++extern struct ExecBase *SysBase;
+ 
+ /*****************************************************************************
+ 
+@@ -96,6 +96,7 @@
+     ASSERT_VALID_PROCESS(me);
+ 
+ #if !(AROS_FLAVOUR & AROS_FLAVOUR_BINCOMPAT)
++    if(OZ_RUNCOMMAND_VERBOSE)bug("[OZ-runcommand] enter seg=%p task=%p ioerr=%ld\n", BADDR(segList), me, IoErr());
+     D(bug("[DOS] %s: seglist @ 0x%p\n", __func__, segList);)
+     if (GetSegListInfo(segList, segtags))
+     {
+@@ -104,6 +105,7 @@
+         {
+             /* Segment is tracked by LoadSeg but is not ELF.
+              * Reject unsupported formats (e.g. 68k HUNK). */
++            bug("[OZ-runcommand] reject non-ELF seg=%p ioerr=%ld\n", BADDR(segList), IoErr());
+             return -1;
+         }
+     }
+@@ -116,7 +118,10 @@
+ 
+     stack=(UBYTE *)AllocMem(stacksize,MEMF_ANY);
+     if(stack==NULL)
++    {
++        bug("[OZ-runcommand] stack allocation failed size=%lu ioerr=%ld\n", stacksize, IoErr());
+         return -1;
++    }
+ 
+     sss.stk_Lower=stack;
+     sss.stk_Upper=stack+stacksize;
+@@ -148,7 +153,9 @@
+     if (SECURITY_ACTIVE)
+         seccookie = secSetUIDBegin(segList);
+ 
++    if(OZ_RUNCOMMAND_VERBOSE)bug("[OZ-runcommand] entry call seg=%p task=%p\n", BADDR(segList), me);
+     ret = NewStackSwap(&sss, CallEntry, &args);
++    if(OZ_RUNCOMMAND_VERBOSE||ret)bug("[OZ-runcommand] entry return seg=%p task=%p result=%ld ioerr=%ld\n", BADDR(segList), me, ret, IoErr());
+ 
+     if (seccookie)
+         secSetUIDEnd(seccookie);

@@ -1,0 +1,2 @@
+Disposable QEMU credential fixture. Empty passwords for isolated no-NIC tests only.
+Never install this directory on the DUT, a user session or a distributable ISO.
