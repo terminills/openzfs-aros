@@ -1,0 +1,10 @@
+include $(SRCDIR)/config/aros.cfg
+
+#MM contrib-openzfs-handler : includes linklibs
+
+# genmodule owns resident/start/end generation; the handler is not a shell app.
+%build_module mmake=contrib-openzfs-handler \
+    modname=OpenZFS modtype=handler conffile=openzfsboot.conf \
+    files="handler" cflags="$(CFLAGS) -ffreestanding -fno-builtin"
+
+%common

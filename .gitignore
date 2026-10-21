@@ -98,5 +98,6 @@ changelog
 !CONTRIBUTING.md
 !PORT-STATUS.md
 !UPSTREAM.md
+!mmakefile.src
 build-aros/
 **/__pycache__/

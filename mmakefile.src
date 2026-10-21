@@ -1,0 +1,32 @@
+# OpenZFS AROS native tools. Scanned as part of an AROS Contrib source tree.
+include $(SRCDIR)/config/aros.cfg
+
+# Keep target-specific SDK and compiler selection in the enclosing AROS build.
+# A private pthread implementation can be selected explicitly for older SDKs.
+OPENZFS_PTHREAD_INCLUDE ?= $(AROS_INCLUDES)
+OPENZFS_PTHREAD_LIBDIR ?= $(AROS_LIB)
+OPENZFS_TOOLSDIR ?= $(AROS_TOOLS)
+
+OPENZFS_MANAGER_FILES := aros/ui/api aros/ui/admission-client \
+    aros/ui/admission-worker aros/ui/manager aros/ui/project-worker \
+    aros/cli/process aros/cli/arguments aros/cli/output \
+    aros/ui/preferences aros/ui/preferences-file \
+    aros/ui/startup-settings aros/ui/startup-settings-file \
+    aros/ui/hostid-settings aros/engine/hostid-record
+
+#MM contrib-openzfs-tools : contrib-openzfs-manager contrib-openzfs-hostidentity
+#MM contrib-openzfs-manager : includes linklibs
+#MM contrib-openzfs-hostidentity : includes linklibs
+
+%build_prog mmake=contrib-openzfs-manager progname=OpenZFSManagerNative \
+    files="$(OPENZFS_MANAGER_FILES)" usetree=yes \
+    cflags="$(CFLAGS) -I$(OPENZFS_PTHREAD_INCLUDE)" \
+    libdir="$(OPENZFS_PTHREAD_LIBDIR)" \
+    uselibs="pthread muimaster intuition utility iffparse" \
+    targetdir="$(OPENZFS_TOOLSDIR)"
+
+%build_prog mmake=contrib-openzfs-hostidentity progname=OpenZFSHostIdentity \
+    files="aros/ui/hostid-cli aros/ui/hostid-settings aros/engine/hostid-record aros/ui/preferences aros/ui/preferences-file" \
+    usetree=yes uselibs="iffparse" targetdir="$(AROS_C)"
+
+%common

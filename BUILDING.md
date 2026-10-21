@@ -1,5 +1,32 @@
 # Building the AROS port
 
+## AROS build-system integration (in progress)
+
+The root `mmakefile.src` uses native `%build_prog` templates, not the standalone
+shell build scripts. Place the source in a directory scanned by the configured
+AROS Contrib build and regenerate its metamake files. Available targets:
+
+- `contrib-openzfs-tools`: Manager and host-identity tool.
+- `contrib-openzfs-manager`: `Tools/OpenZFSManagerNative`.
+- `contrib-openzfs-hostidentity`: `C/OpenZFSHostIdentity`.
+- `contrib-openzfs-handler`: generated module from `aros/handler/mmakefile.src`.
+
+Tools inherit the configured target compiler, SDK, flags and output directories.
+`OPENZFS_PTHREAD_INCLUDE` and `OPENZFS_PTHREAD_LIBDIR` can select matching private
+pthread inputs when the configured SDK does not yet include the required port.
+`OPENZFS_TOOLSDIR` can override the Manager's installation directory.
+
+The tools were compiled and linked through the generated AROS makefile, and the
+resulting Manager opened in isolated hosted AROS with the expected absent-service
+response. The handler template generates successfully, but local compilation
+currently encounters a generator/SDK mismatch: generated startup code references
+`PR_RETURNADDR_NOPROGRAM`, absent from the selected older SDK. Use a coherent SDK
+and genmodule pair; do not define the missing ABI constant in this project.
+
+This integration is not yet a complete `make contrib-openzfs` port: shared-engine,
+upstream CLI, startup/device targets and full package verification remain to be
+wired and tested. The standalone build sequence below remains available.
+
 This is a developer source release, not a standalone SDK or prebuilt installer.
 The ordinary upstream Linux build does not build the AROS integration.
 
