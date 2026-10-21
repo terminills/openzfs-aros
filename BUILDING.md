@@ -37,6 +37,14 @@ ran in isolated hosted AROS and printed `zfs-2.4.4-1`. They returned 1 with no
 service running, because the upstream version command also requests the engine
 version. This is executable startup evidence, not pool-operation qualification.
 
+A subsequent isolated hosted run loaded a freshly rebuilt `openzfs.library`
+and its small service launcher. An unauthenticated engine-version query returned
+EACCES (13). After login through the disposable fixture's `security.library`,
+the same metamake-built `zfs --version` reported both client and engine versions
+with status 0; `zpool list` returned `no pools available` with status 0. Manager
+also connected. No disk files were attached in this check: authenticated IPC
+is verified, while current-package pool and persistence tests remain separate.
+
 The four tools were compiled and linked through the generated AROS makefile,
 and the resulting Manager opened in isolated hosted AROS with the expected
 absent-service response. The handler also builds with a matching generator.
