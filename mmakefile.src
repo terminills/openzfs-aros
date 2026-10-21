@@ -41,4 +41,45 @@ OPENZFS_MANAGER_FILES := aros/ui/api aros/ui/admission-client \
     files="aros/device/zvol-device aros/ui/admission-client" \
     usetree=yes targetdir="$(AROS_C)"
 
+include $(SRCDIR)/$(CURDIR)/aros/cli/build-system.mk
+
+#MM contrib-openzfs-cli : contrib-openzfs-zfs contrib-openzfs-zpool contrib-openzfs-startup contrib-openzfs-startupmount
+#MM contrib-openzfs-zfs : includes linklibs
+#MM contrib-openzfs-zpool : includes linklibs
+#MM contrib-openzfs-startup : includes linklibs
+#MM contrib-openzfs-startupmount : includes linklibs
+
+%rule_compile_multi mmake=contrib-openzfs-cli-vdev \
+    basenames="cmd/zpool/zpool_vdev" targetdir="$(OZ_CLI_OBJ)" \
+    usetree=yes cflags="$(OZ_CLI_FLAGS)"
+
+%build_prog mmake=contrib-openzfs-zfs progname=zfs \
+    files="cmd/zfs/zfs_main cmd/zfs/zfs_iter cmd/zfs/zfs_project $(OZ_CLI_COMMON)" \
+    objs="$(OZ_CLI_OBJ)/check-file-generic.o $(OPENZFS_PIPE2_OBJECT)" \
+    usetree=yes nix=yes cflags="$(OZ_CLI_FLAGS)" ldflags="$(OZ_CLI_LINK)" \
+    objdir="$(OZ_CLI_OBJ)" targetdir="$(AROS_C)"
+
+%build_prog mmake=contrib-openzfs-zpool progname=zpool \
+    files="cmd/zpool/zpool_main cmd/zpool/zpool_iter cmd/zpool/zpool_util $(OZ_CLI_COMMON)" \
+    objs="$(OZ_CLI_OBJ)/cmd/zpool/zpool_vdev.o $(OPENZFS_PIPE2_OBJECT)" \
+    usetree=yes nix=yes cflags="$(OZ_CLI_FLAGS)" ldflags="$(OZ_CLI_LINK)" \
+    objdir="$(OZ_CLI_OBJ)" targetdir="$(AROS_C)"
+
+%rule_compile_multi mmake=contrib-openzfs-startup-support \
+    basenames="aros/cli/startup-mount" targetdir="$(OZ_CLI_OBJ)/startup-library" \
+    usetree=yes cflags="$(OZ_CLI_FLAGS) -DOZ_STARTUP_MOUNT_LIBRARY"
+
+%build_prog mmake=contrib-openzfs-startupmount progname=OpenZFSStartupMount \
+    files="aros/cli/startup-mount $(OZ_CLI_COMMON)" \
+    objs="$(OZ_CLI_OBJ)/check-file-generic.o $(OPENZFS_PIPE2_OBJECT)" \
+    usetree=yes nix=yes cflags="$(OZ_CLI_FLAGS)" ldflags="$(OZ_CLI_LINK)" \
+    objdir="$(OZ_CLI_OBJ)" targetdir="$(AROS_C)"
+
+%build_prog mmake=contrib-openzfs-startup progname=OpenZFSStartup \
+    files="aros/cli/startup aros/ui/startup-import aros/ui/startup-settings aros/ui/startup-settings-file aros/ui/preferences aros/ui/preferences-file $(OZ_CLI_COMMON)" \
+    objs="$(OZ_CLI_OBJ)/startup-library/aros/cli/startup-mount.o $(OZ_CLI_OBJ)/check-file-generic.o $(OPENZFS_PIPE2_OBJECT)" \
+    usetree=yes nix=yes uselibs="iffparse" \
+    cflags="$(OZ_CLI_FLAGS)" ldflags="$(OZ_CLI_LINK)" \
+    objdir="$(OZ_CLI_OBJ)" targetdir="$(AROS_C)"
+
 %common
