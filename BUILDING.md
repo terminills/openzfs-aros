@@ -6,9 +6,11 @@ The root `mmakefile.src` uses native `%build_prog` templates, not the standalone
 shell build scripts. Place the source in a directory scanned by the configured
 AROS Contrib build and regenerate its metamake files. Available targets:
 
-- `contrib-openzfs-tools`: Manager and host-identity tool.
+- `contrib-openzfs-tools`: Manager, host-identity, runtime-check and device tools.
 - `contrib-openzfs-manager`: `Tools/OpenZFSManagerNative`.
 - `contrib-openzfs-hostidentity`: `C/OpenZFSHostIdentity`.
+- `contrib-openzfs-runtimecheck`: `C/OpenZFSRuntimeCheck`.
+- `contrib-openzfs-device`: `C/OpenZFSDevice` (resident device installer).
 - `contrib-openzfs-handler`: generated module from `aros/handler/mmakefile.src`.
 
 Tools inherit the configured target compiler, SDK, flags and output directories.
@@ -16,15 +18,24 @@ Tools inherit the configured target compiler, SDK, flags and output directories.
 pthread inputs when the configured SDK does not yet include the required port.
 `OPENZFS_TOOLSDIR` can override the Manager's installation directory.
 
-The tools were compiled and linked through the generated AROS makefile, and the
-resulting Manager opened in isolated hosted AROS with the expected absent-service
-response. The handler template generates successfully, but local compilation
-currently encounters a generator/SDK mismatch: generated startup code references
-`PR_RETURNADDR_NOPROGRAM`, absent from the selected older SDK. Use a coherent SDK
-and genmodule pair; do not define the missing ABI constant in this project.
+The four tools were compiled and linked through the generated AROS makefile,
+and the resulting Manager opened in isolated hosted AROS with the expected
+absent-service response. The handler also builds with a matching generator.
+An initial generator/SDK mismatch produced startup code referencing
+`PR_RETURNADDR_NOPROGRAM`, absent from the older SDK. A private generator built
+from the parent of AROS commit `bd7713c6b9` resolves that particular test mismatch.
+Prefer a coherent SDK and genmodule pair; do not define missing ABI constants
+in this project. Handler/device compilation is not runtime qualification.
+
+For isolated build-system testing, redirect `AROSDIR`, `GENDIR`, `DBGDIR`,
+`KOBJSDIR`, and host-tool outputs, while
+selecting the intended read-only SDK via `AROS_DEVELOPER`. Overriding `AROS_FS`
+alone does not redirect generated module installation. AROS make can rebuild
+`GENMODULE` automatically from source dependencies, so its output must also be
+private; an executable-path override alone does not pin its version.
 
 This integration is not yet a complete `make contrib-openzfs` port: shared-engine,
-upstream CLI, startup/device targets and full package verification remain to be
+upstream CLI, startup targets and full package verification remain to be
 wired and tested. The standalone build sequence below remains available.
 
 This is a developer source release, not a standalone SDK or prebuilt installer.

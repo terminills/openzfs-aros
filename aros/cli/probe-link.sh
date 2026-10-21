@@ -192,7 +192,7 @@ for cmd in zfs zpool OpenZFSStartupMount OpenZFSStartup; do
 done
 if "$cc" --sysroot="$sdk" -B"$sdk/lib/" -nix "$out/runtime-check.o" \
     "$out/aros_cli_process.c.o" "$out/aros_cli_arguments.c.o" "$out/aros_cli_output.c.o" \
-    -lsecurity -o "$out/OpenZFSRuntimeCheck" >"$out/OpenZFSRuntimeCheck.link.log" 2>&1;then
+    -o "$out/OpenZFSRuntimeCheck" >"$out/OpenZFSRuntimeCheck.link.log" 2>&1;then
     echo 'PASS OpenZFSRuntimeCheck link' | tee -a "$out/summary.txt"
 else
     echo "FAIL OpenZFSRuntimeCheck link: $out/OpenZFSRuntimeCheck.link.log" | tee -a "$out/summary.txt"

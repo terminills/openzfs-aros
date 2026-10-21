@@ -14,9 +14,11 @@ OPENZFS_MANAGER_FILES := aros/ui/api aros/ui/admission-client \
     aros/ui/startup-settings aros/ui/startup-settings-file \
     aros/ui/hostid-settings aros/engine/hostid-record
 
-#MM contrib-openzfs-tools : contrib-openzfs-manager contrib-openzfs-hostidentity
+#MM contrib-openzfs-tools : contrib-openzfs-manager contrib-openzfs-hostidentity contrib-openzfs-runtimecheck contrib-openzfs-device
 #MM contrib-openzfs-manager : includes linklibs
 #MM contrib-openzfs-hostidentity : includes linklibs
+#MM contrib-openzfs-runtimecheck : includes linklibs
+#MM contrib-openzfs-device : includes linklibs
 
 %build_prog mmake=contrib-openzfs-manager progname=OpenZFSManagerNative \
     files="$(OPENZFS_MANAGER_FILES)" usetree=yes \
@@ -28,5 +30,15 @@ OPENZFS_MANAGER_FILES := aros/ui/api aros/ui/admission-client \
 %build_prog mmake=contrib-openzfs-hostidentity progname=OpenZFSHostIdentity \
     files="aros/ui/hostid-cli aros/ui/hostid-settings aros/engine/hostid-record aros/ui/preferences aros/ui/preferences-file" \
     usetree=yes uselibs="iffparse" targetdir="$(AROS_C)"
+
+%build_prog mmake=contrib-openzfs-runtimecheck progname=OpenZFSRuntimeCheck \
+    files="aros/cli/runtime-check aros/cli/process aros/cli/arguments aros/cli/output" \
+    usetree=yes nix=yes targetdir="$(AROS_C)" \
+    objdir="$(GENDIR)/$(CURDIR)/runtimecheck"
+
+# This command installs the resident zvol device; it is not a generated module.
+%build_prog mmake=contrib-openzfs-device progname=OpenZFSDevice \
+    files="aros/device/zvol-device aros/ui/admission-client" \
+    usetree=yes targetdir="$(AROS_C)"
 
 %common
