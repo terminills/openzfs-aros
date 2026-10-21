@@ -18,9 +18,11 @@ archive. The native nvpair test links the same private pthread archive, not
 an implicitly selected SDK pthread library. No test output is installed.
 
 Optional tool/dependency selections are inherited by the existing build tools:
-`AROS_CC`, `AROS_ZLIB_IMPORT`, `AROS_CRYPTO_INCLUDE`, `AROS_CRYPTO_ARCHIVE`.
-The repository's pinned extracted libtirpc headers are required under
-`build-aros/libtirpc-1.3.7`; the default nvpair build verifies the archive's
+`AROS_CC`, `AROS_ZLIB_IMPORT`, `AROS_CRYPTO_INCLUDE`, `AROS_CRYPTO_ARCHIVE`,
+`AROS_TIRPC_SOURCE`, and `AROS_TIRPC_ARCHIVE`.
+Extracted libtirpc headers are selected consistently by nvpair and engine
+compilation through `AROS_TIRPC_SOURCE` (default `build-aros/libtirpc-1.3.7`).
+The default nvpair build verifies the archive's
 pinned SHA256 and extracts it if absent. It can download the pinned archive
 if necessary. SDK, pthread, zlib and crypto are not bootstrapped here.
 
@@ -40,7 +42,8 @@ are freshly compiled by the linker, not taken from the initial common objects.
 
 Outputs include `service/OpenZFSServiceNative`, `service/OpenZFSManagerNative`
 and native verification helpers. This is the existing monolithic development
-service packaging, not the unfinished shared-engine production layout. Debug
+service packaging. The shared-engine packaging is built separately using
+`aros/library/build.sh`; see its README for provenance requirements. Debug
 configuration remains the coherent configuration in `aros/engine/config.h`.
 A completed build is not evidence of runtime correctness or warning-free code.
 

@@ -110,5 +110,5 @@ exec "$cc" -c -O2 -g -fno-strict-aliasing -ffunction-sections -fdata-sections -W
     -I"$repo/aros/engine/include" \
     -I"$repo/lib/libspl/include" -I"$repo/lib/libspl/include/os/linux" \
     -I"$repo/include" -I"$repo/include/os/linux/zfs" -I"$repo/module/icp/include" \
-    -I"$repo/build-aros/libtirpc-1.3.7/tirpc" -include sys/sysmacros.h \
+    -I"${AROS_TIRPC_SOURCE:-$repo/build-aros/libtirpc-1.3.7}/tirpc" -include sys/sysmacros.h \
     "$repo/$source" -o "$object_dir/${source//\//_}.o"
