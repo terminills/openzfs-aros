@@ -22,6 +22,8 @@ results, not a fresh qualification of this public snapshot.
 - Physical storage flush, disconnect, and abrupt power-loss behavior require
   hardware qualification. Virtual-disk tests do not establish these guarantees.
 - Not every upstream feature or topology has end-to-end AROS validation.
+- TRIM/discard is not implemented for AROS file or native-device backings;
+  requests report unsupported rather than claiming successful discard.
 - This does not provide an NFS/SMB client or server for browsing a remote ZFS
   server automatically.
 - File-backed shared `mmap` is not provided by AROS; the port must use supported
@@ -32,3 +34,21 @@ results, not a fresh qualification of this public snapshot.
 Use `ENV:` for active settings and `ENVARC:` for persistent settings. Preserve
 backups outside experimental pools, and never assume compatibility with the
 older private AROS ZFS on-disk format.
+
+## Public snapshot validation, 2026-10-21
+
+The native Manager compiled and linked from initial public source `b3ecbadd`
+using an explicitly configured x86-64 SDK and matching private pthread archive.
+The resulting executable SHA-256 is
+`0798042fe8f867d1721d613c7a61de3711089c909d1e26849395f1fbd47e0506`.
+
+A separate isolated hosted test using an older development runtime failed
+before the Manager opened: AROS reported a bus/address-error alert in
+`Exec_43_RemHead`, with a null-address trap. This is a failed compatibility test,
+not successful hosted validation. The cause has not yet been isolated; do not
+assume arbitrary SDK/runtime combinations are interchangeable. The earlier
+qualified native package results do not establish that this combination works.
+
+The test used a private runtime copy, no storage service, and no physical disks.
+Source syntax checks covered 99 shell scripts and 16 Python files; four metadata
+unit tests passed. These checks are separate from native runtime acceptance.
