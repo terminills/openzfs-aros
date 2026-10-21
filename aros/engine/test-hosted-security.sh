@@ -15,14 +15,30 @@ if [[ $persistent == 1 ]];then [[ -n $service ]];fi
 assign_fixture=${AROS_TEST_HOSTED_ASSIGN:-0}
 [[ $assign_fixture == 0 || $assign_fixture == 1 ]]
 if [[ $assign_fixture == 1 ]];then [[ $persistent == 1 ]];fi
-sdk=/opt/aros-workspace/aros-adt-hosted-clean/bin/linux-x86_64/AROS/Developer
-cc=/opt/aros-workspace/aros-adt-crosstools/x86_64-aros-gcc
-run=$(mktemp -d "$repo/build-aros/hosted-security-test.XXXXXXXX")
+sdk=${AROS_SDK:?explicit hosted SDK required}
+cc=${AROS_CC:?explicit AROS compiler required}
+runtime=$(realpath -e "${AROS_TEST_HOSTED_RUNTIME:-$repo/build-aros/hosted}")
+shared=${AROS_TEST_SHARED_BUILD:-}
+host_zdb=${AROS_TEST_HOST_ZDB:-$repo/build-control/zdb}
+host_libpath=${AROS_TEST_HOST_LIBRARY_PATH:-$repo/build-control/.libs:$repo/build-control/deps/usr/lib/x86_64-linux-gnu}
+if [[ $persistent == 1 ]];then [[ -x $host_zdb ]];fi
+if [[ -n $shared ]];then
+    [[ -n $service ]]
+    shared=$(realpath -e "$shared")
+    rg -Fxq 'service_test_modes=0' "$shared/service-build-options.txt"
+    rg -Fxq 'full_dispatcher=1' "$shared/service-build-options.txt"
+    rg -Fxq 'shared_engine=1' "$shared/service-build-options.txt"
+    sha256sum -c "$shared/binaries.sha256"
+    cmp "$shared/engine-object.sha256" "$service/engine-object.sha256"
+fi
+source "$repo/aros/engine/storage-preflight.sh"
+artifact_root=$(oz_artifact_root "$repo/build-aros" "${AROS_ARTIFACT_ROOT:-}")
+run=$(mktemp -d "$artifact_root/hosted-security-test.XXXXXXXX")
 echo "Evidence: $run"
 for dir in boot C Classes Devs Fonts L Libs Locale Prefs S System;do
-    cp -a --reflink=auto "build-aros/hosted/$dir" "$run/$dir"
+    cp -a --reflink=auto "$runtime/$dir" "$run/$dir"
 done
-cp build-aros/hosted/AROS.boot "$run/AROS.boot"
+cp "$runtime/AROS.boot" "$run/AROS.boot"
 cp -a aros/engine/security-fixture "$run/Security"
 cp "$library" "$run/Libs/security.library"
 if [[ -n ${AROS_TEST_DOS_LIBRARY:-} ]];then
@@ -42,6 +58,10 @@ if [[ -n $service ]];then
     rg -Fxq 'service_test_modes=0' "$service/service-build-options.txt"
     rg -Fxq 'full_dispatcher=1' "$service/service-build-options.txt"
     cp "$service/OpenZFSServiceNative" "$service/OpenZFSPublicServiceTest" "$run/C/"
+    if [[ -n $shared ]];then
+        cp "$shared/OpenZFSServiceNative" "$run/C/"
+        cp "$shared/openzfs.library" "$run/Libs/"
+    fi
     cp aros/engine/public-service-test.c "$run/"
     if [[ $mode == GUI ]];then cp "$service/OpenZFSManagerNative" "$run/C/";fi
     if [[ -n ${AROS_TEST_RUNTIME_CHECK:-} ]];then
@@ -86,6 +106,7 @@ if [[ -n $service ]];then
     sha256sum "$run/C/OpenZFSServiceNative" "$run/C/OpenZFSPublicServiceTest" >>"$run/inputs.sha256"
     if [[ $mode == GUI ]];then sha256sum "$run/C/OpenZFSManagerNative" >>"$run/inputs.sha256";fi
 fi
+if [[ -n $shared ]];then sha256sum "$run/Libs/openzfs.library" >>"$run/inputs.sha256";fi
 git rev-parse HEAD >"$run/source-head.txt"
 git diff --binary >"$run/source.patch"
 xpid=;guest=
@@ -131,12 +152,12 @@ if [[ $persistent == 1 ]];then
     members=("$run/OZPublicPool/disk0" "$run/OZPublicPool/disk1")
     for member in "${members[@]}";do [[ -f $member && $(stat -c %s "$member") == 134217728 ]];done
     sha256sum "${members[@]}" >"$run/before-cold.sha256"
-    LD_LIBRARY_PATH="$repo/build-control/.libs:$repo/build-control/deps/usr/lib/x86_64-linux-gnu" \
-        "$repo/build-control/zdb" -e -p "$run/OZPublicPool" -bcc public_mirror >"$run/zdb-check.log" 2>&1
+    LD_LIBRARY_PATH="$host_libpath" \
+        "$host_zdb" -e -p "$run/OZPublicPool" -bcc public_mirror >"$run/zdb-check.log" 2>&1
     rg -q 'No leaks' "$run/zdb-check.log"
     if [[ $mode == GUI ]];then
-        LD_LIBRARY_PATH="$repo/build-control/.libs:$repo/build-control/deps/usr/lib/x86_64-linux-gnu" \
-            "$repo/build-control/zdb" -e -p "$run/OZPublicPool" -dddd public_mirror/files@hosted_gui >"$run/zdb-snapshot.log" 2>&1
+        LD_LIBRARY_PATH="$host_libpath" \
+            "$host_zdb" -e -p "$run/OZPublicPool" -dddd public_mirror/files@hosted_gui >"$run/zdb-snapshot.log" 2>&1
         rg -q '^Dataset public_mirror/files@hosted_gui ' "$run/zdb-snapshot.log"
     fi
     cp "$run/S/Startup-Sequence" "$run/creator-startup"

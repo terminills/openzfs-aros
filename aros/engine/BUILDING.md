@@ -47,6 +47,34 @@ service packaging. The shared-engine packaging is built separately using
 configuration remains the coherent configuration in `aros/engine/config.h`.
 A completed build is not evidence of runtime correctness or warning-free code.
 
+## Isolated hosted security and storage regression
+
+`test-hosted-security.sh` requires explicit `AROS_CC`, `AROS_SDK`, and
+`AROS_TEST_SECURITY_LIBRARY`. Set `AROS_TEST_HOSTED_RUNTIME` to a compatible
+hosted runtime tree; the script copies it into a new private artifact directory
+and starts its own X server. It never runs the supplied runtime in place.
+The usual 100 GiB storage reserve applies before copying.
+
+Set `AROS_TEST_HOSTED_SERVICE_BUILD` to the fresh engine's `service/` directory
+to test storage as well as login/logout. For the shared-engine configuration,
+also set `AROS_TEST_SHARED_BUILD` to the output of `aros/library/build.sh`.
+Its binary hashes and engine-object provenance are checked before staging its
+launcher and library; the matching service build supplies the regression tool.
+
+`AROS_TEST_HOSTED_PERSISTENT=1` creates two disposable 128 MiB files in the
+private runtime, checks the exported mirror with host `zdb`, and boots a cold
+reader. `AROS_TEST_HOST_ZDB` and `AROS_TEST_HOST_LIBRARY_PATH` select the host
+verifier and its library search path when not under `build-control`.
+The cold reader checks exact DOS file data, write refusal on read-only mounts,
+and degraded operation with one member hidden, then restores that member.
+Both original file hashes must remain unchanged after the read-only phase.
+
+On 2026-10-21 the public-source shared build passed both the storage regression
+and this persistent mirror/cold-reader sequence. The independent host verifier
+reported no leaks. Evidence directories: `hosted-security-test.bRTIKnB7` and
+`hosted-security-test.tirxqAQ5`. This validates the selected hosted cases, not
+stock-nightly compatibility, physical media durability, or all OpenZFS features.
+
 ## Build evidence, 2026-09-28
 
 `source-engine.72CYAuks` compiled all 248 inventory units, then linked the full
