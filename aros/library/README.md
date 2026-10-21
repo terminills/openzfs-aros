@@ -34,6 +34,19 @@ This preserves failure status, including denied startup.
 
 ## Build and test
 
+The AROS build-system targets `contrib-openzfs-library` and
+`contrib-openzfs-service` now generate the native module/import ABI and launcher.
+They currently consume a full normal source engine object and its provenance;
+see the root BUILDING.md for overrides and remaining integration work.
+Both build paths share `verify-engine.sh` so diagnostic-object and stale-hash
+rejection remain consistent.
+
+On 2026-10-21 the metamake-produced library and launcher passed the isolated
+hosted persistent mirror test in `hosted-security-test.a7H3v5Ar`: DOS writes,
+export, cold exact-data reads, degraded reads with one member missing, and
+unchanged backing hashes. Host `zdb` reported no leaks. This is not a QEMU or
+physical-hardware result, nor proof of the entire upstream test suite.
+
 Run `bash aros/library/build.sh` with `AROS_LINKED_OBJECT` naming the full,
 normal-service engine object, `AROS_SERVICE_BUILD_DIR` naming the successful
 normal build which recorded that object's hash, `AROS_NVPAIR_ARCHIVE` and

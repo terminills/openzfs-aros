@@ -16,6 +16,8 @@ AROS Contrib build and regenerate its metamake files. Available targets:
 - `contrib-openzfs-zfs` and `contrib-openzfs-zpool`: individual commands in `C`.
 - `contrib-openzfs-startup`: `C/OpenZFSStartup`.
 - `contrib-openzfs-startupmount`: `C/OpenZFSStartupMount`.
+- `contrib-openzfs-library`: `Libs/openzfs.library` and its generated import ABI.
+- `contrib-openzfs-service`: small `C/OpenZFSServiceNative` library launcher.
 
 Tools inherit the configured target compiler, SDK, flags and output directories.
 `OPENZFS_PTHREAD_INCLUDE` and `OPENZFS_PTHREAD_LIBDIR` can select matching private
@@ -30,6 +32,20 @@ Supply compatible dependency inputs using `OPENZFS_TIRPC_INCLUDE`,
 in the configured SDK. `OPENZFS_PIPE2_OBJECT` optionally supplies the generated
 pipe2 import stub for older SDKs; it must match the target POSIX runtime.
 These dependencies are not yet fetched or built by the metamake targets.
+
+The library target currently requires `OPENZFS_ENGINE_OBJECT` naming the full
+source build's `full-engine.o` and `OPENZFS_SERVICE_BUILD` naming its `service/`
+directory. It verifies the recorded engine hash and rejects diagnostic objects
+before renaming the service entry in a private copy. It uses the same archive
+overrides as the CLI, except `OPENZFS_ZLIB_IMPORT` selects the engine's zlib
+import archive. `OPENZFS_OBJCOPY` and `OPENZFS_NM` default to the enclosing
+compiler's tools. The normal AROS includes/core-linklibs stages must run first;
+these provide header directories and the resident-entry object.
+
+The module-template library and launcher passed the isolated hosted persistent
+mirror regression, including cold and degraded reads, unchanged backing-file
+hashes, and an independent host `zdb` check. The launcher contains no engine
+entry symbols. This does not yet constitute a from-scratch metamake engine build.
 
 All four CLI/startup executables linked through the generated makefile.
 The resulting `zfs --version`, `zpool --version`, and repeated `zfs --version`
@@ -61,8 +77,8 @@ alone does not redirect generated module installation. AROS make can rebuild
 `GENMODULE` automatically from source dependencies, so its output must also be
 private; an executable-path override alone does not pin its version.
 
-This integration is not yet a complete `make contrib-openzfs` port: shared-engine,
-dependency bootstrap and full package verification remain to be
+This integration is not yet a complete `make contrib-openzfs` port: engine-object
+compilation, dependency bootstrap and full package verification remain to be
 wired and tested. The standalone build sequence below remains available.
 
 This is a developer source release, not a standalone SDK or prebuilt installer.

@@ -9,24 +9,12 @@ cc=${AROS_CC:-/opt/aros-workspace/aros-adt-crosstools/x86_64-aros-gcc}
 sdk=${AROS_SDK:-/opt/aros-workspace/aros-amiwest-nightly-release/bin/pc-x86_64-smp/AROS/Developer}
 gen=${AROS_GENMODULE:-/opt/aros-workspace/aros-amiwest-nightly-release/bin/linux-x86_64/tools/genmodule}
 engine=${AROS_LINKED_OBJECT:?full normal service engine object required}
-symbols=$(nm "$engine")
-if [[ $symbols == *'oz_test_strict_flush_enabled'* ]];then
-    echo 'Refusing an unqualified strict-flush experimental engine.' >&2;exit 2
-fi
 normal=${AROS_SERVICE_BUILD_DIR:?normal full service build provenance required}
-rg -Fxq 'service_test_modes=0' "$normal/service-build-options.txt"
-rg -Fxq 'full_dispatcher=1' "$normal/service-build-options.txt"
-read -r expected_engine_hash _ <"$normal/engine-object.sha256"
-actual_engine_hash=$(sha256sum "$engine")
-[[ $expected_engine_hash =~ ^[0-9a-f]{64}$ && ${actual_engine_hash%% *} == "$expected_engine_hash" ]]
+bash aros/library/verify-engine.sh "$engine" "$normal" "${AROS_NM:-nm}"
 nvpair=${AROS_NVPAIR_ARCHIVE:?nvpair archive required}
 pthread=${AROS_PRIVATE_PTHREAD:?matching pthread archive required}
 crypto=${AROS_CRYPTO_ARCHIVE:-/opt/aros-workspace/chromium-aros/src/out/aros-chrome/obj/third_party/boringssl/libboringssl.a}
 zlib=${AROS_ZLIB_IMPORT:-/opt/aros-workspace/aros-adt-hosted-clean/bin/linux-x86_64/AROS/Developer/lib/libz1.a}
-[[ $symbols == *' T main'* && $symbols == *' T zfsdev_ioctl_common'* ]]
-if [[ $symbols == *'__wrap_'* || $symbols == *'oz_test_admission_hold'* ]];then
-    echo 'Refusing a fault-injected engine object.' >&2;exit 2
-fi
 out=$(mktemp -d "$artifact_root/shared-engine.XXXXXXXX")
 echo "Shared engine candidate: $out"
 mkdir -p "$out/gen" "$out/include"/{proto,clib,inline,defines,pragmas}

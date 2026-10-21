@@ -1,0 +1,46 @@
+include $(SRCDIR)/config/aros.cfg
+
+# The engine object is produced by the full source engine build. This target
+# packages it as an AROS library, never into any client executable.
+OPENZFS_ENGINE_OBJECT ?=
+OPENZFS_SERVICE_BUILD ?=
+OPENZFS_NVPAIR_ARCHIVE ?= $(AROS_LIB)/libnvpair.a
+OPENZFS_PTHREAD_ARCHIVE ?= $(AROS_LIB)/libpthread.a
+OPENZFS_CRYPTO_ARCHIVE ?= $(AROS_LIB)/libboringssl.a
+OPENZFS_ZLIB_IMPORT ?= $(AROS_LIB)/libz1.a
+OPENZFS_OBJCOPY ?= $(shell $(AROS_CC) -print-prog-name=objcopy)
+OPENZFS_NM ?= $(shell $(AROS_CC) -print-prog-name=nm)
+OZ_LIBRARY_OBJ := $(GENDIR)/$(CURDIR)
+OZ_LIBRARY_INPUTS := $(OPENZFS_NVPAIR_ARCHIVE) $(OPENZFS_ZLIB_IMPORT) \
+    $(OPENZFS_CRYPTO_ARCHIVE) $(OPENZFS_PTHREAD_ARCHIVE)
+
+.PHONY: openzfs-engine-provenance
+openzfs-engine-provenance:
+	@test -n "$(OPENZFS_ENGINE_OBJECT)" -a -n "$(OPENZFS_SERVICE_BUILD)" || \
+	    { echo 'Set OPENZFS_ENGINE_OBJECT and OPENZFS_SERVICE_BUILD to a full normal engine build'; exit 1; }
+	@bash $(SRCDIR)/$(CURDIR)/verify-engine.sh "$(OPENZFS_ENGINE_OBJECT)" "$(OPENZFS_SERVICE_BUILD)" "$(OPENZFS_NM)"
+
+$(OZ_LIBRARY_OBJ)/engine.o: $(OPENZFS_ENGINE_OBJECT) | openzfs-engine-provenance
+	@$(MKDIR) $(dir $@)
+	"$(OPENZFS_OBJCOPY)" --redefine-sym main=oz_service_main $< $@
+
+# genmodule creates resident startup/end records and the public function ABI.
+# USER_OBJS supplies only the engine and its matching archive dependencies.
+USER_OBJS := $(OZ_LIBRARY_OBJ)/engine.o $(OZ_LIBRARY_INPUTS)
+USER_LDFLAGS := -nix
+#MM contrib-openzfs-library : includes linklibs
+%build_module mmake=contrib-openzfs-library \
+    modname=openzfs modtype=library conffile=openzfs.conf \
+    files="engine-library" uselibs="m" stripdebug=no
+
+USER_OBJS :=
+USER_LDFLAGS :=
+#MM contrib-openzfs-service : contrib-openzfs-library-includes
+%build_prog mmake=contrib-openzfs-service progname=OpenZFSServiceNative \
+    files="service-launcher" \
+    cflags="$(CFLAGS) -I$(OZ_LIBRARY_OBJ)/openzfs/include" \
+    objdir="$(OZ_LIBRARY_OBJ)/launcher" targetdir="$(AROS_C)"
+
+$(OZ_LIBRARY_OBJ)/launcher/service-launcher.o: $(OZ_LIBRARY_OBJ)/openzfs/include/proto/openzfs.h
+
+%common
