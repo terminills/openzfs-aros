@@ -135,6 +135,16 @@ mirror and independent `zdb` checks also pass. This is same-pool local stream
 coverage, not network transfer, encrypted/raw streams, interrupted receive,
 or a fresh-boot check of the received dataset (which the test destroys).
 
+The MetaMake-built Manager also passed an interactive real-service check in
+isolated hosted run `hosted-security-test.5fpE94eD`: connect, list the ONLINE
+disposable pool, select snapshot creation, review the exact target, submit,
+and close normally. `public_mirror/files@hosted_gui` was then verified by
+independent host `zdb` and the cold reader boot, with the existing backing-file
+hash gates intact. Screenshots of pool results, confirmation and successful
+snapshot response are retained in that run. Only the owned AROS display was
+captured and controlled; no user session or physical machine was accessed.
+This covers those UI operations, not every management action or layout size.
+
 All four CLI/startup executables linked through the generated makefile.
 The resulting `zfs --version`, `zpool --version`, and repeated `zfs --version`
 ran in isolated hosted AROS and printed `zfs-2.4.4-1`. They returned 1 with no
