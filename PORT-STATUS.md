@@ -61,6 +61,14 @@ a separate qualification gap.
 
 ## Implemented integration
 
+Large-file directory metadata now has current alpha18 native evidence:
+legacy enumeration remains usable through size saturation, while the separate
+dos64.library examination APIs return exact 64-bit sizes. QEMU checks cover
+writer boot and cold healthy/degraded/restored imports, plus invalid packet
+arguments. Wanderer visibly lists both a small file and a >4 GiB sparse file;
+exact post-UI readback and teardown pass. See `aros/handler/README.md` for runs
+and API limits. This does not qualify every desktop workflow or hardware.
+
 The source contains the upstream OpenZFS engine, a shared AROS library/service,
 native DOS handler, management UI, upstream command-line tools, startup support,
 and device adapters. The UI sends backend requests rather than simulating pool

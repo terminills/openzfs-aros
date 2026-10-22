@@ -44,6 +44,26 @@ it must not depend on an uninitialized executable C runtime.
 
 ## Acceptance and retained failures
 
+### Large-file directory metadata
+
+The engine implements `ACTION_EXAMINE_OBJECT64`, `ACTION_EXAMINE_NEXT64`,
+and `ACTION_EXAMINE_FH64`, as used by AROS `dos64.library`. These return exact
+64-bit sizes. Legacy `Examine`/`ExNext`/`ExamineFH` saturate sizes and block
+counts at the signed 32-bit maximum when their destination fields are 32-bit;
+legacy `ExAll` saturates its unsigned size field at the unsigned maximum.
+This prevents one large file from aborting a directory listing. Applications
+requiring exact sizes must use the wide interface, not interpret the saturated
+legacy value as the actual length. Legacy seek/resize overflow refusal remains.
+
+Native alpha18 QEMU `public-service-run.AGSELC7d` passes the public
+`Examine64`, `ExNext64`, and `ExamineFH64` calls with a 4294971392-byte sparse
+file, including normal ASCIIZ filename conversion by dos64.library. Raw packet
+tests check null output, missing lock/handle, and invalid enumeration key errors.
+`public-service-run.kBAVlBMz` repeats these checks after cold healthy, degraded,
+and restored mirror imports; member hashes remain unchanged and host `zdb -bcc`
+passes. The writer boot also checks legacy and raw-wide enumeration.
+These are file-backed virtual-storage tests, not physical-media qualification.
+
 - `native-import-run.SJPTtSqo`: first actual activation faults in the strlen
   wrapper because FAST_BSTR's length macro depended on an uninitialized
   StdCBase. The bootstrap now copies BSTRs with a bounded freestanding loop.

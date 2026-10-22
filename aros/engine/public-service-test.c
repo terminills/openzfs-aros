@@ -10,6 +10,7 @@
 #include "include/sys/mnttab.h"
 #include <proto/exec.h>
 #include <proto/dos.h>
+#include <proto/dos64.h>
 #include <proto/security.h>
 #include <proto/intuition.h>
 #include <intuition/intuitionbase.h>
@@ -30,6 +31,7 @@
 #include <aros/debug.h>
 /* Use one formatted kernel message, not independently interleavable bytes. */
 static void note(const char *s){bug("%s",s);}
+struct Library *DOS64Base;
 static void diagnostic_log(const char *path)
 {
     BPTR f=Open((CONST_STRPTR)path,MODE_OLDFILE);
@@ -113,9 +115,9 @@ static void storage_member(char *path,size_t size,unsigned member)
 static const char storage_payload[]="Public OpenZFS DOS payload\n";
 static const char storage_passphrase[]="AROS public passphrase fixture\n";
 static const char storage_rotated_passphrase[]="AROS rotated public passphrase fixture\n";
-static int desktop_directory(const char *phase)
+static int desktop_directory(const char *volume,const char *phase)
 {
-    BPTR root=Lock((CONST_STRPTR)"OZPUBLIC:",SHARED_LOCK);
+    BPTR root=Lock((CONST_STRPTR)volume,SHARED_LOCK);
     LONG doserr=IoErr();const char *stage="lock";
     struct FileInfoBlock *fib=AllocDosObject(DOS_FIB,NULL);
     struct ExAllControl *ctl=AllocDosObject(DOS_EXALLCONTROL,NULL);
@@ -151,6 +153,36 @@ static int desktop_directory(const char *phase)
     }
     doserr=IoErr();
     if(doserr!=ERROR_NO_MORE_ENTRIES||wide_found!=1){error=EIO;goto done;}
+    stage="dos64-library";
+    DOS64Base=OpenLibrary((CONST_STRPTR)"dos64.library",0);
+    if(!DOS64Base){doserr=IoErr();error=ENOSYS;goto done;}
+    if(!Examine64(root,&wide,NULL)){doserr=IoErr();error=EIO;goto done;}
+    wide_found=0;wide_count=0;
+    while(ExNext64(root,&wide,NULL)){
+        if(++wide_count>64){error=EOVERFLOW;goto done;}
+        if(!strcmp((char *)wide.fib_FileName,"large-sparse.bin")&&
+           wide.fib_Size==UINT64_C(0x100001000))++wide_found;
+    }
+    doserr=IoErr();
+    if(doserr!=ERROR_NO_MORE_ENTRIES||wide_found!=1){error=EIO;goto done;}
+    char large_path[96];snprintf(large_path,sizeof(large_path),"%slarge-sparse.bin",volume);
+    BPTR large=Open((CONST_STRPTR)large_path,MODE_OLDFILE);
+    if(!large){doserr=IoErr();error=EIO;goto done;}
+    BOOL examined=ExamineFH64(large,&wide,NULL);doserr=IoErr();
+    if(!examined||strcmp((char *)wide.fib_FileName,"large-sparse.bin")||
+       wide.fib_Size!=UINT64_C(0x100001000))error=EIO;
+    if(!Close(large))error=EIO;
+    if(error)goto done;
+    stage="dos64-invalid";
+    if(DoPkt(fl->fl_Task,ACTION_EXAMINE_OBJECT64,(SIPTR)root,0,0,0,0)||
+       IoErr()!=ERROR_BAD_NUMBER){doserr=IoErr();error=EIO;goto done;}
+    if(DoPkt(fl->fl_Task,ACTION_EXAMINE_NEXT64,0,(SIPTR)MKBADDR(&wide),0,0,0)||
+       IoErr()!=ERROR_INVALID_LOCK){doserr=IoErr();error=EIO;goto done;}
+    if(DoPkt(fl->fl_Task,ACTION_EXAMINE_FH64,0,(SIPTR)MKBADDR(&wide),0,0,0)||
+       IoErr()!=ERROR_INVALID_LOCK){doserr=IoErr();error=EIO;goto done;}
+    wide.fib_DiskKey=INT32_MAX;
+    if(DoPkt(fl->fl_Task,ACTION_EXAMINE_NEXT64,(SIPTR)root,(SIPTR)MKBADDR(&wide),0,0,0)||
+       IoErr()!=ERROR_BAD_NUMBER){doserr=IoErr();error=EIO;goto done;}
     stage="exall";
     ctl->eac_LastKey=0;ctl->eac_MatchString=NULL;ctl->eac_MatchFunc=NULL;
     for(unsigned calls=0;calls<64;calls++){
@@ -172,6 +204,7 @@ static int desktop_directory(const char *phase)
     }
     error=EOVERFLOW;
 done:
+    if(DOS64Base){CloseLibrary(DOS64Base);DOS64Base=NULL;}
     if(root&&ctl&&buffer&&ctl->eac_LastKey)ExAllEnd(root,buffer,4096,ED_OWNER,ctl);
     if(buffer)FreeVec(buffer);
     if(ctl)FreeDosObject(DOS_EXALLCONTROL,ctl);
@@ -1242,6 +1275,7 @@ static int storage_test(int gui){
     STORAGE_CHECK(Read(file,actual,sizeof(actual))==sizeof(storage_payload)-1&&!memcmp(actual,payload,sizeof(storage_payload)-1));
     STORAGE_CHECK(Close(file));file=0;
     STORAGE_CHECK(!storage_sparse64("OZPUBLIC:",1));
+    STORAGE_CHECK(!desktop_directory("OZPUBLIC:","post-sparse64"));
     {
         char dataset[256];
         STORAGE_CHECK(!oz_mounts_dataset_for_path(OZ_ADMISSION_PORT,"OZPUBLIC:hello.txt",dataset,sizeof(dataset)));
@@ -1454,12 +1488,12 @@ static int storage_test(int gui){
         BPTR desktop=Lock((CONST_STRPTR)"SYS:openzfs-gui-desktop-test",SHARED_LOCK);
         if(desktop){
             UnLock(desktop);
-            STORAGE_CHECK(!desktop_directory("before-wanderer"));
+            STORAGE_CHECK(!desktop_directory("OZPUBLIC:","before-wanderer"));
             STORAGE_CHECK(!cli_command("Run >T:wanderer-public.log SYS:System/Wanderer/Wanderer"));
             Delay(50);
             STORAGE_CHECK(!cli_command("C:WBRun OZPUBLIC:"));
             Delay(50);desktop_windows();
-            STORAGE_CHECK(!desktop_directory("with-wanderer"));
+            STORAGE_CHECK(!desktop_directory("OZPUBLIC:","with-wanderer"));
             note("Public desktop READY: inspect mounted OZPUBLIC and hello.txt in Wanderer; close drawer windows before closing Manager. Wanderer stays running.\n");
         }
         BPTR volume_gui=Lock((CONST_STRPTR)"SYS:openzfs-gui-volume-test",SHARED_LOCK);
@@ -1468,7 +1502,7 @@ static int storage_test(int gui){
         STORAGE_CHECK(SystemTags((CONST_STRPTR)"C:OpenZFSManagerNative",TAG_DONE)==0);
         if(volume_gui)STORAGE_CHECK(!storage_gui_volume_verify());
         if(desktop){
-            STORAGE_CHECK(!desktop_directory("after-ui"));
+            STORAGE_CHECK(!desktop_directory("OZPUBLIC:","after-ui"));
             file=Open((CONST_STRPTR)"OZPUBLIC:hello.txt",MODE_OLDFILE);STORAGE_CHECK(file);
             STORAGE_CHECK(Read(file,actual,sizeof(actual))==sizeof(storage_payload)-1&&!memcmp(actual,payload,sizeof(storage_payload)-1));
             STORAGE_CHECK(Close(file));file=0;
@@ -1634,6 +1668,8 @@ static int storage_cold_once(void)
     if(file){Close(file);return EIO;}
     if(IoErr()!=ERROR_DISK_WRITE_PROTECTED)return EIO;
     error=storage_sparse64("OZCOLD:",0);
+    if(error)return error;
+    error=desktop_directory("OZCOLD:","cold-import");
     if(error)return error;
     if(native_file_fixture&&(storage_layout==OZ_MIRROR||storage_dspare)){
         BPTR cli=Lock((CONST_STRPTR)"SYS:openzfs-cli-package-test",SHARED_LOCK);
