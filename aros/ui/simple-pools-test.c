@@ -1,0 +1,24 @@
+/* SPDX-License-Identifier: CDDL-1.0 */
+#include "simple-pools.h"
+#include <assert.h>
+int main(void)
+{
+    char text[512],small[2];
+    oz_simple_bytes(text,sizeof(text),0);assert(!strcmp(text,"0 B"));
+    oz_simple_bytes(text,sizeof(text),1023);assert(!strcmp(text,"1023 B"));
+    oz_simple_bytes(text,sizeof(text),1536);assert(!strcmp(text,"1.5 KiB"));
+    oz_simple_bytes(text,sizeof(text),UINT64_MAX);assert(!strcmp(text,"15.9 EiB"));
+    oz_simple_pool_row(text,sizeof(text),"tank","ONLINE",1024,3072,4096);
+    assert(strstr(text,"4.0 KiB")&&strstr(text,"1.0 KiB")&&strstr(text,"3.0 KiB"));
+    oz_simple_pool_row(text,sizeof(text),"tank","DEGRADED",1024,3072,4096);
+    assert(strstr(text,"DEGRADED"));
+    oz_simple_pool_row(text,sizeof(text),"tank","UNAVAILABLE",0,0,0);
+    assert(strstr(text,"Capacity unavailable")&&!strstr(text,"0 B"));
+    oz_simple_pool_row(text,sizeof(text),"tank","ONLINE",2,0,1);
+    assert(strstr(text,"Capacity unavailable"));
+    oz_simple_pool_row(text,sizeof(text),"tank","ONLINE",1,1,1);
+    assert(strstr(text,"Capacity unavailable"));
+    oz_simple_pool_row(small,sizeof(small),"tank","ONLINE",0,0,0);
+    assert(small[1]==0);
+    puts("Simple pool formatting PASS");return 0;
+}

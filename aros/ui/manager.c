@@ -16,6 +16,7 @@
 #include "properties.h"
 #include "iostat-rates.h"
 #include "iostat-refresh.h"
+#include "simple-pools.h"
 static struct oz_rate_history io_history;
 static struct oz_refresh io_refresh;
 static Object *auto_iostat;
@@ -780,6 +781,25 @@ int main(int argc,char **argv) {
                     "Connected to the management service.\nThe OpenZFS engine is unavailable.\nPool operations are not ready.\nUse Advanced and Connect for diagnostic details.");
                 /* Save response retains the complete backend reply even when
                  * the novice view displays only the connection summary. */
+                snprintf(response_text,sizeof(response_text),"%s\n",rendered);
+            }
+            if(simple_mode()&&reply->operation==3&&reply->status==OZ_OK){
+                static char summary[32768];
+                snprintf(summary,sizeof(summary),"%lu imported pool(s) on this page.\n",
+                    (unsigned long)reply->row_count);
+                for(unsigned row=0;row<reply->row_count&&row<OZ_MAX_ROWS;row++){
+                    struct oz_row *r=&reply->rows[row];
+                    if(strcmp(r->kind,"pool"))continue;
+                    size_t used=strlen(summary);
+                    oz_simple_pool_row(summary+used,sizeof(summary)-used,r->name,r->state,
+                        r->used,r->available,r->total);
+                }
+                size_t used=strlen(summary);
+                snprintf(summary+used,sizeof(summary)-used,
+                    "\nRaw pool capacity; usable dataset space differs.\n%s",
+                    reply->next_cursor?"More pools are available: choose Next page.":"");
+                show_response(summary);
+                /* Saving retains the exact detailed response, not this display summary. */
                 snprintf(response_text,sizeof(response_text),"%s\n",rendered);
             }
             if(reply->job_id){snprintf(line,sizeof(line),"Background job: %llu (use Advanced/jobs)",(unsigned long long)reply->job_id);logline(line);}

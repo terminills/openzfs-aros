@@ -379,6 +379,17 @@ explicit dependencies; stock-nightly compatibility and turnkey SDK/overlay
 bootstrap remain outstanding. The standalone build sequence below is also
 available.
 
+Simple-mode pool listing now formats the structured pool rows as name/state
+and human-readable size, allocated and free capacity. It does not parse the
+backend's prose or present unavailable/inconsistent counters as zero capacity.
+Advanced replies and saved responses retain the complete backend details;
+pagination remains visible. `simple-pools-test.c` passes host ASan/UBSan tests
+for byte boundaries, maximum 64-bit values, unavailable/degraded states,
+inconsistent samples and bounded output. The rebuilt native Manager was
+visually verified against the real service in `native-gui-run.6VdaucdZ`
+(`pools.png`); normal close and the remaining storage suite pass. Those native
+results are separate from the host formatter checks, not inferred from them.
+
 This is a developer source release, not a standalone SDK or prebuilt installer.
 The ordinary upstream Linux build does not build the AROS integration.
 
