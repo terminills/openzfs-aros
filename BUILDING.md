@@ -297,6 +297,16 @@ and degraded read-only mounts, including resize denial on read-only datasets.
 added. This allocates only sparse payload blocks: it does not qualify sustained
 4 GiB writes, an 18 GB directory copy, or physical USB throughput.
 
+Cold tests additionally withhold more members than redundancy permits:
+both mirror leaves, two RAIDZ1 leaves, three RAIDZ2 leaves, or four RAIDZ3
+leaves. Rejection requires a backend reply, not just a transport error; pool
+enumeration must remain responsive and empty, with no mounted filesystems.
+Every hidden filename is restored even on failure, and another healthy import
+must read the exact normal and sparse-file payloads. Final member hashes and
+host zdb checks remain required. Native runs `iCGv6C2l` (mirror), `F1KwQXMi`
+(RAIDZ1), `LZpfBybc` (RAIDZ2), and `L8Lhe4EJ` (RAIDZ3) all passed. This tests
+missing members at import, not live device removal during outstanding writes.
+
 Prefer a coherent SDK and genmodule pair; do not define missing ABI constants
 in this project. Handler/device compilation is not runtime qualification.
 

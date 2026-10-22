@@ -47,8 +47,10 @@ static void child_exited(IPTR status,IPTR result){*(LONG *)result=(LONG)status;}
 static int present(const char *name){Forbid();int found=FindPort((CONST_STRPTR)name)!=NULL;Permit();return found;}
 static const char *storage_directory="RAM:OZPublicPool";
 static unsigned storage_members=2,storage_layout=OZ_MIRROR,storage_missing=1;
+static int storage_reply_received;
 static const char storage_payload[]="Public OpenZFS DOS payload\n";
 static int storage_request(unsigned op,const char *target,const char *argument,const char *options){
+    storage_reply_received=0;
     static struct oz_message m,out;memset(&m,0,sizeof(m));
     m.magic=OZ_MAGIC;m.version=OZ_VERSION;m.msg.mn_Length=sizeof(m);
     m.operation=op;m.flags=OZ_CONFIRMED;
@@ -65,6 +67,7 @@ static int storage_request(unsigned op,const char *target,const char *argument,c
     struct oz_ticket ticket={0};int error=oz_admission_submit(OZ_ADMISSION_PORT,&m,&ticket);
     if(!error){do{error=oz_admission_query(OZ_ADMISSION_PORT,&ticket,&out);if(error==EAGAIN)Delay(1);}while(error==EAGAIN);}
     if(!error){
+        storage_reply_received=1;
         char line[256];snprintf(line,sizeof(line),"Public storage op=%u status=%lu %.170s\n",op,(unsigned long)out.status,out.detail);note(line);
         if(out.status!=OZ_OK)error=EIO;
     }
@@ -865,13 +868,26 @@ static int storage_cold_once(void)
     if(!error)note("Public cold hosted DOS PASS exact=1 readonly-refusal=1 exported=1\n");
     return error;
 }
+static int storage_no_pools(void)
+{
+    struct oz_client client;static struct oz_message request;
+    if(!oz_client_open(&client))return ENOMEM;
+    memset(&request,0,sizeof(request));request.operation=3;
+    int error=oz_submit(&client,&request)==OZ_OK?0:EIO;
+    if(!error){struct oz_message *reply=NULL;
+        while(!(reply=oz_poll(&client)))Delay(1);
+        if(reply->status!=OZ_OK||!reply->engine_available||reply->row_count)error=EIO;
+        oz_message_free(reply);
+    }
+    oz_client_close(&client);return error;
+}
 static int storage_cold_test(void)
 {
     int error=storage_cold_once();
     if(error)return error;
     /* Hide the topology's tolerated number of disposable members without
      * changing their bytes; restore every name even if degraded import fails. */
-    char member[3][256],hidden[3][256];unsigned moved=0;
+    char member[4][256],hidden[4][256];unsigned moved=0;
     for(unsigned i=0;i<storage_missing;i++){
         snprintf(member[i],sizeof(member[i]),"%s/disk%u",storage_directory,i+1);
         snprintf(hidden[i],sizeof(hidden[i]),"%s/disk%u-held",storage_directory,i+1);
@@ -883,6 +899,26 @@ static int storage_cold_test(void)
     if(!error)error=storage_cold_once();
     while(moved){--moved;if(!Rename((CONST_STRPTR)hidden[moved],(CONST_STRPTR)member[moved])&&!error)error=EIO;}
     if(!error){char line[128];snprintf(line,sizeof(line),"Public cold degraded assign PASS missing=%u exact=1 readonly=1 restored=1\n",storage_missing);note(line);}
+    if(error)return error;
+    /* Exceed parity (both leaves for mirror). A transport failure alone is
+     * not proof of rejection: require a backend reply and responsive queries. */
+    for(unsigned i=0;i<=storage_missing;i++){
+        snprintf(member[i],sizeof(member[i]),"%s/disk%u",storage_directory,i);
+        snprintf(hidden[i],sizeof(hidden[i]),"%s/disk%u-held",storage_directory,i);
+        BPTR exists=Lock((CONST_STRPTR)hidden[i],SHARED_LOCK);
+        if(exists){UnLock(exists);error=EEXIST;break;}
+        if(IoErr()!=ERROR_OBJECT_NOT_FOUND||!Rename((CONST_STRPTR)member[i],(CONST_STRPTR)hidden[i])){error=EIO;break;}
+        moved++;
+    }
+    if(!error){
+        int refused=storage_alias_request(7,1);
+        if(!refused||!storage_reply_received)error=EIO;
+        if(!error)error=storage_no_pools();
+        if(!error)error=verify_mounts(NULL,0);
+    }
+    while(moved){--moved;if(!Rename((CONST_STRPTR)hidden[moved],(CONST_STRPTR)member[moved])&&!error)error=EIO;}
+    if(!error)error=storage_cold_once();
+    if(!error){char line[128];snprintf(line,sizeof(line),"Public cold beyond-parity PASS missing=%u refused=1 empty=1 responsive=1 restored-read=1\n",storage_missing+1);note(line);}
     return error;
 }
 int main(int argc,char **argv){
