@@ -1337,11 +1337,23 @@ static int storage_test(int gui){
         note("Public passphrase encryption PASS create-pbkdf2=350000 locked-mount-denied=1 reload=1 exact-read=1 cleanup=1\n");
     }
     if(gui){
+        BPTR desktop=Lock((CONST_STRPTR)"SYS:openzfs-gui-desktop-test",SHARED_LOCK);
+        if(desktop){
+            UnLock(desktop);
+            STORAGE_CHECK(!cli_command("Run >T:wanderer-public.log SYS:System/Wanderer/Wanderer"));
+            note("Public desktop READY: inspect mounted OZPUBLIC and hello.txt in Wanderer; close drawer windows before closing Manager. Wanderer stays running.\n");
+        }
         BPTR volume_gui=Lock((CONST_STRPTR)"SYS:openzfs-gui-volume-test",SHARED_LOCK);
         if(volume_gui){UnLock(volume_gui);note("Public GUI volume READY: Devices, unit 5, public_mirror/public_volume, read-only Remap; save whole-volume FFS mount file T:OZBLOCK, then close Manager\n");}
         note("Public storage GUI ready: mounted public_mirror/files with hello.txt\n");
         STORAGE_CHECK(SystemTags((CONST_STRPTR)"C:OpenZFSManagerNative",TAG_DONE)==0);
         if(volume_gui)STORAGE_CHECK(!storage_gui_volume_verify());
+        if(desktop){
+            file=Open((CONST_STRPTR)"OZPUBLIC:hello.txt",MODE_OLDFILE);STORAGE_CHECK(file);
+            STORAGE_CHECK(Read(file,actual,sizeof(actual))==sizeof(storage_payload)-1&&!memcmp(actual,payload,sizeof(storage_payload)-1));
+            STORAGE_CHECK(Close(file));file=0;
+            note("Public desktop post-UI data PASS exact-read=1\n");
+        }
         note("Public storage GUI closed; verifying export and readonly reimport\n");
     }
     STORAGE_CHECK(!oz_mount_control(OZ_ADMISSION_PORT,"public_mirror/files","",OZ_MOUNT_DETACH,0));

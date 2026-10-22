@@ -813,3 +813,20 @@ current `aros-adt-pc-x86_64-clean` SDK and private pthread `ARVzbA2v`. This is
 startup/UI evidence only. The reported older laptop binary's `.text+0x20819`
 matches GetMsg in old-ABI autoinit before main; its exact installed identity and
 runtime pairing must still be confirmed before closing that report.
+
+The corresponding private alpha18 backend migration is **not runtime-qualified**.
+`mmake-alpha18-20261022` rebuilt all 360 engine objects, nvpair, the shared
+library, service launcher, handler, device, Manager and public test client.
+It uses fresh pthread `ARVzbA2v`, fresh crypto `h7Dc9176`, and a privately built
+current genmodule; configured platform inputs are still supplied by the SDK.
+The CLI package is incomplete: that SDK's POSIX import library/configuration
+does not expose `pipe2`, while the older qualification used an extended POSIX
+overlay. Do not mix the older ABI overlay or its import stub into alpha18.
+Build logs, dependency provenance and `partial-stage.sha256` are retained.
+
+`AROS_TEST_GUI_DESKTOP=1` enables an interactive Wanderer fixture in the public
+GUI runner. It leaves Wanderer running, asks the tester to inspect OZPUBLIC
+and hello.txt, and rereads the file after Manager closes. This read assertion
+does not prove the desktop icon or drawer presentation. The first attempt,
+`native-gui-run.yVOHUdr6`, timed out during the startup-ABI investigation; it
+is retained as incomplete, not desktop qualification.
