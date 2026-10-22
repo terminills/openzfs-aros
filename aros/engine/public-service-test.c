@@ -509,9 +509,19 @@ static int storage_loader_test(int initially_enabled)
         "RESULT native loader execution policy PASS\n");
     return error;
 }
+static LONG cli_command(const char *command)
+{
+    LONG result=SystemTags((CONST_STRPTR)command,TAG_DONE);
+    LONG io_error=IoErr();
+    char message[512];
+    snprintf(message,sizeof(message),"Public CLI command result=%ld ioerr=%ld: %s\n",
+        (long)result,(long)io_error,command);
+    note(message);
+    return result;
+}
 static int cli_result(const char *command,const char *expected)
 {
-    if(SystemTags((CONST_STRPTR)command,TAG_DONE)!=0)return EIO;
+    if(cli_command(command)!=0)return EIO;
     BPTR file=Open((CONST_STRPTR)"SYS:cli-package-output.txt",MODE_OLDFILE);
     if(!file)return EIO;
     char text[256]={0};LONG count=Read(file,text,sizeof(text)-1);
@@ -672,8 +682,17 @@ static int storage_test(int gui){
         STORAGE_CHECK(!cli_result("C:zfs get -H -o value type public_mirror/files >SYS:cli-package-output.txt","filesystem"));
         STORAGE_CHECK(SystemTags((CONST_STRPTR)"C:zfs snapshot public_mirror/files@cli_roundtrip",TAG_DONE)==0);
         STORAGE_CHECK(!cli_result("C:zfs list -H -o name -t snapshot public_mirror/files@cli_roundtrip >SYS:cli-package-output.txt","public_mirror/files@cli_roundtrip"));
+        STORAGE_CHECK(SystemTags((CONST_STRPTR)"C:zfs clone -o mountpoint=none public_mirror/files@cli_roundtrip public_mirror/cli_clone",TAG_DONE)==0);
+        STORAGE_CHECK(!cli_result("C:zfs get -H -o value origin public_mirror/cli_clone >SYS:cli-package-output.txt","public_mirror/files@cli_roundtrip"));
+        STORAGE_CHECK(SystemTags((CONST_STRPTR)"C:zfs rename public_mirror/cli_clone public_mirror/cli_renamed",TAG_DONE)==0);
+        STORAGE_CHECK(cli_command("C:zfs set compression=lz4 public_mirror/cli_renamed")==0);
+        STORAGE_CHECK(!cli_result("C:zfs get -H -o value compression public_mirror/cli_renamed >SYS:cli-package-output.txt","lz4"));
+        STORAGE_CHECK(SystemTags((CONST_STRPTR)"C:zfs snapshot public_mirror/cli_renamed@rollback",TAG_DONE)==0);
+        STORAGE_CHECK(SystemTags((CONST_STRPTR)"C:zfs rollback public_mirror/cli_renamed@rollback",TAG_DONE)==0);
+        STORAGE_CHECK(SystemTags((CONST_STRPTR)"C:zfs destroy public_mirror/cli_renamed@rollback",TAG_DONE)==0);
+        STORAGE_CHECK(SystemTags((CONST_STRPTR)"C:zfs destroy public_mirror/cli_renamed",TAG_DONE)==0);
         STORAGE_CHECK(SystemTags((CONST_STRPTR)"C:zfs destroy public_mirror/files@cli_roundtrip",TAG_DONE)==0);
-        note("Public packaged CLI PASS pool-list=1 dataset-list=1 property=1 snapshot-create-list-destroy=1\n");
+        note("Public packaged CLI PASS pool-list=1 dataset-list=1 property=1 snapshot-create-list-destroy=1 clone=1 rename=1 set-get=1 rollback-command=1\n");
     }
     if(gui){
         note("Public storage GUI ready: mounted public_mirror/files with hello.txt\n");
