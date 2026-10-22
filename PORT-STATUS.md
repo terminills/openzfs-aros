@@ -15,6 +15,14 @@ The same current native package also passed three-, four-, and five-member
 RAIDZ1/2/3 suites, including fresh-boot reads with one/two/three members missing,
 respectively. Host configuration inspection confirmed the actual parity.
 
+Additional native tests qualify sparse DOS files beyond 4 GiB (including
+replication and cold reads), excessive member-loss refusal followed by
+restoration, and AES-256-GCM raw-key lifecycle with wrong-key denial.
+Encrypted datasets survive healthy/degraded/restored cold imports. Full and
+incremental raw encrypted streams transfer with unloaded keys; received data
+remains inaccessible until key load, then matches the source through the DOS
+handler. See BUILDING.md for individual runs and qualification limits.
+
 These tests use newly created virtual storage and explicitly selected patched
 runtime libraries. They supersede the initial startup-only qualification below,
 but do not establish stock-nightly or physical-device safety. See BUILDING.md

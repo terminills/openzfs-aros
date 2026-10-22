@@ -340,6 +340,13 @@ the three cold encrypted imports, unchanged-member comparisons and independent
 host zdb check (no leaks). This is local full-stream replication through guest
 temporary files, not interrupted/resumable receive or network qualification.
 
+`public-service-run.G2QAicmh` extends that test with a second source snapshot
+containing a new file. With both keys unloaded, `zfs send -w -i` and `zfs receive`
+apply the raw incremental stream. The receiver remains locked and rejects
+mounting until key load, after which both old and new files match exactly.
+The surrounding native package, cold encryption/recovery and independent zdb
+checks also passed. This does not establish interrupted receive/resumption.
+
 Prefer a coherent SDK and genmodule pair; do not define missing ABI constants
 in this project. Handler/device compilation is not runtime qualification.
 
