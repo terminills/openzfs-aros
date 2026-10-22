@@ -92,6 +92,17 @@ earlier `shared-engine.SzmiKStH` used `libz.a` and was not runtime-tested; the
 corrected candidate deliberately matches MetaMake's `libz1.a` dependency.
 The frozen AmiWest handoff package was not replaced by this experiment.
 
+The handoff's actual native Manager (SHA256
+`d7f2d0027627a69b72fbf7835933303e97e44d8018739463c600d85cbc59b9a7`)
+also passed an interactive QEMU check in `native-gui-run.d8Gr4rb3`.
+The Simple connection response displayed the real engine connection, and
+selecting List pools then Show results returned `public_mirror` ONLINE from
+the backend. `manager-start.png` and `query-result.png` retain the screenshots;
+`screenshots.sha256` records their hashes. The Manager closed normally and
+the remaining packaged handler/export/read-only reimport suite passed.
+This is a native connection/list/close check on a RAM pool, not native GUI
+pool-creation coverage or qualification on the show laptop's runtime.
+
 The metamake-built native nvpair test passed allocation, nested lists, XDR
 encode/decode, exact 64-bit values, file output, and truncated-input rejection
 in isolated hosted AROS. The shared engine relinked with that archive also
