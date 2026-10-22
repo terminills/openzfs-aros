@@ -23,6 +23,8 @@ service=${AROS_TEST_SERVICE_BINARY:?public service executable required}
 client=${AROS_TEST_CLIENT_BINARY:?native acceptance client required}
 shared=${AROS_TEST_SHARED_BUILD:-}
 cli_dir=${AROS_TEST_CLI_DIR:-}
+companions=${AROS_TEST_COMPANION_TOOLS:-0}
+[[ $companions == 0 || ( $companions == 1 && -n $cli_dir ) ]]
 handler=${AROS_TEST_HANDLER_BINARY:-}
 device=${AROS_TEST_DEVICE_BINARY:-}
 [[ -z $device || -n $cli_dir ]]
@@ -215,6 +217,14 @@ if [[ -n $cli_dir ]];then
     extra_maps+=(-map "$run/zfs" /C/zfs -map "$run/zpool" /C/zpool
         -map aros/engine/public-service-test-only /openzfs-cli-package-test)
     sha256sum "$run/zfs" "$run/zpool" >"$run/cli-inputs.sha256"
+    if [[ $companions == 1 ]];then
+        for command in OpenZFSStartup OpenZFSStartupMount OpenZFSRuntimeCheck OpenZFSHostIdentity;do
+            cp "$cli_dir/$command" "$run/$command"
+            extra_maps+=(-map "$run/$command" "/C/$command")
+            sha256sum "$run/$command" >>"$run/cli-inputs.sha256"
+        done
+        extra_maps+=(-map aros/engine/public-service-test-only /openzfs-companion-tools-test)
+    fi
 fi
 if [[ -n $handler ]];then
     cp "$handler" "$run/OpenZFS-Handler"

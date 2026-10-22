@@ -710,6 +710,22 @@ static int cli_result(const char *command,const char *expected)
     while(count>0&&(text[count-1]=='\n'||text[count-1]=='\r'))text[--count]=0;
     return strcmp(text,expected)?EIO:0;
 }
+static int companion_tools_test(void)
+{
+    BPTR marker=Lock((CONST_STRPTR)"SYS:openzfs-companion-tools-test",SHARED_LOCK);
+    if(!marker)return 0;
+    UnLock(marker);
+    LONG runtime=cli_command("C:OpenZFSRuntimeCheck >T:companion-runtime.log");
+    diagnostic_log("T:companion-runtime.log");
+    if(runtime)return EIO;
+    if(cli_command("C:OpenZFSStartup INVALID")!=1||
+       cli_command("C:OpenZFSStartup 0000000000000000 CHECK")!=1||
+       cli_command("C:OpenZFSStartupMount public_mirror INVALID")!=1||
+       cli_command("C:OpenZFSHostIdentity 00000000 SAVE")!=20||
+       cli_command("C:OpenZFSHostIdentity 12345678")!=20)return EIO;
+    note("Public companion tools PASS runtime-prerequisites=1 invalid-arguments=1 no-identity-write=1\n");
+    return 0;
+}
 /* Exercise repair through the shipped API/commands, not linked SPA internals.
  * disk0 is later the only available mirror member in the cold degraded test. */
 static int storage_repair_data(const char *root,int write)
@@ -1184,6 +1200,7 @@ static int storage_test(int gui){
     if(error)return error;
     note("Public pool alias identity PASS duplicate-refused=1\n");
 #define STORAGE_CHECK(x) do{if(!(x)){error=__LINE__;goto done;}}while(0)
+    STORAGE_CHECK(!companion_tools_test());
     STORAGE_CHECK(!verify_mounts(NULL,0));
     STORAGE_CHECK(!partition_rpc_test());
     char engine_version[128],small_version[1]={'x'};

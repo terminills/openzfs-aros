@@ -1,5 +1,28 @@
 # Native execution property
 
+## Alpha18 companion qualification (2026-10-22)
+
+The opt-in public-service runner `AROS_TEST_COMPANION_TOOLS=1` installs and
+hashes the four packaged companion commands and runs OpenZFSRuntimeCheck
+before the storage tests. A prerequisite failure is a suite failure, not a
+skipped security check. Subsequent invalid-argument checks must not be counted
+as verified if RuntimeCheck fails first.
+
+On the alpha18c5 base image (SHA256
+`bbc9776d6a5cf0a8ce7c26010e297e9e7a02980714750955053a38d89eca0e27`),
+`public-service-run.S3WXz3N7` fails: both LoadSeg and NewLoadSeg accept the
+execute-protected RAM probe. Ordinary loading and redirected stdio pass.
+This reproduces the missing loader prerequisite on the current platform;
+earlier private-overlay passes do not qualify this unmodified image.
+
+Do not rebuild its DOS overlay from the shared generated-object map without
+checking provenance. The ISO identifies AROS revision `f81cd211c4`, whereas
+the inspected source checkout is `671efe3b321926332e3330a0e138ed4a3d4e820e`.
+Nineteen DOS source files differ, and the ISO DOS library's text differs from
+the current shared build. A matched private build and fresh native tests are
+required before claiming this runtime prerequisite is satisfied. The failed
+run's logs and input manifests are retained; no physical device was used.
+
 ## User-facing runtime detection (2026-09-30)
 
 OpenZFSRuntimeCheck now checks both loader APIs using a copied executable in
