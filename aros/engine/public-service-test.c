@@ -5,6 +5,7 @@
 #include "../ui/mount-api.h"
 #include "../ui/support-api.h"
 #include "../ui/partition-api.h"
+#include "../ui/zvol-api.h"
 #include "include/sys/mnttab.h"
 #include <proto/exec.h>
 #include <proto/dos.h>
@@ -784,6 +785,50 @@ static int storage_sparse64(const char *root,int write)
     if(!error){char line[128];snprintf(line,sizeof(line),"Public sparse64 PASS write=%d boundary=4294967296 size=4294971392 holes=1 legacy-refused=1\n",write);note(line);}
     return error;
 }
+/* Exercise the shipped transport, not engine-internal test entry points.
+ * Retain the volume for independent cold/degraded imports. */
+static int storage_zvol_test(int create)
+{
+    struct oz_ticket session={0};
+    struct {struct oz_zvol_request q;unsigned char bytes[24576];} packet;
+    LONG fd=-1;int error=0;
+#define VCHECK(x) do{if(!(x)){char line[96];snprintf(line,sizeof(line),"Public zvol FAIL line=%d cold=%d\n",__LINE__,!create);note(line);error=EIO;goto done;}}while(0)
+#define VSET(op) do{memset(&packet,0,sizeof(packet));packet.q.session=session;packet.q.version=OZ_ZVOL_VERSION;packet.q.operation=(op);packet.q.descriptor=fd;}while(0)
+#define VCALL(expected) do{ULONG size=sizeof(packet.q);if(packet.q.operation==OZ_ZVOL_READ||packet.q.operation==OZ_ZVOL_WRITE)size+=packet.q.count;VCHECK(!oz_zvol_request(OZ_ADMISSION_PORT,&packet,size)&&packet.q.engine_error==(expected));}while(0)
+    if(create)VCHECK(!cli_command("C:zfs create -s -V 2M -b 8K public_mirror/public_volume"));
+    VCHECK(!oz_session_open(OZ_ADMISSION_PORT,&session));
+    VSET(OZ_ZVOL_OPEN);strcpy(packet.q.name,"public_mirror/public_volume");
+    packet.q.flags=create?OZ_ZVOL_WRITABLE:0;VCALL(0);fd=packet.q.descriptor;VCHECK(fd>0);
+    VSET(OZ_ZVOL_INFO);VCALL(0);
+    VCHECK(packet.q.size==2097152&&packet.q.block_size==8192&&packet.q.readonly==!create);
+    if(create){
+        VSET(OZ_ZVOL_WRITE);packet.q.count=sizeof(packet.bytes);
+        for(unsigned i=0;i<sizeof(packet.bytes);i++)packet.bytes[i]=(unsigned char)(i*7+13);
+        VCALL(0);VCHECK(packet.q.completed==sizeof(packet.bytes));
+        VSET(OZ_ZVOL_DISCARD);packet.q.offset=512;packet.q.count=16384;
+        VCALL(0);VCHECK(packet.q.completed==16384);
+        VSET(OZ_ZVOL_FLUSH);VCALL(0);
+    }else{
+        VSET(OZ_ZVOL_WRITE);packet.q.count=512;VCALL(EROFS);VCHECK(!packet.q.completed);
+    }
+    VSET(OZ_ZVOL_READ);packet.q.count=sizeof(packet.bytes);VCALL(0);
+    VCHECK(packet.q.completed==sizeof(packet.bytes));
+    for(unsigned i=0;i<sizeof(packet.bytes);i++)
+        VCHECK(packet.bytes[i]==(i>=8192&&i<16384?0:(unsigned char)(i*7+13)));
+    VSET(OZ_ZVOL_READ);packet.q.offset=2097152;packet.q.count=512;
+    memset(packet.bytes,0xa7,512);VCALL(EINVAL);VCHECK(!packet.q.completed);
+    for(unsigned i=0;i<512;i++)VCHECK(packet.bytes[i]==0xa7);
+    VSET(OZ_ZVOL_CLOSE);VCALL(0);
+    VSET(OZ_ZVOL_INFO);VCALL(EBADF);
+done:
+    if(session.number){int closed=oz_session_close(OZ_ADMISSION_PORT,&session);if(!error)error=closed;}
+    if(!error)note(create?"Public zvol PASS create=1 geometry=1 write=1 discard-edges=1 flush=1 exact-read=1 bounds=1 stale-descriptor=1\n":
+        "Public cold zvol PASS exact-read=1 discard-edges=1 readonly=1 bounds=1 stale-descriptor=1\n");
+    return error;
+#undef VCALL
+#undef VSET
+#undef VCHECK
+}
 static int storage_test(int gui){
     int error=0;BPTR file=0,lock=CreateDir((CONST_STRPTR)storage_directory);
     if(!lock)return EIO;
@@ -932,6 +977,7 @@ static int storage_test(int gui){
     BPTR cli_marker=Lock((CONST_STRPTR)"SYS:openzfs-cli-package-test",SHARED_LOCK);
     if(cli_marker){
         UnLock(cli_marker);
+        STORAGE_CHECK(!storage_zvol_test(1));
         if(native_file_fixture&&storage_layout==OZ_MIRROR){
             STORAGE_CHECK(!storage_repair_test());
             if(storage_replace)STORAGE_CHECK(!storage_replace_test());
@@ -1272,6 +1318,10 @@ static int storage_cold_once(void)
     error=oz_mount_control(OZ_ADMISSION_PORT,"public_mirror/files","",OZ_MOUNT_DETACH,0);
     if(!error)error=storage_encrypted_cold();
     if(!error)error=storage_rotated_passphrase_cold();
+    if(!error){
+        BPTR cli=Lock((CONST_STRPTR)"SYS:openzfs-cli-package-test",SHARED_LOCK);
+        if(cli){UnLock(cli);error=storage_zvol_test(0);}
+    }
     if(!error)error=storage_request(8,"public_mirror",NULL,NULL);
     if(!error)note("Public cold hosted DOS PASS exact=1 readonly-refusal=1 exported=1\n");
     return error;

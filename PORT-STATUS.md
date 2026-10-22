@@ -17,8 +17,18 @@ respectively. Host configuration inspection confirmed the actual parity.
 The fresh native package additionally passes small dRAID1/2/3 configurations
 with one distributed spare each, including cold degraded reads, excessive-loss
 refusal and restored reads. Independent configuration checks confirm actual
-dRAID parity/data/spare geometry. These runs do not qualify spare activation
-or resilver.
+dRAID parity/data/spare geometry. Subsequent public-package tests also qualify
+typed distributed-spare activation and healing recovery for dRAID1/2/3.
+Sequential reconstruction is exercised separately with the upstream
+device_rebuild feature enabled: persisted rebuild completion, zero reported
+errors, and the automatically started post-rebuild scrub are checked before
+and after cold imports. The scrub must start no earlier than rebuild completion.
+These are small file-backed layouts, not general hardware/topology qualification.
+
+Mirror tests additionally cover offline/write/online resilver and replacement
+with a new file-backed member. Cold imports read exact payload bytes with only
+the repaired or replacement member available. See BUILDING.md for retained
+run identifiers and the distinction between healing and sequential recovery.
 
 Additional native tests qualify sparse DOS files beyond 4 GiB (including
 replication and cold reads), excessive member-loss refusal followed by

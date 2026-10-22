@@ -552,6 +552,32 @@ It submits no GUI mutation. Normal close and the remaining package test pass.
 This closes the control/preview gap, not end-to-end GUI reconstruction or
 native-device attach qualification.
 
+### Public-package zvol transport qualification
+
+`public-service-run.VWf7yC6F` (mirror) and `public-service-run.KWdIi0ce`
+(RAIDZ2) exercise the production shared service from
+`mmake-native-fresh-20261022/package-sequential-admission` with the rebuilt
+public acceptance client. The packaged upstream `zfs` creates a sparse 2 MiB
+volume with 8 KiB blocks. Public session-owned zvol requests verify geometry,
+24 KiB patterned writes, flush, exact reads, and discard of only the complete
+interior block of a partially aligned range. The partial edge blocks retain
+their original bytes. Boundary reads return EINVAL without changing the caller
+buffer; closed descriptors return EBADF.
+
+Three fresh-guest imports per run verify the same retained zvol bytes in healthy,
+degraded (one mirror or two RAIDZ2 members absent), and restored configurations.
+Read-only descriptors reject writes without reporting completed bytes. The
+existing excessive-loss refusal, DOS dataset/crypto tests, clean backing detach,
+unchanged member hashes and independent host `zdb -bcc` checks also pass with
+no leaks. The RAIDZ2 runner additionally enforces all new zvol markers/counts;
+the first mirror run predates those runner assertions but retains those same
+markers. Source snapshots, binary hashes and serial logs remain in each run.
+
+This is public service transport qualification, not a current-package test of
+the resident `openzfs.device`, DOS filesystems formatted inside a zvol, GUI
+volume publication, hardware discard or power-loss durability. Zvol logical
+discard is distinct from the still-unsupported backing-device TRIM operation.
+
 ## Requirements
 
 - Linux build host with Bash, Git, Make, GCC-compatible AROS cross tools, binutils,
