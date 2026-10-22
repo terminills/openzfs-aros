@@ -51,6 +51,7 @@ static int storage_reply_received;
 static int native_file_fixture;
 static int storage_replace,storage_replaced;
 static int storage_dspare;
+static int storage_sequential;
 static char storage_spare_name[160];
 static void storage_member(char *path,size_t size,unsigned member)
 {
@@ -700,10 +701,22 @@ static int storage_spare_status(char *guid,size_t size,int active)
                 note(reply->rows[i].state);note(" ");note(reply->rows[i].value);note("\n");
             }
         }
+        if(!error&&active&&storage_sequential){
+            unsigned complete=0;
+            for(unsigned i=0;i<reply->row_count;i++){
+                const struct oz_row *r=&reply->rows[i];
+                unsigned long long id,issued,rebuilt,errors;
+                if(!strcmp(r->kind,"rebuild")&&!strcmp(r->state,"COMPLETE")&&r->used&&r->progress_permille==1000&&
+                    sscanf(r->value,"guid=%llu issued=%llu rebuilt=%llu errors=%llu",&id,&issued,&rebuilt,&errors)==4&&
+                    id&&issued&&rebuilt&&!errors){complete++;note("Public sequential rebuild row PASS ");note(r->value);note("\n");}
+            }
+            if(complete!=1)error=EAGAIN;
+        }
         if(!error&&active){
-            const char *scan=strstr(reply->detail,"scan=resilver state=finished ");
+            const char *prefix=storage_sequential?"scan=scrub state=finished ":"scan=resilver state=finished ";
+            const char *scan=strstr(reply->detail,prefix);
             unsigned long long examined,total,issued,errors;
-            if(!scan||sscanf(scan,"scan=resilver state=finished examined=%llu to-examine=%llu issued=%llu errors=%llu",
+            if(!scan||sscanf(scan+strlen(prefix),"examined=%llu to-examine=%llu issued=%llu errors=%llu",
                 &examined,&total,&issued,&errors)!=4||!issued||errors)error=EAGAIN;
             if(!error){note("Public dRAID spare scan PASS ");note(scan);note("\n");}
         }
@@ -721,17 +734,25 @@ static int storage_spare_test(void)
         if(!error)error=storage_spare_status(guid,sizeof(guid),0);
         if(!error)note("Public dRAID spare refusal PASS absent=1 original-online=1 spare-available=1\n");
     }
+    if(!error&&storage_sequential){
+        if(storage_request(13,"public_mirror",guid,"rebuild=invalid")!=EINVAL)error=EIO;
+        if(!error)error=storage_spare_status(guid,sizeof(guid),0);
+        if(!error)note("Public sequential option refusal PASS invalid=1 original-online=1\n");
+    }
     if(!error)error=storage_repair_data("OZPUBLIC:",1);
     if(!error&&cli_command("C:zpool sync public_mirror"))error=EIO;
     if(!error)error=storage_request(16,"public_mirror",guid,NULL);
-    if(!error)error=storage_request(13,"public_mirror",guid,NULL);
+    if(!error&&storage_sequential&&cli_command("C:zpool set feature@device_rebuild=enabled public_mirror"))error=EIO;
+    if(!error)error=storage_request(13,"public_mirror",guid,storage_sequential?"rebuild=on":NULL);
     if(!error&&cli_command("C:zpool wait -t resilver public_mirror"))error=EIO;
+    if(!error&&storage_sequential&&cli_command("C:zpool scrub -w public_mirror"))error=EIO;
     if(!error)for(unsigned i=0;i<120;i++){
         error=storage_spare_status(guid,sizeof(guid),1);
         if(error!=EAGAIN)break;
         Delay(50);
     }
     if(!error)note("Public dRAID spare PASS offline=1 inuse=1 finished=1 errors=0\n");
+    if(!error&&storage_sequential)note("Public sequential rebuild PASS complete=1 rebuilt-nonzero=1 errors=0 scrub-finished=1\n");
     return error;
 }
 static int storage_sparse64(const char *root,int write)
@@ -1201,6 +1222,11 @@ static int storage_cold_once(void)
 {
     int error=storage_alias_request(7,1);
     if(error)return error;
+    if(storage_sequential){
+        char guid[32];error=storage_spare_status(guid,sizeof(guid),1);
+        if(error)return error;
+        note("Public cold sequential status PASS complete=1 rebuilt-nonzero=1 scrub-finished=1\n");
+    }
     BPTR marker=Lock((CONST_STRPTR)"SYS:openzfs-gui-snapshot-required",SHARED_LOCK);
     if(marker){
         UnLock(marker);
@@ -1367,11 +1393,14 @@ int main(int argc,char **argv){
     struct Library *secBase=NULL;int logged=0;
     int gui=argc==2&&!strcmp(argv[1],"GUI");
     int cold=argc==2&&!strcmp(argv[1],"STORAGE-COLD");
+    marker=Lock((CONST_STRPTR)"SYS:openzfs-sequential-test",SHARED_LOCK);
+    if(marker){UnLock(marker);storage_sequential=1;}
     marker=Lock((CONST_STRPTR)"SYS:openzfs-dspare-test",SHARED_LOCK);
     if(marker){
         UnLock(marker);storage_dspare=1;
         if(!native_file_fixture||storage_layout!=OZ_DRAID)return 20;
     }
+    if(storage_sequential&&!storage_dspare)return 20;
     marker=Lock((CONST_STRPTR)"SYS:openzfs-replacement-test",SHARED_LOCK);
     if(marker){
         UnLock(marker);storage_replace=1;storage_replaced=cold;
@@ -1510,6 +1539,13 @@ int main(int argc,char **argv){
         note("Public mutation requires authenticated admission PASS\n");
     }
     if(storage)CHECK(!(cold?storage_cold_test():storage_test(gui)));
+    if(storage&&native_file_fixture){
+        /* Close the disposable FAT backing volume after all pools export.
+         * DOS file Flush does not drain deferred FAT directory renames.
+         * The runner may quit QEMU as soon as it sees the final PASS. */
+        CHECK(Inhibit((CONST_STRPTR)"OZBACK:",DOSTRUE));
+        note("Public backing clean detach PASS\n");
+    }
     /* Signal only the service addressed and verified above in the marked,
      * diskless private guest. No mounted endpoints or pools exist here. */
     Forbid();struct MsgPort *port=FindPort((CONST_STRPTR)OZ_PORT);

@@ -213,6 +213,7 @@ int oz_admitted_capture(struct DosPacket *packet, struct MsgPort *service,
         /* The bound send adapter validates its complete option grammar before
          * opening output. Do not duplicate its former from-only grammar here. */
         (m->operation==60||m->operation==61||m->operation==37||m->operation==5||m->operation==15||m->operation==16)?0:m->operation==43?(strcmp(m->options,"readonly=on")&&strcmp(m->options,"readonly=off")):
+        (m->operation==11||m->operation==13)?(m->options[0]&&strcmp(m->options,"rebuild=on")):
         m->operation==42?(m->options[0]&&strcmp(m->options,"received=on")):
         m->operation==24?(m->options[0]&&strcmp(m->options,"scrub_restart=on")&&strcmp(m->options,"scrub_restart=off")):m->options[0]!=0) || (m->cursor&&m->operation!=33) || m->job_id)
         error = ENOTSUP;

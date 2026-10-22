@@ -29,7 +29,7 @@ static void role(nvlist_t *v,unsigned r)
 /* A distributed spare is already owned by the pool. Reuse the CLI's strict
  * live-inventory admission rather than passing its name to file preflight. */
 static int replace_distributed_spare(struct oz_message *m,uint64_t guid,
-    cred_t *caller,const struct oz_packet_security *security)
+    cred_t *caller,const struct oz_packet_security *security,boolean_t rebuild)
 {
     nvlist_t *root=fnvlist_alloc(),*leaf=fnvlist_alloc();
     fnvlist_add_string(root,ZPOOL_CONFIG_TYPE,VDEV_TYPE_ROOT);
@@ -42,7 +42,7 @@ static int replace_distributed_spare(struct oz_message *m,uint64_t guid,
     if(!error)error=oz_cli_attach_begin(m->target,guid,1,packed,size,caller,security,&reservation);
     if(!error)error=spa_open(m->target,&spa,FTAG);
     if(!error)error=oz_cred_push(caller,&scope);
-    if(!error)error=spa_vdev_attach(spa,guid,root,B_TRUE,B_FALSE);
+    if(!error)error=spa_vdev_attach(spa,guid,root,B_TRUE,rebuild);
     if(scope)VERIFY0(oz_cred_pop(scope));
     if(spa)spa_close(spa,FTAG);
     if(reservation)oz_cli_add_end(reservation,error);
@@ -65,7 +65,8 @@ static int pool_files_change(struct oz_message *m,cred_t *caller,
         temporary=m->options+6;
     }
     char why[128];
-    if(m->flags!=OZ_CONFIRMED||((!operation||operation==3)&&m->argument[0])||(operation&&m->options[0])||
+    boolean_t rebuild=(operation==1||operation==2)&&!strcmp(m->options,"rebuild=on");
+    if(m->flags!=OZ_CONFIRMED||((!operation||operation==3)&&m->argument[0])||(operation&&m->options[0]&&!rebuild)||
         (operation==3?oz_validate_add_topology(&m->topology,why,sizeof(why)):
         oz_validate_topology(&m->topology,why,sizeof(why)))!=OZ_OK)return EINVAL;
     struct oz_topology *t=&m->topology;
@@ -79,7 +80,7 @@ static int pool_files_change(struct oz_message *m,cred_t *caller,
     }
     if(operation==2&&!strncmp(t->devices[0].path,"draid",5)&&
         !strchr(t->devices[0].path,':')&&!strchr(t->devices[0].path,'/'))
-        return replace_distributed_spare(m,guid,caller,security);
+        return replace_distributed_spare(m,guid,caller,security,rebuild);
     BPTR locks[OZ_MAX_DEVICES]={0},parents[OZ_MAX_DEVICES]={0};
     boolean_t native[OZ_MAX_DEVICES]={0},has_native=B_FALSE;
     nvlist_t *leaves[OZ_MAX_DEVICES]={0},*groups[OZ_MAX_GROUPS]={0};
@@ -233,13 +234,13 @@ static int pool_files_change(struct oz_message *m,cred_t *caller,
             oz_cli_add_begin(m->target,packed_root,root_size,caller,security,&reservation):
             oz_cli_create_begin(m->target,packed_root,root_size,packed_props,props_size,caller,security,&reservation);
         if(!error)error=operation==3?spa_vdev_add(spa,root,B_TRUE):operation?
-            spa_vdev_attach(spa,guid,root,operation==2,B_FALSE):spa_create(m->target,root,props,NULL,NULL);
+            spa_vdev_attach(spa,guid,root,operation==2,rebuild):spa_create(m->target,root,props,NULL,NULL);
         if(reservation) {
             if(operation)oz_cli_add_end(reservation,error);
             else error=oz_cli_import_end(reservation,error);
         }
         free(packed_root);free(packed_props);
-    } else error=operation==3?spa_vdev_add(spa,root,B_TRUE):operation?spa_vdev_attach(spa,guid,root,operation==2,B_FALSE):
+    } else error=operation==3?spa_vdev_add(spa,root,B_TRUE):operation?spa_vdev_attach(spa,guid,root,operation==2,rebuild):
         spa_create(m->target,root,props,NULL,NULL);
 done:
     for(unsigned i=0;i<t->device_count;i++)oz_vdev_policy_extend_end(policy_added[i],error);

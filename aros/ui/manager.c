@@ -51,7 +51,7 @@ static Object *runtime_check;
 static Object *devices_button;
 static Object *startup_button;
 static char resume_token[sizeof(((struct oz_message *)0)->options)-sizeof("resume=")+1];
-static Object *property,*property_value,*use_property,*recursive,*force,*dryrun,*raw,*resumable;
+static Object *property,*property_value,*use_property,*recursive,*force,*dryrun,*raw,*resumable,*sequential;
 static struct oz_message last_request;
 static struct oz_topology pool_layout,import_files,pool_add_layout;
 static UQUAD next_cursor;
@@ -145,6 +145,9 @@ static void select_operation(void) {
     IPTR n=value(actions,MUIA_List_Active);
     if(n>=visible_count)return;
     selected=visible[n];
+    int can_rebuild=oz_operations[selected].id==11||oz_operations[selected].id==13;
+    set(sequential,MUIA_Disabled,!can_rebuild);
+    if(!can_rebuild)set(sequential,MUIA_Selected,FALSE);
     if(simple_mode()) {
         set(options,MUIA_String_Contents,oz_operations[selected].id==43?"readonly=on":"");
         set(argument,MUIA_String_Contents,"");
@@ -267,6 +270,7 @@ static void fill_request(struct oz_message *m) {
         if(strlen(string(options))<sizeof(m->topology.devices[0].path))
             strcpy(m->topology.devices[0].path,string(options));
         m->options[0]=0;
+        if(value(sequential,MUIA_Selected))strcpy(m->options,"rebuild=on");
     }
 }
 static void send_request(ULONG operation,int preview_only) {
@@ -494,6 +498,7 @@ int main(int argc,char **argv) {
                         Child,dryrun=make_check(TRUE),Child,Label1("Dry-run"),
                         Child,raw=make_check(FALSE),Child,Label1("Raw"),
                         Child,resumable=make_check(FALSE),Child,Label1("Resume"),
+                        Child,sequential=make_check(FALSE),Child,Label1("Sequential"),
                         Child,HSpace(0),
                     End,
                     Child,HGroup,Child,preview=SimpleButton("Preview request"),Child,execute=SimpleButton("Send request"),End,
@@ -621,6 +626,7 @@ int main(int argc,char **argv) {
             set(options,MUIA_String_Contents,opt);
             set(recursive,MUIA_Selected,FALSE);set(force,MUIA_Selected,FALSE);
             set(raw,MUIA_Selected,FALSE);set(resumable,MUIA_Selected,FALSE);
+            set(sequential,MUIA_Selected,FALSE);
             set(status,MUIA_Text_Contents,"Token copied: choose source snapshot and output; add from= for an incremental base");
             logline("Resume token copied to send options; nothing submitted");
         }break;

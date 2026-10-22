@@ -124,6 +124,9 @@ ULONG oz_validate(const struct oz_message *m,char *why,unsigned size) {
     if(error) {snprintf(why,size,"%s",error);return status;}
     if(m->operation==9)return oz_validate_add_topology(&m->topology,why,size);
     if(m->operation==11||m->operation==13) {
+        if(m->options[0]&&strcmp(m->options,"rebuild=on")){
+            snprintf(why,size,"Attach/replace accepts only rebuild=on or empty options");return OZ_BAD_REQUEST;
+        }
         if(m->topology.group_count!=1||m->topology.device_count!=1||
             m->topology.groups[0].role!=OZ_DATA||m->topology.groups[0].layout!=OZ_STRIPE) {
             snprintf(why,size,"Attach/replace requires exactly one new file in a data/stripe group");

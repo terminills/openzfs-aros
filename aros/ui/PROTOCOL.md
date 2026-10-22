@@ -85,6 +85,28 @@ That run remains retained; production engine code was not changed to pass it.
 
 ## Typed native replacement and attach (2026-09-27)
 
+### Sequential reconstruction
+
+Operations 11/13 accept empty options for healing resilver or the exact
+`rebuild=on` option for upstream sequential reconstruction. Other options
+are rejected by both public validation and authenticated admission. Manager
+offers a Sequential checkbox only for attach/replace; it emits this option
+separately from the backing/spare path. The API does not enable pool features
+automatically. Upstream requires `feature@device_rebuild` and a supported
+topology, and continues to enforce checkpoint/activity conflicts.
+
+Pool status exposes top-level `rebuild` rows from upstream rebuild statistics.
+`used` is scanned bytes, `total` is the estimate, and `available` is the
+remaining estimate, not filesystem capacity. The value contains GUID,
+issued/rebuilt byte counts, errors and start/end times. States are ACTIVE,
+COMPLETE, CANCELED or UNKNOWN. Only upstream COMPLETE produces 1000 permille;
+reaching an estimated byte total during ACTIVE does not prove completion.
+Rebuild rows participate in ordinary status pagination, and malformed short
+statistics arrays are refused rather than read past their end.
+
+Sequential reconstruction does not verify data checksums. A successful
+rebuild is not a successful scrub; request and verify the latter separately.
+
 ### Existing distributed-spare replacement
 
 Operation 13 also accepts an existing distributed-spare name, such as

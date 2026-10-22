@@ -38,6 +38,10 @@ struct oz_topology {
  * operation-specific row kinds extend the API without changing wire layout. */
 struct oz_row { char kind[24],name[160],parent[160],state[48],value[256];
     UQUAD used,available,total; ULONG progress_permille; };
+/* rebuild rows: used=scanned bytes, total=estimated bytes to scan,
+ * available=remaining estimate. value carries issued/rebuilt/errors/times.
+ * COMPLETE comes from upstream rebuild state, never estimated byte equality.
+ * Sequential rebuild is not a checksum scrub; inspect scrub separately. */
 /* Exact property queries may return kind=property-long. The complete value
  * is message.detail (no prose prefix), total is its byte length, and row.value
  * is display guidance only. Values exceeding detail capacity fail explicitly. */

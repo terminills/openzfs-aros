@@ -31,6 +31,8 @@ replace=${AROS_TEST_REPLACE:-0}
 [[ $replace == 0 || ( $replace == 1 && $layout == mirror && $persistent == 1 && -n $cli_dir ) ]]
 dspare=${AROS_TEST_DSPARE:-0}
 [[ $dspare == 0 || ( $dspare == 1 && $layout == draid[123] && $persistent == 1 && -n $cli_dir ) ]]
+sequential=${AROS_TEST_SEQUENTIAL:-0}
+[[ $sequential == 0 || ( $sequential == 1 && $dspare == 1 ) ]]
 gui=${AROS_PUBLIC_GUI:-0}
 cpus=${AROS_TEST_CPUS:-2}
 qemu=${AROS_TEST_QEMU:-qemu-system-x86_64}
@@ -56,6 +58,9 @@ if [[ $replace == 1 ]];then
 fi
 if [[ $dspare == 1 ]];then
     extra_maps+=(-map aros/engine/public-service-test-only /openzfs-dspare-test)
+fi
+if [[ $sequential == 1 ]];then
+    extra_maps+=(-map aros/engine/public-service-test-only /openzfs-sequential-test)
 fi
 if [[ -n $shared ]];then
     shared=$(realpath -e "$shared")
@@ -376,8 +381,12 @@ if [[ $persistent == 1 ]];then
     if [[ $layout == mirror && -n $cli_dir ]];then
         rg -q '^Public mirror resilver PASS offline=1 missed-write=1 online=1 finished=1 issued-nonzero=1 errors=0' "$run/serial-results.log"
     fi
+    rg -q '^Public backing clean detach PASS' "$run/serial-results.log"
     if [[ $dspare == 1 ]];then
         rg -q '^Public dRAID spare PASS offline=1 inuse=1 finished=1 errors=0' "$run/serial-results.log"
+    fi
+    if [[ $sequential == 1 ]];then
+        rg -q '^Public sequential rebuild PASS complete=1 rebuilt-nonzero=1 errors=0 scrub-finished=1' "$run/serial-results.log"
     fi
     if [[ $replace == 1 ]];then
         rg -q '^Public mirror replacement PASS new-guid=1 old-absent=1 leaves=2 finished=1 errors=0' "$run/serial-results.log"
@@ -430,6 +439,7 @@ if [[ $persistent == 1 ]];then
     printf 'quit\n' | socat - "UNIX-CONNECT:$run/cold-monitor" >/dev/null
     wait "$pid"
     trap - EXIT
+    rg -q '^Public backing clean detach PASS' "$run/cold-results.log"
     if [[ $layout == mirror && -n $cli_dir ]];then
         [[ $(rg -c '^Public cold resilver payload PASS bytes=1048576 exact=1' "$run/cold-results.log") == 3 ]]
     fi
@@ -441,6 +451,9 @@ if [[ $persistent == 1 ]];then
         rg -q '^Public cold dRAID spare PASS original-absent=1 exact=1' "$run/cold-results.log"
         rg -q "^Public cold dRAID rebuilt redundancy PASS missing=$((missing+1)) exact=1 restored=1" "$run/cold-results.log"
         [[ $(rg -c '^Public cold resilver payload PASS bytes=1048576 exact=1' "$run/cold-results.log") == 4 ]]
+    fi
+    if [[ $sequential == 1 ]];then
+        [[ $(rg -c '^Public cold sequential status PASS complete=1 rebuilt-nonzero=1 scrub-finished=1' "$run/cold-results.log") == 4 ]]
     fi
     for ((member=0;member<members;member++));do
         suffix=;if [[ $replace == 1 && $member == 0 ]];then suffix=-new;fi

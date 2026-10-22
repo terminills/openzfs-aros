@@ -221,6 +221,31 @@ static int device_rows(nvlist_t *nv,const char *parent,const char *role,
             (unsigned long long)vs->vs_read_errors,(unsigned long long)vs->vs_write_errors,
             (unsigned long long)vs->vs_checksum_errors,(unsigned long long)parity);
     }
+    uint64_t *rebuild_raw;uint_t rebuild_count;
+    if(!nvlist_lookup_uint64_array(nv,ZPOOL_CONFIG_REBUILD_STATS,&rebuild_raw,&rebuild_count)){
+        if(rebuild_count<=offsetof(vdev_rebuild_stat_t,vrs_errors)/sizeof(uint64_t))return EINVAL;
+        vdev_rebuild_stat_t rebuild={0};
+        memcpy(&rebuild,rebuild_raw,MIN(sizeof(rebuild),(size_t)rebuild_count*sizeof(uint64_t)));
+        if(rebuild.vrs_state!=VDEV_REBUILD_NONE){
+            index=page->index++;
+            if(index>=page->m->cursor){
+                if(page->m->row_count==OZ_MAX_ROWS){page->m->next_cursor=index;page->full=1;return ECANCELED;}
+                struct oz_row *r=&page->m->rows[page->m->row_count++];
+                strcpy(r->kind,"rebuild");strcpy(r->name,name);strcpy(r->parent,parent);
+                strcpy(r->state,rebuild.vrs_state==VDEV_REBUILD_ACTIVE?"ACTIVE":
+                    rebuild.vrs_state==VDEV_REBUILD_COMPLETE?"COMPLETE":
+                    rebuild.vrs_state==VDEV_REBUILD_CANCELED?"CANCELED":"UNKNOWN");
+                r->used=rebuild.vrs_bytes_scanned;r->total=rebuild.vrs_bytes_est;
+                r->available=r->total>r->used?r->total-r->used:0;
+                r->progress_permille=rebuild.vrs_state==VDEV_REBUILD_COMPLETE?1000:
+                    (r->total?(r->used>=r->total?999:(ULONG)((long double)r->used*1000/r->total)):0);
+                snprintf(r->value,sizeof(r->value),"guid=%llu issued=%llu rebuilt=%llu errors=%llu start=%llu end=%llu",
+                    (unsigned long long)guid,(unsigned long long)rebuild.vrs_bytes_issued,
+                    (unsigned long long)rebuild.vrs_bytes_rebuilt,(unsigned long long)rebuild.vrs_errors,
+                    (unsigned long long)rebuild.vrs_start_time,(unsigned long long)rebuild.vrs_end_time);
+            }
+        }
+    }
     uint64_t *init_raw;uint_t init_count;
     if(!nvlist_lookup_uint64_array(nv,ZPOOL_CONFIG_VDEV_STATS,&init_raw,&init_count)&&
         VDEV_STAT_VALID(vs_initialize_action_time,init_count)) {

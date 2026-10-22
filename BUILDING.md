@@ -505,6 +505,36 @@ two missing original files still allowed import and exact payload reads.
 The test now verifies that recovered redundancy and uses complete member
 loss for its refusal check; it does not equate successful import with health.
 
+### Sequential reconstruction qualification
+
+Typed attach/replace accepts `rebuild=on`; the Manager's Sequential checkbox
+emits that option without changing the backing/spare path. Empty options keep
+healing resilver. Validation and authenticated admission reject other options.
+Pool features are not silently enabled by this API. Upstream decides whether
+the selected topology and pool features support sequential reconstruction.
+Status now includes paginated `rebuild` rows with actual upstream state,
+scanned/estimated bytes, issued/rebuilt bytes, errors and timestamps. Only
+COMPLETE reaches 1000 permille; a byte estimate is not a completion signal.
+
+Run with `AROS_TEST_LAYOUT=draid1 AROS_TEST_DSPARE=1 AROS_TEST_SEQUENTIAL=1`
+to enable the disposable pool's device_rebuild feature and exercise this API.
+`public-service-run.vcM2THBN` passes: malformed-option refusal, real sequential
+spare rebuild (356,352 rebuilt bytes, zero errors), explicit checksum scrub,
+and the full cold-data/redundancy sequence. All four cold imports retain the
+COMPLETE rebuild row and finished scrub statistics. Member hashes are unchanged
+and independent zdb reports no leaks. The same engine's ordinary mirror
+replacement regression passes in `public-service-run.aemGct9B`.
+
+The earlier `KjZrOMU7` failure exposed the missing admission-option allowance.
+`mtRJyGCZ` passed guest checks but failed host extraction because FAT still
+cached restored directory names when QEMU quit. Native file fixtures now
+explicitly inhibit their disposable FAT backing volume after all pools export,
+before emitting PASS; the runner requires that clean-detach marker in writer
+and cold reader. This is clean shutdown, not power-loss qualification, and
+does not change the filesystem driver to hide a failure. All failed evidence
+is retained. The new Sequential control is rebuilt but not yet interactively
+qualified; native attach and higher-parity sequential runs remain separate.
+
 ## Requirements
 
 - Linux build host with Bash, Git, Make, GCC-compatible AROS cross tools, binutils,
