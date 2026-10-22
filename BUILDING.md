@@ -286,6 +286,17 @@ confirmed the three RAIDZ pools' actual parity and member counts. These checks
 cover normal exports and degraded read-only reimports; they do not establish
 every topology, parity reconstruction during writes, or abrupt-loss recovery.
 
+The current acceptance client also creates a sparse file of 4 GiB + 4096
+bytes through native 64-bit DOS packets. It writes a marker across the 4 GiB
+boundary, verifies zero-filled holes, exact size and data, and checks that a
+legacy 32-bit seek refuses overflow without changing the position. The same
+checks run against full/incremental received datasets and fresh-boot healthy
+and degraded read-only mounts, including resize denial on read-only datasets.
+`public-service-run.dl2KyDaV` passed this final suite and independent host zdb;
+`WwsWdvA9` passed the earlier cold checks before replication assertions were
+added. This allocates only sparse payload blocks: it does not qualify sustained
+4 GiB writes, an 18 GB directory copy, or physical USB throughput.
+
 Prefer a coherent SDK and genmodule pair; do not define missing ABI constants
 in this project. Handler/device compilation is not runtime qualification.
 

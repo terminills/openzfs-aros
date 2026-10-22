@@ -11,6 +11,7 @@
 #include <proto/security.h>
 #include <libraries/security.h>
 #include <dos/dostags.h>
+#include <dos/dosextens.h>
 #include <exec/memory.h>
 #include <hidd/storage.h>
 #include <errno.h>
@@ -531,6 +532,31 @@ static int cli_result(const char *command,const char *expected)
     while(count>0&&(text[count-1]=='\n'||text[count-1]=='\r'))text[--count]=0;
     return strcmp(text,expected)?EIO:0;
 }
+static int storage_sparse64(const char *root,int write)
+{
+    char path[96];snprintf(path,sizeof(path),"%slarge-sparse.bin",root);
+    BPTR file=Open((CONST_STRPTR)path,write?MODE_NEWFILE:MODE_OLDFILE);
+    if(!file)return EIO;
+    struct FileHandle *fh=BADDR(file);
+    const uint64_t boundary=UINT64_C(0x100000000),size=boundary+4096;
+    int error=0;const char payload[]="Across the 4 GiB boundary";
+#define SPACKET(action,offset,mode) DoPkt(fh->fh_Type,action,fh->fh_Arg1,(IPTR)(offset),mode,0,0)
+    if(write){
+        if(!SPACKET(ACTION_CHANGE_FILE_SIZE64,size,OFFSET_BEGINNING)||
+            !SPACKET(ACTION_CHANGE_FILE_POSITION64,boundary-8,OFFSET_BEGINNING)||
+            Write(file,payload,sizeof(payload))!=sizeof(payload)||!Flush(file))error=EIO;
+    }else if(SPACKET(ACTION_CHANGE_FILE_SIZE64,size+1,OFFSET_BEGINNING)||IoErr()!=ERROR_DISK_WRITE_PROTECTED)error=EIO;
+    if(!error&&SPACKET(ACTION_GET_FILE_SIZE64,0,0)!=(SIPTR)size)error=EIO;
+    unsigned char bytes[64],expected[64]={0};memcpy(expected+8,payload,sizeof(payload));
+    if(!error&&(!SPACKET(ACTION_CHANGE_FILE_POSITION64,boundary-16,OFFSET_BEGINNING)||
+        Read(file,bytes,sizeof(bytes))!=sizeof(bytes)||memcmp(bytes,expected,sizeof(bytes))))error=EIO;
+    if(!error&&(Seek(file,0,OFFSET_BEGINNING)!=-1||IoErr()!=ERROR_OBJECT_TOO_LARGE||
+        SPACKET(ACTION_GET_FILE_POSITION64,0,0)!=(SIPTR)(boundary+48)))error=EIO;
+    if(!Close(file))error=EIO;
+#undef SPACKET
+    if(!error){char line[128];snprintf(line,sizeof(line),"Public sparse64 PASS write=%d boundary=4294967296 size=4294971392 holes=1 legacy-refused=1\n",write);note(line);}
+    return error;
+}
 static int storage_test(int gui){
     int error=0;BPTR file=0,lock=CreateDir((CONST_STRPTR)storage_directory);
     if(!lock)return EIO;
@@ -647,6 +673,7 @@ static int storage_test(int gui){
     file=Open((CONST_STRPTR)"OZPUBLIC:hello.txt",MODE_OLDFILE);STORAGE_CHECK(file);
     STORAGE_CHECK(Read(file,actual,sizeof(actual))==sizeof(storage_payload)-1&&!memcmp(actual,payload,sizeof(storage_payload)-1));
     STORAGE_CHECK(Close(file));file=0;
+    STORAGE_CHECK(!storage_sparse64("OZPUBLIC:",1));
     {
         char dataset[256];
         STORAGE_CHECK(!oz_mounts_dataset_for_path(OZ_ADMISSION_PORT,"OZPUBLIC:hello.txt",dataset,sizeof(dataset)));
@@ -707,6 +734,7 @@ static int storage_test(int gui){
         STORAGE_CHECK(cli_command("C:zfs send public_mirror/cli_renamed@rollback >T:cli-replication.zfs")==0);
         STORAGE_CHECK(cli_command("C:zfs receive -u -o mountpoint=none public_mirror/cli_received <T:cli-replication.zfs")==0);
         STORAGE_CHECK(!oz_mount_control(OZ_ADMISSION_PORT,"public_mirror/cli_received","OZCLIRECV",OZ_MOUNT_ATTACH,OZ_MOUNT_READONLY));
+        STORAGE_CHECK(!storage_sparse64("OZCLIRECV:",0));
         file=Open((CONST_STRPTR)"OZCLIRECV:hello.txt",MODE_OLDFILE);STORAGE_CHECK(file);
         STORAGE_CHECK(Read(file,actual,sizeof(actual))==sizeof(storage_payload)-1&&!memcmp(actual,payload,sizeof(storage_payload)-1));
         STORAGE_CHECK(Close(file));file=0;
@@ -722,6 +750,7 @@ static int storage_test(int gui){
         STORAGE_CHECK(cli_command("C:zfs send -i public_mirror/cli_renamed@rollback public_mirror/cli_renamed@incremental >T:cli-incremental.zfs")==0);
         STORAGE_CHECK(cli_command("C:zfs receive -u public_mirror/cli_received <T:cli-incremental.zfs")==0);
         STORAGE_CHECK(!oz_mount_control(OZ_ADMISSION_PORT,"public_mirror/cli_received","OZCLIINCRO",OZ_MOUNT_ATTACH,OZ_MOUNT_READONLY));
+        STORAGE_CHECK(!storage_sparse64("OZCLIINCRO:",0));
         file=Open((CONST_STRPTR)"OZCLIINCRO:incremental.txt",MODE_OLDFILE);STORAGE_CHECK(file);
         STORAGE_CHECK(Read(file,actual,sizeof(actual))==sizeof(storage_payload)-1&&!memcmp(actual,payload,sizeof(storage_payload)-1));
         STORAGE_CHECK(Close(file));file=0;
@@ -829,6 +858,8 @@ static int storage_cold_once(void)
     file=Open((CONST_STRPTR)"OZCOLD:denied.txt",MODE_NEWFILE);
     if(file){Close(file);return EIO;}
     if(IoErr()!=ERROR_DISK_WRITE_PROTECTED)return EIO;
+    error=storage_sparse64("OZCOLD:",0);
+    if(error)return error;
     error=oz_mount_control(OZ_ADMISSION_PORT,"public_mirror/files","",OZ_MOUNT_DETACH,0);
     if(!error)error=storage_request(8,"public_mirror",NULL,NULL);
     if(!error)note("Public cold hosted DOS PASS exact=1 readonly-refusal=1 exported=1\n");
