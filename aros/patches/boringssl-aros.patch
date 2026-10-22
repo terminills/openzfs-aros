@@ -1,0 +1,53 @@
+diff --git a/crypto/internal.h b/crypto/internal.h
+--- a/crypto/internal.h
++++ b/crypto/internal.h
+@@ -1170,7 +1170,8 @@ static inline uint64_t CRYPTO_rotr_u64(uint64_t value, int shift) {
+ 
+ // CRYPTO_addc_* returns |x + y + carry|, and sets |*out_carry| to the carry
+ // bit. |carry| must be zero or one.
+-#if OPENSSL_HAS_BUILTIN(__builtin_addc)
++#if OPENSSL_HAS_BUILTIN(__builtin_addc) && \
++    !(defined(OPENSSL_AROS) && defined(__cplusplus))
+ 
+ #define CRYPTO_GENERIC_ADDC(x, y, carry, out_carry) \
+   (_Generic((x),                                    \
+@@ -1222,7 +1223,8 @@ static inline uint64_t CRYPTO_addc_u64(uint64_t x, uint64_t y, uint64_t carry,
+ 
+ // CRYPTO_subc_* returns |x - y - borrow|, and sets |*out_borrow| to the borrow
+ // bit. |borrow| must be zero or one.
+-#if OPENSSL_HAS_BUILTIN(__builtin_subc)
++#if OPENSSL_HAS_BUILTIN(__builtin_subc) && \
++    !(defined(OPENSSL_AROS) && defined(__cplusplus))
+ 
+ #define CRYPTO_GENERIC_SUBC(x, y, borrow, out_borrow) \
+   (_Generic((x),                                      \
+diff --git a/crypto/x509/x509_def.c b/crypto/x509/x509_def.c
+--- a/crypto/x509/x509_def.c
++++ b/crypto/x509/x509_def.c
+@@ -60,6 +60,8 @@
+ 
+ #if defined(OPENSSL_FUCHSIA)
+ #define OPENSSLDIR "/config/ssl"
++#elif defined(__AROS__)
++#define OPENSSLDIR "PROGDIR:etc/ssl"
+ #else
+ #define OPENSSLDIR "/etc/ssl"
+ #endif
+diff --git a/include/openssl/target.h b/include/openssl/target.h
+--- a/include/openssl/target.h
++++ b/include/openssl/target.h
+@@ -172,6 +172,14 @@
+ #define OPENSSL_OPENBSD
+ #endif
+ 
++#if defined(__AROS__)
++#define OPENSSL_AROS
++// Chromium owns socket lifecycle and supplies TLS with custom BIOs. AROS
++// bsdsocket.library bases are task-owned, so BoringSSL's POSIX socket BIOs
++// cannot safely call the socket API without an explicit opener context.
++#define OPENSSL_NO_SOCK
++#endif
++
+ // BoringSSL requires platform's locking APIs to make internal global state
+ // thread-safe, including the PRNG. On some single-threaded embedded platforms,
+ // locking APIs may not exist, so this dependency may be disabled with the

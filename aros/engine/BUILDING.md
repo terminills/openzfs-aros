@@ -63,9 +63,20 @@ The prior frozen binary handoff was not overwritten.
 ### Building the crypto dependency independently
 
 `build-crypto.sh` builds BoringSSL's full `crypto` target in a private directory,
-without invoking Chromium's build or consuming its compiled archive. Select an
-AROS-compatible BoringSSL source tree explicitly; stock upstream source is not
-automatically patched or fetched. Host CMake, Ninja, Perl and Go are required.
+without invoking Chromium's build or consuming its compiled archive. Host
+CMake, Ninja, Perl and Go are required. To prepare its source independently:
+
+```sh
+bash aros/engine/prepare-crypto-source.sh
+```
+
+This fetches upstream BoringSSL commit
+`4fa4804c8ab4521079af62dba5260a99c34b8a29` into a new private checkout and applies
+`aros/patches/boringssl-aros.patch`. It prints the `AROS_CRYPTO_SOURCE` path to
+export below. `AROS_BORINGSSL_REPOSITORY` may select a local mirror, but the
+expected commit remains pinned. The helper never edits a supplied checkout.
+The pin reproduces the tested dependency, not a claim that it is the latest
+security-reviewed BoringSSL. Review and requalify upgrades separately.
 
 ```sh
 export AROS_CXX=/path/to/x86_64-aros-g++
@@ -105,6 +116,16 @@ pthread inputs and creates a new private evidence directory instead of
 overwriting a shared test binary. Pass its output executable through
 `AROS_TEST_PBKDF2_BINARY` to the native public-service runner; when supplied,
 that runner requires the known-answer PASS marker as well as its storage gates.
+
+The independent upstream fetch was subsequently tested end to end:
+`crypto-input.97AxCjOW` fetched the pinned commit from the default upstream
+URL and applied the bundled patch. Its non-Git files match the prior selected
+AROS-compatible source tree. Archive `crypto-source.bC1xHzNG`, known-answer
+test `pbkdf2-test.mwrxbwBR`, and shared candidate `shared-engine.gzDMgVs4`
+passed native run `public-service-run.tFEjoFyz`, including PBKDF2, the actual
+passphrase dataset, raw replication and cold mirror recovery. Host zdb reports
+no leaks and cold reads leave member files unchanged. This removes the need
+for a Chromium source checkout or compiled crypto archive from this path.
 
 Run the engine build from the checkout:
 
