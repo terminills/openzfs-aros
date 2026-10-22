@@ -319,6 +319,17 @@ uses public test bytes, not user credentials; it does not establish encrypted
 dataset persistence across reboot, passphrase derivation, raw encrypted send,
 or secure key-erasure behavior. Earlier historical crypto tests are separate.
 
+The subsequent native persistent test retains that encrypted dataset, with its
+key unloaded and both RAM key files deleted before export. The fresh guest
+requires `keystatus=unavailable` and a rejected read-only mount, recreates only
+the public fixture key in RAM, loads it, reads the exact original payload,
+detaches and unloads again. Healthy, degraded and restored imports all execute
+these checks. `public-service-run.SnOsxOLI` passed all three iterations and
+the surrounding package suite, unchanged-member comparisons and host zdb.
+This adds encrypted cold persistence on the tested virtual mirror; it still
+does not establish physical USB durability or secure erasure of key memory.
+Nonpersistent tests continue to destroy their encrypted dataset during cleanup.
+
 Prefer a coherent SDK and genmodule pair; do not define missing ABI constants
 in this project. Handler/device compilation is not runtime qualification.
 

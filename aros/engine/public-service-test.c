@@ -48,6 +48,7 @@ static int present(const char *name){Forbid();int found=FindPort((CONST_STRPTR)n
 static const char *storage_directory="RAM:OZPublicPool";
 static unsigned storage_members=2,storage_layout=OZ_MIRROR,storage_missing=1;
 static int storage_reply_received;
+static int native_file_fixture;
 static const char storage_payload[]="Public OpenZFS DOS payload\n";
 static int storage_request(unsigned op,const char *target,const char *argument,const char *options){
     storage_reply_received=0;
@@ -796,7 +797,7 @@ static int storage_test(int gui){
         STORAGE_CHECK(Close(file));file=0;
         STORAGE_CHECK(!oz_mount_control(OZ_ADMISSION_PORT,"public_mirror/encrypted","",OZ_MOUNT_DETACH,0));
         STORAGE_CHECK(cli_command("C:zfs unload-key public_mirror/encrypted")==0);
-        STORAGE_CHECK(cli_command("C:zfs destroy public_mirror/encrypted")==0);
+        if(!native_file_fixture)STORAGE_CHECK(cli_command("C:zfs destroy public_mirror/encrypted")==0);
         STORAGE_CHECK(DeleteFile((CONST_STRPTR)"RAM:public-test.key"));
         STORAGE_CHECK(DeleteFile((CONST_STRPTR)"RAM:public-wrong.key"));
         note("Public packaged encryption PASS create=1 unload=1 wrong-key-denied=1 reload=1 exact-read=1 cleanup=1\n");
@@ -855,6 +856,36 @@ done:
     if(error){char line[96];snprintf(line,sizeof(line),"Public storage failure=%d\n",error);note(line);}
     return error;
 }
+static int storage_encrypted_cold(void)
+{
+    if(!native_file_fixture)return 0;
+    BPTR marker=Lock((CONST_STRPTR)"SYS:openzfs-cli-package-test",SHARED_LOCK);
+    if(!marker)return 0;
+    UnLock(marker);
+    int error=cli_result("C:zfs get -H -o value keystatus public_mirror/encrypted >T:cli-package-output.txt","unavailable");
+    if(error)return error;
+    /* No cached key may leak across exports or a fresh boot. */
+    if(!oz_mount_control(OZ_ADMISSION_PORT,"public_mirror/encrypted","OZCRYPTCOLD",OZ_MOUNT_ATTACH,OZ_MOUNT_READONLY))return EIO;
+    unsigned char key[32];for(unsigned i=0;i<sizeof(key);i++)key[i]=(unsigned char)(i+1);
+    BPTR file=Open((CONST_STRPTR)"RAM:public-test.key",MODE_NEWFILE);
+    if(!file)return EIO;
+    if(Write(file,key,sizeof(key))!=sizeof(key))error=EIO;
+    if(!Close(file))error=EIO;
+    if(!error&&cli_command("C:zfs load-key -L file:///RAM/public-test.key public_mirror/encrypted"))error=EIO;
+    if(!DeleteFile((CONST_STRPTR)"RAM:public-test.key"))error=EIO;
+    if(error)return error;
+    error=oz_mount_control(OZ_ADMISSION_PORT,"public_mirror/encrypted","OZCRYPTCOLD",OZ_MOUNT_ATTACH,OZ_MOUNT_READONLY);
+    if(error)return error;
+    char bytes[sizeof(storage_payload)+1];file=Open((CONST_STRPTR)"OZCRYPTCOLD:payload",MODE_OLDFILE);
+    if(!file)return EIO;
+    LONG n=Read(file,bytes,sizeof(bytes));
+    if(!Close(file)||n!=sizeof(storage_payload)-1||memcmp(bytes,storage_payload,sizeof(storage_payload)-1))error=EIO;
+    int detached=oz_mount_control(OZ_ADMISSION_PORT,"public_mirror/encrypted","",OZ_MOUNT_DETACH,0);
+    if(!error)error=detached;
+    if(!error&&cli_command("C:zfs unload-key public_mirror/encrypted"))error=EIO;
+    if(!error)note("Public cold encryption PASS locked=1 mount-denied=1 load=1 exact-read=1 unload=1\n");
+    return error;
+}
 static int storage_cold_once(void)
 {
     int error=storage_alias_request(7,1);
@@ -894,6 +925,7 @@ static int storage_cold_once(void)
     error=storage_sparse64("OZCOLD:",0);
     if(error)return error;
     error=oz_mount_control(OZ_ADMISSION_PORT,"public_mirror/files","",OZ_MOUNT_DETACH,0);
+    if(!error)error=storage_encrypted_cold();
     if(!error)error=storage_request(8,"public_mirror",NULL,NULL);
     if(!error)note("Public cold hosted DOS PASS exact=1 readonly-refusal=1 exported=1\n");
     return error;
@@ -966,7 +998,7 @@ int main(int argc,char **argv){
         else if(strcmp(layout,"mirror"))return 20;
     }
     marker=Lock((CONST_STRPTR)"SYS:openzfs-native-file-fixture",SHARED_LOCK);
-    if(marker){UnLock(marker);storage_directory="OZBACK:OZPublicPool";}
+    if(marker){UnLock(marker);storage_directory="OZBACK:OZPublicPool";native_file_fixture=1;}
     marker=Lock((CONST_STRPTR)"SYS:openzfs-hosted-file-fixture",SHARED_LOCK);
     if(marker){
         UnLock(marker);storage_directory="EMU:OZPublicPool";
