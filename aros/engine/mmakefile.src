@@ -1,0 +1,46 @@
+include $(SRCDIR)/config/aros.cfg
+
+OZ_SOURCE := $(SRCDIR)/$(CURDIR)/../..
+OZ_NVPAIR_OBJ := $(GENDIR)/$(CURDIR)/nvpair
+OPENZFS_TIRPC_SOURCE ?=
+ifneq ($(filter contrib-openzfs-nvpair contrib-openzfs-nvpair-quick contrib-openzfs-nvpair-test contrib-openzfs-nvpair-test-quick,$(TARGET)),)
+ifeq ($(strip $(OPENZFS_TIRPC_SOURCE)),)
+$(error Set OPENZFS_TIRPC_SOURCE to the extracted libtirpc-1.3.7 source)
+endif
+endif
+OPENZFS_PTHREAD_INCLUDE ?= $(AROS_INCLUDES)
+OPENZFS_PTHREAD_LIBDIR ?= $(AROS_LIB)
+OPENZFS_NVPAIR_LIBDIR ?= $(AROS_LIB)
+OZ_NVPAIR_FLAGS := $(CFLAGS) -O2 -fno-strict-aliasing \
+    -Wno-sign-compare -Wno-unused-parameter -Wno-missing-field-initializers \
+    -Werror=implicit-function-declaration \
+    -include $(OZ_SOURCE)/aros/engine/config.h -include sys/sysmacros.h \
+    -I$(OPENZFS_PTHREAD_INCLUDE) -I$(OZ_SOURCE)/lib/libspl/include \
+    -I$(OZ_SOURCE)/lib/libspl/include/os/linux -I$(OZ_SOURCE)/include \
+    -I$(OPENZFS_TIRPC_SOURCE)/tirpc
+OZ_XDR_OBJECTS := $(addprefix $(OZ_NVPAIR_OBJ)/xdr/,$(addsuffix .o,xdr xdr_mem xdr_array xdr_float))
+OZ_NVPAIR_SOURCES := $(addprefix $(OZ_SOURCE)/,module/nvpair/nvpair module/nvpair/fnvpair module/nvpair/nvpair_alloc_fixed lib/libnvpair/nvpair_alloc_system lib/libspl/assert lib/libspl/backtrace)
+
+# Compile only the portable memory XDR codec, not the RPC network/auth stack.
+%rule_compile_multi mmake=contrib-openzfs-xdr \
+    basenames="$(addprefix $(OPENZFS_TIRPC_SOURCE)/src/,xdr xdr_mem xdr_array xdr_float)" \
+    srcdir="$(OPENZFS_TIRPC_SOURCE)/src" targetdir="$(OZ_NVPAIR_OBJ)/xdr" \
+    cflags="$(CFLAGS) -O2 -I$(OPENZFS_TIRPC_SOURCE)/tirpc"
+%rule_makedirs dirs="$(OZ_NVPAIR_OBJ)/xdr" setuptarget="$(OZ_XDR_OBJECTS) $(OZ_XDR_OBJECTS:.o=.d)"
+%include_deps depstargets="contrib-openzfs-nvpair contrib-openzfs-nvpair-quick" deps="$(OZ_XDR_OBJECTS:.o=.d)"
+
+#MM contrib-openzfs-nvpair : includes
+%build_linklib mmake=contrib-openzfs-nvpair libname=nvpair \
+    files="$(OZ_NVPAIR_SOURCES)" \
+    objs="$(OZ_XDR_OBJECTS)" \
+    objdir="$(OZ_NVPAIR_OBJ)" libdir="$(OPENZFS_NVPAIR_LIBDIR)" \
+    cflags="$(OZ_NVPAIR_FLAGS)"
+
+#MM contrib-openzfs-nvpair-test : contrib-openzfs-nvpair linklibs
+%build_prog mmake=contrib-openzfs-nvpair-test progname=OpenZFSNvpairTest \
+    files="nvpair-test" objdir="$(OZ_NVPAIR_OBJ)/test" \
+    objs="$(OPENZFS_NVPAIR_LIBDIR)/libnvpair.a" \
+    cflags="$(OZ_NVPAIR_FLAGS)" libdir="$(OPENZFS_PTHREAD_LIBDIR)" \
+    uselibs="pthread" targetdir="$(AROS_C)"
+
+%common

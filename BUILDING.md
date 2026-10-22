@@ -18,6 +18,8 @@ AROS Contrib build and regenerate its metamake files. Available targets:
 - `contrib-openzfs-startupmount`: `C/OpenZFSStartupMount`.
 - `contrib-openzfs-library`: `Libs/openzfs.library` and its generated import ABI.
 - `contrib-openzfs-service`: small `C/OpenZFSServiceNative` library launcher.
+- `contrib-openzfs-nvpair`: source-built `libnvpair.a` with memory XDR support.
+- `contrib-openzfs-nvpair-test`: native `C/OpenZFSNvpairTest` regression tool.
 
 Tools inherit the configured target compiler, SDK, flags and output directories.
 `OPENZFS_PTHREAD_INCLUDE` and `OPENZFS_PTHREAD_LIBDIR` can select matching private
@@ -31,7 +33,21 @@ Supply compatible dependency inputs using `OPENZFS_TIRPC_INCLUDE`,
 `OPENZFS_ZLIB_ARCHIVE`, and `OPENZFS_PTHREAD_ARCHIVE` when they are not installed
 in the configured SDK. `OPENZFS_PIPE2_OBJECT` optionally supplies the generated
 pipe2 import stub for older SDKs; it must match the target POSIX runtime.
-These dependencies are not yet fetched or built by the metamake targets.
+Most dependencies are not yet fetched or built by the metamake targets.
+For nvpair, run `contrib-openzfs-nvpair` with `OPENZFS_TIRPC_SOURCE` set to an
+extracted libtirpc 1.3.7 tree. The standalone nvpair builder documents and checks
+the pinned source archive hash; the metamake target uses the supplied source
+tree without downloading or modifying it. `OPENZFS_NVPAIR_LIBDIR` controls the
+archive installation directory (default: the target SDK library directory).
+The target builds upstream nvpair plus only four memory-XDR codec sources, not
+the RPC networking or authentication stack. Select this archive in subsequent
+CLI/library builds with `OPENZFS_NVPAIR_ARCHIVE` if using a private directory.
+
+The metamake-built native nvpair test passed allocation, nested lists, XDR
+encode/decode, exact 64-bit values, file output, and truncated-input rejection
+in isolated hosted AROS. The shared engine relinked with that archive also
+passed the persistent mirror/cold/degraded regression. This does not remove
+the need for compatible pthread, crypto, zlib, and AROS runtime dependencies.
 
 The library target currently requires `OPENZFS_ENGINE_OBJECT` naming the full
 source build's `full-engine.o` and `OPENZFS_SERVICE_BUILD` naming its `service/`
