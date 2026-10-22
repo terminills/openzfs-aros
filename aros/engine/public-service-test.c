@@ -509,6 +509,17 @@ static int storage_loader_test(int initially_enabled)
         "RESULT native loader execution policy PASS\n");
     return error;
 }
+static int cli_result(const char *command,const char *expected)
+{
+    if(SystemTags((CONST_STRPTR)command,TAG_DONE)!=0)return EIO;
+    BPTR file=Open((CONST_STRPTR)"SYS:cli-package-output.txt",MODE_OLDFILE);
+    if(!file)return EIO;
+    char text[256]={0};LONG count=Read(file,text,sizeof(text)-1);
+    int closed=Close(file);
+    if(count<0||!closed)return EIO;
+    while(count>0&&(text[count-1]=='\n'||text[count-1]=='\r'))text[--count]=0;
+    return strcmp(text,expected)?EIO:0;
+}
 static int storage_test(int gui){
     int error=0;BPTR file=0,lock=CreateDir((CONST_STRPTR)storage_directory);
     if(!lock)return EIO;
@@ -652,6 +663,17 @@ static int storage_test(int gui){
         STORAGE_CHECK(oz_mounts_record_for_root(OZ_ADMISSION_PORT,"OZPUBLIC:missing-file",&root_record)==ENOENT&&!root_record.dataset[0]);
         note("Public native root resolution PASS alias=1 file-rejected=1 unrelated=1 absent=1\n");
         note("Public native path dataset PASS file=1 alias=1 unrelated=1 absent=1 bounds=1\n");
+    }
+    BPTR cli_marker=Lock((CONST_STRPTR)"SYS:openzfs-cli-package-test",SHARED_LOCK);
+    if(cli_marker){
+        UnLock(cli_marker);
+        STORAGE_CHECK(!cli_result("C:zpool list -H -o name public_mirror >SYS:cli-package-output.txt","public_mirror"));
+        STORAGE_CHECK(!cli_result("C:zfs list -H -o name public_mirror/files >SYS:cli-package-output.txt","public_mirror/files"));
+        STORAGE_CHECK(!cli_result("C:zfs get -H -o value type public_mirror/files >SYS:cli-package-output.txt","filesystem"));
+        STORAGE_CHECK(SystemTags((CONST_STRPTR)"C:zfs snapshot public_mirror/files@cli_roundtrip",TAG_DONE)==0);
+        STORAGE_CHECK(!cli_result("C:zfs list -H -o name -t snapshot public_mirror/files@cli_roundtrip >SYS:cli-package-output.txt","public_mirror/files@cli_roundtrip"));
+        STORAGE_CHECK(SystemTags((CONST_STRPTR)"C:zfs destroy public_mirror/files@cli_roundtrip",TAG_DONE)==0);
+        note("Public packaged CLI PASS pool-list=1 dataset-list=1 property=1 snapshot-create-list-destroy=1\n");
     }
     if(gui){
         note("Public storage GUI ready: mounted public_mirror/files with hello.txt\n");

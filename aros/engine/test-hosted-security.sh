@@ -7,6 +7,11 @@ library=$(realpath -e "${AROS_TEST_SECURITY_LIBRARY:?private hosted security lib
 service=${AROS_TEST_HOSTED_SERVICE_BUILD:-}
 if [[ -n $service ]];then service=$(realpath -e "$service");fi
 mode=${AROS_TEST_HOSTED_SERVICE_MODE:-STORAGE}
+cli_dir=${AROS_TEST_CLI_DIR:-}
+if [[ -n $cli_dir ]];then
+    cli_dir=$(realpath -e "$cli_dir")
+    [[ -n $service && -f $cli_dir/zfs && -f $cli_dir/zpool ]]
+fi
 [[ $mode == STORAGE || $mode == GUI ]]
 if [[ $mode == GUI ]];then [[ -n $service ]];fi
 persistent=${AROS_TEST_HOSTED_PERSISTENT:-0}
@@ -63,6 +68,10 @@ if [[ -n $service ]];then
         cp "$shared/openzfs.library" "$run/Libs/"
     fi
     cp aros/engine/public-service-test.c "$run/"
+    if [[ -n $cli_dir ]];then
+        cp "$cli_dir/zfs" "$cli_dir/zpool" "$run/C/"
+        printf '%s\n' 'Actual CLI tests on the disposable public_mirror only' >"$run/openzfs-cli-package-test"
+    fi
     if [[ $mode == GUI ]];then cp "$service/OpenZFSManagerNative" "$run/C/";fi
     if [[ -n ${AROS_TEST_RUNTIME_CHECK:-} ]];then
         cp "$AROS_TEST_RUNTIME_CHECK" "$run/C/OpenZFSRuntimeCheck"
@@ -107,6 +116,7 @@ if [[ -n $service ]];then
     if [[ $mode == GUI ]];then sha256sum "$run/C/OpenZFSManagerNative" >>"$run/inputs.sha256";fi
 fi
 if [[ -n $shared ]];then sha256sum "$run/Libs/openzfs.library" >>"$run/inputs.sha256";fi
+if [[ -n $cli_dir ]];then sha256sum "$run/C/zfs" "$run/C/zpool" >>"$run/inputs.sha256";fi
 git rev-parse HEAD >"$run/source-head.txt"
 git diff --binary >"$run/source.patch"
 xpid=;guest=
@@ -144,6 +154,7 @@ fi
 rg -q '^RESULT hosted security login/logout PASS configured=1 uid77gid88=1 restored=1' "$run/security-test.log"
 if [[ -n $service ]];then
     rg -q 'RESULT public service storage PASS' "$run/serial.log"
+    if [[ -n $cli_dir ]];then rg -q 'Public packaged CLI PASS' "$run/serial.log";fi
 fi
 if [[ $persistent == 1 ]];then
     # The writer has reported orderly export. Stop only this private process

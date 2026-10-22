@@ -62,17 +62,19 @@ $(OZ_CLI_OBJ)/zfs_gitrev.h: $(OZ_SOURCE)/META
 $(OZ_CLI_OBJ)/check-file-generic.o: $(OZ_CLI_OBJ)/cmd/zpool/zpool_vdev.o
 	$(AROS_LD) -r --gc-sections -u check_file_generic $< -o $@
 
-$(addprefix $(OZ_CLI_OBJ)/,$(addsuffix .o,$(OZ_CLI_COMMON) \
+OZ_CLI_HEADER_USERS := $(addprefix $(OZ_CLI_OBJ)/,$(OZ_CLI_COMMON) \
     cmd/zfs/zfs_main cmd/zfs/zfs_iter cmd/zfs/zfs_project \
     cmd/zpool/zpool_main cmd/zpool/zpool_iter cmd/zpool/zpool_util cmd/zpool/zpool_vdev \
     aros/cli/startup aros/cli/startup-mount aros/ui/startup-import \
-    aros/ui/startup-settings aros/ui/startup-settings-file aros/ui/preferences aros/ui/preferences-file))): \
+    aros/ui/startup-settings aros/ui/startup-settings-file aros/ui/preferences aros/ui/preferences-file)
+$(addsuffix .o,$(OZ_CLI_HEADER_USERS)) $(addsuffix .d,$(OZ_CLI_HEADER_USERS)): \
     $(OZ_CLI_OBJ)/metadata.h $(OZ_CLI_OBJ)/zfs_gitrev.h
 
-$(OZ_CLI_OBJ)/startup-library/aros/cli/startup-mount.o: $(OZ_CLI_OBJ)/metadata.h $(OZ_CLI_OBJ)/zfs_gitrev.h
-$(OZ_CLI_OBJ)/startup-library/aros/cli/startup-mount.o: | $(OZ_CLI_OBJ)/startup-library/aros/cli
+$(OZ_CLI_OBJ)/startup-library/aros/cli/startup-mount.o $(OZ_CLI_OBJ)/startup-library/aros/cli/startup-mount.d: $(OZ_CLI_OBJ)/metadata.h $(OZ_CLI_OBJ)/zfs_gitrev.h
+$(OZ_CLI_OBJ)/startup-library/aros/cli/startup-mount.o $(OZ_CLI_OBJ)/startup-library/aros/cli/startup-mount.d: | $(OZ_CLI_OBJ)/startup-library/aros/cli
+$(OZ_CLI_OBJ)/cmd/zpool/zpool_vdev.o $(OZ_CLI_OBJ)/cmd/zpool/zpool_vdev.d: | $(OZ_CLI_OBJ)/cmd/zpool
 
-$(OZ_CLI_OBJ)/startup-library/aros/cli:
+$(OZ_CLI_OBJ)/startup-library/aros/cli $(OZ_CLI_OBJ)/cmd/zpool:
 	@$(MKDIR) $@
 
 $(AROS_C)/zfs $(AROS_C)/zpool $(AROS_C)/OpenZFSStartup $(AROS_C)/OpenZFSStartupMount: $(OZ_CLI_ARCHIVES)

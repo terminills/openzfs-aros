@@ -73,6 +73,21 @@ hosted persistent mirror, cold/degraded DOS read, and host `zdb` checks in
 source build; its hash is retained separately. This does not prove the complete
 aggregate target from a pristine AROS checkout or stock SDK compatibility.
 
+The complete `contrib-openzfs` MetaMake aggregate subsequently passed with
+initially empty OpenZFS object and staging directories, using a preconfigured
+hosted AROS SDK and explicitly supplied dependencies. This exposed and fixed
+missing aggregate make recipes and generated-header/directory prerequisites
+for CLI dependency files. Build evidence is retained in
+`mmake-clean-final-20261021/aggregate-build.log`. It is not a fresh OS/SDK build.
+The resulting library, launcher, `zfs`, and `zpool` passed isolated hosted
+pool/dataset listing, property retrieval, and snapshot creation/listing/destruction
+against disposable mirror files (`hosted-security-test.NJcLlGxE`). The same run
+passed cold and degraded DOS reads, independent host `zdb`, and unchanged-file
+hash checks. The freshly compiled test helper reused the earlier public-build
+client objects, with input hashes retained separately. Enable this packaged CLI
+coverage with `AROS_TEST_CLI_DIR` pointing to the staged `C` directory when
+running `aros/engine/test-hosted-security.sh` with a normal full service build.
+
 All four CLI/startup executables linked through the generated makefile.
 The resulting `zfs --version`, `zpool --version`, and repeated `zfs --version`
 ran in isolated hosted AROS and printed `zfs-2.4.4-1`. They returned 1 with no
