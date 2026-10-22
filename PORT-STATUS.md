@@ -51,8 +51,10 @@ busy-client ejection are refused. FAT inside a sparse zvol additionally passes
 format/write/read, DOS directory/volume enumeration and cold mirror
 healthy/degraded/restored reads, using the explicitly selected combined FAT
 flush/read-only overlay. The flush-only FAT runtime fails the cold disk-state
-protection check; stock-nightly compatibility must not be inferred. FFS and GUI
-volume publication remain separate current-package qualification gaps.
+protection check; stock-nightly compatibility must not be inferred. FFS passes
+the same current-package cold mirror lifecycle with its explicit private AFS
+shutdown fix and controlled cancellation of expected write-protection
+requesters. GUI volume publication remains a separate qualification gap.
 
 ## Implemented integration
 

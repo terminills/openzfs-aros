@@ -693,6 +693,34 @@ rejection alone is insufficient for a write-back filesystem. The selected old
 flush-only FAT handler lacked this correction. No OpenZFS engine/device code
 or test assertion was changed to bypass the failure.
 
+FFS follow-up `public-service-run.gjhbtU9u` passes the same public-package
+filesystem lifecycle with `AROS_TEST_ZVOL_FFS=1` and private AFS overlay
+`afs-zvol.QXh7pd4A`. The actual DOS type is checked as FFS. All three cold
+mirror imports enumerate the file/volume, report protected media, refuse all
+nine create/delete/rename attempts, preserve the exact payload and shut down
+before eject/export. Independent `zdb -bcc` reports no leaks and unchanged
+member hashes; successful images were automatically pruned.
+
+AFS opens its own write-protection requester directly, so the ordinary caller
+requester-suppression setting is not sufficient. The first run `rmdV2dLQ`
+timed out at that requester after passing the writer phase; its screenshot and
+logs are retained, not counted as a passing cold run. The harness now records
+each specifically announced negative operation and sends only the supported
+Left-Amiga+B Cancel shortcut while that operation is pending, with a bounded
+input count. It captures the requester display and still requires the returned
+`ERROR_DISK_WRITE_PROTECTED` and subsequent exact read. Nine expected/resolved
+markers and `ffs-denial-*.ppm` captures are retained in the passing run. This is
+controlled requester interaction in a private VM, not suppression of AFS error
+handling or a visual desktop-volume test.
+
+Build the explicit private AFS dependency with the same `AROS_RELEASE_BUILD`,
+`AROS_BASELINE_SOURCE`, and `AROS_CC` settings using
+`bash aros/platform/build-afs-zvol-overlay.sh`. Supply its `afs-handler` as
+`AROS_TEST_AFS_HANDLER`; the helper retains the existing single ACTION_DIE
+reply correction and verifies its shared input hashes remain unchanged.
+`AROS_AFS_BASE_PACKAGE` is optional when a complete filesystem package overlay
+is also needed. No shared AROS artifacts are modified.
+
 To reproduce the combined private FAT handler, set `AROS_RELEASE_BUILD` to the
 configured PC/SMP build, `AROS_SOURCE` to the AROS source tree containing the
 FAT cache/packet flush fixes, `AROS_BASELINE_SOURCE` to its matching baseline

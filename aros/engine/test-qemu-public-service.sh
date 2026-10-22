@@ -21,6 +21,8 @@ keep_images=${AROS_TEST_KEEP_IMAGES:-0}
 [[ $keep_images == 0 || $keep_images == 1 ]]
 zvol_fs=${AROS_TEST_ZVOL_FILESYSTEM:-0}
 [[ $zvol_fs == 0 || ( $zvol_fs == 1 && -n $device && $persistent == 1 ) ]]
+zvol_ffs=${AROS_TEST_ZVOL_FFS:-0}
+[[ $zvol_ffs == 0 || ( $zvol_ffs == 1 && $zvol_fs == 1 ) ]]
 layout=${AROS_TEST_LAYOUT:-mirror}
 case "$layout" in
     mirror) members=2; missing=1 ;;
@@ -61,6 +63,9 @@ duration=600
 extra_maps=()
 if [[ $zvol_fs == 1 ]];then
     extra_maps+=(-map aros/engine/public-service-test-only /openzfs-zvol-filesystem-test)
+fi
+if [[ $zvol_ffs == 1 ]];then
+    extra_maps+=(-map aros/engine/public-service-test-only /openzfs-zvol-ffs-test)
 fi
 if [[ $replace == 1 ]];then
     extra_maps+=(-map aros/engine/public-service-test-only /openzfs-replacement-test)
@@ -235,6 +240,11 @@ if [[ $ahci_query == 1 ]];then
         -device ide-hd,drive=ahci-query,bus=ozahci.0)
 fi
 cp -a aros/engine/security-fixture "$run/security-fixture"
+if [[ $zvol_ffs == 1 ]];then
+    cp "${AROS_TEST_AFS_HANDLER:?explicit AFS handler required}" "$run/afs-handler"
+    sha256sum "$run/afs-handler" >"$run/afs-handler.sha256"
+    extra_maps+=(-map "$run/afs-handler" /L/afs-handler)
+fi
 if [[ -n $device ]];then
     cp "$device" "$run/OpenZFSDevice"
     sha256sum "$run/OpenZFSDevice" >"$run/device-input.sha256"
@@ -403,6 +413,9 @@ if [[ $persistent == 1 ]];then
     if [[ $zvol_fs == 1 ]];then
         rg -q '^Public zvol filesystem PASS format=1 write=1 flush=1 exact-read=1 directory=1 volume-list=1 busy-refused=1 shutdown=1' "$run/serial-results.log"
     fi
+    if [[ $zvol_ffs == 1 ]];then
+        rg -q '^Public FFS zvol type PASS dos-type-verified=1' "$run/serial-results.log"
+    fi
     if [[ -n $cli_dir ]];then
         rg -q '^Public zvol PASS create=1 geometry=1 write=1 discard-edges=1 flush=1 exact-read=1 bounds=1 stale-descriptor=1' "$run/serial-results.log"
     fi
@@ -450,10 +463,29 @@ if [[ $persistent == 1 ]];then
     pid=$!
     trap cleanup EXIT
     deadline=$((SECONDS+duration))
+    ffs_cancel_count=0
+    ffs_captured=0
     while :;do
         if [[ -f "$run/cold-serial.log" ]];then
             sed -E 's/^[[:xdigit:]]{16} 0x[[:xdigit:]]{16} \| [0-9]+ \| //' "$run/cold-serial.log" >"$run/cold-results.log"
             if rg -q '^RESULT .*FAIL|Public service test line=[1-9][0-9]*|\[PF-DBG\]|^ASSERT at' "$run/cold-results.log";then exit 1;fi
+            if [[ $zvol_ffs == 1 ]];then
+                expected=$(rg -c '^Public FFS denial requester expected ' "$run/cold-results.log" || true)
+                resolved=$(rg -c '^Public FFS denial resolved ' "$run/cold-results.log" || true)
+                if (( ${expected:-0} > ${resolved:-0} ));then
+                    # Only the isolated fixture's explicitly announced negative
+                    # operation may receive input. AFS opens EasyRequestArgs
+                    # directly; its Cancel shortcut is Left-Amiga B, not Escape.
+                    (( ffs_cancel_count < 45 )) || { echo 'FFS requester cancellation limit reached' >&2; exit 1; }
+                    if (( expected > ffs_captured ));then
+                        printf 'screendump %s/ffs-denial-%s.ppm\n' "$run" "$expected" |
+                            socat - "UNIX-CONNECT:$run/cold-monitor" >>"$run/ffs-requester-input.log"
+                        ffs_captured=$expected
+                    fi
+                    printf 'sendkey meta_l-b\n' | socat - "UNIX-CONNECT:$run/cold-monitor" >>"$run/ffs-requester-input.log"
+                    ffs_cancel_count=$((ffs_cancel_count+1))
+                fi
+            fi
             if rg -q '^RESULT public service storage PASS' "$run/cold-results.log" &&
                 rg -q "^Public cold degraded assign PASS missing=$missing exact=1 readonly=1 restored=1" "$run/cold-results.log";then break;fi
         fi
@@ -473,6 +505,9 @@ if [[ $persistent == 1 ]];then
         fi
         if [[ $zvol_fs == 1 ]];then
             [[ $(rg -c '^Public cold zvol filesystem PASS exact-read=1 readonly=1 directory=1 volume-list=1 busy-refused=1 shutdown=1' "$run/cold-results.log") == "$zvol_imports" ]]
+        fi
+        if [[ $zvol_ffs == 1 ]];then
+            [[ $(rg -c '^Public FFS zvol type PASS dos-type-verified=1' "$run/cold-results.log") == "$zvol_imports" ]]
         fi
     fi
     if [[ $layout == mirror && -n $cli_dir ]];then

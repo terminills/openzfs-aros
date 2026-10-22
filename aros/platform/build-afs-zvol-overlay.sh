@@ -2,12 +2,14 @@
 # Private dependency overlay: never change shared AROS source/build artifacts.
 set -euo pipefail
 repo=$(cd -- "$(dirname -- "$0")/../.." && pwd)
-build=/opt/aros-workspace/aros-amiwest-nightly-release
-source=/opt/aros-workspace/AROS-amiwest-nightly-src/rom/filesys/afs
+build=${AROS_RELEASE_BUILD:?explicit configured PC/SMP build required}
+source=${AROS_BASELINE_SOURCE:?matching AROS baseline source required}/rom/filesys/afs
 sdk="$build/bin/pc-x86_64-smp/AROS/Developer"
 gen="$build/bin/pc-x86_64-smp/gen"
 objects="$gen/rom/filesys/afs/afs"
-cc=/opt/aros-workspace/aros-crosstools/x86_64-aros-gcc
+cc=${AROS_CC:?explicit AROS cross compiler required}
+available=$(df -Pk "$repo" | awk 'NR==2 {print $4}')
+(( available >= 104857600 )) || { echo '100 GiB workspace reserve required' >&2; exit 2; }
 out=$(mktemp -d "$repo/build-aros/afs-zvol.XXXXXXXX")
 echo "Evidence: $out"
 exec > >(tee "$out/build.log") 2>&1
@@ -33,6 +35,8 @@ done
     "${parts[@]}" "$out/objects/afs_end.o" -o "$out/afs-handler" \
     -L"$gen/lib" -static -Wl,--start-group -ldebug -larossupport -Wl,--end-group
 sha256sum "$out/afs-handler" >"$out/output.sha256"
-python3 "$repo/aros/cli/package-environment-overlay.py" \
-    "${AROS_AFS_BASE_PACKAGE:?existing fixture filesystem package required}" "$out" afs-handler aros-fs
+if [[ -n ${AROS_AFS_BASE_PACKAGE:-} ]];then
+    python3 "$repo/aros/cli/package-environment-overlay.py" \
+        "$AROS_AFS_BASE_PACKAGE" "$out" afs-handler aros-fs
+fi
 sha256sum -c "$out/inputs.sha256"
