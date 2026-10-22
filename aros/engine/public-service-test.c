@@ -543,6 +543,82 @@ static int cli_result(const char *command,const char *expected)
     while(count>0&&(text[count-1]=='\n'||text[count-1]=='\r'))text[--count]=0;
     return strcmp(text,expected)?EIO:0;
 }
+/* Exercise repair through the shipped API/commands, not linked SPA internals.
+ * disk0 is later the only available mirror member in the cold degraded test. */
+static int storage_repair_data(const char *root,int write)
+{
+    char path[96];snprintf(path,sizeof(path),"%sresilver.bin",root);
+    BPTR file=Open((CONST_STRPTR)path,write?MODE_NEWFILE:MODE_OLDFILE);
+    if(!file)return EIO;
+    unsigned char expected[4096],actual[4096];int error=0;
+    unsigned state=0x12345678;
+    for(unsigned block=0;block<256&&!error;block++){
+        for(unsigned i=0;i<sizeof(expected);i++){
+            state^=state<<13;state^=state>>17;state^=state<<5;
+            expected[i]=(unsigned char)state;
+        }
+        if(write){if(Write(file,expected,sizeof(expected))!=sizeof(expected))error=EIO;}
+        else if(Read(file,actual,sizeof(actual))!=sizeof(actual)||memcmp(actual,expected,sizeof(actual)))error=EIO;
+    }
+    if(write){if(!Flush(file))error=EIO;}
+    else if(!error&&Read(file,actual,1)!=0)error=EIO;
+    if(!Close(file))error=EIO;
+    if(!error)note(write?"Public resilver payload written bytes=1048576\n":
+        "Public cold resilver payload PASS bytes=1048576 exact=1\n");
+    return error;
+}
+static int storage_repair_status(char *guid,size_t size,const char *state,int finished)
+{
+    struct oz_client client;static struct oz_message request;
+    if(!oz_client_open(&client))return ENOMEM;
+    memset(&request,0,sizeof(request));request.operation=4;
+    strcpy(request.target,"public_mirror");
+    int error=oz_submit(&client,&request)==OZ_OK?0:EIO;
+    if(!error){
+        struct oz_message *reply=NULL;
+        while(!(reply=oz_poll(&client)))Delay(1);
+        error=EIO;
+        if(reply->status==OZ_OK&&!reply->next_cursor){
+            for(unsigned i=0;i<reply->row_count;i++){
+                const struct oz_row *row=&reply->rows[i];size_t n=strlen(row->name);
+                if(strcmp(row->kind,"file")||n<6||strcmp(row->name+n-6,"/disk0")||strcmp(row->state,state))continue;
+                const char *field=strstr(row->value," guid=");
+                if(!field)continue;
+                char *end;unsigned long long value=strtoull(field+6,&end,10);
+                if(!value||*end!=' ')continue;
+                snprintf(guid,size,"%llu",value);error=0;
+            }
+            if(!error&&finished){
+                const char *scan=strstr(reply->detail,"scan=resilver state=finished ");
+                unsigned long long examined=0,total=0,issued=0,errors=1;
+                if(!scan||sscanf(scan,"scan=resilver state=finished examined=%llu to-examine=%llu issued=%llu errors=%llu",
+                    &examined,&total,&issued,&errors)!=4||!issued||errors)error=EAGAIN;
+                if(!error){note("Public resilver scan PASS ");note(scan);note("\n");}
+            }
+        }
+        oz_message_free(reply);
+    }
+    oz_client_close(&client);return error;
+}
+static int storage_repair_test(void)
+{
+    char guid[32];int error=storage_repair_status(guid,sizeof(guid),"ONLINE",0);
+    if(!error)error=storage_request(16,"public_mirror",guid,NULL);
+    if(!error)error=storage_repair_status(guid,sizeof(guid),"OFFLINE",0);
+    if(!error)error=storage_repair_data("OZPUBLIC:",1);
+    if(!error&&cli_command("C:zpool sync public_mirror"))error=EIO;
+    if(!error)error=storage_request(15,"public_mirror",guid,NULL);
+    if(!error&&cli_command("C:zpool wait -t resilver public_mirror"))error=EIO;
+    if(!error){
+        for(unsigned i=0;i<120;i++){
+            error=storage_repair_status(guid,sizeof(guid),"ONLINE",1);
+            if(error!=EAGAIN)break;
+            Delay(50);
+        }
+    }
+    if(!error)note("Public mirror resilver PASS offline=1 missed-write=1 online=1 finished=1 issued-nonzero=1 errors=0\n");
+    return error;
+}
 static int storage_sparse64(const char *root,int write)
 {
     char path[96];snprintf(path,sizeof(path),"%slarge-sparse.bin",root);
@@ -716,6 +792,7 @@ static int storage_test(int gui){
     BPTR cli_marker=Lock((CONST_STRPTR)"SYS:openzfs-cli-package-test",SHARED_LOCK);
     if(cli_marker){
         UnLock(cli_marker);
+        if(native_file_fixture&&storage_layout==OZ_MIRROR)STORAGE_CHECK(!storage_repair_test());
         STORAGE_CHECK(!cli_result("C:zpool list -H -o name public_mirror >T:cli-package-output.txt","public_mirror"));
         STORAGE_CHECK(!cli_result("C:zfs list -H -o name public_mirror/files >T:cli-package-output.txt","public_mirror/files"));
         STORAGE_CHECK(!cli_result("C:zfs get -H -o value type public_mirror/files >T:cli-package-output.txt","filesystem"));
@@ -1039,6 +1116,10 @@ static int storage_cold_once(void)
     if(IoErr()!=ERROR_DISK_WRITE_PROTECTED)return EIO;
     error=storage_sparse64("OZCOLD:",0);
     if(error)return error;
+    if(native_file_fixture&&storage_layout==OZ_MIRROR){
+        BPTR cli=Lock((CONST_STRPTR)"SYS:openzfs-cli-package-test",SHARED_LOCK);
+        if(cli){UnLock(cli);error=storage_repair_data("OZCOLD:",0);if(error)return error;}
+    }
     error=oz_mount_control(OZ_ADMISSION_PORT,"public_mirror/files","",OZ_MOUNT_DETACH,0);
     if(!error)error=storage_encrypted_cold();
     if(!error)error=storage_rotated_passphrase_cold();

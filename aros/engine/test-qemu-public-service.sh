@@ -363,6 +363,9 @@ printf 'quit\n' | socat - "UNIX-CONNECT:$run/monitor" >/dev/null
 wait "$pid"
 trap - EXIT
 if [[ $persistent == 1 ]];then
+    if [[ $layout == mirror && -n $cli_dir ]];then
+        rg -q '^Public mirror resilver PASS offline=1 missed-write=1 online=1 finished=1 issued-nonzero=1 errors=0' "$run/serial-results.log"
+    fi
     mkdir "$run/members-before" "$run/members-after"
     for ((member=0;member<members;member++));do
         mcopy -i "$run/backing.raw" "::OZPublicPool/disk$member" "$run/members-before/disk$member"
@@ -405,6 +408,9 @@ if [[ $persistent == 1 ]];then
     printf 'quit\n' | socat - "UNIX-CONNECT:$run/cold-monitor" >/dev/null
     wait "$pid"
     trap - EXIT
+    if [[ $layout == mirror && -n $cli_dir ]];then
+        [[ $(rg -c '^Public cold resilver payload PASS bytes=1048576 exact=1' "$run/cold-results.log") == 3 ]]
+    fi
     for ((member=0;member<members;member++));do
         mcopy -i "$run/backing.raw" "::OZPublicPool/disk$member" "$run/members-after/disk$member"
         cmp "$run/members-before/disk$member" "$run/members-after/disk$member"

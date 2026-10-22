@@ -411,6 +411,25 @@ read-only verification; independent zdb reports no leaks for all three.
 This qualifies small virtual dRAID configurations, not distributed-spare
 activation/replacement, resilver, large-layout throughput or physical durability.
 
+### Current native mirror repair qualification
+
+`public-service-run.MGEST4XV` verifies repair through the shipped public API
+and `zpool` command, with no test-linked SPA access. It obtains disk0's GUID
+from status, confirms OFFLINE, writes and flushes 1 MiB of deterministic data
+through the DOS handler, syncs the pool, and brings that member online.
+After `zpool wait -t resilver`, status must independently report a finished
+resilver with nonzero issued bytes and zero scan errors. This run reported
+1,298,432 issued bytes; command success alone is not the acceptance condition.
+
+A separate QEMU boot reads the exact new payload during healthy, degraded and
+restored read-only imports. The degraded phase hides disk1, so the new data
+must come from repaired disk0, not the original writer or its cache. All cold
+member hashes remain unchanged; independent host `zdb -bcc` reports no leaks.
+Repeat run `public-service-run.4flBWRkE` passes the same complete sequence with
+explicit runner gates for warm repair and all three cold payload reads.
+This qualifies offline/write/online repair of a two-file mirror, not physical
+durability, replacement, distributed-spare activation or arbitrary topologies.
+
 ## Requirements
 
 - Linux build host with Bash, Git, Make, GCC-compatible AROS cross tools, binutils,
