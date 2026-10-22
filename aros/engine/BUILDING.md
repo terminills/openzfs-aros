@@ -127,6 +127,15 @@ passphrase dataset, raw replication and cold mirror recovery. Host zdb reports
 no leaks and cold reads leave member files unchanged. This removes the need
 for a Chromium source checkout or compiled crypto archive from this path.
 
+`public-service-run.2hBHnHsY` also qualifies upstream `zfs change-key` through
+the native commands/service. It rotates a written passphrase dataset from
+350000 to 400000 PBKDF2 iterations, verifies the new property, unloads the key,
+requires the old passphrase to fail with the dataset still locked, then loads
+the new passphrase and reads the exact original payload through the handler.
+The test destroys that disposable dataset afterward. The surrounding cold
+raw-key mirror suite passes; this run does not yet prove cold persistence of
+the rotated passphrase itself.
+
 Run the engine build from the checkout:
 
 ```sh

@@ -857,7 +857,15 @@ static int storage_test(int gui){
         STORAGE_CHECK(Write(file,payload,sizeof(storage_payload)-1)==sizeof(storage_payload)-1);
         STORAGE_CHECK(Flush(file));STORAGE_CHECK(Close(file));file=0;
         STORAGE_CHECK(!oz_mount_control(OZ_ADMISSION_PORT,"public_mirror/passphrase","",OZ_MOUNT_DETACH,0));
+        const char rotated_passphrase[]="AROS rotated public passphrase fixture\n";
+        file=Open((CONST_STRPTR)"RAM:public-passphrase-new",MODE_NEWFILE);STORAGE_CHECK(file);
+        STORAGE_CHECK(Write(file,rotated_passphrase,sizeof(rotated_passphrase)-1)==sizeof(rotated_passphrase)-1);
+        STORAGE_CHECK(Close(file));file=0;
+        STORAGE_CHECK(cli_command("C:zfs change-key -o keyformat=passphrase -o pbkdf2iters=400000 -o keylocation=file:///RAM/public-passphrase-new public_mirror/passphrase")==0);
+        STORAGE_CHECK(!cli_result("C:zfs get -H -o value pbkdf2iters public_mirror/passphrase >T:cli-package-output.txt","400000"));
         STORAGE_CHECK(cli_command("C:zfs unload-key public_mirror/passphrase")==0);
+        STORAGE_CHECK(cli_command("C:zfs load-key -L file:///RAM/public-passphrase public_mirror/passphrase")!=0);
+        STORAGE_CHECK(!cli_result("C:zfs get -H -o value keystatus public_mirror/passphrase >T:cli-package-output.txt","unavailable"));
         STORAGE_CHECK(oz_mount_control(OZ_ADMISSION_PORT,"public_mirror/passphrase","OZPASS",OZ_MOUNT_ATTACH,OZ_MOUNT_READONLY)!=0);
         STORAGE_CHECK(cli_command("C:zfs load-key public_mirror/passphrase")==0);
         STORAGE_CHECK(!oz_mount_control(OZ_ADMISSION_PORT,"public_mirror/passphrase","OZPASS",OZ_MOUNT_ATTACH,OZ_MOUNT_READONLY));
@@ -868,7 +876,9 @@ static int storage_test(int gui){
         STORAGE_CHECK(cli_command("C:zfs unload-key public_mirror/passphrase")==0);
         STORAGE_CHECK(cli_command("C:zfs destroy public_mirror/passphrase")==0);
         STORAGE_CHECK(DeleteFile((CONST_STRPTR)"RAM:public-passphrase"));
-        note("Public passphrase encryption PASS pbkdf2=350000 locked-mount-denied=1 reload=1 exact-read=1 cleanup=1\n");
+        STORAGE_CHECK(DeleteFile((CONST_STRPTR)"RAM:public-passphrase-new"));
+        note("Public passphrase rotation PASS iterations=400000 old-key-denied=1 still-locked=1 new-key-load=1 exact-read=1 cleanup=1\n");
+        note("Public passphrase encryption PASS create-pbkdf2=350000 locked-mount-denied=1 reload=1 exact-read=1 cleanup=1\n");
     }
     if(gui){
         note("Public storage GUI ready: mounted public_mirror/files with hello.txt\n");
