@@ -65,6 +65,21 @@ The target builds upstream nvpair plus only four memory-XDR codec sources, not
 the RPC networking or authentication stack. Select this archive in subsequent
 CLI/library builds with `OPENZFS_NVPAIR_ARCHIVE` if using a private directory.
 
+The standalone `aros/engine/build-nvpair.sh` now requires explicit `AROS_CC`
+and `AROS_SDK`. Use a fresh `AROS_NVPAIR_OUTPUT_DIR` to retain separate build
+evidence. It verifies the pinned libtirpc archive and compares all consumed
+XDR sources and the complete tirpc header directory against an extraction of
+that archive, including when `AROS_TIRPC_SOURCE` already exists. A valid archive
+hash is not treated as proof of an arbitrary source tree. The retained
+`nvpair-inputs.*` directory records compiler/SDK selection, XDR source hashes,
+post-compilation source checks and output hashes. The archiver is selected by
+the compiler, and the storage reserve guard applies to both output directories.
+Native build `nvpair-explicit.WDG3zSio` passed; private negative fixture
+`nvpair-mismatch.9753vsZU` changed one XDR source and was rejected before an
+archive was produced. This establishes build/provenance behavior, not a new
+runtime qualification of that standalone archive or a complete dependency
+bootstrap. The earlier MetaMake package runtime evidence remains separate.
+
 The metamake-built native nvpair test passed allocation, nested lists, XDR
 encode/decode, exact 64-bit values, file output, and truncated-input rejection
 in isolated hosted AROS. The shared engine relinked with that archive also
