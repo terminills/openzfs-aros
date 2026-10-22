@@ -52,6 +52,16 @@ explained merely by rebuilding DOS from the pinned revision. Both control
 and patched runs reach the runtime checks; neither result is inferred from
 compilation alone.
 
+Cold mirror regression `public-service-run.APtjYbHn` also passes with the
+patched DOS package and the separately recorded FAT clean-detach overlay:
+writer companion/loader checks, fresh healthy and degraded imports, exact
+DOS reads, wide directory enumeration, encryption/key rotation, zvol device
+checks, and beyond-parity refusal followed by restored reads. Reader member
+hashes remain unchanged; independent zdb reports no leaks. Successful test
+images are automatically pruned. The two diagnosed negative-run ISOs are
+also pruned after terminal-process checks and SHA256 capture; their logs and
+manifests remain. No other agent's VM or physical storage was modified.
+
 ## User-facing runtime detection (2026-09-30)
 
 OpenZFSRuntimeCheck now checks both loader APIs using a copied executable in
