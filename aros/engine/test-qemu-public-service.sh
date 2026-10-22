@@ -10,6 +10,8 @@ posix=${AROS_TEST_POSIX_LIBRARY:?private POSIX library required}
 service=${AROS_TEST_SERVICE_BINARY:?public service executable required}
 client=${AROS_TEST_CLIENT_BINARY:?native acceptance client required}
 shared=${AROS_TEST_SHARED_BUILD:-}
+cli_dir=${AROS_TEST_CLI_DIR:-}
+handler=${AROS_TEST_HANDLER_BINARY:-}
 gui=${AROS_PUBLIC_GUI:-0}
 cpus=${AROS_TEST_CPUS:-2}
 qemu=${AROS_TEST_QEMU:-qemu-system-x86_64}
@@ -110,6 +112,24 @@ fi
 cp "$service" "$run/OpenZFSServiceNative"
 cp "$client" "$run/OpenZFSPublicServiceTest"
 cp "$startup" "$run/Startup-Sequence"
+if [[ -n $cli_dir ]];then
+    cp "$cli_dir/zfs" "$cli_dir/zpool" "$run/"
+    extra_maps+=(-map "$run/zfs" /C/zfs -map "$run/zpool" /C/zpool
+        -map aros/engine/public-service-test-only /openzfs-cli-package-test)
+    sha256sum "$run/zfs" "$run/zpool" >"$run/cli-inputs.sha256"
+fi
+if [[ -n $handler ]];then
+    cp "$handler" "$run/OpenZFS-Handler"
+    printf '%s\n' 'FileSystem = L:OpenZFS-Handler' 'Device = openzfs' \
+        'Unit = 0' 'Flags = 0' 'Surfaces = 1' 'BlocksPerTrack = 1' \
+        'LowCyl = 0' 'HighCyl = 0' 'DosType = 0x5a465301' \
+        'Control = "public_mirror/files"' 'StackSize = 262144' \
+        'Activate = 0' >"$run/OZPACKAGE"
+    extra_maps+=(-map "$run/OpenZFS-Handler" /L/OpenZFS-Handler
+        -map "$run/OZPACKAGE" /OZPACKAGE
+        -map aros/engine/public-service-test-only /openzfs-handler-package-test)
+    sha256sum "$run/OpenZFS-Handler" "$run/OZPACKAGE" >"$run/handler-inputs.sha256"
+fi
 if [[ $gui == 1 ]];then
     cp "${AROS_TEST_MANAGER_BINARY:?native Manager required for GUI test}" "$run/OpenZFSManagerNative"
     extra_maps+=(-map "$run/OpenZFSManagerNative" /C/OpenZFSManagerNative)
@@ -283,6 +303,11 @@ while :;do
                [[ $(rg -c 'Public upstream native scanner PASS denied=1 explicit=1 duplicate=1 malformed=1' "$run/serial-results.log" || true) == 1 ]]; }; } &&
            { [[ ${AROS_TEST_LOADER_POLICY:-0} != 1 ]] ||
              rg -q '^RESULT native loader execution policy PASS' "$run/serial-results.log"; } &&
+           { [[ -z $cli_dir ]] || {
+             rg -q '^Public packaged CLI PASS' "$run/serial-results.log" &&
+             rg -q '^Public packaged replication PASS .*incremental=1' "$run/serial-results.log"; }; } &&
+           { [[ -z $handler ]] ||
+             rg -q '^Public packaged handler PASS' "$run/serial-results.log"; } &&
            rg -q '^RESULT public service storage PASS' "$run/serial-results.log";then break;fi
     fi
     if ! kill -0 "$pid" 2>/dev/null || ((SECONDS>=deadline));then echo "Timeout/exit: $run" >&2;exit 1;fi

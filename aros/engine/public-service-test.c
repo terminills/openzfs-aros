@@ -522,7 +522,7 @@ static LONG cli_command(const char *command)
 static int cli_result(const char *command,const char *expected)
 {
     if(cli_command(command)!=0)return EIO;
-    BPTR file=Open((CONST_STRPTR)"SYS:cli-package-output.txt",MODE_OLDFILE);
+    BPTR file=Open((CONST_STRPTR)"T:cli-package-output.txt",MODE_OLDFILE);
     if(!file)return EIO;
     char text[256]={0};LONG count=Read(file,text,sizeof(text)-1);
     int closed=Close(file);
@@ -677,18 +677,18 @@ static int storage_test(int gui){
     BPTR cli_marker=Lock((CONST_STRPTR)"SYS:openzfs-cli-package-test",SHARED_LOCK);
     if(cli_marker){
         UnLock(cli_marker);
-        STORAGE_CHECK(!cli_result("C:zpool list -H -o name public_mirror >SYS:cli-package-output.txt","public_mirror"));
-        STORAGE_CHECK(!cli_result("C:zfs list -H -o name public_mirror/files >SYS:cli-package-output.txt","public_mirror/files"));
-        STORAGE_CHECK(!cli_result("C:zfs get -H -o value type public_mirror/files >SYS:cli-package-output.txt","filesystem"));
+        STORAGE_CHECK(!cli_result("C:zpool list -H -o name public_mirror >T:cli-package-output.txt","public_mirror"));
+        STORAGE_CHECK(!cli_result("C:zfs list -H -o name public_mirror/files >T:cli-package-output.txt","public_mirror/files"));
+        STORAGE_CHECK(!cli_result("C:zfs get -H -o value type public_mirror/files >T:cli-package-output.txt","filesystem"));
         STORAGE_CHECK(SystemTags((CONST_STRPTR)"C:zfs snapshot public_mirror/files@cli_roundtrip",TAG_DONE)==0);
-        STORAGE_CHECK(!cli_result("C:zfs list -H -o name -t snapshot public_mirror/files@cli_roundtrip >SYS:cli-package-output.txt","public_mirror/files@cli_roundtrip"));
+        STORAGE_CHECK(!cli_result("C:zfs list -H -o name -t snapshot public_mirror/files@cli_roundtrip >T:cli-package-output.txt","public_mirror/files@cli_roundtrip"));
         STORAGE_CHECK(SystemTags((CONST_STRPTR)"C:zfs clone -o mountpoint=none public_mirror/files@cli_roundtrip public_mirror/cli_clone",TAG_DONE)==0);
-        STORAGE_CHECK(!cli_result("C:zfs get -H -o value origin public_mirror/cli_clone >SYS:cli-package-output.txt","public_mirror/files@cli_roundtrip"));
+        STORAGE_CHECK(!cli_result("C:zfs get -H -o value origin public_mirror/cli_clone >T:cli-package-output.txt","public_mirror/files@cli_roundtrip"));
         STORAGE_CHECK(SystemTags((CONST_STRPTR)"C:zfs rename public_mirror/cli_clone public_mirror/cli_renamed",TAG_DONE)==0);
         STORAGE_CHECK(cli_command("C:zpool set feature@lz4_compress=enabled public_mirror")==0);
-        STORAGE_CHECK(!cli_result("C:zpool get -H -o value feature@lz4_compress public_mirror >SYS:cli-package-output.txt","active"));
+        STORAGE_CHECK(!cli_result("C:zpool get -H -o value feature@lz4_compress public_mirror >T:cli-package-output.txt","active"));
         STORAGE_CHECK(cli_command("C:zfs set compression=lz4 public_mirror/cli_renamed")==0);
-        STORAGE_CHECK(!cli_result("C:zfs get -H -o value compression public_mirror/cli_renamed >SYS:cli-package-output.txt","lz4"));
+        STORAGE_CHECK(!cli_result("C:zfs get -H -o value compression public_mirror/cli_renamed >T:cli-package-output.txt","lz4"));
         STORAGE_CHECK(SystemTags((CONST_STRPTR)"C:zfs snapshot public_mirror/cli_renamed@rollback",TAG_DONE)==0);
         STORAGE_CHECK(!oz_mount_control(OZ_ADMISSION_PORT,"public_mirror/cli_renamed","OZCLIRW",OZ_MOUNT_ATTACH,0));
         file=Open((CONST_STRPTR)"OZCLIRW:after-snapshot.txt",MODE_NEWFILE);STORAGE_CHECK(file);
@@ -703,8 +703,8 @@ static int storage_test(int gui){
         STORAGE_CHECK(Read(file,actual,sizeof(actual))==sizeof(storage_payload)-1&&!memcmp(actual,payload,sizeof(storage_payload)-1));
         STORAGE_CHECK(Close(file));file=0;
         STORAGE_CHECK(!oz_mount_control(OZ_ADMISSION_PORT,"public_mirror/cli_renamed","",OZ_MOUNT_DETACH,0));
-        STORAGE_CHECK(cli_command("C:zfs send public_mirror/cli_renamed@rollback >SYS:cli-replication.zfs")==0);
-        STORAGE_CHECK(cli_command("C:zfs receive -u -o mountpoint=none public_mirror/cli_received <SYS:cli-replication.zfs")==0);
+        STORAGE_CHECK(cli_command("C:zfs send public_mirror/cli_renamed@rollback >T:cli-replication.zfs")==0);
+        STORAGE_CHECK(cli_command("C:zfs receive -u -o mountpoint=none public_mirror/cli_received <T:cli-replication.zfs")==0);
         STORAGE_CHECK(!oz_mount_control(OZ_ADMISSION_PORT,"public_mirror/cli_received","OZCLIRECV",OZ_MOUNT_ATTACH,OZ_MOUNT_READONLY));
         file=Open((CONST_STRPTR)"OZCLIRECV:hello.txt",MODE_OLDFILE);STORAGE_CHECK(file);
         STORAGE_CHECK(Read(file,actual,sizeof(actual))==sizeof(storage_payload)-1&&!memcmp(actual,payload,sizeof(storage_payload)-1));
@@ -718,8 +718,8 @@ static int storage_test(int gui){
         STORAGE_CHECK(Flush(file));STORAGE_CHECK(Close(file));file=0;
         STORAGE_CHECK(!oz_mount_control(OZ_ADMISSION_PORT,"public_mirror/cli_renamed","",OZ_MOUNT_DETACH,0));
         STORAGE_CHECK(cli_command("C:zfs snapshot public_mirror/cli_renamed@incremental")==0);
-        STORAGE_CHECK(cli_command("C:zfs send -i public_mirror/cli_renamed@rollback public_mirror/cli_renamed@incremental >SYS:cli-incremental.zfs")==0);
-        STORAGE_CHECK(cli_command("C:zfs receive -u public_mirror/cli_received <SYS:cli-incremental.zfs")==0);
+        STORAGE_CHECK(cli_command("C:zfs send -i public_mirror/cli_renamed@rollback public_mirror/cli_renamed@incremental >T:cli-incremental.zfs")==0);
+        STORAGE_CHECK(cli_command("C:zfs receive -u public_mirror/cli_received <T:cli-incremental.zfs")==0);
         STORAGE_CHECK(!oz_mount_control(OZ_ADMISSION_PORT,"public_mirror/cli_received","OZCLIINCRO",OZ_MOUNT_ATTACH,OZ_MOUNT_READONLY));
         file=Open((CONST_STRPTR)"OZCLIINCRO:incremental.txt",MODE_OLDFILE);STORAGE_CHECK(file);
         STORAGE_CHECK(Read(file,actual,sizeof(actual))==sizeof(storage_payload)-1&&!memcmp(actual,payload,sizeof(storage_payload)-1));

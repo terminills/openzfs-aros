@@ -200,6 +200,19 @@ the extended packaged CLI/handler suite. The public-service QEMU runner now
 requires explicit ISO, acceptance client and zlib inputs, supports verified
 `AROS_TEST_SHARED_BUILD` staging, and applies the storage reserve guard with
 optional separate-filesystem `AROS_TEST_ARTIFACT_ROOT`.
+
+The extended native run `public-service-run.vredzyyV` also passed with the
+MetaMake-staged `zfs`, `zpool`, and standalone handler. Set
+`AROS_TEST_CLI_DIR` to the staged `C` directory and
+`AROS_TEST_HANDLER_BINARY` to the staged handler to require these checks.
+The runner retains package hashes and requires separate CLI, replication,
+and handler PASS markers. Coverage includes clone/rename, LZ4 property
+activation, rollback verified through mounted files, full and incremental
+send/receive with exact mounted data checks, and standalone DOS Mount with
+read-only write denial and detach. CLI scratch lives in `T:`, not the
+read-only boot ISO. This run used the same explicit runtime overlays and a
+disposable RAM mirror; it does not prove cold persistence or hardware safety.
+
 Prefer a coherent SDK and genmodule pair; do not define missing ABI constants
 in this project. Handler/device compilation is not runtime qualification.
 
