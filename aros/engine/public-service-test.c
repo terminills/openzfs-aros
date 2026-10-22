@@ -898,6 +898,74 @@ done:
     return error;
 #undef DCHECK
 }
+static int storage_zvol_filesystem(int create)
+{
+    BPTR marker=Lock((CONST_STRPTR)"SYS:openzfs-zvol-filesystem-test",SHARED_LOCK);
+    if(!marker)return 0;
+    UnLock(marker);
+    int error=0;BPTR file=0,root=0;
+    unsigned char *bytes=AllocVec(131072,MEMF_PUBLIC);
+#define FCHECK(x) do{if(!(x)){char line[128];snprintf(line,sizeof(line),"Public zvol filesystem FAIL line=%d cold=%d dos=%ld\n",__LINE__,!create,(long)IoErr());note(line);error=EIO;goto done;}}while(0)
+    FCHECK(bytes);
+    if(create)FCHECK(!cli_command("C:zfs create -s -V 64M -b 8K public_mirror/filesystem_volume"));
+    FCHECK(!cli_command(create?"C:OpenZFSDevice REMAP 1 public_mirror/filesystem_volume WRITABLE":
+        "C:OpenZFSDevice REMAP 1 public_mirror/filesystem_volume"));
+    FCHECK(!cli_command("C:OpenZFSDevice MOUNTFILE 1 FAT >T:OZVFS"));
+    FCHECK(!cli_command("C:Mount T:OZVFS"));
+    if(create){
+        FCHECK(Inhibit((CONST_STRPTR)"OZVFS:",DOSTRUE));
+        FCHECK(Format((CONST_STRPTR)"OZVFS:",(CONST_STRPTR)"PublicZvol",ID_MSDOS_DISK));
+        FCHECK(Inhibit((CONST_STRPTR)"OZVFS:",DOSFALSE));
+        for(unsigned i=0;i<131072;i++)bytes[i]=(unsigned char)(i*17+i/512+41);
+        file=Open((CONST_STRPTR)"OZVFS:payload.bin",MODE_NEWFILE);FCHECK(file);
+        FCHECK(Write(file,bytes,131072)==131072&&Flush(file));
+        int closed=Close(file);file=0;FCHECK(closed);
+        /* Drain filesystem metadata, then rediscover from the device. */
+        FCHECK(Inhibit((CONST_STRPTR)"OZVFS:",DOSTRUE));
+        FCHECK(Inhibit((CONST_STRPTR)"OZVFS:",DOSFALSE));
+    }
+    root=Lock((CONST_STRPTR)"OZVFS:",SHARED_LOCK);FCHECK(root);
+    struct FileInfoBlock fib;struct InfoData info;
+    FCHECK(Examine(root,&fib));int found=0;
+    while(ExNext(root,&fib))if(!strcmp(fib.fib_FileName,"payload.bin")&&fib.fib_Size==131072)found++;
+    FCHECK(IoErr()==ERROR_NO_MORE_ENTRIES&&found==1);
+    FCHECK(Info(root,&info));
+    if(!create)FCHECK(info.id_DiskState==ID_WRITE_PROTECTED);
+    UnLock(root);root=0;
+    struct DosList *list=LockDosList(LDF_VOLUMES|LDF_READ);
+    struct DosList *volume=FindDosEntry(list,(CONST_STRPTR)"PublicZvol",LDF_VOLUMES);
+    int visible=volume&&volume->dol_Task;
+    UnLockDosList(LDF_VOLUMES|LDF_READ);FCHECK(visible);
+    if(!create){
+        file=Open((CONST_STRPTR)"OZVFS:denied.bin",MODE_NEWFILE);
+        FCHECK(!file&&IoErr()==ERROR_DISK_WRITE_PROTECTED);
+        FCHECK(!DeleteFile((CONST_STRPTR)"OZVFS:payload.bin")&&IoErr()==ERROR_DISK_WRITE_PROTECTED);
+        FCHECK(!Rename((CONST_STRPTR)"OZVFS:payload.bin",(CONST_STRPTR)"OZVFS:renamed.bin")&&IoErr()==ERROR_DISK_WRITE_PROTECTED);
+    }
+    FCHECK(cli_command("C:OpenZFSDevice EJECT 1")!=0);
+    file=Open((CONST_STRPTR)"OZVFS:payload.bin",MODE_OLDFILE);FCHECK(file);
+    memset(bytes,0,131072);FCHECK(Read(file,bytes,131072)==131072);
+    for(unsigned i=0;i<131072;i++)FCHECK(bytes[i]==(unsigned char)(i*17+i/512+41));
+    int closed=Close(file);file=0;FCHECK(closed);
+    FCHECK(Inhibit((CONST_STRPTR)"OZVFS:",DOSTRUE));
+    struct MsgPort *filesystem=DeviceProc((CONST_STRPTR)"OZVFS:");FCHECK(filesystem);
+    list=LockDosList(LDF_DEVICES|LDF_READ);
+    struct DosList *entry=FindDosEntry(list,(CONST_STRPTR)"OZVFS",LDF_DEVICES);
+    int owned=entry&&entry->dol_Task==filesystem;
+    UnLockDosList(LDF_DEVICES|LDF_READ);FCHECK(owned);
+    /* Retire only this private fixture node before its handler exits. */
+    FCHECK(RemDosEntry(entry));
+    FCHECK(DoPkt(filesystem,ACTION_DIE,0,0,0,0,0));
+    FCHECK(!cli_command("C:OpenZFSDevice EJECT 1"));
+done:
+    if(file)Close(file);
+    if(root)UnLock(root);
+    if(bytes)FreeVec(bytes);
+    if(!error)note(create?"Public zvol filesystem PASS format=1 write=1 flush=1 exact-read=1 directory=1 volume-list=1 busy-refused=1 shutdown=1\n":
+        "Public cold zvol filesystem PASS exact-read=1 readonly=1 directory=1 volume-list=1 busy-refused=1 shutdown=1\n");
+    return error;
+#undef FCHECK
+}
 static int storage_test(int gui){
     int error=0;BPTR file=0,lock=CreateDir((CONST_STRPTR)storage_directory);
     if(!lock)return EIO;
@@ -1048,6 +1116,7 @@ static int storage_test(int gui){
         UnLock(cli_marker);
         STORAGE_CHECK(!storage_zvol_test(1));
         STORAGE_CHECK(!storage_device_test(1));
+        STORAGE_CHECK(!storage_zvol_filesystem(1));
         if(native_file_fixture&&storage_layout==OZ_MIRROR){
             STORAGE_CHECK(!storage_repair_test());
             if(storage_replace)STORAGE_CHECK(!storage_replace_test());
@@ -1390,7 +1459,8 @@ static int storage_cold_once(void)
     if(!error)error=storage_rotated_passphrase_cold();
     if(!error){
         BPTR cli=Lock((CONST_STRPTR)"SYS:openzfs-cli-package-test",SHARED_LOCK);
-        if(cli){UnLock(cli);error=storage_zvol_test(0);if(!error)error=storage_device_test(0);}
+        if(cli){UnLock(cli);error=storage_zvol_test(0);if(!error)error=storage_device_test(0);
+            if(!error)error=storage_zvol_filesystem(0);}
     }
     if(!error)error=storage_request(8,"public_mirror",NULL,NULL);
     if(!error)note("Public cold hosted DOS PASS exact=1 readonly-refusal=1 exported=1\n");

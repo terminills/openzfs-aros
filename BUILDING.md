@@ -648,6 +648,34 @@ native build or runtime qualification.
 
 ## Testing
 
+Successful persistent public-service runs now prune their disposable ISO,
+backing and extracted member images after cold verification and independent
+`zdb` checks. Logs, screenshots, source snapshots, binaries and original hash
+manifests remain, together with `pruned-images.jsonl` recording each removed
+image's path, size and SHA-256. Removed images cannot be reopened; reproduce the
+fixture from the retained inputs when needed. `AROS_TEST_KEEP_IMAGES=1` opts out
+only when continued image inspection is needed. Failed/incomplete runs remain
+untouched. This prevents verified multi-gigabyte VM images accumulating by
+default. The cleaner checks for open files and only selects fixed disposable
+filenames within this repository's verified `public-service-run.*` directories.
+
+For existing runs, preview with
+`python3 aros/distribution/prune-public-test-images.py`; add `--apply` to prune.
+The five isolated retention-policy tests are run with
+`python3 aros/distribution/test-prune-public-images.py`.
+
+The opt-in `AROS_TEST_ZVOL_FILESYSTEM=1` additionally requires the public device
+binary and a persistent run. Its current FAT-on-zvol qualification is **not
+passing**: `public-service-run.KntFAIKw` formats a sparse 64 MiB volume, writes
+and rereads a 128 KiB file, enumerates its directory and DOS volume, refuses
+eject while mounted, and shuts the handler down successfully. On the fresh
+read-only import, file enumeration passes but FAT `Info()` does not report
+`ID_WRITE_PROTECTED`; the test stops there rather than weakening the check.
+The actual device-level read-only checks immediately before it pass. The failed
+images and logs are retained to distinguish the selected FAT overlay from a
+zvol integration defect. Later cold filesystem mutation/read checks have not
+yet run successfully with this package.
+
 Start with isolated hosted AROS or QEMU and newly created disposable disk files.
 Never point recovery, fault-injection, formatting, or pool-creation tests at a
 real data disk. Retain commands, source revisions, binary hashes, and logs.

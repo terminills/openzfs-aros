@@ -17,6 +17,10 @@ device=${AROS_TEST_DEVICE_BINARY:-}
 pbkdf2=${AROS_TEST_PBKDF2_BINARY:-}
 persistent=${AROS_TEST_PERSISTENT:-0}
 [[ $persistent == 0 || $persistent == 1 ]]
+keep_images=${AROS_TEST_KEEP_IMAGES:-0}
+[[ $keep_images == 0 || $keep_images == 1 ]]
+zvol_fs=${AROS_TEST_ZVOL_FILESYSTEM:-0}
+[[ $zvol_fs == 0 || ( $zvol_fs == 1 && -n $device && $persistent == 1 ) ]]
 layout=${AROS_TEST_LAYOUT:-mirror}
 case "$layout" in
     mirror) members=2; missing=1 ;;
@@ -55,6 +59,9 @@ prefix=public-service-run
 startup=aros/engine/Startup-Public-Service
 duration=600
 extra_maps=()
+if [[ $zvol_fs == 1 ]];then
+    extra_maps+=(-map aros/engine/public-service-test-only /openzfs-zvol-filesystem-test)
+fi
 if [[ $replace == 1 ]];then
     extra_maps+=(-map aros/engine/public-service-test-only /openzfs-replacement-test)
 fi
@@ -393,6 +400,9 @@ if [[ $persistent == 1 ]];then
     if [[ -n $device ]];then
         rg -q '^Public device PASS geometry=1 async-128KiB=1 reopen=3 exact-read=1 eject=1 busy-refused=1 bounds=1' "$run/serial-results.log"
     fi
+    if [[ $zvol_fs == 1 ]];then
+        rg -q '^Public zvol filesystem PASS format=1 write=1 flush=1 exact-read=1 directory=1 volume-list=1 busy-refused=1 shutdown=1' "$run/serial-results.log"
+    fi
     if [[ -n $cli_dir ]];then
         rg -q '^Public zvol PASS create=1 geometry=1 write=1 discard-edges=1 flush=1 exact-read=1 bounds=1 stale-descriptor=1' "$run/serial-results.log"
     fi
@@ -461,6 +471,9 @@ if [[ $persistent == 1 ]];then
         if [[ -n $device ]];then
             [[ $(rg -c '^Public cold device PASS geometry=1 readonly=1 reopen=3 exact-read=1 eject=1 busy-refused=1 bounds=1' "$run/cold-results.log") == "$zvol_imports" ]]
         fi
+        if [[ $zvol_fs == 1 ]];then
+            [[ $(rg -c '^Public cold zvol filesystem PASS exact-read=1 readonly=1 directory=1 volume-list=1 busy-refused=1 shutdown=1' "$run/cold-results.log") == "$zvol_imports" ]]
+        fi
     fi
     if [[ $layout == mirror && -n $cli_dir ]];then
         [[ $(rg -c '^Public cold resilver payload PASS bytes=1048576 exact=1' "$run/cold-results.log") == 3 ]]
@@ -491,3 +504,7 @@ fi
 if [[ $partitions == 1 ]];then sha256sum -c "$run/disks-before.sha256" > "$run/disks-after-check.txt";fi
 if [[ -n $label_source ]];then sha256sum -c "$run/label-original.sha256" >"$run/label-original-after-check.txt";fi
 echo "PASS: public service lifecycles and $layout DOS round trip (persistent=$persistent). Evidence: $run"
+if [[ $persistent == 1 && $keep_images == 0 ]];then
+    python3 aros/distribution/prune-public-test-images.py --apply --run "$(basename "$run")" \
+        >"$run/image-pruning.log" 2>&1
+fi
