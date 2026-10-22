@@ -49,6 +49,13 @@ static const char *storage_directory="RAM:OZPublicPool";
 static unsigned storage_members=2,storage_layout=OZ_MIRROR,storage_missing=1;
 static int storage_reply_received;
 static int native_file_fixture;
+static int storage_replace,storage_replaced;
+static void storage_member(char *path,size_t size,unsigned member)
+{
+    snprintf(path,size,"%s%sdisk%u%s",storage_directory,
+        storage_directory[strlen(storage_directory)-1]==':'?"":"/",member,
+        storage_replaced&&member==0?"-new":"");
+}
 static const char storage_payload[]="Public OpenZFS DOS payload\n";
 static const char storage_passphrase[]="AROS public passphrase fixture\n";
 static const char storage_rotated_passphrase[]="AROS rotated public passphrase fixture\n";
@@ -68,9 +75,13 @@ static int storage_request(unsigned op,const char *target,const char *argument,c
             m.topology.groups[0].draid_data=1;
             m.topology.groups[0].draid_spares=1;
         }
-        for(unsigned i=0;i<storage_members;i++)snprintf(m.topology.devices[i].path,
-            sizeof(m.topology.devices[i].path),"%s%sdisk%u",storage_directory,
-            storage_directory[strlen(storage_directory)-1]==':'?"":"/",i);
+        for(unsigned i=0;i<storage_members;i++)storage_member(m.topology.devices[i].path,
+            sizeof(m.topology.devices[i].path),i);
+    }
+    if(op==13){
+        m.topology.group_count=1;m.topology.device_count=1;m.topology.ashift=12;
+        m.topology.groups[0].layout=OZ_STRIPE;
+        snprintf(m.topology.devices[0].path,sizeof(m.topology.devices[0].path),"%s/disk0-new",storage_directory);
     }
     struct oz_ticket ticket={0};int error=oz_admission_submit(OZ_ADMISSION_PORT,&m,&ticket);
     if(!error){do{error=oz_admission_query(OZ_ADMISSION_PORT,&ticket,&out);if(error==EAGAIN)Delay(1);}while(error==EAGAIN);}
@@ -579,15 +590,20 @@ static int storage_repair_status(char *guid,size_t size,const char *state,int fi
         while(!(reply=oz_poll(&client)))Delay(1);
         error=EIO;
         if(reply->status==OZ_OK&&!reply->next_cursor){
+            const char *suffix=storage_replaced?"/disk0-new":"/disk0";
+            unsigned leaves=0,old_present=0;
             for(unsigned i=0;i<reply->row_count;i++){
                 const struct oz_row *row=&reply->rows[i];size_t n=strlen(row->name);
-                if(strcmp(row->kind,"file")||n<6||strcmp(row->name+n-6,"/disk0")||strcmp(row->state,state))continue;
+                if(!strcmp(row->kind,"file"))leaves++;
+                if(n>=6&&!strcmp(row->name+n-6,"/disk0"))old_present=1;
+                if(strcmp(row->kind,"file")||n<strlen(suffix)||strcmp(row->name+n-strlen(suffix),suffix)||strcmp(row->state,state))continue;
                 const char *field=strstr(row->value," guid=");
                 if(!field)continue;
                 char *end;unsigned long long value=strtoull(field+6,&end,10);
                 if(!value||*end!=' ')continue;
                 snprintf(guid,size,"%llu",value);error=0;
             }
+            if(storage_replaced&&(leaves!=2||old_present))error=EAGAIN;
             if(!error&&finished){
                 const char *scan=strstr(reply->detail,"scan=resilver state=finished ");
                 unsigned long long examined=0,total=0,issued=0,errors=1;
@@ -617,6 +633,36 @@ static int storage_repair_test(void)
         }
     }
     if(!error)note("Public mirror resilver PASS offline=1 missed-write=1 online=1 finished=1 issued-nonzero=1 errors=0\n");
+    return error;
+}
+static int storage_replace_test(void)
+{
+    char old_guid[32],new_guid[32],path[256];
+    int error=storage_repair_status(old_guid,sizeof(old_guid),"ONLINE",0);
+    if(error)return error;
+    snprintf(path,sizeof(path),"%s/disk0-new",storage_directory);
+    BPTR exists=Lock((CONST_STRPTR)path,SHARED_LOCK);
+    if(exists){UnLock(exists);return EEXIST;}
+    if(IoErr()!=ERROR_OBJECT_NOT_FOUND)return EIO;
+    void *zeros=AllocVec(1024*1024,MEMF_ANY|MEMF_CLEAR);
+    if(!zeros)return ENOMEM;
+    BPTR file=Open((CONST_STRPTR)path,MODE_NEWFILE);
+    if(!file)error=EIO;
+    for(unsigned i=0;i<128&&!error;i++)if(Write(file,zeros,1024*1024)!=1024*1024)error=EIO;
+    if(file){if(!Flush(file))error=EIO;if(!Close(file))error=EIO;}
+    FreeVec(zeros);
+    if(!error)error=storage_request(13,"public_mirror",old_guid,NULL);
+    if(!error&&cli_command("C:zpool wait -t resilver,replace public_mirror"))error=EIO;
+    if(!error){
+        storage_replaced=1;
+        for(unsigned i=0;i<120;i++){
+            error=storage_repair_status(new_guid,sizeof(new_guid),"ONLINE",1);
+            if(error!=EAGAIN)break;
+            Delay(50);
+        }
+        if(!error&&!strcmp(old_guid,new_guid))error=EIO;
+    }
+    if(!error)note("Public mirror replacement PASS new-guid=1 old-absent=1 leaves=2 finished=1 errors=0\n");
     return error;
 }
 static int storage_sparse64(const char *root,int write)
@@ -792,7 +838,10 @@ static int storage_test(int gui){
     BPTR cli_marker=Lock((CONST_STRPTR)"SYS:openzfs-cli-package-test",SHARED_LOCK);
     if(cli_marker){
         UnLock(cli_marker);
-        if(native_file_fixture&&storage_layout==OZ_MIRROR)STORAGE_CHECK(!storage_repair_test());
+        if(native_file_fixture&&storage_layout==OZ_MIRROR){
+            STORAGE_CHECK(!storage_repair_test());
+            if(storage_replace)STORAGE_CHECK(!storage_replace_test());
+        }
         STORAGE_CHECK(!cli_result("C:zpool list -H -o name public_mirror >T:cli-package-output.txt","public_mirror"));
         STORAGE_CHECK(!cli_result("C:zfs list -H -o name public_mirror/files >T:cli-package-output.txt","public_mirror/files"));
         STORAGE_CHECK(!cli_result("C:zfs get -H -o value type public_mirror/files >T:cli-package-output.txt","filesystem"));
@@ -1148,8 +1197,8 @@ static int storage_cold_test(void)
      * changing their bytes; restore every name even if degraded import fails. */
     char member[4][256],hidden[4][256];unsigned moved=0;
     for(unsigned i=0;i<storage_missing;i++){
-        snprintf(member[i],sizeof(member[i]),"%s/disk%u",storage_directory,i+1);
-        snprintf(hidden[i],sizeof(hidden[i]),"%s/disk%u-held",storage_directory,i+1);
+        storage_member(member[i],sizeof(member[i]),i+1);
+        snprintf(hidden[i],sizeof(hidden[i]),"%s-held",member[i]);
         BPTR exists=Lock((CONST_STRPTR)hidden[i],SHARED_LOCK);
         if(exists){UnLock(exists);error=EEXIST;break;}
         if(IoErr()!=ERROR_OBJECT_NOT_FOUND||!Rename((CONST_STRPTR)member[i],(CONST_STRPTR)hidden[i])){error=EIO;break;}
@@ -1158,12 +1207,13 @@ static int storage_cold_test(void)
     if(!error)error=storage_cold_once();
     while(moved){--moved;if(!Rename((CONST_STRPTR)hidden[moved],(CONST_STRPTR)member[moved])&&!error)error=EIO;}
     if(!error){char line[128];snprintf(line,sizeof(line),"Public cold degraded assign PASS missing=%u exact=1 readonly=1 restored=1\n",storage_missing);note(line);}
+    if(!error&&storage_replaced)note("Public cold replacement PASS replacement-only=1 exact=1\n");
     if(error)return error;
     /* Exceed parity (both leaves for mirror). A transport failure alone is
      * not proof of rejection: require a backend reply and responsive queries. */
     for(unsigned i=0;i<=storage_missing;i++){
-        snprintf(member[i],sizeof(member[i]),"%s/disk%u",storage_directory,i);
-        snprintf(hidden[i],sizeof(hidden[i]),"%s/disk%u-held",storage_directory,i);
+        storage_member(member[i],sizeof(member[i]),i);
+        snprintf(hidden[i],sizeof(hidden[i]),"%s-held",member[i]);
         BPTR exists=Lock((CONST_STRPTR)hidden[i],SHARED_LOCK);
         if(exists){UnLock(exists);error=EEXIST;break;}
         if(IoErr()!=ERROR_OBJECT_NOT_FOUND||!Rename((CONST_STRPTR)member[i],(CONST_STRPTR)hidden[i])){error=EIO;break;}
@@ -1228,6 +1278,11 @@ int main(int argc,char **argv){
     struct Library *secBase=NULL;int logged=0;
     int gui=argc==2&&!strcmp(argv[1],"GUI");
     int cold=argc==2&&!strcmp(argv[1],"STORAGE-COLD");
+    marker=Lock((CONST_STRPTR)"SYS:openzfs-replacement-test",SHARED_LOCK);
+    if(marker){
+        UnLock(marker);storage_replace=1;storage_replaced=cold;
+        if(!native_file_fixture||storage_layout!=OZ_MIRROR)return 20;
+    }
     if(cold&&!strcmp(storage_directory,"RAM:OZPublicPool"))return 20;
     int storage=cold||gui||(argc==2&&!strcmp(argv[1],"STORAGE"));
     int startup=storage||(argc==2&&!strcmp(argv[1],"STARTUP"));

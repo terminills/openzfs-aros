@@ -27,6 +27,8 @@ case "$layout" in
     *) echo 'AROS_TEST_LAYOUT must be mirror, raidz1/2/3 or draid1/2/3' >&2; exit 2 ;;
 esac
 [[ $layout == mirror || $persistent == 1 ]]
+replace=${AROS_TEST_REPLACE:-0}
+[[ $replace == 0 || ( $replace == 1 && $layout == mirror && $persistent == 1 && -n $cli_dir ) ]]
 gui=${AROS_PUBLIC_GUI:-0}
 cpus=${AROS_TEST_CPUS:-2}
 qemu=${AROS_TEST_QEMU:-qemu-system-x86_64}
@@ -47,6 +49,9 @@ prefix=public-service-run
 startup=aros/engine/Startup-Public-Service
 duration=600
 extra_maps=()
+if [[ $replace == 1 ]];then
+    extra_maps+=(-map aros/engine/public-service-test-only /openzfs-replacement-test)
+fi
 if [[ -n $shared ]];then
     shared=$(realpath -e "$shared")
     rg -Fxq 'service_test_modes=0' "$shared/service-build-options.txt"
@@ -366,9 +371,18 @@ if [[ $persistent == 1 ]];then
     if [[ $layout == mirror && -n $cli_dir ]];then
         rg -q '^Public mirror resilver PASS offline=1 missed-write=1 online=1 finished=1 issued-nonzero=1 errors=0' "$run/serial-results.log"
     fi
+    if [[ $replace == 1 ]];then
+        rg -q '^Public mirror replacement PASS new-guid=1 old-absent=1 leaves=2 finished=1 errors=0' "$run/serial-results.log"
+        # Keep the retired member as evidence, but make it unavailable to the
+        # fresh guest, including to any import-directory discovery fallback.
+        mcopy -i "$run/backing.raw" ::OZPublicPool/disk0 "$run/retired-disk0"
+        sha256sum "$run/retired-disk0" >"$run/retired-disk0.sha256"
+        mdel -i "$run/backing.raw" ::OZPublicPool/disk0
+    fi
     mkdir "$run/members-before" "$run/members-after"
     for ((member=0;member<members;member++));do
-        mcopy -i "$run/backing.raw" "::OZPublicPool/disk$member" "$run/members-before/disk$member"
+        suffix=;if [[ $replace == 1 && $member == 0 ]];then suffix=-new;fi
+        mcopy -i "$run/backing.raw" "::OZPublicPool/disk$member$suffix" "$run/members-before/disk$member"
     done
     sha256sum "$run/members-before/"* >"$run/members-before.sha256"
     printf '%s\n' 'FailAt 20' 'MakeDir RAM:T RAM:ENV' 'Assign T: RAM:T' \
@@ -411,8 +425,13 @@ if [[ $persistent == 1 ]];then
     if [[ $layout == mirror && -n $cli_dir ]];then
         [[ $(rg -c '^Public cold resilver payload PASS bytes=1048576 exact=1' "$run/cold-results.log") == 3 ]]
     fi
+    if [[ $replace == 1 ]];then
+        rg -q '^Public cold replacement PASS replacement-only=1 exact=1' "$run/cold-results.log"
+        sha256sum -c "$run/retired-disk0.sha256" >"$run/retired-disk0-unchanged.log"
+    fi
     for ((member=0;member<members;member++));do
-        mcopy -i "$run/backing.raw" "::OZPublicPool/disk$member" "$run/members-after/disk$member"
+        suffix=;if [[ $replace == 1 && $member == 0 ]];then suffix=-new;fi
+        mcopy -i "$run/backing.raw" "::OZPublicPool/disk$member$suffix" "$run/members-after/disk$member"
         cmp "$run/members-before/disk$member" "$run/members-after/disk$member"
     done
     sha256sum "$run/members-after/"* >"$run/members-after.sha256"

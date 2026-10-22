@@ -430,6 +430,27 @@ explicit runner gates for warm repair and all three cold payload reads.
 This qualifies offline/write/online repair of a two-file mirror, not physical
 durability, replacement, distributed-spare activation or arbitrary topologies.
 
+### Current native mirror replacement qualification
+
+Set `AROS_TEST_REPLACE=1` for the persistent mirror package test (requires
+the packaged CLI). The acceptance client provisions an additional blank
+128 MiB file, submits operation 13 using the original leaf's exact GUID,
+waits for upstream replacement/resilver activity, and checks an ONLINE new
+GUID, two remaining leaves, absence of the retired leaf, and a finished
+error-free resilver with nonzero issued bytes.
+
+`public-service-run.qHFpp23h` passed this path with 1,978,368 bytes issued by
+the replacement resilver. After export, the runner retains the retired member
+outside the guest as `retired-disk0` with a checksum, then removes its disposable
+guest copy. The next QEMU boot reads the exact data with the other original
+member hidden, so neither an old member nor the writer's caches can satisfy
+that check. Healthy, degraded and restored imports pass, cold member hashes
+remain unchanged, and independent host `zdb -bcc` reports no leaks.
+The ordinary non-replacement mirror regression run `public-service-run.GUbY9zBx`
+also passes with the same rebuilt acceptance client and runner.
+This covers replacement of a file-backed mirror member, not native-device
+replacement, dRAID distributed spares or physical power-loss durability.
+
 ## Requirements
 
 - Linux build host with Bash, Git, Make, GCC-compatible AROS cross tools, binutils,
