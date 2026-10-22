@@ -10,6 +10,32 @@ OpenZFS at the existing Work volume or assume in-place conversion.
 
 ## Current integration evidence (2026-10-04)
 
+### Alpha18 large-file desktop enumeration (2026-10-22)
+
+Private native QEMU run `native-gui-run.AT6BKb1Y` passes the public service
+suite with Wanderer running. Screenshot `01.png` shows both `hello.txt` and
+`large-sparse.bin` in the mounted drawer. Before Wanderer, while it is running,
+and after normal drawer/Manager closure, the test checks legacy ExNext,
+raw ACTION_EXAMINE_OBJECT64/NEXT64 packets, and ExAll ED_OWNER. The wide
+packet result must contain the exact sparse length 4294971392; legacy fields
+saturate at their representable maximum. Exact file readback and subsequent
+storage teardown pass. This is isolated software evidence, not DUT evidence.
+
+The failure was reproducible before starting Wanderer: runs `I4KwFzxv` and
+`vmYp0CJw` stop enumeration with DOS error 207 on the sparse file. Candidate
+`P65qMJkP` still failed: the SDK defines both FileInfoBlock32 and
+FileInfoBlock64, so finding a UQUAD definition did not establish the active
+legacy ABI. The working change keeps legacy directory enumeration usable
+(saturation, as in PFS3) and implements the separate wide examination packets.
+It does not relax legacy seek/resize overflow refusal. ExAll's legacy size
+field is unsigned, whereas legacy FileInfoBlock size is signed.
+
+The full suite result does not yet qualify the public dos64.library wrappers
+or every new packet's error path. The initial drawer's title also remains
+visually blank in this fixture; no unrelated Wanderer/MUI patch was applied.
+The failed-run ISO copies were hashed and removed after their QEMU processes
+ended; serial logs, source snapshots and manifests are retained.
+
 Real mirror checksum repair now has cold-boot evidence:
 `checksum-run.9qVqvwzI` completed with host exit 0 after one byte of an
 allocated 4-KiB payload block was changed in a disposable member copy.

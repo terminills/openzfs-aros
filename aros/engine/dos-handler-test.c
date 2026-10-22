@@ -1490,7 +1490,8 @@ static int sparse64_client_checks(int write)
             IoErr()!=ERROR_OBJECT_TOO_LARGE))error=EIO;
         if(!error&&file_packet64(file,ACTION_GET_FILE_SIZE64,0,0)!=(SIPTR)size)error=EIO;
         struct FileInfoBlock fib;
-        if(!error&&(ExamineFH(file,&fib)||IoErr()!=ERROR_OBJECT_TOO_LARGE))error=EIO;
+        if(!error&&(!ExamineFH(file,&fib)||
+            fib.fib_Size!=(sizeof(fib.fib_Size)==4?INT32_MAX:size)))error=EIO;
         if(!error&&!file_packet64(file,ACTION_CHANGE_FILE_POSITION64,-1,OFFSET_END))error=EIO;
         unsigned char end=0xff;
         if(!error&&(Read(file,&end,1)!=1||end||Read(file,&end,1)!=0))error=EIO;

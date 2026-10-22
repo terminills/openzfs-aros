@@ -17,6 +17,7 @@
 #include <dos/dostags.h>
 #include <dos/dosextens.h>
 #include <dos/exall.h>
+#include <dos/dos64.h>
 #include <exec/memory.h>
 #include <exec/io.h>
 #include <exec/errors.h>
@@ -131,10 +132,25 @@ static int desktop_directory(const char *phase)
         if(!strcmp(fib->fib_FileName,"hello.txt")&&fib->fib_DirEntryType<0&&
            fib->fib_Size==sizeof(storage_payload)-1)++next_found;
         if(!strcmp(fib->fib_FileName,"large-sparse.bin")&&fib->fib_DirEntryType<0&&
-           fib->fib_Size==UINT64_C(0x100001000))++next_large;
+           fib->fib_Size==(sizeof(fib->fib_Size)==4?INT32_MAX:UINT64_C(0x100001000)))++next_large;
     }
     doserr=IoErr();
     if(doserr!=ERROR_NO_MORE_ENTRIES||next_found!=1||next_large!=1){error=EIO;goto done;}
+    stage="exnext64";
+    struct FileInfoBlock64 wide;
+    struct FileLock *fl=BADDR(root);
+    if(!DoPkt(fl->fl_Task,ACTION_EXAMINE_OBJECT64,(SIPTR)root,(SIPTR)MKBADDR(&wide),0,0,0)){
+        doserr=IoErr();error=EIO;goto done;
+    }
+    unsigned wide_found=0,wide_count=0;
+    while(DoPkt(fl->fl_Task,ACTION_EXAMINE_NEXT64,(SIPTR)root,(SIPTR)MKBADDR(&wide),0,0,0)){
+        if(++wide_count>64){error=EOVERFLOW;goto done;}
+        /* Raw packet strings are BCPL; dos64.library normally converts. */
+        if(wide.fib_FileName[0]==16&&!memcmp(wide.fib_FileName+1,"large-sparse.bin",16)&&
+           wide.fib_Size==UINT64_C(0x100001000))++wide_found;
+    }
+    doserr=IoErr();
+    if(doserr!=ERROR_NO_MORE_ENTRIES||wide_found!=1){error=EIO;goto done;}
     stage="exall";
     ctl->eac_LastKey=0;ctl->eac_MatchString=NULL;ctl->eac_MatchFunc=NULL;
     for(unsigned calls=0;calls<64;calls++){
@@ -149,7 +165,7 @@ static int desktop_directory(const char *phase)
             if(!strcmp(entry->ed_Name,"hello.txt")&&entry->ed_Type<0&&
                entry->ed_Size==sizeof(storage_payload)-1)++all_found;
             if(!strcmp(entry->ed_Name,"large-sparse.bin")&&entry->ed_Type<0&&
-               entry->ed_Size==UINT64_C(0x100001000))++all_large;
+               entry->ed_Size==(sizeof(entry->ed_Size)==4?UINT32_MAX:UINT64_C(0x100001000)))++all_large;
             entry=entry->ed_Next;
         }
         if(!more){if(ioerr!=ERROR_NO_MORE_ENTRIES||all_found!=1||all_large!=1)error=EIO;goto done;}

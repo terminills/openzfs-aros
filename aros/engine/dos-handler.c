@@ -7,6 +7,7 @@
 #include <dos/dosextens.h>
 #include <dos/filehandler.h>
 #include <dos/exall.h>
+#include <dos/dos64.h>
 #include <dos/record.h>
 #include <dos/notify.h>
 #include <devices/timer.h>
@@ -560,15 +561,10 @@ static ULONG display_protection(const struct oz_zpl_info *info)
     if(info->mode&0001)bits|=FIBF_OTR_EXECUTE;
     return bits;
 }
-static int fill_fib(struct oz_zpl *fs,uint64_t object,const char *name,struct FileInfoBlock *fib)
+static int fill_fib64(struct oz_zpl *fs,uint64_t object,const char *name,struct FileInfoBlock64 *fib)
 {
     struct oz_zpl_info info;int rc=oz_zpl_stat(fs,object,&info);if(rc)return rc;
     if(strlen(name)>sizeof(fib->fib_FileName)-2)return ENAMETOOLONG;
-    /* ABIv1 has 64-bit size/block fields. Only reject values that the
-     * actual destination cannot represent; otherwise one large file
-     * aborts enumeration of an entire drawer. */
-    if((sizeof(fib->fib_Size)==4&&info.size>INT32_MAX)||
-       (sizeof(fib->fib_NumBlocks)==4&&info.blocks>INT32_MAX))return EOVERFLOW;
     uint32_t owner;
     rc=oz_aros_owner_from_ids(info.mapped_uid,info.mapped_gid,&owner);
     if(rc)return rc;
@@ -598,6 +594,25 @@ static int fill_fib(struct oz_zpl *fs,uint64_t object,const char *name,struct Fi
     fib->fib_Date.ds_Days=secs/86400;fib->fib_Date.ds_Minute=(secs%86400)/60;
     fib->fib_Date.ds_Tick=(secs%60)*TICKS_PER_SECOND+
         (info.mtime>=252460800?info.mtime_nsec/(1000000000/TICKS_PER_SECOND):0);return 0;
+}
+
+static int fill_fib(struct oz_zpl *fs,uint64_t object,const char *name,struct FileInfoBlock *fib)
+{
+    struct FileInfoBlock64 wide;
+    int rc=fill_fib64(fs,object,name,&wide);if(rc)return rc;
+    memset(fib,0,sizeof(*fib));
+    fib->fib_DiskKey=wide.fib_DiskKey;
+    fib->fib_DirEntryType=wide.fib_DirEntryType;
+    fib->fib_EntryType=wide.fib_EntryType;
+    memcpy(fib->fib_FileName,wide.fib_FileName,sizeof(fib->fib_FileName));
+    memcpy(fib->fib_Comment,wide.fib_Comment,sizeof(fib->fib_Comment));
+    fib->fib_Protection=wide.fib_Protection;fib->fib_Date=wide.fib_Date;
+    fib->fib_OwnerUID=wide.fib_OwnerUID;fib->fib_OwnerGID=wide.fib_OwnerGID;
+    /* Legacy directory consumers must still see all entries. Match the
+     * saturation policy used by PFS3; exact sizes use EXAMINE_*64. */
+    fib->fib_Size=sizeof(fib->fib_Size)==4&&wide.fib_Size>INT32_MAX?INT32_MAX:wide.fib_Size;
+    fib->fib_NumBlocks=sizeof(fib->fib_NumBlocks)==4&&wide.fib_NumBlocks>INT32_MAX?INT32_MAX:wide.fib_NumBlocks;
+    return 0;
 }
 
 static LONG examine_all(struct oz_mount *mount,struct locked *lock,
@@ -634,8 +649,6 @@ static LONG examine_all(struct oz_mount *mount,struct locked *lock,
         if(ctl->eac_MatchString&&!MatchPatternNoCase(ctl->eac_MatchString,(STRPTR)name)) {
             ctl->eac_LastKey++;continue;
         }
-        if(level>=ED_SIZE&&sizeof(((struct ExAllData *)0)->ed_Size)==4&&info.size>UINT32_MAX)
-            return ERROR_OBJECT_TOO_LARGE;
         uint32_t owner=0;
         if(level>=ED_OWNER) {
             rc=oz_aros_owner_from_ids(info.mapped_uid,info.mapped_gid,&owner);
@@ -654,7 +667,8 @@ static LONG examine_all(struct oz_mount *mount,struct locked *lock,
         entry->ed_Name=buffer+used+fields[level];
         memcpy(entry->ed_Name,name,namesize);
         if(level>=ED_TYPE)entry->ed_Type=entry_type(&info);
-        if(level>=ED_SIZE)entry->ed_Size=info.directory?0:info.size;
+        if(level>=ED_SIZE)entry->ed_Size=info.directory?0:
+            sizeof(entry->ed_Size)==4&&info.size>UINT32_MAX?UINT32_MAX:info.size;
         if(level>=ED_PROTECTION) {
             entry->ed_Prot=display_protection(&info);
             if(!info.directory&&!info.symlink&&!oz_zpl_exec(mount->fs)) {
@@ -1306,33 +1320,47 @@ void oz_dos_pump(struct oz_mount *mount)
         else value=lock->object==other->object?DOSTRUE:DOSFALSE;
         break;
     }
+    case ACTION_EXAMINE_OBJECT64:
     case ACTION_EXAMINE_OBJECT: {
         if(dp->dp_Arg1&&!lock){error=ERROR_INVALID_LOCK;break;}
         struct FileInfoBlock *fib=BADDR(dp->dp_Arg2);
         if(!fib){error=ERROR_BAD_NUMBER;break;}
         int rc=access_object(mount,lock?lock->object:oz_zpl_root(fs),ACE_READ_ATTRIBUTES,cr);
-        if(!rc)rc=fill_fib(fs,lock?lock->object:oz_zpl_root(fs),lock?lock->name:mount->name,fib);
+        if(!rc)rc=dp->dp_Type==ACTION_EXAMINE_OBJECT64?
+            fill_fib64(fs,lock?lock->object:oz_zpl_root(fs),lock?lock->name:mount->name,(void *)fib):
+            fill_fib(fs,lock?lock->object:oz_zpl_root(fs),lock?lock->name:mount->name,fib);
         if(rc)error=dos_error(rc);else value=DOSTRUE;break;
     }
+    case ACTION_EXAMINE_FH64:
     case ACTION_EXAMINE_FH: {
         if(!h){error=ERROR_INVALID_LOCK;break;}
         struct FileInfoBlock *fib=BADDR(dp->dp_Arg2);
         if(!fib){error=ERROR_BAD_NUMBER;break;}
         int rc=access_object(mount,h->object,ACE_READ_ATTRIBUTES,cr);
-        if(!rc)rc=fill_fib(fs,h->object,h->name,fib);
+        if(!rc)rc=dp->dp_Type==ACTION_EXAMINE_FH64?
+            fill_fib64(fs,h->object,h->name,(void *)fib):fill_fib(fs,h->object,h->name,fib);
         if(rc)error=dos_error(rc);else value=DOSTRUE;break;
     }
+    case ACTION_EXAMINE_NEXT64:
     case ACTION_EXAMINE_NEXT: {
         if(!lock){error=ERROR_INVALID_LOCK;break;}
         struct FileInfoBlock *fib=BADDR(dp->dp_Arg2);char name[256];struct oz_zpl_info info;
-        if(!fib||fib->fib_DiskKey>=INT32_MAX){error=ERROR_BAD_NUMBER;break;}
-        LONG next=fib->fib_DiskKey+1;
+        if(!fib){error=ERROR_BAD_NUMBER;break;}
+        IPTR key=dp->dp_Type==ACTION_EXAMINE_NEXT64?
+            ((struct FileInfoBlock64 *)fib)->fib_DiskKey:fib->fib_DiskKey;
+        if(key>=INT32_MAX){error=ERROR_BAD_NUMBER;break;}
+        LONG next=key+1;
         int rc=access_object(mount,lock->object,ACE_LIST_DIRECTORY|ACE_EXECUTE,cr);
-        if(!rc)rc=oz_zpl_nth(fs,lock->object,fib->fib_DiskKey,name,sizeof(name),&info);
+        if(!rc)rc=oz_zpl_nth(fs,lock->object,key,name,sizeof(name),&info);
         if(rc){error=rc==ENOENT?ERROR_NO_MORE_ENTRIES:dos_error(rc);break;}
         rc=access_object(mount,info.object,ACE_READ_ATTRIBUTES,cr);
-        if(!rc)rc=fill_fib(fs,info.object,name,fib);
-        if(rc)error=dos_error(rc);else {fib->fib_DiskKey=next;value=DOSTRUE;}break;
+        if(!rc)rc=dp->dp_Type==ACTION_EXAMINE_NEXT64?
+            fill_fib64(fs,info.object,name,(void *)fib):fill_fib(fs,info.object,name,fib);
+        if(rc)error=dos_error(rc);else {
+            if(dp->dp_Type==ACTION_EXAMINE_NEXT64)((struct FileInfoBlock64 *)fib)->fib_DiskKey=next;
+            else fib->fib_DiskKey=next;
+            value=DOSTRUE;
+        }break;
     }
     case ACTION_FH_FROM_LOCK: {
         struct FileHandle *fh=BADDR(dp->dp_Arg1);
