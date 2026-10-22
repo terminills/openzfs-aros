@@ -7,6 +7,8 @@
 #include "../ui/partition-api.h"
 #include "../ui/zvol-api.h"
 #include "../device/mountfile.h"
+#include "../ui/startup-settings.h"
+#include "hostid-record.h"
 #include "include/sys/mnttab.h"
 #include <proto/exec.h>
 #include <proto/dos.h>
@@ -725,6 +727,84 @@ static int companion_tools_test(void)
        cli_command("C:OpenZFSHostIdentity 12345678")!=20)return EIO;
     note("Public companion tools PASS runtime-prerequisites=1 invalid-arguments=1 no-identity-write=1\n");
     return 0;
+}
+/* Exercise real command publication in fresh guest-RAM assigns only. Never
+ * overwrite the boot image's ENV/ENVARC or carry a test host ID into service. */
+static int companion_configuration_test(void)
+{
+    BPTR marker=Lock((CONST_STRPTR)"SYS:openzfs-companion-tools-test",SHARED_LOCK);
+    if(!marker)return 0;
+    UnLock(marker);
+    const char *assigns[]={"ENV","ENVARC"};
+    const char *roots[]={"RAM:OZCompanionEnv","RAM:OZCompanionArchive"};
+    BPTR saved[2]={0,0};int assigned[2]={0,0},created[2]={0,0},error=0;
+    struct oz_startup_settings record={0},loaded={0};unsigned published=0;
+#define CONFIG_CHECK(x) do{if(!(x)){error=__LINE__;goto cleanup;}}while(0)
+    for(unsigned i=0;i<2;i++){
+        char path[32];snprintf(path,sizeof(path),"%s:",assigns[i]);
+        saved[i]=Lock((CONST_STRPTR)path,SHARED_LOCK);CONFIG_CHECK(saved[i]);
+        BPTR directory=CreateDir((CONST_STRPTR)roots[i]);CONFIG_CHECK(directory);created[i]=1;
+        if(!SetOwner((STRPTR)roots[i],secOWNER_SYSTEM)||!SetProtection((CONST_STRPTR)roots[i],0)){
+            UnLock(directory);CONFIG_CHECK(0);
+        }
+        UnLock(directory);
+        directory=Lock((CONST_STRPTR)roots[i],SHARED_LOCK);CONFIG_CHECK(directory);
+        if(!AssignLock((CONST_STRPTR)assigns[i],directory)){UnLock(directory);CONFIG_CHECK(0);}
+        assigned[i]=1;
+    }
+    {
+        BPTR probe=CreateDir((CONST_STRPTR)"ENV:configuration-probe");
+        CONFIG_CHECK(probe);
+        struct FileInfoBlock *fib=AllocDosObject(DOS_FIB,NULL);
+        if(fib&&Examine(probe,fib)){
+            char line[160];snprintf(line,sizeof(line),"Public configuration created-directory owner=%u:%u protection=%lx type=%ld\n",
+                fib->fib_OwnerUID,fib->fib_OwnerGID,(unsigned long)fib->fib_Protection,(long)fib->fib_DirEntryType);note(line);
+        }
+        if(fib)FreeDosObject(DOS_FIB,fib);
+        UnLock(probe);CONFIG_CHECK(DeleteFile((CONST_STRPTR)"ENV:configuration-probe"));
+    }
+    LONG identity_result=cli_command("C:OpenZFSHostIdentity 5a465301 SAVE >T:companion-identity.log");
+    diagnostic_log("T:companion-identity.log");
+    CONFIG_CHECK(!identity_result);
+    for(unsigned i=0;i<2;i++){
+        char path[96];snprintf(path,sizeof(path),"%s:OpenZFSHost.prefs",assigns[i]);
+        BPTR file=Open((CONST_STRPTR)path,MODE_OLDFILE);CONFIG_CHECK(file);
+        uint32_t identity=0;int result=oz_hostid_record_read(file,&identity),closed=Close(file);
+        CONFIG_CHECK(!result&&closed&&identity==UINT32_C(0x5a465301));
+    }
+    record.guid=UINT64_C(0x5a46530000000001);record.count=1;
+    strcpy(record.pool,"companion_disabled");strcpy(record.paths[0],"RAM:must-not-be-opened");
+    CONFIG_CHECK(!oz_startup_settings_apply_trusted(&record,1,&published));
+    CONFIG_CHECK(published==(OZ_STARTUP_PUBLISHED_ENV|OZ_STARTUP_PUBLISHED_ENVARC));
+    CONFIG_CHECK(!cli_command("C:OpenZFSStartup 5a46530000000001 CHECK"));
+    CONFIG_CHECK(!cli_command("C:OpenZFSStartup 5a46530000000001"));
+    CONFIG_CHECK(DeleteFile((CONST_STRPTR)"ENV:OpenZFS-5a46530000000001.prefs"));
+    CONFIG_CHECK(cli_command("C:OpenZFSStartup 5a46530000000001 CHECK")==1);
+    CONFIG_CHECK(!cli_command("C:OpenZFSStartup 5a46530000000001 PREPARE"));
+    CONFIG_CHECK(!oz_startup_settings_trusted(record.guid,&loaded)&&loaded.guid==record.guid&&
+        !loaded.flags&&loaded.count==1&&!strcmp(loaded.pool,record.pool)&&!strcmp(loaded.paths[0],record.paths[0]));
+    CONFIG_CHECK(!cli_command("C:OpenZFSStartup 5a46530000000001 RESTORE"));
+    CONFIG_CHECK(!present(OZ_PORT)&&!present(OZ_ADMISSION_PORT));
+cleanup:
+    for(unsigned i=0;i<2;i++){
+        if(assigned[i]){
+            if(AssignLock((CONST_STRPTR)assigns[i],saved[i]))saved[i]=0;
+            else if(!error)error=__LINE__;
+        }
+        if(saved[i])UnLock(saved[i]);
+        if(created[i]){
+            const char *names[]={"OpenZFSHost.prefs","OpenZFS-5a46530000000001.prefs"};
+            for(unsigned n=0;n<2;n++){
+                char path[128];snprintf(path,sizeof(path),"%s/%s",roots[i],names[n]);
+                if(!DeleteFile((CONST_STRPTR)path)&&IoErr()!=ERROR_OBJECT_NOT_FOUND&&!error)error=__LINE__;
+            }
+            if(!DeleteFile((CONST_STRPTR)roots[i])&&!error)error=__LINE__;
+        }
+    }
+    if(error){char line[96];snprintf(line,sizeof(line),"Public companion configuration FAIL line=%d DOS=%ld\n",error,(long)IoErr());note(line);}
+    else note("Public companion configuration PASS hostid-save=1 iff-readback=2 trusted-check=1 prepare=1 disabled-restore=1 assigns-restored=1\n");
+#undef CONFIG_CHECK
+    return error;
 }
 /* Exercise repair through the shipped API/commands, not linked SPA internals.
  * disk0 is later the only available mirror member in the cold degraded test. */
@@ -1855,6 +1935,7 @@ int main(int argc,char **argv){
         CHECK(!present(OZ_PORT)&&!present(OZ_ADMISSION_PORT));
         secLogoutA(quiet);logged=0;
         CHECK(secLoginA(root)==secOWNER_SYSTEM);logged=1;
+        CHECK(!companion_configuration_test());
         CHECK(SystemTags((CONST_STRPTR)"Run >T:service-writable.log C:OpenZFSServiceNative WRITABLE",TAG_DONE)==0);
         note("Public startup invalid-mode and non-root denial PASS\n");
     }

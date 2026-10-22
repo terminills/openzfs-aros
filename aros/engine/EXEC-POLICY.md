@@ -62,6 +62,27 @@ images are automatically pruned. The two diagnosed negative-run ISOs are
 also pruned after terminal-process checks and SHA256 capture; their logs and
 manifests remain. No other agent's VM or physical storage was modified.
 
+## Companion configuration commands (2026-10-22)
+
+`public-service-run.kOHm9dDV` adds two successful executions of the actual
+OpenZFSHostIdentity and OpenZFSStartup commands. Each uses fresh private RAM
+directories, system ownership and private permissions, temporarily assigned
+as ENV and ENVARC. HostIdentity SAVE succeeds; the native IFF reader verifies
+the exact identity in both records. A disabled startup record passes CHECK,
+does not import or start a service, fails CHECK when its ENV copy is removed,
+then passes PREPARE from ENVARC, trusted readback, and disabled RESTORE.
+The original assigns are restored and temporary records removed before the
+service starts. The complete subsequent RAM storage suite passes.
+
+The negative fixture runs Ic4B1y0r, IJ9rz0cD, BNhaZOUR and RicJdNjI are
+retained as logs/manifests, with test ISOs pruned after open-use checks and
+hash capture. The final fixture correction releases CreateDir's exclusive
+lock and reacquires a shared lock before AssignLock. Passing an exclusive
+directory lock into the assign prevented the publisher from accessing it.
+No publication security checks were relaxed. This qualifies command execution
+and explicit ENV provisioning, not an enabled boot import or durable ENVARC
+storage across a reboot.
+
 ## User-facing runtime detection (2026-09-30)
 
 OpenZFSRuntimeCheck now checks both loader APIs using a copied executable in
