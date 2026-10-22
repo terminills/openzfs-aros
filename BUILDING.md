@@ -535,6 +535,23 @@ does not change the filesystem driver to hide a failure. All failed evidence
 is retained. The new Sequential control is rebuilt but not yet interactively
 qualified; native attach and higher-parity sequential runs remain separate.
 
+Higher-parity follow-up `public-service-run.iWws1mfl` (dRAID2) and
+`public-service-run.89Me9RN1` (dRAID3) pass sequential spare reconstruction,
+the post-rebuild scrub, all four cold status/data checks, complete-member-loss
+refusal, clean backing detach, unchanged member hashes and independent zdb
+checks. Failed `RKzCDpbG` is retained: the test tried to start a second scrub
+while upstream's automatic post-rebuild scrub was running. The test now waits
+for that scrub and requires its start time to be at or after rebuild completion,
+so an older successful scrub cannot satisfy the gate. No engine behavior was
+changed to suppress that failure.
+
+Native GUI run `native-gui-run.WfKHTWCH` verifies the Sequential control's
+layout, the `rebuild=on` typed preview with unchanged member path (`03.png`),
+and clearing/disabling the checkbox for an unrelated operation (`04.png`).
+It submits no GUI mutation. Normal close and the remaining package test pass.
+This closes the control/preview gap, not end-to-end GUI reconstruction or
+native-device attach qualification.
+
 ## Requirements
 
 - Linux build host with Bash, Git, Make, GCC-compatible AROS cross tools, binutils,

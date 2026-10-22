@@ -701,23 +701,25 @@ static int storage_spare_status(char *guid,size_t size,int active)
                 note(reply->rows[i].state);note(" ");note(reply->rows[i].value);note("\n");
             }
         }
+        unsigned long long completed_rebuild_end=0;
         if(!error&&active&&storage_sequential){
             unsigned complete=0;
             for(unsigned i=0;i<reply->row_count;i++){
                 const struct oz_row *r=&reply->rows[i];
-                unsigned long long id,issued,rebuilt,errors;
+                unsigned long long id,issued,rebuilt,errors,start,end;
                 if(!strcmp(r->kind,"rebuild")&&!strcmp(r->state,"COMPLETE")&&r->used&&r->progress_permille==1000&&
-                    sscanf(r->value,"guid=%llu issued=%llu rebuilt=%llu errors=%llu",&id,&issued,&rebuilt,&errors)==4&&
-                    id&&issued&&rebuilt&&!errors){complete++;note("Public sequential rebuild row PASS ");note(r->value);note("\n");}
+                    sscanf(r->value,"guid=%llu issued=%llu rebuilt=%llu errors=%llu start=%llu end=%llu",&id,&issued,&rebuilt,&errors,&start,&end)==6&&
+                    id&&issued&&rebuilt&&!errors&&end&&end>=start){complete++;completed_rebuild_end=end;note("Public sequential rebuild row PASS ");note(r->value);note("\n");}
             }
             if(complete!=1)error=EAGAIN;
         }
         if(!error&&active){
             const char *prefix=storage_sequential?"scan=scrub state=finished ":"scan=resilver state=finished ";
             const char *scan=strstr(reply->detail,prefix);
-            unsigned long long examined,total,issued,errors;
-            if(!scan||sscanf(scan+strlen(prefix),"examined=%llu to-examine=%llu issued=%llu errors=%llu",
-                &examined,&total,&issued,&errors)!=4||!issued||errors)error=EAGAIN;
+            unsigned long long examined,total,issued,errors,start,end;
+            if(!scan||sscanf(scan+strlen(prefix),"examined=%llu to-examine=%llu issued=%llu errors=%llu start=%llu end=%llu",
+                &examined,&total,&issued,&errors,&start,&end)!=6||!issued||errors||
+                (storage_sequential&&(start<completed_rebuild_end||end<start)))error=EAGAIN;
             if(!error){note("Public dRAID spare scan PASS ");note(scan);note("\n");}
         }
         oz_message_free(reply);
@@ -745,7 +747,9 @@ static int storage_spare_test(void)
     if(!error&&storage_sequential&&cli_command("C:zpool set feature@device_rebuild=enabled public_mirror"))error=EIO;
     if(!error)error=storage_request(13,"public_mirror",guid,storage_sequential?"rebuild=on":NULL);
     if(!error&&cli_command("C:zpool wait -t resilver public_mirror"))error=EIO;
-    if(!error&&storage_sequential&&cli_command("C:zpool scrub -w public_mirror"))error=EIO;
+    /* Upstream automatically starts the checksum scrub after the last
+     * rebuild. Starting another races that scrub and can return EBUSY. */
+    if(!error&&storage_sequential&&cli_command("C:zpool wait -t scrub public_mirror"))error=EIO;
     if(!error)for(unsigned i=0;i<120;i++){
         error=storage_spare_status(guid,sizeof(guid),1);
         if(error!=EAGAIN)break;

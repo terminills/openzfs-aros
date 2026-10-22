@@ -105,7 +105,10 @@ Rebuild rows participate in ordinary status pagination, and malformed short
 statistics arrays are refused rather than read past their end.
 
 Sequential reconstruction does not verify data checksums. A successful
-rebuild is not a successful scrub; request and verify the latter separately.
+rebuild is not a successful scrub. Upstream normally starts a scrub after the
+last rebuild; wait for and verify that scrub instead of racing it with a
+second start request. If automatic scrubbing is disabled, request a scrub
+explicitly. A prior completed scrub is not evidence for the rebuilt data.
 
 ### Existing distributed-spare replacement
 
