@@ -47,8 +47,12 @@ Public-package zvol qualification now includes the session transport and
 resident `openzfs.device`: logical discard boundaries, Exec block I/O larger
 than one transport request, repeated close/reopen, mapping ejection, and cold
 healthy/degraded/restored reads on mirror and RAIDZ2. Read-only writes and
-busy-client ejection are refused. This does not yet qualify DOS filesystems
-inside zvols or GUI volume publication with the current public package.
+busy-client ejection are refused. FAT inside a sparse zvol additionally passes
+format/write/read, DOS directory/volume enumeration and cold mirror
+healthy/degraded/restored reads, using the explicitly selected combined FAT
+flush/read-only overlay. The flush-only FAT runtime fails the cold disk-state
+protection check; stock-nightly compatibility must not be inferred. FFS and GUI
+volume publication remain separate current-package qualification gaps.
 
 ## Implemented integration
 

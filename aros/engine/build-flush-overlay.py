@@ -1,18 +1,23 @@
 #!/usr/bin/env python3
 """Private FAT and POSIX fsync objects; never modify installed SDK/runtime."""
 import hashlib
+import os
 import pathlib
 import shutil
 import subprocess
 import tempfile
 
 repo = pathlib.Path(__file__).resolve().parents[2]
-release = pathlib.Path('/opt/aros-workspace/aros-amiwest-nightly-release')
-source = pathlib.Path('/opt/aros-workspace/AROS')
-baseline = pathlib.Path('/opt/aros-workspace/AROS-amiwest-nightly-src')
+release = pathlib.Path(os.environ['AROS_RELEASE_BUILD']).resolve(strict=True)
+source = pathlib.Path(os.environ['AROS_SOURCE']).resolve(strict=True)
+baseline = pathlib.Path(os.environ['AROS_BASELINE_SOURCE']).resolve(strict=True)
 sdk = release / 'bin/pc-x86_64-smp/AROS/Developer'
 gen = release / 'bin/pc-x86_64-smp/gen/rom/filesys/fat/fat'
-cc = '/opt/aros-workspace/aros-crosstools/x86_64-aros-gcc'
+cc = os.environ['AROS_CC']
+fat_only = os.environ.get('AROS_FAT_ONLY', '0') == '1'
+readonly = os.environ.get('AROS_FAT_READONLY_FIX', '0') == '1'
+if shutil.disk_usage(repo).free < 100 * 2**30:
+    raise RuntimeError('100 GiB workspace reserve required')
 out = pathlib.Path(tempfile.mkdtemp(prefix='flush-overlay.', dir=repo / 'build-aros'))
 print('Evidence:', out, flush=True)
 common = [cc, '--sysroot', str(sdk), '-B' + str(sdk / 'lib') + '/',
@@ -22,6 +27,12 @@ for name in ['cache', 'packet']:
     src = source / 'rom/filesys/fat' / (name + '.c')
     shutil.copy2(src, out / src.name)
     inputs.append(src)
+    if name == 'packet' and readonly:
+        patch = repo / 'aros/platform/fat-device-readonly.patch'
+        shutil.copy2(patch, out / patch.name)
+        inputs.append(patch)
+        subprocess.run(['patch', '--batch', '--fuzz=0', '-d', str(out), '-p0',
+                        '-i', str(out / patch.name)], check=True)
     subprocess.run(common + ['-O2', '-D__NOLIBBASE__',
         '-I' + str(baseline / 'rom/filesys/fat'), '-I' + str(gen / 'include'),
         '-c', str(out / src.name), '-o', str(out / (name + '.o'))], check=True)
@@ -34,6 +45,15 @@ objects = [out / p.name if p.name in ['cache.o', 'packet.o'] else p for p in obj
 subprocess.run(common + ['-nostartfiles', '-static', '-Wl,-Map,' + str(out / 'fat.map'),
     *map(str, objects), '-Wl,--start-group', '-lfatbpb', '-Wl,--end-group',
     '-o', str(out / 'fat.handler')], check=True)
+if fat_only:
+    inputs.extend(sorted((baseline / 'rom/filesys/fat').glob('*.h')))
+    inputs.extend(sorted((gen / 'include').glob('*.h')))
+    inputs.extend([sdk / 'lib/libfatbpb.a', out / 'fat.handler'])
+    (out / 'inputs.sha256').write_text(''.join(
+        hashlib.sha256(p.read_bytes()).hexdigest() + '  ' + str(p) + '\n' for p in inputs))
+    (out / 'build-options.txt').write_text(f'fat_only=1\nreadonly_fix={int(readonly)}\n')
+    print('Overlay:', out, flush=True)
+    raise SystemExit(0)
 src = source / 'compiler/crt/posixc/fsync.c'
 shutil.copy2(src, out / 'fsync.c')
 shutil.copy2(baseline / 'compiler/crt/posixc/__fdesc.h', out / '__fdesc.h')
@@ -60,7 +80,7 @@ subprocess.run(common + ['-O2', '-I' + str(baseline / 'rom/filesys/fat'),
 inputs.append(out / 'OpenZFSFATCacheTest')
 test = repo / 'aros/engine/fsync-error-test.c'
 inputs.append(test)
-pthread = repo / 'build-aros/pthread-consistent.s3r1CHla'
+pthread = pathlib.Path(os.environ['AROS_PRIVATE_PTHREAD'])
 inputs.extend([pthread / 'source/pthread.h', pthread / 'libpthread.a'])
 subprocess.run(common + ['-O2', '-D_GNU_SOURCE', '-Dfsync=oz_test_fsync',
     '-c', str(out / 'fsync.c'), '-o', str(out / 'fsync-test-body.o')], check=True)

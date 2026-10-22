@@ -665,16 +665,49 @@ The five isolated retention-policy tests are run with
 `python3 aros/distribution/test-prune-public-images.py`.
 
 The opt-in `AROS_TEST_ZVOL_FILESYSTEM=1` additionally requires the public device
-binary and a persistent run. Its current FAT-on-zvol qualification is **not
-passing**: `public-service-run.KntFAIKw` formats a sparse 64 MiB volume, writes
+binary and a persistent run. Negative run `public-service-run.KntFAIKw`
+formats a sparse 64 MiB volume, writes
 and rereads a 128 KiB file, enumerates its directory and DOS volume, refuses
 eject while mounted, and shuts the handler down successfully. On the fresh
 read-only import, file enumeration passes but FAT `Info()` does not report
 `ID_WRITE_PROTECTED`; the test stops there rather than weakening the check.
 The actual device-level read-only checks immediately before it pass. The failed
 images and logs are retained to distinguish the selected FAT overlay from a
-zvol integration defect. Later cold filesystem mutation/read checks have not
-yet run successfully with this package.
+zvol integration defect.
+
+Follow-up `public-service-run.0zjdMRxB` passes those unchanged assertions with
+the private combined flush/read-only FAT overlay `flush-overlay.b4i_bpe7`.
+All three cold mirror imports (healthy, one member absent, restored) enumerate
+the retained file and DOS volume, report protected media, refuse file creation,
+deletion and rename, reread the exact 128 KiB payload, refuse mounted-device
+ejection, and cleanly stop the filesystem before eject/export. Independent host
+`zdb -bcc` reports no leaks; cold member hashes remain unchanged. Successful
+VM images were pruned automatically after verification, retaining logs and
+the deletion manifests. This is clean-export FAT-on-zvol qualification, not
+stock-nightly, abrupt-power-loss, FFS, or visual Wanderer testing.
+
+The missing dependency is the existing
+`aros/platform/fat-device-readonly.patch`: it checks `TD_PROTSTATUS` before
+admitting cached mutations and when reporting disk state. Device-level write
+rejection alone is insufficient for a write-back filesystem. The selected old
+flush-only FAT handler lacked this correction. No OpenZFS engine/device code
+or test assertion was changed to bypass the failure.
+
+To reproduce the combined private FAT handler, set `AROS_RELEASE_BUILD` to the
+configured PC/SMP build, `AROS_SOURCE` to the AROS source tree containing the
+FAT cache/packet flush fixes, `AROS_BASELINE_SOURCE` to its matching baseline
+source, and `AROS_CC` to the cross compiler. Run:
+
+```
+AROS_FAT_ONLY=1 AROS_FAT_READONLY_FIX=1 python3 aros/engine/build-flush-overlay.py
+```
+
+Pass the resulting `fat.handler` as `AROS_TEST_FAT_HANDLER`. The helper changes
+only a new private output directory, uses the configured build's remaining FAT
+objects, and records source/object/header/output hashes. It is not a fresh whole
+AROS build. Omitting FAT_ONLY also builds the historical POSIX fsync fixtures
+and requires `AROS_PRIVATE_PTHREAD` to name the matching private pthread build
+directory. That broader path was not rerun for this qualification.
 
 Start with isolated hosted AROS or QEMU and newly created disposable disk files.
 Never point recovery, fault-injection, formatting, or pool-creation tests at a
