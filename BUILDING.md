@@ -30,6 +30,24 @@ Tools inherit the configured target compiler, SDK, flags and output directories.
 pthread inputs when the configured SDK does not yet include the required port.
 `OPENZFS_TOOLSDIR` can override the Manager's installation directory.
 
+To rebuild the private pthread dependency, explicitly supply `AROS_CC`,
+`AROS_SDK`, and `AROS_PTHREAD_SOURCE` (the matching AROS pthread source
+directory containing `pthread.c`, public headers, and `mmakefile.src`) to
+`bash aros/engine/build-private-pthread.sh`. It snapshots the complete source
+set, compiles every listed function with the selected SDK, and uses the
+compiler-selected archiver. It records compiler identity, input paths, source,
+object and archive hashes without installing into the SDK. Keep its reported
+archive and header directory together. `AROS_ARTIFACT_ROOT` can select a
+separate mounted filesystem; the common 100-GiB reserve guard applies.
+
+Fresh 35-source pthread build `pthread-consistent.6ujRL4nB` was linked into
+shared engine `shared-engine.RDWvxF8a`. Hosted run
+`hosted-security-test.KzxOl3nq` passed the selected CLI replication/rollback,
+handler and persistent/cold/degraded mirror suite. Its source was the previously
+qualified AROS pthread snapshot, not an automatically downloaded new version;
+the engine objects and test client otherwise remained the qualified MetaMake
+build. This does not establish compatibility with arbitrary pthread revisions.
+
 The CLI targets compile the upstream command and userland library sources;
 they use authenticated service IPC rather than embedding the storage engine.
 Supply compatible dependency inputs using `OPENZFS_TIRPC_INCLUDE`,
