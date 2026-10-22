@@ -511,7 +511,7 @@ static int storage_loader_test(int initially_enabled)
 }
 static LONG cli_command(const char *command)
 {
-    LONG result=SystemTags((CONST_STRPTR)command,TAG_DONE);
+    LONG result=SystemTags((CONST_STRPTR)command,SYS_Error,Output(),TAG_DONE);
     LONG io_error=IoErr();
     char message[512];
     snprintf(message,sizeof(message),"Public CLI command result=%ld ioerr=%ld: %s\n",
@@ -685,6 +685,8 @@ static int storage_test(int gui){
         STORAGE_CHECK(SystemTags((CONST_STRPTR)"C:zfs clone -o mountpoint=none public_mirror/files@cli_roundtrip public_mirror/cli_clone",TAG_DONE)==0);
         STORAGE_CHECK(!cli_result("C:zfs get -H -o value origin public_mirror/cli_clone >SYS:cli-package-output.txt","public_mirror/files@cli_roundtrip"));
         STORAGE_CHECK(SystemTags((CONST_STRPTR)"C:zfs rename public_mirror/cli_clone public_mirror/cli_renamed",TAG_DONE)==0);
+        STORAGE_CHECK(cli_command("C:zpool set feature@lz4_compress=enabled public_mirror")==0);
+        STORAGE_CHECK(!cli_result("C:zpool get -H -o value feature@lz4_compress public_mirror >SYS:cli-package-output.txt","active"));
         STORAGE_CHECK(cli_command("C:zfs set compression=lz4 public_mirror/cli_renamed")==0);
         STORAGE_CHECK(!cli_result("C:zfs get -H -o value compression public_mirror/cli_renamed >SYS:cli-package-output.txt","lz4"));
         STORAGE_CHECK(SystemTags((CONST_STRPTR)"C:zfs snapshot public_mirror/cli_renamed@rollback",TAG_DONE)==0);

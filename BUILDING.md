@@ -88,6 +88,15 @@ client objects, with input hashes retained separately. Enable this packaged CLI
 coverage with `AROS_TEST_CLI_DIR` pointing to the staged `C` directory when
 running `aros/engine/test-hosted-security.sh` with a normal full service build.
 
+The packaged CLI coverage also includes clone/origin lookup, rename, explicit
+LZ4 pool-feature enablement and state query, compression set/get, rollback
+command execution and cleanup. Rollback here uses an unchanged snapshot and
+does not independently prove data restoration. Initial runs correctly refused
+LZ4 because the minimal fixture had not enabled its feature. Explicit child
+stderr capture exposed that upstream diagnostic; the trailing DOS error alone
+was misleading. The test now enables and verifies the feature through `zpool`
+before setting the dataset property, without weakening feature validation.
+
 All four CLI/startup executables linked through the generated makefile.
 The resulting `zfs --version`, `zpool --version`, and repeated `zfs --version`
 ran in isolated hosted AROS and printed `zfs-2.4.4-1`. They returned 1 with no
