@@ -189,6 +189,17 @@ That tag must be supported by the selected runtime; compiling against the
 header does not prove runtime support. Native aggregate and client logs are
 `aggregate-native-matched.log` and `public-test-native.log`. This paragraph
 records cross-build success only, not QEMU or hardware acceptance.
+
+The resulting native shared engine and acceptance client subsequently passed
+`public-service-run.5eKxPfIv` in isolated two-CPU QEMU: repeated service
+lifecycles, authenticated native admission, and a RAM-backed mirror DOS
+write/read/read-only-reimport sequence. The test used explicitly selected
+historical DOS/ATA/POSIX overlays and zlib; their hashes and base ISO hash are
+retained. This is not stock-nightly qualification, physical-device proof, or
+the extended packaged CLI/handler suite. The public-service QEMU runner now
+requires explicit ISO, acceptance client and zlib inputs, supports verified
+`AROS_TEST_SHARED_BUILD` staging, and applies the storage reserve guard with
+optional separate-filesystem `AROS_TEST_ARTIFACT_ROOT`.
 Prefer a coherent SDK and genmodule pair; do not define missing ABI constants
 in this project. Handler/device compilation is not runtime qualification.
 

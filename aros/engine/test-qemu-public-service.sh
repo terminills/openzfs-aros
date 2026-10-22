@@ -2,12 +2,14 @@
 set -euo pipefail
 repo=$(cd -- "$(dirname -- "$0")/../.." && pwd)
 cd "$repo"
-base=${AROS_TEST_ISO:-/opt/aros-workspace/aros-amiwest-nightly-release/distfiles/aros-smp-pc-x86_64.iso}
+base=${AROS_TEST_ISO:?explicit native test ISO required}
+zlib=${AROS_TEST_ZLIB_LIBRARY:?explicit native z1.library required}
 dos=${AROS_TEST_DOS_OVERLAY:?private DOS overlay required}
 ata=${AROS_TEST_ATA_OVERLAY:?private ATA overlay required}
 posix=${AROS_TEST_POSIX_LIBRARY:?private POSIX library required}
 service=${AROS_TEST_SERVICE_BINARY:?public service executable required}
-client=${AROS_TEST_CLIENT_BINARY:-build-aros/OpenZFSPublicServiceTest}
+client=${AROS_TEST_CLIENT_BINARY:?native acceptance client required}
+shared=${AROS_TEST_SHARED_BUILD:-}
 gui=${AROS_PUBLIC_GUI:-0}
 cpus=${AROS_TEST_CPUS:-2}
 qemu=${AROS_TEST_QEMU:-qemu-system-x86_64}
@@ -28,6 +30,15 @@ prefix=public-service-run
 startup=aros/engine/Startup-Public-Service
 duration=600
 extra_maps=()
+if [[ -n $shared ]];then
+    shared=$(realpath -e "$shared")
+    rg -Fxq 'service_test_modes=0' "$shared/service-build-options.txt"
+    rg -Fxq 'full_dispatcher=1' "$shared/service-build-options.txt"
+    rg -Fxq 'shared_engine=1' "$shared/service-build-options.txt"
+    sha256sum -c "$shared/binaries.sha256"
+    cmp "$service" "$shared/OpenZFSServiceNative"
+    extra_maps+=(-map "$shared/openzfs.library" /Libs/openzfs.library)
+fi
 if [[ ${AROS_TEST_LOADER_POLICY:-0} == 1 ]];then
     extra_maps+=(-map aros/engine/public-service-test-only /openzfs-loader-policy-test)
 fi
@@ -55,7 +66,10 @@ if [[ $gui == 1 ]];then
     startup=aros/engine/Startup-Public-Service-GUI
     duration=1800
 fi
-run=$(mktemp -d "$repo/build-aros/$prefix.XXXXXXXX")
+source "$repo/aros/engine/storage-preflight.sh"
+mkdir -p "$repo/build-aros"
+artifact_root=$(oz_artifact_root "$repo/build-aros" "${AROS_TEST_ARTIFACT_ROOT:-}")
+run=$(mktemp -d "$artifact_root/$prefix.XXXXXXXX")
 echo "Evidence: $run"
 qemu_path=$(command -v "$qemu")
 "$qemu" --version > "$run/qemu-version.txt"
@@ -142,13 +156,14 @@ git rev-parse HEAD >"$run/source.txt"
 git diff --binary >"$run/source.patch"
 sha256sum "$base" "$run/OpenZFSServiceNative" "$run/OpenZFSPublicServiceTest" \
     "$dos/aros-base.pkg.xz" "$ata/aros-bsp.pkg.xz" "$posix" \
-    build-aros/hosted/Libs/z1.library >"$run/inputs.sha256"
+    "$zlib" >"$run/inputs.sha256"
+if [[ -n $shared ]];then sha256sum "$shared/openzfs.library" >>"$run/inputs.sha256";fi
 xorriso -indev "$base" -outdev "$run/test.iso" \
     -map aros/engine/grub-qemu-test.cfg /boot/grub/grub.cfg \
     -map "$dos/aros-base.pkg.xz" /boot/aros-base.pkg.xz \
     -map "$ata/aros-bsp.pkg.xz" /boot/pc-smp/aros-bsp.pkg.xz \
     -map "$posix" /Libs/posixc.library \
-    -map build-aros/hosted/Libs/z1.library /Libs/z1.library \
+    -map "$zlib" /Libs/z1.library \
     -map "$run/security-fixture" /Security \
     -map "$run/OpenZFSServiceNative" /C/OpenZFSServiceNative \
     -map "$run/OpenZFSPublicServiceTest" /C/OpenZFSPublicServiceTest \
