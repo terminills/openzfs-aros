@@ -9,6 +9,12 @@ platform_maps=() platform_inputs=()
 if [[ $base_platform == 1 ]];then
     # Never silently combine a current boot image with older ABI overlays.
     [[ -z ${AROS_TEST_ZLIB_LIBRARY:-}${AROS_TEST_DOS_OVERLAY:-}${AROS_TEST_ATA_OVERLAY:-} ]]
+    if [[ -n ${AROS_TEST_BASE_DOS_PACKAGE:-} ]];then
+        python3 aros/engine/verify-dos-package-overlay.py "$base" \
+            "$AROS_TEST_BASE_DOS_PACKAGE" "${AROS_PACKAGE_TOOL:?package tool required}"
+        platform_maps=(-map "$AROS_TEST_BASE_DOS_PACKAGE" /boot/aros-base.pkg.xz)
+        platform_inputs=("$AROS_TEST_BASE_DOS_PACKAGE")
+    fi
 else
     zlib=${AROS_TEST_ZLIB_LIBRARY:?explicit native z1.library required}
     dos=${AROS_TEST_DOS_OVERLAY:?private DOS overlay required}

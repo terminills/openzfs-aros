@@ -23,6 +23,35 @@ the current shared build. A matched private build and fresh native tests are
 required before claiming this runtime prerequisite is satisfied. The failed
 run's logs and input manifests are retained; no physical device was used.
 
+Private revision rebuild `dos-revision.0s3jHPGK` compiles the DOS translation
+units and source headers from `f81cd211c4`, generates the module headers anew,
+and applies the existing loader patch. It still uses the explicitly recorded
+SDK link archives and generated catalog header; it is not claimed byte-identical
+to the original ISO DOS library. `build-dos-revision.sh` makes these inputs
+explicit and hashes them instead of recycling shared DOS objects.
+
+With this private replacement, `public-service-run.vHG7IgBM` passes both APIs
+for on/off/on on RAM and on the mounted ZFS dataset. Execute-off returns
+DOS error 224 while ordinary reads remain permitted. RuntimeCheck, companion
+invalid-argument cases, and the complete RAM-backed storage suite pass. The
+temporary ISO is pruned after success; logs/manifests remain. This does not
+qualify successful persistent startup configuration or physical USB storage.
+
+The public runner accepts this focused replacement as
+`AROS_TEST_BASE_DOS_PACKAGE` in base-platform mode, with `AROS_PACKAGE_TOOL`.
+Its verifier extracts the selected ISO's original package and requires exactly
+one changed member, dos.library, with all other bytes and module order intact.
+This packaging check is not ABI proof; revision provenance and runtime testing
+are separately required. Legacy mixed DOS/ATA/zlib overlays remain prohibited
+in base-platform mode. Five host tests cover the package comparison guard.
+
+The freshly rebuilt unpatched control `dos-revision.KKtbRZHG`, tested in
+`public-service-run.dxAbRbx0`, reproduces the same execute-off acceptance in
+both APIs and fails RuntimeCheck. Thus the passing patched result is not
+explained merely by rebuilding DOS from the pinned revision. Both control
+and patched runs reach the runtime checks; neither result is inferred from
+compilation alone.
+
 ## User-facing runtime detection (2026-09-30)
 
 OpenZFSRuntimeCheck now checks both loader APIs using a copied executable in

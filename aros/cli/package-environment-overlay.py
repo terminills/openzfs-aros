@@ -3,12 +3,13 @@
 import hashlib
 import io
 import lzma
+import os
 import pathlib
 import runpy
 import subprocess
 import sys
 
-source = pathlib.Path('/opt/aros-workspace/AROS/tools/package/pkg')
+source = pathlib.Path(os.environ.get('AROS_PACKAGE_TOOL', '/opt/aros-workspace/AROS/tools/package/pkg'))
 api = runpy.run_path(str(source))
 base, out = pathlib.Path(sys.argv[1]), pathlib.Path(sys.argv[2])
 member = sys.argv[3] if len(sys.argv) > 3 else 'dos.library'
