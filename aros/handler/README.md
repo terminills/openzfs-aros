@@ -64,6 +64,14 @@ and restored mirror imports; member hashes remain unchanged and host `zdb -bcc`
 passes. The writer boot also checks legacy and raw-wide enumeration.
 These are file-backed virtual-storage tests, not physical-media qualification.
 
+Desktop repeat `native-gui-run.wx4RRXdn` passes the same live Manager,
+directory API, post-UI exact-read, and full storage gates. Opening the mounted
+volume by its desktop icon shows `OZPUBLIC:` and both files (screenshots
+`02.png`, `03.png`), including a second close/reopen. The automatic WBRun
+opening has a garbled title (`01.png`) despite correct file contents; that
+launch-path observation is tracked separately from filesystem enumeration.
+No Wanderer or Zune source was changed for these tests.
+
 - `native-import-run.SJPTtSqo`: first actual activation faults in the strlen
   wrapper because FAST_BSTR's length macro depended on an uninitialized
   StdCBase. The bootstrap now copies BSTRs with a bounded freestanding loop.
