@@ -12,6 +12,7 @@ client=${AROS_TEST_CLIENT_BINARY:?native acceptance client required}
 shared=${AROS_TEST_SHARED_BUILD:-}
 cli_dir=${AROS_TEST_CLI_DIR:-}
 handler=${AROS_TEST_HANDLER_BINARY:-}
+pbkdf2=${AROS_TEST_PBKDF2_BINARY:-}
 persistent=${AROS_TEST_PERSISTENT:-0}
 [[ $persistent == 0 || $persistent == 1 ]]
 layout=${AROS_TEST_LAYOUT:-mirror}
@@ -143,6 +144,12 @@ if [[ $persistent == 1 ]];then
     extra_drives+=(-drive "file=$run/backing.raw,format=raw,if=ide,index=0")
     sha256sum "$run/fat-handler" "$run/OZBACK" >"$run/backing-inputs.sha256"
 fi
+if [[ -n $pbkdf2 ]];then
+    cp "$pbkdf2" "$run/OpenZFSPBKDF2Test"
+    sha256sum "$run/OpenZFSPBKDF2Test" >"$run/pbkdf2-input.sha256"
+    extra_maps+=(-map "$run/OpenZFSPBKDF2Test" /C/OpenZFSPBKDF2Test)
+    sed -i '/^Stack /a C:OpenZFSPBKDF2Test' "$run/Startup-Sequence"
+fi
 if [[ -n $cli_dir ]];then
     cp "$cli_dir/zfs" "$cli_dir/zpool" "$run/"
     extra_maps+=(-map "$run/zfs" /C/zfs -map "$run/zpool" /C/zpool
@@ -252,6 +259,7 @@ while :;do
         reaped=$(rg -c '^Public task-exit session reclamation PASS cycles=4 sessions=32' "$run/serial-results.log" || true)
         controls=$(rg -c '^Public native control descriptors PASS capacity=64 ownership=1 stale=1 session-cleanup=1' "$run/serial-results.log" || true)
         if [[ $count == 3 && $sessions == 2 && $reaped == 2 ]] &&
+           { [[ -z $pbkdf2 ]] || rg -q '^RESULT native PBKDF2 known answers PASS' "$run/serial-results.log"; } &&
            { [[ ${AROS_TEST_REQUIRE_INVENTORY_WORKER:-0} != 1 ]] ||
              rg -q '^RESULT native inventory worker PASS delayed=1 busy-free=1 success=1 denied=1 malformed=10 absent=1 unchanged=1' "$run/serial-results.log"; } &&
            { [[ ${AROS_TEST_REQUIRE_CONTROL:-0} != 1 ]] ||

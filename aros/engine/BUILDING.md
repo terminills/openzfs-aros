@@ -95,6 +95,17 @@ This is not a FIPS certification or a fresh execution of standalone PBKDF2
 known-answer tests. Failed configure/build attempts `uB3vNled`, `4XEQYWtC`
 and `gjcbbSZz` remain retained alongside the successful build.
 
+The subsequent `public-service-run.bZtMJ64h` executes the standalone native
+PBKDF2 test `pbkdf2-test.KoB9JNRh` linked against that independently built crypto
+archive. RFC 6070 vectors at 1, 2 and 4096 iterations, the independently checked
+32-byte OpenZFS salt/350000-iteration vector, and invalid-input output clearing
+all pass. The packaged dataset and cold-recovery suite also passes in that run.
+The builder `build-pbkdf2-test.sh` now requires explicit SDK/compiler/crypto/
+pthread inputs and creates a new private evidence directory instead of
+overwriting a shared test binary. Pass its output executable through
+`AROS_TEST_PBKDF2_BINARY` to the native public-service runner; when supplied,
+that runner requires the known-answer PASS marker as well as its storage gates.
+
 Run the engine build from the checkout:
 
 ```sh
