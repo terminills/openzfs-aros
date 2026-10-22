@@ -106,6 +106,17 @@ itself built through `contrib-openzfs-public-test`. All ten client source units
 were compiled afresh; this run no longer reuses the earlier client objects.
 The SDK and external dependency archives remain explicitly supplied inputs.
 
+`hosted-security-test.029wFKQH` additionally passes full and incremental
+replication through the actual packaged `zfs send` and `zfs receive` commands,
+using ordinary redirected stream files inside the isolated runtime. The full
+receive preserves the snapshot's original payload and excludes the later file;
+the incremental receive adds a new file while preserving the original. Both
+are verified through read-only native DOS mounts, followed by exact snapshot
+and dataset cleanup. Existing rollback, standalone handler, cold/degraded
+mirror and independent `zdb` checks also pass. This is same-pool local stream
+coverage, not network transfer, encrypted/raw streams, interrupted receive,
+or a fresh-boot check of the received dataset (which the test destroys).
+
 All four CLI/startup executables linked through the generated makefile.
 The resulting `zfs --version`, `zpool --version`, and repeated `zfs --version`
 ran in isolated hosted AROS and printed `zfs-2.4.4-1`. They returned 1 with no

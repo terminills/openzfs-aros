@@ -169,7 +169,10 @@ fi
 rg -q '^RESULT hosted security login/logout PASS configured=1 uid77gid88=1 restored=1' "$run/security-test.log"
 if [[ -n $service ]];then
     rg -q 'RESULT public service storage PASS' "$run/serial.log"
-    if [[ -n $cli_dir ]];then rg -q 'Public packaged CLI PASS' "$run/serial.log";fi
+    if [[ -n $cli_dir ]];then
+        rg -q 'Public packaged CLI PASS' "$run/serial.log"
+        rg -q 'Public packaged replication PASS .*incremental=1' "$run/serial.log"
+    fi
     if [[ -n $handler ]];then rg -q 'Public packaged handler PASS' "$run/serial.log";fi
 fi
 if [[ $persistent == 1 ]];then
