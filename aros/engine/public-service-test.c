@@ -14,6 +14,9 @@
 #include <dos/dostags.h>
 #include <dos/dosextens.h>
 #include <exec/memory.h>
+#include <exec/io.h>
+#include <exec/errors.h>
+#include <devices/trackdisk.h>
 #include <hidd/storage.h>
 #include <errno.h>
 #include <stdio.h>
@@ -829,6 +832,72 @@ done:
 #undef VSET
 #undef VCHECK
 }
+static int storage_device_test(int write)
+{
+    BPTR marker=Lock((CONST_STRPTR)"SYS:openzfs-device-package-test",SHARED_LOCK);
+    if(!marker)return 0;
+    UnLock(marker);
+    static int started;
+    struct MsgPort *port=CreateMsgPort();
+    struct IOStdReq *io=port?(void *)CreateIORequest(port,sizeof(*io)):NULL;
+    unsigned char *bytes=AllocVec(131072,MEMF_PUBLIC);
+    int error=0,opened=0,mapped=0;
+#define DCHECK(x) do{if(!(x)){char line[128];snprintf(line,sizeof(line),"Public device FAIL line=%d cold=%d io=%d\n",__LINE__,!write,io?io->io_Error:0);note(line);error=EIO;goto done;}}while(0)
+    DCHECK(io&&bytes);
+    if(!started){
+        BPTR input=Open((CONST_STRPTR)"NIL:",MODE_OLDFILE);
+        BPTR output=Open((CONST_STRPTR)"T:public-device.log",MODE_NEWFILE);
+        BPTR errors=Open((CONST_STRPTR)"NIL:",MODE_NEWFILE);
+        if(!input||!output||!errors){if(input)Close(input);if(output)Close(output);if(errors)Close(errors);DCHECK(0);}
+        LONG launched=SystemTags((CONST_STRPTR)"C:OpenZFSDevice EMPTY",SYS_Asynch,TRUE,
+            SYS_Input,input,SYS_Output,output,SYS_Error,errors,NP_StackSize,262144,TAG_DONE);
+        if(launched==-1){Close(input);Close(output);Close(errors);DCHECK(0);}
+        for(unsigned i=0;i<500;i++){
+            if(!OpenDevice((CONST_STRPTR)"openzfs.device",0,(struct IORequest *)io,0)){opened=1;break;}
+            Delay(1);
+        }
+        DCHECK(opened);CloseDevice((struct IORequest *)io);opened=0;started=1;
+        DCHECK(cli_command("C:OpenZFSDevice EMPTY")==10);
+    }
+    DCHECK(!cli_command(write?"C:OpenZFSDevice REMAP 0 public_mirror/public_volume WRITABLE":
+        "C:OpenZFSDevice REMAP 0 public_mirror/public_volume"));mapped=1;
+    for(unsigned pass=0;pass<3;pass++){
+        DCHECK(!OpenDevice((CONST_STRPTR)"openzfs.device",0,(struct IORequest *)io,0));opened=1;
+        struct DriveGeometry geometry={0};
+        io->io_Command=TD_GETGEOMETRY;io->io_Data=&geometry;io->io_Length=sizeof(geometry);
+        DCHECK(!DoIO((struct IORequest *)io)&&geometry.dg_SectorSize==512&&geometry.dg_TotalSectors==4096);
+        /* A separate eject command must not revoke this active client's unit. */
+        DCHECK(cli_command("C:OpenZFSDevice EJECT 0")!=0);
+        io->io_Data=bytes;io->io_Length=131072;io->io_Offset=32768;
+        if(write&&pass==0){
+            for(unsigned i=0;i<131072;i++)bytes[i]=(unsigned char)(i*11+i/512+29);
+            io->io_Command=CMD_WRITE;SendIO((struct IORequest *)io);
+            DCHECK(!WaitIO((struct IORequest *)io)&&io->io_Actual==131072);
+            io->io_Command=CMD_UPDATE;DCHECK(!DoIO((struct IORequest *)io));
+        }else if(!write){
+            memset(bytes,0xee,131072);io->io_Command=CMD_WRITE;
+            DCHECK(DoIO((struct IORequest *)io)==TDERR_WriteProt&&!io->io_Actual);
+        }
+        memset(bytes,0,131072);io->io_Command=CMD_READ;
+        SendIO((struct IORequest *)io);DCHECK(!WaitIO((struct IORequest *)io)&&io->io_Actual==131072);
+        for(unsigned i=0;i<131072;i++)DCHECK(bytes[i]==(unsigned char)(i*11+i/512+29));
+        io->io_Offset=2097152;io->io_Length=512;memset(bytes,0xa7,512);
+        DCHECK(DoIO((struct IORequest *)io)==IOERR_BADLENGTH&&!io->io_Actual);
+        for(unsigned i=0;i<512;i++)DCHECK(bytes[i]==0xa7);
+        DCHECK(!GetMsg(port));
+        CloseDevice((struct IORequest *)io);opened=0;
+    }
+done:
+    if(opened)CloseDevice((struct IORequest *)io);
+    if(mapped){int eject=cli_command("C:OpenZFSDevice EJECT 0");if(!error&&eject)error=EIO;}
+    if(io)DeleteIORequest((struct IORequest *)io);
+    if(port)DeleteMsgPort(port);
+    if(bytes)FreeVec(bytes);
+    if(!error)note(write?"Public device PASS geometry=1 async-128KiB=1 reopen=3 exact-read=1 eject=1 busy-refused=1 bounds=1\n":
+        "Public cold device PASS geometry=1 readonly=1 reopen=3 exact-read=1 eject=1 busy-refused=1 bounds=1\n");
+    return error;
+#undef DCHECK
+}
 static int storage_test(int gui){
     int error=0;BPTR file=0,lock=CreateDir((CONST_STRPTR)storage_directory);
     if(!lock)return EIO;
@@ -978,6 +1047,7 @@ static int storage_test(int gui){
     if(cli_marker){
         UnLock(cli_marker);
         STORAGE_CHECK(!storage_zvol_test(1));
+        STORAGE_CHECK(!storage_device_test(1));
         if(native_file_fixture&&storage_layout==OZ_MIRROR){
             STORAGE_CHECK(!storage_repair_test());
             if(storage_replace)STORAGE_CHECK(!storage_replace_test());
@@ -1320,7 +1390,7 @@ static int storage_cold_once(void)
     if(!error)error=storage_rotated_passphrase_cold();
     if(!error){
         BPTR cli=Lock((CONST_STRPTR)"SYS:openzfs-cli-package-test",SHARED_LOCK);
-        if(cli){UnLock(cli);error=storage_zvol_test(0);}
+        if(cli){UnLock(cli);error=storage_zvol_test(0);if(!error)error=storage_device_test(0);}
     }
     if(!error)error=storage_request(8,"public_mirror",NULL,NULL);
     if(!error)note("Public cold hosted DOS PASS exact=1 readonly-refusal=1 exported=1\n");

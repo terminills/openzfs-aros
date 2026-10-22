@@ -12,6 +12,8 @@ client=${AROS_TEST_CLIENT_BINARY:?native acceptance client required}
 shared=${AROS_TEST_SHARED_BUILD:-}
 cli_dir=${AROS_TEST_CLI_DIR:-}
 handler=${AROS_TEST_HANDLER_BINARY:-}
+device=${AROS_TEST_DEVICE_BINARY:-}
+[[ -z $device || -n $cli_dir ]]
 pbkdf2=${AROS_TEST_PBKDF2_BINARY:-}
 persistent=${AROS_TEST_PERSISTENT:-0}
 [[ $persistent == 0 || $persistent == 1 ]]
@@ -226,7 +228,13 @@ if [[ $ahci_query == 1 ]];then
         -device ide-hd,drive=ahci-query,bus=ozahci.0)
 fi
 cp -a aros/engine/security-fixture "$run/security-fixture"
-tar -czf "$run/aros-source.tar.gz" aros/engine aros/ui aros/zpl aros/cli aros/platform \
+if [[ -n $device ]];then
+    cp "$device" "$run/OpenZFSDevice"
+    sha256sum "$run/OpenZFSDevice" >"$run/device-input.sha256"
+    extra_maps+=(-map "$run/OpenZFSDevice" /C/OpenZFSDevice
+        -map aros/engine/public-service-test-only /openzfs-device-package-test)
+fi
+tar -czf "$run/aros-source.tar.gz" aros/engine aros/ui aros/zpl aros/cli aros/platform aros/device \
     module/zfs/zfs_onexit.c include/sys/zfs_onexit.h lib/libzutil/zutil_import.c include/libzutil.h
 git rev-parse HEAD >"$run/source.txt"
 git diff --binary >"$run/source.patch"
@@ -382,6 +390,9 @@ if [[ $persistent == 1 ]];then
         rg -q '^Public mirror resilver PASS offline=1 missed-write=1 online=1 finished=1 issued-nonzero=1 errors=0' "$run/serial-results.log"
     fi
     rg -q '^Public backing clean detach PASS' "$run/serial-results.log"
+    if [[ -n $device ]];then
+        rg -q '^Public device PASS geometry=1 async-128KiB=1 reopen=3 exact-read=1 eject=1 busy-refused=1 bounds=1' "$run/serial-results.log"
+    fi
     if [[ -n $cli_dir ]];then
         rg -q '^Public zvol PASS create=1 geometry=1 write=1 discard-edges=1 flush=1 exact-read=1 bounds=1 stale-descriptor=1' "$run/serial-results.log"
     fi
@@ -447,6 +458,9 @@ if [[ $persistent == 1 ]];then
         zvol_imports=3
         if [[ $dspare == 1 ]];then zvol_imports=4;fi
         [[ $(rg -c '^Public cold zvol PASS exact-read=1 discard-edges=1 readonly=1 bounds=1 stale-descriptor=1' "$run/cold-results.log") == "$zvol_imports" ]]
+        if [[ -n $device ]];then
+            [[ $(rg -c '^Public cold device PASS geometry=1 readonly=1 reopen=3 exact-read=1 eject=1 busy-refused=1 bounds=1' "$run/cold-results.log") == "$zvol_imports" ]]
+        fi
     fi
     if [[ $layout == mirror && -n $cli_dir ]];then
         [[ $(rg -c '^Public cold resilver payload PASS bytes=1048576 exact=1' "$run/cold-results.log") == 3 ]]

@@ -578,6 +578,33 @@ the resident `openzfs.device`, DOS filesystems formatted inside a zvol, GUI
 volume publication, hardware discard or power-loss durability. Zvol logical
 discard is distinct from the still-unsupported backing-device TRIM operation.
 
+### Resident device with the public package
+
+Set `AROS_TEST_DEVICE_BINARY` to the matching MetaMake
+`stage/C/OpenZFSDevice` when running the public-service suite. The runner copies
+and hashes that executable, includes device sources in its source archive, and
+requires the device result markers on every persistent writer/cold-import run.
+
+`public-service-run.StUps4JO` (mirror) qualifies EMPTY publication, writable
+mapping, actual Exec OpenDevice/SendIO/WaitIO, 128 KiB read/write requests (split
+across the 64 KiB service transport), CMD_UPDATE, exact geometry, three
+close/reopen cycles, and explicit eject before pool export. All three cold
+healthy/degraded/restored imports repeat reads and reject writes through the
+read-only device mapping. The expanded `public-service-run.8Rw9gfGm` (RAIDZ2)
+also verifies duplicate publication refusal, busy-client eject refusal without
+losing the mapping, and out-of-range reads preserving caller buffers with zero
+bytes completed. It passes all three cold imports, including two absent members.
+Both full suites exit successfully with independent `zdb -bcc` reporting no
+leaks and unchanged cold member hashes. No engine or device behavior was
+modified to satisfy these tests.
+
+The first guard-test compile failed because the acceptance client omitted
+`exec/errors.h`; both failed and corrected build logs are retained. These
+tests do not yet qualify formatting/mounting a DOS filesystem inside the zvol
+with this public package, concurrent multi-process device traffic, GUI volume
+publication, hardware durability, or resident-device unload (it intentionally
+remains installed until reboot after its mappings are ejected).
+
 ## Requirements
 
 - Linux build host with Bash, Git, Make, GCC-compatible AROS cross tools, binutils,

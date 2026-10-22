@@ -43,6 +43,13 @@ runtime libraries. They supersede the initial startup-only qualification below,
 but do not establish stock-nightly or physical-device safety. See BUILDING.md
 for exact scope, inputs and evidence identifiers.
 
+Public-package zvol qualification now includes the session transport and
+resident `openzfs.device`: logical discard boundaries, Exec block I/O larger
+than one transport request, repeated close/reopen, mapping ejection, and cold
+healthy/degraded/restored reads on mirror and RAIDZ2. Read-only writes and
+busy-client ejection are refused. This does not yet qualify DOS filesystems
+inside zvols or GUI volume publication with the current public package.
+
 ## Implemented integration
 
 The source contains the upstream OpenZFS engine, a shared AROS library/service,
