@@ -21,7 +21,10 @@ case "$layout" in
     raidz1) members=3; missing=1 ;;
     raidz2) members=4; missing=2 ;;
     raidz3) members=5; missing=3 ;;
-    *) echo 'AROS_TEST_LAYOUT must be mirror or raidz1/2/3' >&2; exit 2 ;;
+    draid1) members=3; missing=1 ;;
+    draid2) members=4; missing=2 ;;
+    draid3) members=5; missing=3 ;;
+    *) echo 'AROS_TEST_LAYOUT must be mirror, raidz1/2/3 or draid1/2/3' >&2; exit 2 ;;
 esac
 [[ $layout == mirror || $persistent == 1 ]]
 gui=${AROS_PUBLIC_GUI:-0}

@@ -393,6 +393,24 @@ results are separate from the host formatter checks, not inferred from them.
 This is a developer source release, not a standalone SDK or prebuilt installer.
 The ordinary upstream Linux build does not build the AROS integration.
 
+### Current native dRAID qualification
+
+The public-service runner accepts `AROS_TEST_LAYOUT=draid1`, `draid2` or
+`draid3` with persistent disposable backing. These use three/four/five member
+files, respectively, one data column and one distributed spare. Independent
+host `zdb -C` confirms dRAID type, parity, data and spare counts; this is not
+RAIDZ merely labeled as dRAID.
+
+Runs `public-service-run.VqCeGDTO` (dRAID1), `PidNgOWc` (dRAID2), and `8rSCjl3W`
+(dRAID3) pass the current package suite, including sparse64, encrypted raw
+replication and passphrase rotation. Fresh-boot healthy/degraded/restored
+imports read exact data with one/two/three members absent. Losing one further
+member refuses import with no pool or mount left registered, and restoring the
+files restores readable data. Member hashes remain unchanged throughout cold
+read-only verification; independent zdb reports no leaks for all three.
+This qualifies small virtual dRAID configurations, not distributed-spare
+activation/replacement, resilver, large-layout throughput or physical durability.
+
 ## Requirements
 
 - Linux build host with Bash, Git, Make, GCC-compatible AROS cross tools, binutils,

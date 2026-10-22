@@ -63,6 +63,11 @@ static int storage_request(unsigned op,const char *target,const char *argument,c
     if(op==5||op==7){
         m.topology.device_count=storage_members;
         if(op==5){m.topology.group_count=1;m.topology.ashift=12;m.topology.groups[0].layout=storage_layout;}
+        if(op==5&&storage_layout==OZ_DRAID){
+            m.topology.groups[0].draid_parity=storage_missing;
+            m.topology.groups[0].draid_data=1;
+            m.topology.groups[0].draid_spares=1;
+        }
         for(unsigned i=0;i<storage_members;i++)snprintf(m.topology.devices[i].path,
             sizeof(m.topology.devices[i].path),"%s%sdisk%u",storage_directory,
             storage_directory[strlen(storage_directory)-1]==':'?"":"/",i);
@@ -1106,6 +1111,9 @@ int main(int argc,char **argv){
         if(!strcmp(layout,"raidz1")){storage_layout=OZ_RAIDZ1;storage_members=3;storage_missing=1;}
         else if(!strcmp(layout,"raidz2")){storage_layout=OZ_RAIDZ2;storage_members=4;storage_missing=2;}
         else if(!strcmp(layout,"raidz3")){storage_layout=OZ_RAIDZ3;storage_members=5;storage_missing=3;}
+        else if(!strcmp(layout,"draid1")){storage_layout=OZ_DRAID;storage_members=3;storage_missing=1;}
+        else if(!strcmp(layout,"draid2")){storage_layout=OZ_DRAID;storage_members=4;storage_missing=2;}
+        else if(!strcmp(layout,"draid3")){storage_layout=OZ_DRAID;storage_members=5;storage_missing=3;}
         else if(strcmp(layout,"mirror"))return 20;
     }
     marker=Lock((CONST_STRPTR)"SYS:openzfs-native-file-fixture",SHARED_LOCK);

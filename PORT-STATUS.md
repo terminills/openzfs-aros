@@ -14,6 +14,11 @@ pool-member bytes, and independent host `zdb -bcc` with no leaks.
 The same current native package also passed three-, four-, and five-member
 RAIDZ1/2/3 suites, including fresh-boot reads with one/two/three members missing,
 respectively. Host configuration inspection confirmed the actual parity.
+The fresh native package additionally passes small dRAID1/2/3 configurations
+with one distributed spare each, including cold degraded reads, excessive-loss
+refusal and restored reads. Independent configuration checks confirm actual
+dRAID parity/data/spare geometry. These runs do not qualify spare activation
+or resilver.
 
 Additional native tests qualify sparse DOS files beyond 4 GiB (including
 replication and cold reads), excessive member-loss refusal followed by
