@@ -105,7 +105,11 @@ if [[ -n $shared ]];then
     rg -Fxq 'shared_engine=1' "$shared/service-build-options.txt"
     sha256sum -c "$shared/binaries.sha256"
     cmp "$service" "$shared/OpenZFSServiceNative"
-    extra_maps+=(-map "$shared/openzfs.library" /Libs/openzfs.library)
+    # xorriso preserves a selected symlink as a guest symlink. Resolve the
+    # checked library input so a build/staging link cannot become a dangling
+    # or self-referential Libs: entry in the private test ISO.
+    shared_library=$(realpath -e "$shared/openzfs.library")
+    extra_maps+=(-map "$shared_library" /Libs/openzfs.library)
 fi
 if [[ ${AROS_TEST_LOADER_POLICY:-0} == 1 ]];then
     extra_maps+=(-map aros/engine/public-service-test-only /openzfs-loader-policy-test)
@@ -143,6 +147,7 @@ qemu_path=$(command -v "$qemu")
 "$qemu" --version > "$run/qemu-version.txt"
 sha256sum "$(realpath -e "$qemu_path")" > "$run/qemu-binary.sha256"
 printf '%s\n' "$cpus" > "$run/cpus.txt"
+printf '%s\n' "$persistent" > "$run/persistent.txt"
 printf '%s\n' "$disk_aio" > "$run/disk-aio.txt"
 trace_args=()
 launcher=()
@@ -569,7 +574,7 @@ fi
 if [[ $gui_desktop == 1 ]];then
     rg -q '^Public desktop post-UI data PASS exact-read=1' "$run/serial-results.log"
 fi
-if [[ ( $persistent == 1 || $gui == 1 ) && $keep_images == 0 ]];then
+if [[ $keep_images == 0 ]];then
     python3 aros/distribution/prune-public-test-images.py --apply --run "$(basename "$run")" \
         >"$run/image-pruning.log" 2>&1
 fi

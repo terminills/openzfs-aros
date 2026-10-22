@@ -773,6 +773,25 @@ qualification and is not inferred from QEMU success.
 
 ### Target SDK ABI and desktop startup
 
+For a MetaMake development bundle, `aros/distribution/stage-mmake.py` accepts
+the private build directory, a completed GUI public-service run, a completed
+cold public-service run, and `--output-parent`. It binds selected application
+and POSIX runtime bytes to both runs' input hashes (Manager to the GUI run),
+checks full shared-engine symbols and release options, and creates a new
+staging directory with SHA256SUMS and evidence metadata. Platform overrides
+are separated under Platform/, never silently installed. Four companion
+utilities remain explicitly build-only in the bundle's qualification record.
+
+Bundle `mmake-bundle.hktsxy4r.tar.xz` was unpacked and checksum-verified in a
+fresh directory; native `public-service-run.l41Mia4v` passes the full RAM-backed
+suite using those extracted binaries. Its SHA256 is
+`0740ffcbdbd0257ea7ee6a177805ed43d5e1d3bd3cbd573b13f4b9b600fce234`.
+The preceding `RNo1BZTY` failed before service startup because the private
+test adapter mapped a symlink into the ISO, producing a self-referential
+`Libs/openzfs.library`. Resolving the verified library before ISO mapping fixes
+the harness; the archive bytes did not change. This is not a runtime-engine
+fix. The package still requires the documented matching alpha18 platform.
+
 The target triple alone does not identify a compatible AROS SDK. In particular,
 the older release SDK used for the public storage fixtures has
 `offsetof(struct Process, pr_MsgPort) == 0xb0`, whereas the alpha18 SDK has

@@ -59,6 +59,19 @@ class Retention(unittest.TestCase):
         self.invoke(True)
         self.assertTrue((self.run / "test.iso").exists())
 
+    def test_ram_requires_explicit_mode_and_no_backing(self):
+        (self.run / "cold-results.log").unlink()
+        self.assertFalse(prune.eligible(self.run))
+        (self.run / "persistent.txt").write_text("0\n")
+        self.assertTrue(prune.eligible(self.run))
+        (self.run / "backing.raw").write_bytes(b"preserve")
+        self.assertFalse(prune.eligible(self.run))
+
+    def test_ram_marker_cannot_override_failed_cold_run(self):
+        (self.run / "persistent.txt").write_text("0\n")
+        (self.run / "cold-results.log").write_text("RESULT public service storage FAIL\n")
+        self.assertFalse(prune.eligible(self.run))
+
     def test_open_image_preserves(self):
         self.invoke(True, True)
         self.assertTrue((self.run / "test.iso").exists())

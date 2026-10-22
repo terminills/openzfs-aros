@@ -19,7 +19,10 @@ def eligible(run):
     if run.is_symlink() or run.parent != ROOT or not re.fullmatch(
             r"(?:public-service|native-gui)-run\.[A-Za-z0-9]+", run.name):
         return False
-    if run.name.startswith("native-gui-run."):
+    ram_mode = run / "persistent.txt"
+    ram_only = (ram_mode.is_file() and ram_mode.read_text().strip() == "0"
+                and not (run / "cold-results.log").exists())
+    if run.name.startswith("native-gui-run.") or ram_only:
         # GUI suites use RAM-backed pools, never persistent image chains.
         path = run / "serial-results.log"
         if not path.is_file() or (run / "backing.raw").exists():
