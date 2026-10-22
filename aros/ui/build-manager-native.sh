@@ -10,6 +10,15 @@ pthread_include=${AROS_PTHREAD_INCLUDE:-$repo/build-aros/pthread-consistent.s3r1
 output=${1:-build-aros/OpenZFSManagerNative}
 cmp "$(dirname "$pthread")/source/pthread.h" "$pthread_include/pthread.h"
 mkdir -p "$(dirname "$output")"
+"$cc" --version >"$output.compiler.txt"
+printf 'sdk=%s\npthread=%s\npthread_include=%s\n' "$sdk" "$pthread" "$pthread_include" >"$output.target.txt"
+# Preserve the actual compile-time layout and startup archive identity. AROS
+# SMP SDK generations can differ despite sharing the x86_64 target triple.
+"$cc" --sysroot="$sdk" -B"$sdk/lib/" -I"$pthread_include" -S \
+    aros/ui/target-abi.c -o "$output.target-abi.s"
+sha256sum "$sdk/include/exec/tasks.h" "$sdk/include/exec/ports.h" \
+    "$sdk/include/dos/dosextens.h" "$sdk/lib/libautoinit.a" \
+    >"$output.sdk.sha256"
 "$cc" --sysroot="$sdk" -B"$sdk/lib/" -I"$pthread_include" -O2 -g -Wall -Wextra \
     aros/ui/api.c aros/ui/admission-client.c aros/ui/admission-worker.c \
     aros/ui/manager.c aros/ui/project-worker.c aros/cli/process.c aros/cli/arguments.c aros/cli/output.c aros/ui/preferences.c aros/ui/preferences-file.c \
@@ -21,4 +30,6 @@ sha256sum "$pthread" "$pthread_include/pthread.h" aros/ui/api.c aros/ui/api.h \
     aros/ui/preferences.c aros/ui/preferences-file.c aros/ui/preferences.h aros/ui/pool-wizard.h aros/ui/encrypted-create.h \
     aros/ui/startup-settings.c aros/ui/startup-settings-file.c aros/ui/startup-settings.h aros/ui/startup-editor.h aros/ui/settings-file.h \
     aros/ui/hostid-settings.c aros/ui/hostid-settings.h aros/engine/hostid-record.c aros/engine/hostid-record.h \
+    aros/ui/target-abi.c "$output.target-abi.s" "$output.sdk.sha256" \
     "$output" >"$output.inputs.sha256"
+sha256sum -c "$output.sdk.sha256" >"$output.sdk-after-check.log"

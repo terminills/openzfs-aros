@@ -770,3 +770,46 @@ real data disk. Retain commands, source revisions, binary hashes, and logs.
 Test create/write/read/export/import, cold boots, repeated application runs,
 and degraded/recovery behavior separately. Hardware durability requires its own
 qualification and is not inferred from QEMU success.
+
+### Target SDK ABI and desktop startup
+
+The target triple alone does not identify a compatible AROS SDK. In particular,
+the older release SDK used for the public storage fixtures has
+`offsetof(struct Process, pr_MsgPort) == 0xb0`, whereas the alpha18 SDK has
+`0x130` (SMP Task padding). Static startup code and pthread must be rebuilt for
+the target layout along with the application. Do not deploy an older-ABI
+service, handler or library merely because a newer-ABI Manager opens.
+
+The native Manager build helper now records compiler/SDK identities, hashes of
+Task/Process/MsgPort headers and `libautoinit.a`, and an assembly dump of their
+actual compile-time layout (`*.target-abi.s`). It verifies those SDK inputs did
+not change during compilation. These are provenance records, not an automatic
+runtime compatibility check.
+
+For a no-service startup test, build a complete private pthread against the
+matching SDK, then build Manager with that same SDK and pthread snapshot. Run:
+
+```
+AROS_TEST_ISO=/path/to/matching.iso \
+AROS_TEST_MANAGER_BINARY=/path/to/OpenZFSManagerNative \
+    bash aros/ui/test-qemu-no-service.sh
+```
+
+This fixture has no writable disks, networking, service or pool. First verify
+the shell-launched Manager displays Service unavailable and closes normally.
+It then starts Wanderer and launches a RAM copy through WBRun with a real TOOL
+icon (Calculator's icon is used only inside this private fixture). Without a
+real icon WBRun selects the CLI path, so that is not Workbench-startup proof.
+Verify the second window, close and repeat the Workbench launch. The runner
+does not infer success from window creation or process exit: retain screenshots
+and logs, stop only its recorded QEMU instance when finished, and remove its
+disposable ISO after recording its hash. No physical testing is performed.
+
+On 2026-10-22 the alpha18c5 private guest showed the rebuilt Manager's accurate
+Service unavailable response in shell and real-icon Workbench launches
+(`manager-startup-run.i9xix86y/01.png` and `14.png`). The Manager hash was
+`9622c6404ca73fdfe883b499ea2915a412557d8b3a8f63e046cfa04635ce2265`, using the
+current `aros-adt-pc-x86_64-clean` SDK and private pthread `ARVzbA2v`. This is
+startup/UI evidence only. The reported older laptop binary's `.text+0x20819`
+matches GetMsg in old-ABI autoinit before main; its exact installed identity and
+runtime pairing must still be confirmed before closing that report.
