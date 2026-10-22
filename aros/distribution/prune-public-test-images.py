@@ -17,8 +17,15 @@ ROOT = Path(__file__).resolve().parents[2] / "build-aros"
 
 def eligible(run):
     if run.is_symlink() or run.parent != ROOT or not re.fullmatch(
-            r"public-service-run\.[A-Za-z0-9]+", run.name):
+            r"(?:public-service|native-gui)-run\.[A-Za-z0-9]+", run.name):
         return False
+    if run.name.startswith("native-gui-run."):
+        # GUI suites use RAM-backed pools, never persistent image chains.
+        path = run / "serial-results.log"
+        if not path.is_file() or (run / "backing.raw").exists():
+            return False
+        text = path.read_text(errors="replace")
+        return "RESULT public service storage PASS" in text and not re.search(r"\bFAIL\b", text)
     for name in ("serial-results.log", "cold-results.log"):
         path = run / name
         if not path.is_file():
@@ -47,8 +54,8 @@ def main():
     parser.add_argument("--apply", action="store_true")
     parser.add_argument("--run", help="one basename under this repository's build-aros")
     args = parser.parse_args()
-    if args.run and not re.fullmatch(r"public-service-run\.[A-Za-z0-9]+", args.run):
-        parser.error("--run must be a public-service-run basename")
+    if args.run and not re.fullmatch(r"(?:public-service|native-gui)-run\.[A-Za-z0-9]+", args.run):
+        parser.error("--run must be a public-service-run or native-gui-run basename")
     runs = [ROOT / args.run] if args.run else sorted(ROOT.glob("public-service-run.*"))
     total = 0
     for run in runs:

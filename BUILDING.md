@@ -648,6 +648,33 @@ native build or runtime qualification.
 
 ## Testing
 
+### Native Manager zvol mapping and saved mount file
+
+`native-gui-run.G6zXlnca` qualifies actual Manager remapping and mount-file save
+with the public shared-service/device package, not only a preview. Enable
+`AROS_PUBLIC_GUI=1`, `AROS_TEST_GUI_VOLUME=1`, `AROS_TEST_PERSISTENT=0`, and
+provide explicit `AROS_TEST_MANAGER_BINARY` and `AROS_TEST_DEVICE_BINARY` along
+with the normal public CLI/service inputs. The guest prints the exact requested
+unit, dataset and output path. Through Devices, map unused unit 5 to
+`public_mirror/public_volume` read-only, save the whole-volume FFS description
+to `T:OZBLOCK`, then close the Manager normally.
+
+The retained screenshots show confirmation (`03.png`), completed read-only
+mapping with exact capacity/sectors (`04.png`), save confirmation (`05.png`),
+and the saved description (`06.png`). After Manager exit, an independent Exec
+client queries the actual mapping, reads known data, verifies write refusal,
+and compares the saved file byte-for-byte with the expected description before
+ejecting. The remaining public-service export/reimport suite passes, and the
+runner exits zero. An initial main-window close input dragged the title bar;
+that capture/input log is retained, and normal close subsequently succeeded.
+
+This run uses RAM-backed pool members: it does not add cold-persistence or host
+zdb qualification, format the mapped volume, or prove a desktop icon appeared.
+Saving a mount file intentionally does not perform Mount or Format. Successful
+RAM-backed GUI test ISOs are now pruned after terminal storage PASS; active,
+failed and persistent-backed GUI directories are excluded. The six isolated
+retention-policy tests cover that distinction. Screenshots and logs remain.
+
 Successful persistent public-service runs now prune their disposable ISO,
 backing and extracted member images after cold verification and independent
 `zdb` checks. Logs, screenshots, source snapshots, binaries and original hash
@@ -661,7 +688,7 @@ filenames within this repository's verified `public-service-run.*` directories.
 
 For existing runs, preview with
 `python3 aros/distribution/prune-public-test-images.py`; add `--apply` to prune.
-The five isolated retention-policy tests are run with
+The six isolated retention-policy tests are run with
 `python3 aros/distribution/test-prune-public-images.py`.
 
 The opt-in `AROS_TEST_ZVOL_FILESYSTEM=1` additionally requires the public device

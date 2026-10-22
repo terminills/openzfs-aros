@@ -42,6 +42,8 @@ dspare=${AROS_TEST_DSPARE:-0}
 sequential=${AROS_TEST_SEQUENTIAL:-0}
 [[ $sequential == 0 || ( $sequential == 1 && $dspare == 1 ) ]]
 gui=${AROS_PUBLIC_GUI:-0}
+gui_volume=${AROS_TEST_GUI_VOLUME:-0}
+[[ $gui_volume == 0 || ( $gui_volume == 1 && $gui == 1 && -n $device && -n $cli_dir ) ]]
 cpus=${AROS_TEST_CPUS:-2}
 qemu=${AROS_TEST_QEMU:-qemu-system-x86_64}
 ide_trace=${AROS_TEST_IDE_TRACE:-0}
@@ -61,6 +63,9 @@ prefix=public-service-run
 startup=aros/engine/Startup-Public-Service
 duration=600
 extra_maps=()
+if [[ $gui_volume == 1 ]];then
+    extra_maps+=(-map aros/engine/public-service-test-only /openzfs-gui-volume-test)
+fi
 if [[ $zvol_fs == 1 ]];then
     extra_maps+=(-map aros/engine/public-service-test-only /openzfs-zvol-filesystem-test)
 fi
@@ -539,7 +544,10 @@ fi
 if [[ $partitions == 1 ]];then sha256sum -c "$run/disks-before.sha256" > "$run/disks-after-check.txt";fi
 if [[ -n $label_source ]];then sha256sum -c "$run/label-original.sha256" >"$run/label-original-after-check.txt";fi
 echo "PASS: public service lifecycles and $layout DOS round trip (persistent=$persistent). Evidence: $run"
-if [[ $persistent == 1 && $keep_images == 0 ]];then
+if [[ $gui_volume == 1 ]];then
+    rg -q '^Public GUI volume PASS actual-mapping=1 readonly=1 exact-data=1 saved-mountfile=1 eject=1' "$run/serial-results.log"
+fi
+if [[ ( $persistent == 1 || $gui == 1 ) && $keep_images == 0 ]];then
     python3 aros/distribution/prune-public-test-images.py --apply --run "$(basename "$run")" \
         >"$run/image-pruning.log" 2>&1
 fi

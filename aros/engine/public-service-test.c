@@ -6,6 +6,7 @@
 #include "../ui/support-api.h"
 #include "../ui/partition-api.h"
 #include "../ui/zvol-api.h"
+#include "../device/mountfile.h"
 #include "include/sys/mnttab.h"
 #include <proto/exec.h>
 #include <proto/dos.h>
@@ -977,6 +978,39 @@ done:
     return error;
 #undef FCHECK
 }
+static int storage_gui_volume_verify(void)
+{
+    struct MsgPort *port=CreateMsgPort();
+    struct IOStdReq *io=port?(void *)CreateIORequest(port,sizeof(*io)):NULL;
+    int error=0,opened=0;BPTR file=0;
+    struct oz_device_mapping mapping={0};unsigned char bytes[512];
+    char expected[OZ_MOUNTFILE_SIZE],saved[OZ_MOUNTFILE_SIZE];
+#define GCHECK(x) do{if(!(x)){char line[96];snprintf(line,sizeof(line),"Public GUI volume FAIL line=%d\n",__LINE__);note(line);error=EIO;goto done;}}while(0)
+    GCHECK(io);
+    GCHECK(!OpenDevice((CONST_STRPTR)"openzfs.device",5,(struct IORequest *)io,0));opened=1;
+    io->io_Command=OZCMD_GETMAPPING;io->io_Data=&mapping;io->io_Length=sizeof(mapping);
+    GCHECK(!DoIO((struct IORequest *)io)&&io->io_Actual==sizeof(mapping));
+    GCHECK(mapping.unit==5&&mapping.bytes==2097152&&mapping.sector_size==512&&
+        mapping.flags==(OZ_MAPPING_PRESENT|OZ_MAPPING_READONLY)&&
+        !strcmp(mapping.dataset,"public_mirror/public_volume"));
+    io->io_Command=CMD_READ;io->io_Data=bytes;io->io_Length=sizeof(bytes);io->io_Offset=32768;
+    GCHECK(!DoIO((struct IORequest *)io)&&io->io_Actual==sizeof(bytes));
+    for(unsigned i=0;i<sizeof(bytes);i++)GCHECK(bytes[i]==(unsigned char)(i*11+i/512+29));
+    io->io_Command=CMD_WRITE;GCHECK(DoIO((struct IORequest *)io)==TDERR_WriteProt&&!io->io_Actual);
+    GCHECK(!oz_mountfile_format(&mapping,1,0,expected,sizeof(expected)));
+    file=Open((CONST_STRPTR)"T:OZBLOCK",MODE_OLDFILE);GCHECK(file);
+    LONG n=Read(file,saved,sizeof(saved));
+    GCHECK(n==(LONG)strlen(expected)&&!memcmp(saved,expected,n));
+done:
+    if(file)Close(file);
+    if(opened)CloseDevice((struct IORequest *)io);
+    if(io)DeleteIORequest((struct IORequest *)io);
+    if(port)DeleteMsgPort(port);
+    if(!error&&cli_command("C:OpenZFSDevice EJECT 5"))error=EIO;
+    if(!error)note("Public GUI volume PASS actual-mapping=1 readonly=1 exact-data=1 saved-mountfile=1 eject=1\n");
+    return error;
+#undef GCHECK
+}
 static int storage_test(int gui){
     int error=0;BPTR file=0,lock=CreateDir((CONST_STRPTR)storage_directory);
     if(!lock)return EIO;
@@ -1303,8 +1337,11 @@ static int storage_test(int gui){
         note("Public passphrase encryption PASS create-pbkdf2=350000 locked-mount-denied=1 reload=1 exact-read=1 cleanup=1\n");
     }
     if(gui){
+        BPTR volume_gui=Lock((CONST_STRPTR)"SYS:openzfs-gui-volume-test",SHARED_LOCK);
+        if(volume_gui){UnLock(volume_gui);note("Public GUI volume READY: Devices, unit 5, public_mirror/public_volume, read-only Remap; save whole-volume FFS mount file T:OZBLOCK, then close Manager\n");}
         note("Public storage GUI ready: mounted public_mirror/files with hello.txt\n");
         STORAGE_CHECK(SystemTags((CONST_STRPTR)"C:OpenZFSManagerNative",TAG_DONE)==0);
+        if(volume_gui)STORAGE_CHECK(!storage_gui_volume_verify());
         note("Public storage GUI closed; verifying export and readonly reimport\n");
     }
     STORAGE_CHECK(!oz_mount_control(OZ_ADMISSION_PORT,"public_mirror/files","",OZ_MOUNT_DETACH,0));

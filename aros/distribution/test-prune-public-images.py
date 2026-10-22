@@ -44,6 +44,16 @@ class Retention(unittest.TestCase):
         self.invoke()
         self.assertTrue((self.run / "test.iso").exists())
 
+    def test_gui_requires_pass_and_no_backing(self):
+        gui = self.run.with_name("native-gui-run.test")
+        self.run.rename(gui)
+        self.assertTrue(prune.eligible(gui))
+        (gui / "backing.raw").write_bytes(b"do not prune")
+        self.assertFalse(prune.eligible(gui))
+        (gui / "backing.raw").unlink()
+        (gui / "serial-results.log").write_text("RESULT public service storage FAIL\n")
+        self.assertFalse(prune.eligible(gui))
+
     def test_failed_run_preserves(self):
         (self.run / "cold-results.log").write_text("RESULT public service storage FAIL\n")
         self.invoke(True)
