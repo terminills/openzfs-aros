@@ -307,6 +307,18 @@ host zdb checks remain required. Native runs `iCGv6C2l` (mirror), `F1KwQXMi`
 (RAIDZ1), `LZpfBybc` (RAIDZ2), and `L8Lhe4EJ` (RAIDZ3) all passed. This tests
 missing members at import, not live device removal during outstanding writes.
 
+The packaged CLI suite now exercises AES-256-GCM dataset creation with a
+disposable 32-byte raw key in guest RAM. It writes and flushes a DOS payload,
+unmounts, unloads the key, verifies `keystatus=unavailable`, attempts a different
+key and requires failure with the status still unavailable, then reloads the
+correct key and reads the exact payload through a read-only mount. It finally
+unloads, destroys the test dataset, and deletes both RAM key fixtures.
+`public-service-run.vqYeyU6c` passed this lifecycle plus the surrounding native
+CLI/handler, sparse64, cold/degraded/refusal and independent zdb checks. This
+uses public test bytes, not user credentials; it does not establish encrypted
+dataset persistence across reboot, passphrase derivation, raw encrypted send,
+or secure key-erasure behavior. Earlier historical crypto tests are separate.
+
 Prefer a coherent SDK and genmodule pair; do not define missing ABI constants
 in this project. Handler/device compilation is not runtime qualification.
 

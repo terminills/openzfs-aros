@@ -770,6 +770,36 @@ static int storage_test(int gui){
         STORAGE_CHECK(SystemTags((CONST_STRPTR)"C:zfs destroy public_mirror/cli_renamed",TAG_DONE)==0);
         STORAGE_CHECK(SystemTags((CONST_STRPTR)"C:zfs destroy public_mirror/files@cli_roundtrip",TAG_DONE)==0);
         note("Public packaged CLI PASS pool-list=1 dataset-list=1 property=1 snapshot-create-list-destroy=1 clone=1 rename=1 set-get=1 rollback-data=1\n");
+        /* Public, disposable fixture bytes, not user key material. RAM only. */
+        unsigned char key[32];for(unsigned i=0;i<sizeof(key);i++)key[i]=(unsigned char)(i+1);
+        file=Open((CONST_STRPTR)"RAM:public-test.key",MODE_NEWFILE);STORAGE_CHECK(file);
+        STORAGE_CHECK(Write(file,key,sizeof(key))==sizeof(key));STORAGE_CHECK(Close(file));file=0;
+        STORAGE_CHECK(cli_command("C:zpool set feature@encryption=enabled public_mirror")==0);
+        STORAGE_CHECK(cli_command("C:zfs create -u -o mountpoint=none -o encryption=aes-256-gcm -o keyformat=raw -o keylocation=file:///RAM/public-test.key public_mirror/encrypted")==0);
+        STORAGE_CHECK(!cli_result("C:zfs get -H -o value encryption public_mirror/encrypted >T:cli-package-output.txt","aes-256-gcm"));
+        STORAGE_CHECK(!oz_mount_control(OZ_ADMISSION_PORT,"public_mirror/encrypted","OZCRYPT",OZ_MOUNT_ATTACH,0));
+        file=Open((CONST_STRPTR)"OZCRYPT:payload",MODE_NEWFILE);STORAGE_CHECK(file);
+        STORAGE_CHECK(Write(file,payload,sizeof(storage_payload)-1)==sizeof(storage_payload)-1);
+        STORAGE_CHECK(Flush(file));STORAGE_CHECK(Close(file));file=0;
+        STORAGE_CHECK(!oz_mount_control(OZ_ADMISSION_PORT,"public_mirror/encrypted","",OZ_MOUNT_DETACH,0));
+        STORAGE_CHECK(cli_command("C:zfs unload-key public_mirror/encrypted")==0);
+        STORAGE_CHECK(!cli_result("C:zfs get -H -o value keystatus public_mirror/encrypted >T:cli-package-output.txt","unavailable"));
+        memset(key,0x7a,sizeof(key));file=Open((CONST_STRPTR)"RAM:public-wrong.key",MODE_NEWFILE);STORAGE_CHECK(file);
+        STORAGE_CHECK(Write(file,key,sizeof(key))==sizeof(key));STORAGE_CHECK(Close(file));file=0;
+        STORAGE_CHECK(cli_command("C:zfs load-key -L file:///RAM/public-wrong.key public_mirror/encrypted")!=0);
+        STORAGE_CHECK(!cli_result("C:zfs get -H -o value keystatus public_mirror/encrypted >T:cli-package-output.txt","unavailable"));
+        STORAGE_CHECK(cli_command("C:zfs load-key -L file:///RAM/public-test.key public_mirror/encrypted")==0);
+        STORAGE_CHECK(!cli_result("C:zfs get -H -o value keystatus public_mirror/encrypted >T:cli-package-output.txt","available"));
+        STORAGE_CHECK(!oz_mount_control(OZ_ADMISSION_PORT,"public_mirror/encrypted","OZCRYPT",OZ_MOUNT_ATTACH,OZ_MOUNT_READONLY));
+        file=Open((CONST_STRPTR)"OZCRYPT:payload",MODE_OLDFILE);STORAGE_CHECK(file);
+        STORAGE_CHECK(Read(file,actual,sizeof(actual))==sizeof(storage_payload)-1&&!memcmp(actual,payload,sizeof(storage_payload)-1));
+        STORAGE_CHECK(Close(file));file=0;
+        STORAGE_CHECK(!oz_mount_control(OZ_ADMISSION_PORT,"public_mirror/encrypted","",OZ_MOUNT_DETACH,0));
+        STORAGE_CHECK(cli_command("C:zfs unload-key public_mirror/encrypted")==0);
+        STORAGE_CHECK(cli_command("C:zfs destroy public_mirror/encrypted")==0);
+        STORAGE_CHECK(DeleteFile((CONST_STRPTR)"RAM:public-test.key"));
+        STORAGE_CHECK(DeleteFile((CONST_STRPTR)"RAM:public-wrong.key"));
+        note("Public packaged encryption PASS create=1 unload=1 wrong-key-denied=1 reload=1 exact-read=1 cleanup=1\n");
     }
     if(gui){
         note("Public storage GUI ready: mounted public_mirror/files with hello.txt\n");
