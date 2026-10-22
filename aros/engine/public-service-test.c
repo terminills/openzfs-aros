@@ -50,6 +50,8 @@ static unsigned storage_members=2,storage_layout=OZ_MIRROR,storage_missing=1;
 static int storage_reply_received;
 static int native_file_fixture;
 static int storage_replace,storage_replaced;
+static int storage_dspare;
+static char storage_spare_name[160];
 static void storage_member(char *path,size_t size,unsigned member)
 {
     snprintf(path,size,"%s%sdisk%u%s",storage_directory,
@@ -82,6 +84,7 @@ static int storage_request(unsigned op,const char *target,const char *argument,c
         m.topology.group_count=1;m.topology.device_count=1;m.topology.ashift=12;
         m.topology.groups[0].layout=OZ_STRIPE;
         snprintf(m.topology.devices[0].path,sizeof(m.topology.devices[0].path),"%s/disk0-new",storage_directory);
+        if(storage_dspare)snprintf(m.topology.devices[0].path,sizeof(m.topology.devices[0].path),"%s",storage_spare_name);
     }
     struct oz_ticket ticket={0};int error=oz_admission_submit(OZ_ADMISSION_PORT,&m,&ticket);
     if(!error){do{error=oz_admission_query(OZ_ADMISSION_PORT,&ticket,&out);if(error==EAGAIN)Delay(1);}while(error==EAGAIN);}
@@ -665,6 +668,72 @@ static int storage_replace_test(void)
     if(!error)note("Public mirror replacement PASS new-guid=1 old-absent=1 leaves=2 finished=1 errors=0\n");
     return error;
 }
+static int storage_spare_status(char *guid,size_t size,int active)
+{
+    struct oz_client client;static struct oz_message request;
+    if(!oz_client_open(&client))return ENOMEM;
+    memset(&request,0,sizeof(request));request.operation=4;strcpy(request.target,"public_mirror");
+    int error=oz_submit(&client,&request)==OZ_OK?0:EIO;
+    if(!error){
+        struct oz_message *reply=NULL;while(!(reply=oz_poll(&client)))Delay(1);
+        unsigned leaf=0,spare=0;
+        if(reply->status==OZ_OK&&!reply->next_cursor){
+            for(unsigned i=0;i<reply->row_count;i++){
+                const struct oz_row *r=&reply->rows[i];size_t n=strlen(r->name);
+                if(!strcmp(r->kind,"file")&&n>=6&&!strcmp(r->name+n-6,"/disk0")&&
+                    !strcmp(r->state,active?"OFFLINE":"ONLINE")){
+                    const char *field=strstr(r->value," guid=");char *end=NULL;
+                    unsigned long long id=field?strtoull(field+6,&end,10):0;
+                    if(id&&end&&*end==' '){snprintf(guid,size,"%llu",id);leaf=1;}
+                }
+                if(!strcmp(r->kind,"dspare")&&strstr(r->value,"role=spare ")&&
+                    !strcmp(r->state,active?"INUSE":"ONLINE")){
+                    snprintf(storage_spare_name,sizeof(storage_spare_name),"%s",r->name);spare++;
+                }
+            }
+        }
+        error=leaf&&spare==1?0:EIO;
+        if(error){
+            note("Public dRAID spare status mismatch: ");note(reply->detail);note("\n");
+            for(unsigned i=0;i<reply->row_count;i++){
+                note(reply->rows[i].kind);note(" ");note(reply->rows[i].name);note(" ");
+                note(reply->rows[i].state);note(" ");note(reply->rows[i].value);note("\n");
+            }
+        }
+        if(!error&&active){
+            const char *scan=strstr(reply->detail,"scan=resilver state=finished ");
+            unsigned long long examined,total,issued,errors;
+            if(!scan||sscanf(scan,"scan=resilver state=finished examined=%llu to-examine=%llu issued=%llu errors=%llu",
+                &examined,&total,&issued,&errors)!=4||!issued||errors)error=EAGAIN;
+            if(!error){note("Public dRAID spare scan PASS ");note(scan);note("\n");}
+        }
+        oz_message_free(reply);
+    }
+    oz_client_close(&client);return error;
+}
+static int storage_spare_test(void)
+{
+    char guid[32];int error=storage_spare_status(guid,sizeof(guid),0);
+    if(!error){
+        strcpy(storage_spare_name,"draid1-999-999");
+        int refused=storage_request(13,"public_mirror",guid,NULL);
+        if(!refused||!storage_reply_received)error=EIO;
+        if(!error)error=storage_spare_status(guid,sizeof(guid),0);
+        if(!error)note("Public dRAID spare refusal PASS absent=1 original-online=1 spare-available=1\n");
+    }
+    if(!error)error=storage_repair_data("OZPUBLIC:",1);
+    if(!error&&cli_command("C:zpool sync public_mirror"))error=EIO;
+    if(!error)error=storage_request(16,"public_mirror",guid,NULL);
+    if(!error)error=storage_request(13,"public_mirror",guid,NULL);
+    if(!error&&cli_command("C:zpool wait -t resilver public_mirror"))error=EIO;
+    if(!error)for(unsigned i=0;i<120;i++){
+        error=storage_spare_status(guid,sizeof(guid),1);
+        if(error!=EAGAIN)break;
+        Delay(50);
+    }
+    if(!error)note("Public dRAID spare PASS offline=1 inuse=1 finished=1 errors=0\n");
+    return error;
+}
 static int storage_sparse64(const char *root,int write)
 {
     char path[96];snprintf(path,sizeof(path),"%slarge-sparse.bin",root);
@@ -842,6 +911,7 @@ static int storage_test(int gui){
             STORAGE_CHECK(!storage_repair_test());
             if(storage_replace)STORAGE_CHECK(!storage_replace_test());
         }
+        if(storage_dspare)STORAGE_CHECK(!storage_spare_test());
         STORAGE_CHECK(!cli_result("C:zpool list -H -o name public_mirror >T:cli-package-output.txt","public_mirror"));
         STORAGE_CHECK(!cli_result("C:zfs list -H -o name public_mirror/files >T:cli-package-output.txt","public_mirror/files"));
         STORAGE_CHECK(!cli_result("C:zfs get -H -o value type public_mirror/files >T:cli-package-output.txt","filesystem"));
@@ -1165,7 +1235,7 @@ static int storage_cold_once(void)
     if(IoErr()!=ERROR_DISK_WRITE_PROTECTED)return EIO;
     error=storage_sparse64("OZCOLD:",0);
     if(error)return error;
-    if(native_file_fixture&&storage_layout==OZ_MIRROR){
+    if(native_file_fixture&&(storage_layout==OZ_MIRROR||storage_dspare)){
         BPTR cli=Lock((CONST_STRPTR)"SYS:openzfs-cli-package-test",SHARED_LOCK);
         if(cli){UnLock(cli);error=storage_repair_data("OZCOLD:",0);if(error)return error;}
     }
@@ -1197,7 +1267,7 @@ static int storage_cold_test(void)
      * changing their bytes; restore every name even if degraded import fails. */
     char member[4][256],hidden[4][256];unsigned moved=0;
     for(unsigned i=0;i<storage_missing;i++){
-        storage_member(member[i],sizeof(member[i]),i+1);
+        storage_member(member[i],sizeof(member[i]),storage_dspare?i:i+1);
         snprintf(hidden[i],sizeof(hidden[i]),"%s-held",member[i]);
         BPTR exists=Lock((CONST_STRPTR)hidden[i],SHARED_LOCK);
         if(exists){UnLock(exists);error=EEXIST;break;}
@@ -1208,10 +1278,28 @@ static int storage_cold_test(void)
     while(moved){--moved;if(!Rename((CONST_STRPTR)hidden[moved],(CONST_STRPTR)member[moved])&&!error)error=EIO;}
     if(!error){char line[128];snprintf(line,sizeof(line),"Public cold degraded assign PASS missing=%u exact=1 readonly=1 restored=1\n",storage_missing);note(line);}
     if(!error&&storage_replaced)note("Public cold replacement PASS replacement-only=1 exact=1\n");
+    if(!error&&storage_dspare)note("Public cold dRAID spare PASS original-absent=1 exact=1\n");
     if(error)return error;
+    if(storage_dspare){
+        /* Once rebuilt, this 1-data/1-parity/3-child layout can still read
+         * after losing the original offline member AND one live child. */
+        for(unsigned i=0;i<2;i++){
+            storage_member(member[i],sizeof(member[i]),i);
+            snprintf(hidden[i],sizeof(hidden[i]),"%s-held",member[i]);
+            BPTR exists=Lock((CONST_STRPTR)hidden[i],SHARED_LOCK);
+            if(exists){UnLock(exists);error=EEXIST;break;}
+            if(IoErr()!=ERROR_OBJECT_NOT_FOUND||!Rename((CONST_STRPTR)member[i],(CONST_STRPTR)hidden[i])){error=EIO;break;}
+            moved++;
+        }
+        if(!error)error=storage_cold_once();
+        while(moved){--moved;if(!Rename((CONST_STRPTR)hidden[moved],(CONST_STRPTR)member[moved])&&!error)error=EIO;}
+        if(error)return error;
+        note("Public cold dRAID rebuilt redundancy PASS missing=2 exact=1 restored=1\n");
+    }
     /* Exceed parity (both leaves for mirror). A transport failure alone is
      * not proof of rejection: require a backend reply and responsive queries. */
-    for(unsigned i=0;i<=storage_missing;i++){
+    unsigned losses=storage_dspare?storage_members:storage_missing+1;
+    for(unsigned i=0;i<losses;i++){
         storage_member(member[i],sizeof(member[i]),i);
         snprintf(hidden[i],sizeof(hidden[i]),"%s-held",member[i]);
         BPTR exists=Lock((CONST_STRPTR)hidden[i],SHARED_LOCK);
@@ -1227,7 +1315,7 @@ static int storage_cold_test(void)
     }
     while(moved){--moved;if(!Rename((CONST_STRPTR)hidden[moved],(CONST_STRPTR)member[moved])&&!error)error=EIO;}
     if(!error)error=storage_cold_once();
-    if(!error){char line[128];snprintf(line,sizeof(line),"Public cold beyond-parity PASS missing=%u refused=1 empty=1 responsive=1 restored-read=1\n",storage_missing+1);note(line);}
+    if(!error){char line[160];snprintf(line,sizeof(line),"Public cold beyond-parity PASS missing=%u refused=1 empty=1 responsive=1 restored-read=1\n",losses);note(line);}
     return error;
 }
 int main(int argc,char **argv){
@@ -1278,6 +1366,11 @@ int main(int argc,char **argv){
     struct Library *secBase=NULL;int logged=0;
     int gui=argc==2&&!strcmp(argv[1],"GUI");
     int cold=argc==2&&!strcmp(argv[1],"STORAGE-COLD");
+    marker=Lock((CONST_STRPTR)"SYS:openzfs-dspare-test",SHARED_LOCK);
+    if(marker){
+        UnLock(marker);storage_dspare=1;
+        if(!native_file_fixture||storage_layout!=OZ_DRAID||storage_missing!=1)return 20;
+    }
     marker=Lock((CONST_STRPTR)"SYS:openzfs-replacement-test",SHARED_LOCK);
     if(marker){
         UnLock(marker);storage_replace=1;storage_replaced=cold;

@@ -85,6 +85,24 @@ That run remains retained; production engine code was not changed to pass it.
 
 ## Typed native replacement and attach (2026-09-27)
 
+### Existing distributed-spare replacement
+
+Operation 13 also accepts an existing distributed-spare name, such as
+`draid1-0-0`, in the single stripe/data leaf's `path`. The argument remains
+the exact decimal GUID of the member being replaced. The Manager sends this
+through its "New backing / dRAID spare" field, not a shell command. No ABI
+change or new path-discovery authority is implied.
+
+These synthetic names bypass external-file blank checking only after the
+same live-inventory admission used by the CLI verifies that the target
+member and distributed spare belong to the same dRAID group. Root, writable
+pool, suspended-pool, flag and topology checks remain enforced. Unknown
+spares are refused; attach (operation 11) does not gain this special route.
+Success starts upstream healing resilver; it is not completion. Status must
+show the active spare and the scan outcome. Auxiliary `VDEV_AUX_SPARED`
+reports INUSE regardless of the auxiliary handle's open state, matching
+upstream `zpool status`; it does not overwrite the in-tree device's health.
+
 Operations 11 and 13 now admit blank native members through the same shared
 preflight as upstream CLI attach/replace. Existing GUID validation, root and
 writable checks remain. All new paths are bound and checked before upstream

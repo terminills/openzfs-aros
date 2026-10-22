@@ -158,7 +158,7 @@ static void select_operation(void) {
         "Create: key=value,key=value. Omit to inherit.":
         "Options: see operation help. No commands or secrets.");
     set(options,MUIA_ShortHelp,oz_operations[selected].help);
-    set(options_label,MUIA_Text_Contents,(oz_operations[selected].id==11||oz_operations[selected].id==13)?"New backing path":"Properties / options");
+    set(options_label,MUIA_Text_Contents,oz_operations[selected].id==13?"New backing / dRAID spare":oz_operations[selected].id==11?"New backing path":"Properties / options");
     if(oz_operations[selected].id==14)set(options_label,MUIA_Text_Contents,"guids=leaf,leaf,...");
     set(target_label,MUIA_Text_Contents,oz_operations[selected].target_label[0]?
         oz_operations[selected].target_label:"Target (unused)");

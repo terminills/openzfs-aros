@@ -26,6 +26,29 @@ static void role(nvlist_t *v,unsigned r)
             r==OZ_SPECIAL?VDEV_ALLOC_BIAS_SPECIAL:VDEV_ALLOC_BIAS_DEDUP);
 }
 
+/* A distributed spare is already owned by the pool. Reuse the CLI's strict
+ * live-inventory admission rather than passing its name to file preflight. */
+static int replace_distributed_spare(struct oz_message *m,uint64_t guid,
+    cred_t *caller,const struct oz_packet_security *security)
+{
+    nvlist_t *root=fnvlist_alloc(),*leaf=fnvlist_alloc();
+    fnvlist_add_string(root,ZPOOL_CONFIG_TYPE,VDEV_TYPE_ROOT);
+    fnvlist_add_string(leaf,ZPOOL_CONFIG_TYPE,VDEV_TYPE_DRAID_SPARE);
+    fnvlist_add_string(leaf,ZPOOL_CONFIG_PATH,m->topology.devices[0].path);
+    fnvlist_add_nvlist_array(root,ZPOOL_CONFIG_CHILDREN,(const nvlist_t *const *)&leaf,1);
+    char *packed=NULL;size_t size=0;void *reservation=NULL;
+    spa_t *spa=NULL;struct oz_cred_scope *scope=NULL;
+    int error=nvlist_pack(root,&packed,&size,NV_ENCODE_NATIVE,0);
+    if(!error)error=oz_cli_attach_begin(m->target,guid,1,packed,size,caller,security,&reservation);
+    if(!error)error=spa_open(m->target,&spa,FTAG);
+    if(!error)error=oz_cred_push(caller,&scope);
+    if(!error)error=spa_vdev_attach(spa,guid,root,B_TRUE,B_FALSE);
+    if(scope)VERIFY0(oz_cred_pop(scope));
+    if(spa)spa_close(spa,FTAG);
+    if(reservation)oz_cli_add_end(reservation,error);
+    free(packed);nvlist_free(leaf);nvlist_free(root);return error;
+}
+
 /* operation: 0=create, 1=attach, 2=replace, 3=add. All share the same native
  * file identity/blankness and writable-open preflight. */
 static int pool_files_change(struct oz_message *m,cred_t *caller,
@@ -54,6 +77,9 @@ static int pool_files_change(struct oz_message *m,cred_t *caller,
         errno=0;guid=strtoull(m->argument,NULL,10);
         if(errno==ERANGE||!guid)return EINVAL;
     }
+    if(operation==2&&!strncmp(t->devices[0].path,"draid",5)&&
+        !strchr(t->devices[0].path,':')&&!strchr(t->devices[0].path,'/'))
+        return replace_distributed_spare(m,guid,caller,security);
     BPTR locks[OZ_MAX_DEVICES]={0},parents[OZ_MAX_DEVICES]={0};
     boolean_t native[OZ_MAX_DEVICES]={0},has_native=B_FALSE;
     nvlist_t *leaves[OZ_MAX_DEVICES]={0},*groups[OZ_MAX_GROUPS]={0};

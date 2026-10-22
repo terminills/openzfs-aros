@@ -207,7 +207,9 @@ static int device_rows(nvlist_t *nv,const char *parent,const char *role,
         if(nvlist_lookup_uint64_array(nv,ZPOOL_CONFIG_VDEV_STATS,&raw,&count)||
             !VDEV_STAT_VALID(vs_checksum_errors,count))return EINVAL;
         const vdev_stat_t *vs=(const vdev_stat_t *)raw;
-        strcpy(r->state,!strcmp(role,"spare")&&vs->vs_state==VDEV_STATE_HEALTHY&&
+        /* Upstream zpool status gives SPARED precedence over the auxiliary
+         * handle's open state; its active in-tree instance owns the I/O. */
+        strcpy(r->state,!strcmp(role,"spare")&&
             vs->vs_aux==VDEV_AUX_SPARED?"INUSE":health(vs->vs_state,vs->vs_aux));
         r->used=vs->vs_alloc;r->total=vs->vs_space;
         r->available=vs->vs_space>vs->vs_alloc?vs->vs_space-vs->vs_alloc:0;

@@ -451,6 +451,40 @@ also passes with the same rebuilt acceptance client and runner.
 This covers replacement of a file-backed mirror member, not native-device
 replacement, dRAID distributed spares or physical power-loss durability.
 
+### Distributed-spare package test
+
+`AROS_TEST_LAYOUT=draid1 AROS_TEST_DSPARE=1` selects a persistent
+1-data/1-parity/3-child/1-spare test using the public replace API. It checks
+refusal of an absent spare, then offlines the original member and activates
+the existing spare by its status-reported name. It requires INUSE and a
+finished, nonzero, error-free healing resilver. The Manager uses the same
+typed request; its field/help accept an existing dRAID spare name as well as
+a new external backing path. Sequential reconstruction is not selected.
+
+Cold verification reads the exact payload, sparse file and encrypted datasets
+with zero, one and two original files hidden, then restores the files and
+reads again. This particular rebuilt layout tolerates the original offline
+member plus one further missing child; that is not a general claim about all
+dRAID geometries. With all three members hidden, import must fail without
+leaving a pool or mount registered. Read-only member hashes and independent
+host `zdb -bcc` are checked after restoration.
+
+Final package run `public-service-run.fvSsNIwT` passes this complete sequence,
+including the absent-spare refusal and four cold payload reads. The same
+rebuilt engine also passes ordinary mirror replacement and cold recovery in
+`public-service-run.zaPkqPua`. Both independent zdb checks report no leaks.
+The Manager was rebuilt; this qualification exercises its public API, not
+interactive operation of the newly labeled field. Hardware, higher-parity
+spare activation and sequential reconstruction remain separate gates.
+
+Failed runs are retained: `VafOOFqR` and `jpwWJqGA` exposed a status adapter
+bug (an auxiliary SPARED handle was incorrectly labeled UNAVAIL). The fix
+matches upstream zpool's INUSE precedence, without changing in-tree health.
+`uwuc289P` and `jfFOhhnt` exposed a wrong test assumption: after spare rebuild,
+two missing original files still allowed import and exact payload reads.
+The test now verifies that recovered redundancy and uses complete member
+loss for its refusal check; it does not equate successful import with health.
+
 ## Requirements
 
 - Linux build host with Bash, Git, Make, GCC-compatible AROS cross tools, binutils,
