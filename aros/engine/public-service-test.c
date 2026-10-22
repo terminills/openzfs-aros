@@ -16,6 +16,7 @@
 #include <libraries/security.h>
 #include <dos/dostags.h>
 #include <dos/dosextens.h>
+#include <dos/exall.h>
 #include <exec/memory.h>
 #include <exec/io.h>
 #include <exec/errors.h>
@@ -111,6 +112,59 @@ static void storage_member(char *path,size_t size,unsigned member)
 static const char storage_payload[]="Public OpenZFS DOS payload\n";
 static const char storage_passphrase[]="AROS public passphrase fixture\n";
 static const char storage_rotated_passphrase[]="AROS rotated public passphrase fixture\n";
+static int desktop_directory(const char *phase)
+{
+    BPTR root=Lock((CONST_STRPTR)"OZPUBLIC:",SHARED_LOCK);
+    LONG doserr=IoErr();const char *stage="lock";
+    struct FileInfoBlock *fib=AllocDosObject(DOS_FIB,NULL);
+    struct ExAllControl *ctl=AllocDosObject(DOS_EXALLCONTROL,NULL);
+    struct ExAllData *buffer=AllocVec(4096,MEMF_ANY|MEMF_CLEAR);
+    int error=0;unsigned next_found=0,all_found=0,next_count=0,all_count=0;
+    unsigned next_large=0,all_large=0;
+    if(ctl){ctl->eac_LastKey=0;ctl->eac_MatchString=NULL;ctl->eac_MatchFunc=NULL;}
+    if(!root||!fib||!ctl||!buffer){error=ENOMEM;goto done;}
+    stage="examine";
+    if(!Examine(root,fib)){doserr=IoErr();error=EIO;goto done;}
+    stage="exnext";
+    while(ExNext(root,fib)){
+        if(++next_count>64){error=EOVERFLOW;goto done;}
+        if(!strcmp(fib->fib_FileName,"hello.txt")&&fib->fib_DirEntryType<0&&
+           fib->fib_Size==sizeof(storage_payload)-1)++next_found;
+        if(!strcmp(fib->fib_FileName,"large-sparse.bin")&&fib->fib_DirEntryType<0&&
+           fib->fib_Size==UINT64_C(0x100001000))++next_large;
+    }
+    doserr=IoErr();
+    if(doserr!=ERROR_NO_MORE_ENTRIES||next_found!=1||next_large!=1){error=EIO;goto done;}
+    stage="exall";
+    ctl->eac_LastKey=0;ctl->eac_MatchString=NULL;ctl->eac_MatchFunc=NULL;
+    for(unsigned calls=0;calls<64;calls++){
+        BOOL more=ExAll(root,buffer,4096,ED_OWNER,ctl);LONG ioerr=IoErr();
+        doserr=ioerr;
+        struct ExAllData *entry=buffer;
+        for(ULONG n=0;n<ctl->eac_Entries;n++){
+            uintptr_t low=(uintptr_t)buffer,high=low+4096;
+            if((uintptr_t)entry<low||(uintptr_t)entry>high-sizeof(*entry)||++all_count>64){error=EOVERFLOW;goto done;}
+            uintptr_t name=(uintptr_t)entry->ed_Name;
+            if(name<low||name>=high||strnlen(entry->ed_Name,high-name)==high-name){error=EIO;goto done;}
+            if(!strcmp(entry->ed_Name,"hello.txt")&&entry->ed_Type<0&&
+               entry->ed_Size==sizeof(storage_payload)-1)++all_found;
+            if(!strcmp(entry->ed_Name,"large-sparse.bin")&&entry->ed_Type<0&&
+               entry->ed_Size==UINT64_C(0x100001000))++all_large;
+            entry=entry->ed_Next;
+        }
+        if(!more){if(ioerr!=ERROR_NO_MORE_ENTRIES||all_found!=1||all_large!=1)error=EIO;goto done;}
+    }
+    error=EOVERFLOW;
+done:
+    if(root&&ctl&&buffer&&ctl->eac_LastKey)ExAllEnd(root,buffer,4096,ED_OWNER,ctl);
+    if(buffer)FreeVec(buffer);
+    if(ctl)FreeDosObject(DOS_EXALLCONTROL,ctl);
+    if(fib)FreeDosObject(DOS_FIB,fib);
+    if(root)UnLock(root);
+    char line[240];snprintf(line,sizeof(line),"Public desktop directory %s phase=%s stage=%s exnext=%u/%u exall=%u/%u errno=%d doserr=%ld\n",
+        error?"FAIL":"PASS",phase,stage,next_found,next_count,all_found,all_count,error,(long)doserr);note(line);
+    return error;
+}
 static int storage_request(unsigned op,const char *target,const char *argument,const char *options){
     storage_reply_received=0;
     static struct oz_message m,out;memset(&m,0,sizeof(m));
@@ -1384,10 +1438,12 @@ static int storage_test(int gui){
         BPTR desktop=Lock((CONST_STRPTR)"SYS:openzfs-gui-desktop-test",SHARED_LOCK);
         if(desktop){
             UnLock(desktop);
+            STORAGE_CHECK(!desktop_directory("before-wanderer"));
             STORAGE_CHECK(!cli_command("Run >T:wanderer-public.log SYS:System/Wanderer/Wanderer"));
             Delay(50);
             STORAGE_CHECK(!cli_command("C:WBRun OZPUBLIC:"));
             Delay(50);desktop_windows();
+            STORAGE_CHECK(!desktop_directory("with-wanderer"));
             note("Public desktop READY: inspect mounted OZPUBLIC and hello.txt in Wanderer; close drawer windows before closing Manager. Wanderer stays running.\n");
         }
         BPTR volume_gui=Lock((CONST_STRPTR)"SYS:openzfs-gui-volume-test",SHARED_LOCK);
@@ -1396,6 +1452,7 @@ static int storage_test(int gui){
         STORAGE_CHECK(SystemTags((CONST_STRPTR)"C:OpenZFSManagerNative",TAG_DONE)==0);
         if(volume_gui)STORAGE_CHECK(!storage_gui_volume_verify());
         if(desktop){
+            STORAGE_CHECK(!desktop_directory("after-ui"));
             file=Open((CONST_STRPTR)"OZPUBLIC:hello.txt",MODE_OLDFILE);STORAGE_CHECK(file);
             STORAGE_CHECK(Read(file,actual,sizeof(actual))==sizeof(storage_payload)-1&&!memcmp(actual,payload,sizeof(storage_payload)-1));
             STORAGE_CHECK(Close(file));file=0;

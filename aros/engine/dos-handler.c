@@ -564,7 +564,11 @@ static int fill_fib(struct oz_zpl *fs,uint64_t object,const char *name,struct Fi
 {
     struct oz_zpl_info info;int rc=oz_zpl_stat(fs,object,&info);if(rc)return rc;
     if(strlen(name)>sizeof(fib->fib_FileName)-2)return ENAMETOOLONG;
-    if(info.size>INT32_MAX||info.blocks>INT32_MAX)return EOVERFLOW;
+    /* ABIv1 has 64-bit size/block fields. Only reject values that the
+     * actual destination cannot represent; otherwise one large file
+     * aborts enumeration of an entire drawer. */
+    if((sizeof(fib->fib_Size)==4&&info.size>INT32_MAX)||
+       (sizeof(fib->fib_NumBlocks)==4&&info.blocks>INT32_MAX))return EOVERFLOW;
     uint32_t owner;
     rc=oz_aros_owner_from_ids(info.mapped_uid,info.mapped_gid,&owner);
     if(rc)return rc;
