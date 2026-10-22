@@ -357,9 +357,27 @@ alone does not redirect generated module installation. AROS make can rebuild
 `GENMODULE` automatically from source dependencies, so its output must also be
 private; an executable-path override alone does not pin its version.
 
-The aggregate target is wired, but external dependency bootstrap and a complete
-clean-tree aggregate/package verification remain outstanding. The standalone
-build sequence below remains available.
+The aggregate target also passed a fresh private-output build on 2026-10-22
+(`mmake-native-fresh-20261022`), using current ADT pthread and crypto built from
+the independently fetched upstream source plus the bundled AROS patch. All
+360 engine units, commands, handler, library, service and Manager were rebuilt.
+This uses a configured SDK, its generated configuration and module-startup
+object, compatible private genmodule and the existing SDK-check source shim;
+it is not a clean build of the entire operating system or SDK. The first
+attempts stopped on missing private target configuration/module-startup input;
+those logs remain alongside the successful aggregate log.
+
+The resulting package passed persistent native QEMU run
+`public-service-run.RqXKXWLR`, including PBKDF2 known answers, real passphrase
+datasets, raw full/incremental replication, sparse64, cold mirror recovery,
+unchanged members and independent zdb. A separate nonpersistent native run,
+`native-gui-run.yKFrLIn3`, visually verified the new Manager connecting and
+listing the real `public_mirror` pool ONLINE (`pools.png`), then closing normally;
+the remaining handler/storage tests passed afterward. Package hashes, build
+logs, screenshots and input logs are retained. Runtime overlays are still
+explicit dependencies; stock-nightly compatibility and turnkey SDK/overlay
+bootstrap remain outstanding. The standalone build sequence below is also
+available.
 
 This is a developer source release, not a standalone SDK or prebuilt installer.
 The ordinary upstream Linux build does not build the AROS integration.
