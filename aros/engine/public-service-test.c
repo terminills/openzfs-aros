@@ -45,6 +45,7 @@ int oz_public_ioctl_test(const char *);
 static void child_exited(IPTR status,IPTR result){*(LONG *)result=(LONG)status;}
 static int present(const char *name){Forbid();int found=FindPort((CONST_STRPTR)name)!=NULL;Permit();return found;}
 static const char *storage_directory="RAM:OZPublicPool";
+static unsigned storage_members=2,storage_layout=OZ_MIRROR,storage_missing=1;
 static const char storage_payload[]="Public OpenZFS DOS payload\n";
 static int storage_request(unsigned op,const char *target,const char *argument,const char *options){
     static struct oz_message m,out;memset(&m,0,sizeof(m));
@@ -54,9 +55,9 @@ static int storage_request(unsigned op,const char *target,const char *argument,c
     if(argument)snprintf(m.argument,sizeof(m.argument),"%s",argument);
     if(options)snprintf(m.options,sizeof(m.options),"%s",options);
     if(op==5||op==7){
-        m.topology.device_count=2;
-        if(op==5){m.topology.group_count=1;m.topology.ashift=12;m.topology.groups[0].layout=OZ_MIRROR;}
-        for(unsigned i=0;i<2;i++)snprintf(m.topology.devices[i].path,
+        m.topology.device_count=storage_members;
+        if(op==5){m.topology.group_count=1;m.topology.ashift=12;m.topology.groups[0].layout=storage_layout;}
+        for(unsigned i=0;i<storage_members;i++)snprintf(m.topology.devices[i].path,
             sizeof(m.topology.devices[i].path),"%s%sdisk%u",storage_directory,
             storage_directory[strlen(storage_directory)-1]==':'?"":"/",i);
     }
@@ -537,7 +538,7 @@ static int storage_test(int gui){
     if(NameFromLock(lock,(STRPTR)location,sizeof(location))){note("Public fixture directory: ");note(location);note("\n");}
     UnLock(lock);
     void *zeros=AllocVec(1024*1024,MEMF_ANY|MEMF_CLEAR);if(!zeros)return ENOMEM;
-    for(unsigned i=0;i<2&&!error;i++){
+    for(unsigned i=0;i<storage_members&&!error;i++){
         char path[64];snprintf(path,sizeof(path),"%s/disk%u",storage_directory,i);
         file=Open((CONST_STRPTR)path,MODE_NEWFILE);
         if(!file){error=EIO;break;}
@@ -837,24 +838,36 @@ static int storage_cold_test(void)
 {
     int error=storage_cold_once();
     if(error)return error;
-    /* These are runner-created disposable members. Hide one without changing
-     * its bytes, then restore its name even when degraded import fails. */
-    char member[256],hidden[256];
-    snprintf(member,sizeof(member),"%s/disk1",storage_directory);
-    snprintf(hidden,sizeof(hidden),"%s/disk1-held",storage_directory);
-    BPTR exists=Lock((CONST_STRPTR)hidden,SHARED_LOCK);
-    if(exists){UnLock(exists);return EEXIST;}
-    if(IoErr()!=ERROR_OBJECT_NOT_FOUND)return EIO;
-    if(!Rename((CONST_STRPTR)member,(CONST_STRPTR)hidden))return EIO;
-    error=storage_cold_once();
-    if(!Rename((CONST_STRPTR)hidden,(CONST_STRPTR)member)&&!error)error=EIO;
-    if(!error)note("Public cold degraded assign PASS missing=1 exact=1 readonly=1 restored=1\n");
+    /* Hide the topology's tolerated number of disposable members without
+     * changing their bytes; restore every name even if degraded import fails. */
+    char member[3][256],hidden[3][256];unsigned moved=0;
+    for(unsigned i=0;i<storage_missing;i++){
+        snprintf(member[i],sizeof(member[i]),"%s/disk%u",storage_directory,i+1);
+        snprintf(hidden[i],sizeof(hidden[i]),"%s/disk%u-held",storage_directory,i+1);
+        BPTR exists=Lock((CONST_STRPTR)hidden[i],SHARED_LOCK);
+        if(exists){UnLock(exists);error=EEXIST;break;}
+        if(IoErr()!=ERROR_OBJECT_NOT_FOUND||!Rename((CONST_STRPTR)member[i],(CONST_STRPTR)hidden[i])){error=EIO;break;}
+        moved++;
+    }
+    if(!error)error=storage_cold_once();
+    while(moved){--moved;if(!Rename((CONST_STRPTR)hidden[moved],(CONST_STRPTR)member[moved])&&!error)error=EIO;}
+    if(!error){char line[128];snprintf(line,sizeof(line),"Public cold degraded assign PASS missing=%u exact=1 readonly=1 restored=1\n",storage_missing);note(line);}
     return error;
 }
 int main(int argc,char **argv){
     BPTR marker=Lock((CONST_STRPTR)"SYS:openzfs-service-test-only",SHARED_LOCK);
     if(!marker)return 20;
     UnLock(marker);
+    BPTR layout_file=Open((CONST_STRPTR)"SYS:openzfs-test-layout",MODE_OLDFILE);
+    if(layout_file){
+        char layout[16]={0};LONG count=Read(layout_file,layout,sizeof(layout)-1);Close(layout_file);
+        if(count<=0)return 20;
+        while(count>0&&(layout[count-1]=='\n'||layout[count-1]=='\r'))layout[--count]=0;
+        if(!strcmp(layout,"raidz1")){storage_layout=OZ_RAIDZ1;storage_members=3;storage_missing=1;}
+        else if(!strcmp(layout,"raidz2")){storage_layout=OZ_RAIDZ2;storage_members=4;storage_missing=2;}
+        else if(!strcmp(layout,"raidz3")){storage_layout=OZ_RAIDZ3;storage_members=5;storage_missing=3;}
+        else if(strcmp(layout,"mirror"))return 20;
+    }
     marker=Lock((CONST_STRPTR)"SYS:openzfs-native-file-fixture",SHARED_LOCK);
     if(marker){UnLock(marker);storage_directory="OZBACK:OZPublicPool";}
     marker=Lock((CONST_STRPTR)"SYS:openzfs-hosted-file-fixture",SHARED_LOCK);

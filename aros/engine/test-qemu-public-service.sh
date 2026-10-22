@@ -14,6 +14,15 @@ cli_dir=${AROS_TEST_CLI_DIR:-}
 handler=${AROS_TEST_HANDLER_BINARY:-}
 persistent=${AROS_TEST_PERSISTENT:-0}
 [[ $persistent == 0 || $persistent == 1 ]]
+layout=${AROS_TEST_LAYOUT:-mirror}
+case "$layout" in
+    mirror) members=2; missing=1 ;;
+    raidz1) members=3; missing=1 ;;
+    raidz2) members=4; missing=2 ;;
+    raidz3) members=5; missing=3 ;;
+    *) echo 'AROS_TEST_LAYOUT must be mirror or raidz1/2/3' >&2; exit 2 ;;
+esac
+[[ $layout == mirror || $persistent == 1 ]]
 gui=${AROS_PUBLIC_GUI:-0}
 cpus=${AROS_TEST_CPUS:-2}
 qemu=${AROS_TEST_QEMU:-qemu-system-x86_64}
@@ -114,6 +123,8 @@ fi
 cp "$service" "$run/OpenZFSServiceNative"
 cp "$client" "$run/OpenZFSPublicServiceTest"
 cp "$startup" "$run/Startup-Sequence"
+printf '%s\n' "$layout" >"$run/layout.txt"
+extra_maps+=(-map "$run/layout.txt" /openzfs-test-layout)
 if [[ $persistent == 1 ]];then
     # Only a newly created regular file, never a supplied or physical disk.
     [[ $gui == 0 && $partitions == 0 && -z $label_source && $ahci_query == 0 ]]
@@ -122,9 +133,10 @@ if [[ $persistent == 1 ]];then
     [[ -x $host_zdb ]]
     sha256sum "$host_zdb" >"$run/host-zdb.sha256"
     cp "$fat" "$run/fat-handler"
-    truncate -s 512M "$run/backing.raw"
+    backing_mib=$((members*128+256))
+    truncate -s "${backing_mib}M" "$run/backing.raw"
     mkfs.vfat -F 16 -n OZFILES "$run/backing.raw" >"$run/format.log" 2>&1
-    sed 's/^HighCyl .*/HighCyl = 1048575/' aros/engine/OZBACK >"$run/OZBACK"
+    sed "s/^HighCyl .*/HighCyl = $((backing_mib*2048-1))/" aros/engine/OZBACK >"$run/OZBACK"
     sed '/^Stack /a Mount SYS:OZBACK' "$startup" >"$run/Startup-Sequence"
     extra_maps+=(-map "$run/fat-handler" /L/fat-handler -map "$run/OZBACK" /OZBACK
         -map aros/engine/public-service-test-only /openzfs-native-file-fixture)
@@ -341,7 +353,7 @@ wait "$pid"
 trap - EXIT
 if [[ $persistent == 1 ]];then
     mkdir "$run/members-before" "$run/members-after"
-    for member in 0 1;do
+    for ((member=0;member<members;member++));do
         mcopy -i "$run/backing.raw" "::OZPublicPool/disk$member" "$run/members-before/disk$member"
     done
     sha256sum "$run/members-before/"* >"$run/members-before.sha256"
@@ -374,7 +386,7 @@ if [[ $persistent == 1 ]];then
             sed -E 's/^[[:xdigit:]]{16} 0x[[:xdigit:]]{16} \| [0-9]+ \| //' "$run/cold-serial.log" >"$run/cold-results.log"
             if rg -q '^RESULT .*FAIL|Public service test line=[1-9][0-9]*|\[PF-DBG\]|^ASSERT at' "$run/cold-results.log";then exit 1;fi
             if rg -q '^RESULT public service storage PASS' "$run/cold-results.log" &&
-                rg -q '^Public cold degraded assign PASS' "$run/cold-results.log";then break;fi
+                rg -q "^Public cold degraded assign PASS missing=$missing exact=1 readonly=1 restored=1" "$run/cold-results.log";then break;fi
         fi
         if ! kill -0 "$pid" 2>/dev/null || ((SECONDS>=deadline));then echo "Cold timeout/exit: $run" >&2;exit 1;fi
         sleep 1
@@ -382,7 +394,7 @@ if [[ $persistent == 1 ]];then
     printf 'quit\n' | socat - "UNIX-CONNECT:$run/cold-monitor" >/dev/null
     wait "$pid"
     trap - EXIT
-    for member in 0 1;do
+    for ((member=0;member<members;member++));do
         mcopy -i "$run/backing.raw" "::OZPublicPool/disk$member" "$run/members-after/disk$member"
         cmp "$run/members-before/disk$member" "$run/members-after/disk$member"
     done
@@ -394,4 +406,4 @@ if [[ $persistent == 1 ]];then
 fi
 if [[ $partitions == 1 ]];then sha256sum -c "$run/disks-before.sha256" > "$run/disks-after-check.txt";fi
 if [[ -n $label_source ]];then sha256sum -c "$run/label-original.sha256" >"$run/label-original-after-check.txt";fi
-echo "PASS: public service lifecycles and mirror DOS round trip (persistent=$persistent). Evidence: $run"
+echo "PASS: public service lifecycles and $layout DOS round trip (persistent=$persistent). Evidence: $run"

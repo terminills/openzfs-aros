@@ -233,6 +233,21 @@ Both boot images are now constructed directly from the original base image.
 This proves normal export/fresh-boot persistence on virtual storage, not
 stock-nightly compatibility, abrupt-power-loss recovery or physical flush.
 
+`AROS_TEST_LAYOUT=raidz1|raidz2|raidz3` extends this persistent suite to
+three/four/five 128 MiB file members respectively; `mirror` remains the default.
+The private FAT backing grows to fit the members plus 256 MiB headroom.
+Cold verification hides one/two/three members respectively, checks exact DOS
+data and read-only enforcement, and restores all filenames even on failure.
+Each run still requires byte-identical members and host `zdb -bcc` success.
+The pool fixture retains the name `public_mirror` regardless of its topology.
+
+Native MetaMake topology runs passed: `xm4kcdQ2` (RAIDZ1), `3BcAZiL5`
+(RAIDZ2), `tolAunKR` (RAIDZ3), and `y8zAfp56` (mirror regression), all under
+`build-aros/public-service-run.*`. Separate retained `zdb-config.log` files
+confirmed the three RAIDZ pools' actual parity and member counts. These checks
+cover normal exports and degraded read-only reimports; they do not establish
+every topology, parity reconstruction during writes, or abrupt-loss recovery.
+
 Prefer a coherent SDK and genmodule pair; do not define missing ABI constants
 in this project. Handler/device compilation is not runtime qualification.
 

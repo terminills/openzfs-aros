@@ -11,6 +11,9 @@ data, full and incremental replication, and handler read-only enforcement.
 The persistent run `public-service-run.qA8HX86o` additionally passed a fresh
 guest boot, healthy and degraded mirror imports, exact file reads, unchanged
 pool-member bytes, and independent host `zdb -bcc` with no leaks.
+The same current native package also passed three-, four-, and five-member
+RAIDZ1/2/3 suites, including fresh-boot reads with one/two/three members missing,
+respectively. Host configuration inspection confirmed the actual parity.
 
 These tests use newly created virtual storage and explicitly selected patched
 runtime libraries. They supersede the initial startup-only qualification below,
