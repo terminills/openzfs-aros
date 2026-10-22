@@ -145,6 +145,16 @@ snapshot response are retained in that run. Only the owned AROS display was
 captured and controlled; no user session or physical machine was accessed.
 This covers those UI operations, not every management action or layout size.
 
+Simple mode now summarizes successful connection replies instead of displaying
+the full protocol capability dump. It distinguishes engine availability from
+storage health and points to List pools and Advanced mode. Error replies remain
+unabridged, and Save response retains the complete backend response. Hosted
+run `hosted-security-test.J5hxGuXa` visually verifies the concise connected
+view, Advanced reconnect with full capabilities, and a saved response containing
+the original protocol fields. Normal window close and the selected storage
+suite pass. Its unavailable-engine summary branch is not runtime-qualified by
+that connected-engine test.
+
 All four CLI/startup executables linked through the generated makefile.
 The resulting `zfs --version`, `zpool --version`, and repeated `zfs --version`
 ran in isolated hosted AROS and printed `zfs-2.4.4-1`. They returned 1 with no

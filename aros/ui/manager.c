@@ -774,6 +774,14 @@ int main(int argc,char **argv) {
             /* Rows and their numeric metadata need the same wrapping as the
              * prose detail. Direct List inserts clipped the error counters. */
             show_response(rendered);
+            if(simple_mode()&&reply->operation==1&&reply->status==OZ_OK){
+                show_response(reply->engine_available?
+                    "Connected to the OpenZFS service.\nOpenZFS engine is available.\nChoose List pools to inspect imported pools.\nConnection alone does not verify storage health.\nUse Advanced and Connect for full capabilities.":
+                    "Connected to the management service.\nThe OpenZFS engine is unavailable.\nPool operations are not ready.\nUse Advanced and Connect for diagnostic details.");
+                /* Save response retains the complete backend reply even when
+                 * the novice view displays only the connection summary. */
+                snprintf(response_text,sizeof(response_text),"%s\n",rendered);
+            }
             if(reply->job_id){snprintf(line,sizeof(line),"Background job: %llu (use Advanced/jobs)",(unsigned long long)reply->job_id);logline(line);}
             next_cursor=reply->next_cursor;set(next_page,MUIA_Disabled,!next_cursor);
             oz_message_free(reply);
