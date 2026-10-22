@@ -22,6 +22,8 @@ AROS Contrib build and regenerate its metamake files. Available targets:
 - `contrib-openzfs-nvpair-test`: native `C/OpenZFSNvpairTest` regression tool.
 - `contrib-openzfs-engine`: full normal engine object, compiled from source.
 - `contrib-openzfs`: aggregate of tools, CLI/startup, handler, library and service.
+- `contrib-openzfs-public-test`: optional native acceptance client, built from
+  current source in its own object directory; not installed by the aggregate.
 
 Tools inherit the configured target compiler, SDK, flags and output directories.
 `OPENZFS_PTHREAD_INCLUDE` and `OPENZFS_PTHREAD_LIBDIR` can select matching private
@@ -90,12 +92,19 @@ running `aros/engine/test-hosted-security.sh` with a normal full service build.
 
 The packaged CLI coverage also includes clone/origin lookup, rename, explicit
 LZ4 pool-feature enablement and state query, compression set/get, rollback
-command execution and cleanup. Rollback here uses an unchanged snapshot and
-does not independently prove data restoration. Initial runs correctly refused
+command execution and cleanup. A subsequent test writes and flushes a new file
+after the snapshot, detaches, rolls back through `zfs`, and remounts read-only:
+the later file must be absent and the original payload byte-exact. Initial runs correctly refused
 LZ4 because the minimal fixture had not enabled its feature. Explicit child
 stderr capture exposed that upstream diagnostic; the trailing DOS error alone
 was misleading. The test now enables and verifies the feature through `zpool`
 before setting the dataset property, without weakening feature validation.
+
+`hosted-security-test.1toSrTja` repeats the packaged lifecycle, rollback data,
+standalone handler and cold/degraded mirror checks with the acceptance client
+itself built through `contrib-openzfs-public-test`. All ten client source units
+were compiled afresh; this run no longer reuses the earlier client objects.
+The SDK and external dependency archives remain explicitly supplied inputs.
 
 All four CLI/startup executables linked through the generated makefile.
 The resulting `zfs --version`, `zpool --version`, and repeated `zfs --version`

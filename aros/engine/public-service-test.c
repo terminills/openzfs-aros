@@ -690,11 +690,23 @@ static int storage_test(int gui){
         STORAGE_CHECK(cli_command("C:zfs set compression=lz4 public_mirror/cli_renamed")==0);
         STORAGE_CHECK(!cli_result("C:zfs get -H -o value compression public_mirror/cli_renamed >SYS:cli-package-output.txt","lz4"));
         STORAGE_CHECK(SystemTags((CONST_STRPTR)"C:zfs snapshot public_mirror/cli_renamed@rollback",TAG_DONE)==0);
-        STORAGE_CHECK(SystemTags((CONST_STRPTR)"C:zfs rollback public_mirror/cli_renamed@rollback",TAG_DONE)==0);
+        STORAGE_CHECK(!oz_mount_control(OZ_ADMISSION_PORT,"public_mirror/cli_renamed","OZCLIRW",OZ_MOUNT_ATTACH,0));
+        file=Open((CONST_STRPTR)"OZCLIRW:after-snapshot.txt",MODE_NEWFILE);STORAGE_CHECK(file);
+        STORAGE_CHECK(Write(file,payload,sizeof(storage_payload)-1)==sizeof(storage_payload)-1);
+        STORAGE_CHECK(Flush(file));STORAGE_CHECK(Close(file));file=0;
+        STORAGE_CHECK(!oz_mount_control(OZ_ADMISSION_PORT,"public_mirror/cli_renamed","",OZ_MOUNT_DETACH,0));
+        STORAGE_CHECK(cli_command("C:zfs rollback public_mirror/cli_renamed@rollback")==0);
+        STORAGE_CHECK(!oz_mount_control(OZ_ADMISSION_PORT,"public_mirror/cli_renamed","OZCLIRO",OZ_MOUNT_ATTACH,OZ_MOUNT_READONLY));
+        file=Open((CONST_STRPTR)"OZCLIRO:after-snapshot.txt",MODE_OLDFILE);
+        STORAGE_CHECK(!file&&IoErr()==ERROR_OBJECT_NOT_FOUND);
+        file=Open((CONST_STRPTR)"OZCLIRO:hello.txt",MODE_OLDFILE);STORAGE_CHECK(file);
+        STORAGE_CHECK(Read(file,actual,sizeof(actual))==sizeof(storage_payload)-1&&!memcmp(actual,payload,sizeof(storage_payload)-1));
+        STORAGE_CHECK(Close(file));file=0;
+        STORAGE_CHECK(!oz_mount_control(OZ_ADMISSION_PORT,"public_mirror/cli_renamed","",OZ_MOUNT_DETACH,0));
         STORAGE_CHECK(SystemTags((CONST_STRPTR)"C:zfs destroy public_mirror/cli_renamed@rollback",TAG_DONE)==0);
         STORAGE_CHECK(SystemTags((CONST_STRPTR)"C:zfs destroy public_mirror/cli_renamed",TAG_DONE)==0);
         STORAGE_CHECK(SystemTags((CONST_STRPTR)"C:zfs destroy public_mirror/files@cli_roundtrip",TAG_DONE)==0);
-        note("Public packaged CLI PASS pool-list=1 dataset-list=1 property=1 snapshot-create-list-destroy=1 clone=1 rename=1 set-get=1 rollback-command=1\n");
+        note("Public packaged CLI PASS pool-list=1 dataset-list=1 property=1 snapshot-create-list-destroy=1 clone=1 rename=1 set-get=1 rollback-data=1\n");
     }
     if(gui){
         note("Public storage GUI ready: mounted public_mirror/files with hello.txt\n");
