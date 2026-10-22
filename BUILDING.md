@@ -857,6 +857,8 @@ It propagates cache/device failures instead of acknowledging a completed detach.
 This patch is separate from physical-media removal and does not prove power-loss
 durability. The persistence runner now additionally requires read-only host
 `fsck.fat -n` checks after each guest phase; it never repairs test images to pass.
+Repeat `public-service-run.D3BzNOn1` passed both new FAT checks and the full cold
+suite; another 9.78 GiB of disposable images was automatically pruned.
 
 `AROS_TEST_GUI_DESKTOP=1` enables an interactive Wanderer fixture in the public
 GUI runner. It leaves Wanderer running, asks the tester to inspect OZPUBLIC
@@ -864,3 +866,11 @@ and hello.txt, and rereads the file after Manager closes. This read assertion
 does not prove the desktop icon or drawer presentation. The first attempt,
 `native-gui-run.yVOHUdr6`, timed out during the startup-ABI investigation; it
 is retained as incomplete, not desktop qualification.
+
+The alpha18 live-service attempt `native-gui-run.M4jeHkSj` showed Manager
+connecting and listing `public_mirror` ONLINE with capacity figures (`04.png`).
+Manager closed normally and the post-UI file read passed. However, Wanderer was
+not visually established and CrashReporter activity appeared; the later packaged
+handler detach assertion failed at public-service-test.c line 1371. This run is
+retained as a failure, not desktop integration proof. Desktop-held locks versus
+handler cleanup still require diagnosis; do not bypass busy-volume protection.
