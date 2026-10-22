@@ -56,6 +56,9 @@ results, not a fresh qualification of this public snapshot.
   native I/O and explicit ownership rather than assume Linux memory semantics.
 - Reproducible dependency bootstrap and wider independent testing remain work
   for contributors. No prebuilt binaries or test-disk images are included.
+  Private source-build helpers now cover pthread and BoringSSL crypto as well
+  as nvpair/XDR; matching AROS platform sources, SDK and overlays must still be
+  selected explicitly. Crypto no longer requires Chromium's prebuilt archive.
 
 Use `ENV:` for active settings and `ENVARC:` for persistent settings. Preserve
 backups outside experimental pools, and never assume compatibility with the

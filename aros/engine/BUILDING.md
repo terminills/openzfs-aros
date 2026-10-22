@@ -60,6 +60,41 @@ unchanged members and independent zdb (no leaks). This qualifies that selected
 dependency replacement, not an unpatched stock runtime or a new full SDK.
 The prior frozen binary handoff was not overwritten.
 
+### Building the crypto dependency independently
+
+`build-crypto.sh` builds BoringSSL's full `crypto` target in a private directory,
+without invoking Chromium's build or consuming its compiled archive. Select an
+AROS-compatible BoringSSL source tree explicitly; stock upstream source is not
+automatically patched or fetched. Host CMake, Ninja, Perl and Go are required.
+
+```sh
+export AROS_CXX=/path/to/x86_64-aros-g++
+export AROS_CRYPTO_SOURCE=/path/to/boringssl/src
+export AROS_HOST_GO=/path/to/host/go
+export AROS_BUILD_JOBS=8
+bash aros/engine/build-crypto.sh
+```
+
+Keep the SDK, C compiler and matching pthread headers selected as above. Use
+the printed `AROS_CRYPTO_ARCHIVE` and `AROS_CRYPTO_INCLUDE` together. The helper
+hashes the source tree and consumed pthread/compatibility headers before and
+after building, retains compiler/configuration/build logs, and limits jobs to
+1-32. Go caches and all CMake outputs stay private; nothing is installed.
+The local forced-include shim selects actual pthread limits over SDK POSIX
+minima. Missing trailing static semaphore initializer fields remain warnings
+(C zero-initializes them); other upstream warning-error policy is unchanged.
+
+`crypto-source.GIQEzBFj` completed the 234-step native crypto target on
+2026-10-22. Shared candidate `shared-engine.98HB7sbf` uses that archive and
+current ADT pthread. Native run `public-service-run.GXf0nnuv` passed a real
+passphrase-encrypted dataset lifecycle at 350000 PBKDF2 iterations, including
+write/flush, key unload, locked mount denial, reload and exact DOS readback.
+The existing raw-key full/incremental replication and cold mirror recovery
+suite also passed with unchanged members and independent zdb validation.
+This is not a FIPS certification or a fresh execution of standalone PBKDF2
+known-answer tests. Failed configure/build attempts `uB3vNled`, `4XEQYWtC`
+and `gjcbbSZz` remain retained alongside the successful build.
+
 Run the engine build from the checkout:
 
 ```sh
