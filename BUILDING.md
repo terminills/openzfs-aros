@@ -175,6 +175,20 @@ absent-service response. The handler also builds with a matching generator.
 An initial generator/SDK mismatch produced startup code referencing
 `PR_RETURNADDR_NOPROGRAM`, absent from the older SDK. A private generator built
 from the parent of AROS commit `bd7713c6b9` resolves that particular test mismatch.
+
+A separate PC/SMP-SDK aggregate and acceptance-client build also completed in
+`mmake-native-20261021`. That older SDK requires a different generator: the
+parent of AROS commit `7405611e23` predates out-of-line module init/expunge.
+Both the hosted generator and the installed native-build generator emitted
+`InitSets`/`set_libinit` startup code unsupported by this SDK. A privately
+compiled matching generator resolved the build without changing the SDK or
+shared tools. Its old host sources produced warnings under the current host
+compiler, retained in `generator-build-3.log`. The pthread build additionally
+required an explicit `AROS_PTHREAD_DOSTAGS` header containing `NP_Affinity`.
+That tag must be supported by the selected runtime; compiling against the
+header does not prove runtime support. Native aggregate and client logs are
+`aggregate-native-matched.log` and `public-test-native.log`. This paragraph
+records cross-build success only, not QEMU or hardware acceptance.
 Prefer a coherent SDK and genmodule pair; do not define missing ABI constants
 in this project. Handler/device compilation is not runtime qualification.
 
