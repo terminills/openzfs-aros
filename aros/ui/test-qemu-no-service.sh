@@ -16,10 +16,20 @@ cp "$manager" "$run/OpenZFSManagerNative"
 git rev-parse HEAD >"$run/source.txt"
 git diff --binary >"$run/source.patch"
 sha256sum "$base" "$manager" "$run/Startup-Sequence" >"$run/inputs.sha256"
+extra_maps=()
+if [[ -n ${AROS_TEST_POSIX_LIBRARY:-}${AROS_TEST_PIPE_BINARY:-} ]];then
+    [[ -f ${AROS_TEST_POSIX_LIBRARY:?paired POSIX library required} && -f ${AROS_TEST_PIPE_BINARY:?paired pipe test required} ]]
+    cp "$AROS_TEST_POSIX_LIBRARY" "$run/posixc.library"
+    cp "$AROS_TEST_PIPE_BINARY" "$run/OpenZFSPipeTest"
+    sha256sum "$run/posixc.library" "$run/OpenZFSPipeTest" >>"$run/inputs.sha256"
+    extra_maps+=(-map "$run/posixc.library" /Libs/posixc.library
+        -map "$run/OpenZFSPipeTest" /C/OpenZFSPipeTest)
+fi
 xorriso -indev "$base" -outdev "$run/test.iso" \
     -map aros/engine/grub-qemu-test.cfg /boot/grub/grub.cfg \
     -map "$run/Startup-Sequence" /S/Startup-Sequence \
     -map "$run/OpenZFSManagerNative" /Tools/OpenZFSManagerNative \
+    "${extra_maps[@]}" \
     -boot_image any discard -boot_image grub bin_path=/boot/grub/i386-pc/eltorito.img \
     -boot_image grub boot_info_table=on -boot_image grub grub2_boot_info=on >"$run/pack.log" 2>&1
 qemu-system-x86_64 -name "openzfs-manager-startup-$$" -machine pc,accel=kvm \

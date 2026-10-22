@@ -11,6 +11,14 @@ Assign FONTS: SYS:Fonts
 Assign WANDERER: SYS:System/Wanderer
 Stack 1048576
 C:IPrefs
+If EXISTS C:OpenZFSPipeTest
+    Mount DEVS:DOSDrivers/PIPE
+    C:OpenZFSPipeTest
+    If WARN
+        Echo "OpenZFS pipe dependency test FAILED"
+        Quit 20
+    EndIf
+EndIf
 Echo "OpenZFS no-service Manager: shell launch"
 SYS:Tools/OpenZFSManagerNative
 Echo "OpenZFS no-service Manager: shell returned"

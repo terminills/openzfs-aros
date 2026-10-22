@@ -814,15 +814,31 @@ startup/UI evidence only. The reported older laptop binary's `.text+0x20819`
 matches GetMsg in old-ABI autoinit before main; its exact installed identity and
 runtime pairing must still be confirmed before closing that report.
 
-The corresponding private alpha18 backend migration is **not runtime-qualified**.
+The corresponding private alpha18 backend migration has **RAM-backed QEMU
+qualification only**, not cold-persistence or physical-device qualification.
 `mmake-alpha18-20261022` rebuilt all 360 engine objects, nvpair, the shared
 library, service launcher, handler, device, Manager and public test client.
 It uses fresh pthread `ARVzbA2v`, fresh crypto `h7Dc9176`, and a privately built
 current genmodule; configured platform inputs are still supplied by the SDK.
-The CLI package is incomplete: that SDK's POSIX import library/configuration
-does not expose `pipe2`, while the older qualification used an extended POSIX
-overlay. Do not mix the older ABI overlay or its import stub into alpha18.
-Build logs, dependency provenance and `partial-stage.sha256` are retained.
+That SDK's POSIX import library/configuration does not expose `pipe2`.
+`aros/platform/alpha18-pipe2.patch` is a companion candidate against the
+alpha18 POSIX source: it appends a dispatch vector, preserves existing vectors,
+sets CLOEXEC before publishing descriptors, and rejects unsupported nonblocking
+pipes. Rebuild the entire matching POSIX library and its generated import stub;
+do not mix an older ABI overlay or stub into alpha18. The private build also
+required matching `libraries/fd.h` and `dos/consoleinfo.h` headers absent or stale
+in that SDK. This is not yet a turnkey stock-SDK build.
+
+With PIPE: mounted, `manager-startup-run.pkpyisEB` passed 64 sequential native
+pipe iterations (flags, data, EOF and invalid arguments). The initial missing
+PIPE: mount failure is retained; this is not concurrent fork/CLOEXEC proof.
+`public-service-run.ChaklSOj` then passed the full RAM-backed public suite on
+alpha18c5: production CLI, handler and device, sparse files across 4 GiB,
+replication including locked raw incremental encrypted streams, and passphrase
+rotation with old-key refusal. The ISO's kernel, DOS, ATA and zlib were untouched;
+only the new POSIX library and matching OpenZFS package were mapped in.
+`AROS_TEST_BASE_PLATFORM=1` selects this mode and rejects simultaneous legacy
+platform-overlay inputs. Logs, source snapshots and input hashes are retained.
 
 `AROS_TEST_GUI_DESKTOP=1` enables an interactive Wanderer fixture in the public
 GUI runner. It leaves Wanderer running, asks the tester to inspect OZPUBLIC

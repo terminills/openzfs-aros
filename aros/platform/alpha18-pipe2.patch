@@ -1,0 +1,149 @@
+--- a/compiler/crt/posixc/pipe.c
++++ b/compiler/crt/posixc/pipe.c
+@@ -17,10 +17,10 @@
+     NAME */
+ #include <unistd.h>
+ 
+-        int pipe(
++        int pipe2(
+ 
+ /*  SYNOPSIS */
+-        int *pipedes)
++        int *pipedes, int flags)
+ 
+ /*  FUNCTION
+ 
+@@ -45,7 +45,20 @@
+     fdesc *rdesc = NULL, *wdesc = NULL;
+     /* PIPE:cpipe-%08x-%d, where %x is the getpid(), %d is the nth pipe */
+     char pipe_name[5 + 6 + 8 + 1 + 16 + 1];
+-    static int pipeno = 0;
++    static unsigned int pipeno = 0;
++    unsigned int number;
++    int fds[2], error;
++
++    if (flags & ~(O_CLOEXEC | O_NONBLOCK))
++    {
++        errno = EINVAL;
++        return -1;
++    }
++    if (flags & O_NONBLOCK)
++    {
++        errno = ENOTSUP;
++        return -1;
++    }
+ 
+     if (!pipedes)
+     {
+@@ -72,12 +85,10 @@
+     }
+ 
+     /* Get the next pipe number */
+-    Forbid();
+-    pipeno++;
+-    Permit();
++    number = __atomic_add_fetch(&pipeno, 1, __ATOMIC_RELAXED);
+ 
+     snprintf(pipe_name, sizeof(pipe_name), "PIPE:cpipe-%08lx-%d",
+-               (unsigned long)getpid(), pipeno);
++               (unsigned long)getpid(), number);
+     pipe_name[sizeof(pipe_name)-1] = 0;
+ 
+     writer = Open(pipe_name, MODE_NEWFILE);
+@@ -86,8 +97,10 @@
+         reader = Open(pipe_name, MODE_OLDFILE);
+         if (!reader)
+         {
++            error = IoErr();
+             DeleteFile(pipe_name);
+             Close(writer);
++            SetIoErr(error);
+             writer = BNULL;
+         }
+     }
+@@ -95,6 +108,8 @@
+     if (!writer)
+     {
+         errno = __stdc_ioerr2errno(IoErr());
++        FreeVec(rfcb);
++        FreeVec(wfcb);
+         __free_fdesc(rdesc);
+         __free_fdesc(wdesc);
+         return -1;
+@@ -104,44 +119,55 @@
+     InitSemaphore(&wfcb->io_lock);
+ 
+     /* errno is set by __getfirstfd()/__getfdslot() on failure */
+-    pipedes[0] = __getfirstfd(0);
+-    if (pipedes[0] < 0 || __getfdslot(pipedes[0]) < 0)
++    fds[0] = __getfirstfd(0);
++    if (fds[0] < 0 || __getfdslot(fds[0]) < 0)
+     {
+-        if (pipedes[0] >= 0)
+-            __freefdslot(pipedes[0]);
++        error = errno;
++        if (fds[0] >= 0)
++            __freefdslot(fds[0]);
+         Close(reader);
+         Close(writer);
+         FreeVec(rfcb);
+         FreeVec(wfcb);
+         __free_fdesc(rdesc);
+         __free_fdesc(wdesc);
++        errno = error;
+         return -1;
+     }
+-    rdesc->fdflags = 0;
++    rdesc->fdflags = (flags & O_CLOEXEC) ? FD_CLOEXEC : 0;
+     rdesc->fcb = rfcb;
+     rdesc->fcb->handle    = reader;
+     rdesc->fcb->flags     = O_RDONLY;
+     rdesc->fcb->opencount = 1;
+-    __setfdesc(pipedes[0], rdesc);
++    __setfdesc(fds[0], rdesc);
+ 
+-    pipedes[1] = __getfirstfd(pipedes[0]);
+-    if (pipedes[1] < 0 || __getfdslot(pipedes[1]) < 0)
++    fds[1] = __getfirstfd(fds[0]);
++    if (fds[1] < 0 || __getfdslot(fds[1]) < 0)
+     {
+-        if (pipedes[1] >= 0)
+-            __freefdslot(pipedes[1]);
+-        close(pipedes[0]);      /* releases reader, rfcb and rdesc */
++        error = errno;
++        if (fds[1] >= 0)
++            __freefdslot(fds[1]);
++        close(fds[0]);      /* releases reader, rfcb and rdesc */
+         Close(writer);
+         FreeVec(wfcb);
+         __free_fdesc(wdesc);
++        errno = error;
+         return -1;
+     }
+-    wdesc->fdflags = 0;
++    wdesc->fdflags = (flags & O_CLOEXEC) ? FD_CLOEXEC : 0;
+     wdesc->fcb = wfcb;
+     wdesc->fcb->handle    = writer;
+     wdesc->fcb->flags     = O_WRONLY;
+     wdesc->fcb->opencount = 1;
+-    __setfdesc(pipedes[1], wdesc);
++    __setfdesc(fds[1], wdesc);
++
++    pipedes[0] = fds[0];
++    pipedes[1] = fds[1];
+ 
+     return 0;
+ }
+ 
++int pipe(int *pipedes)
++{
++    return pipe2(pipedes, 0);
++}
+--- a/compiler/crt/posixc/posixc.conf
++++ b/compiler/crt/posixc/posixc.conf
+@@ -1163,4 +1163,5 @@
+ void __posixc_fd_release(void *token)
+ # Appended: preserve every existing dispatch position.
+ int fstatat64(int dirfd, const char *path, struct stat64 *buf, int flags)
++int pipe2(int filedes[2], int flags)
+ ##end functionlist

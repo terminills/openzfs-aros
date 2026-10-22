@@ -3,9 +3,21 @@ set -euo pipefail
 repo=$(cd -- "$(dirname -- "$0")/../.." && pwd)
 cd "$repo"
 base=${AROS_TEST_ISO:?explicit native test ISO required}
-zlib=${AROS_TEST_ZLIB_LIBRARY:?explicit native z1.library required}
-dos=${AROS_TEST_DOS_OVERLAY:?private DOS overlay required}
-ata=${AROS_TEST_ATA_OVERLAY:?private ATA overlay required}
+base_platform=${AROS_TEST_BASE_PLATFORM:-0}
+[[ $base_platform == 0 || $base_platform == 1 ]]
+platform_maps=() platform_inputs=()
+if [[ $base_platform == 1 ]];then
+    # Never silently combine a current boot image with older ABI overlays.
+    [[ -z ${AROS_TEST_ZLIB_LIBRARY:-}${AROS_TEST_DOS_OVERLAY:-}${AROS_TEST_ATA_OVERLAY:-} ]]
+else
+    zlib=${AROS_TEST_ZLIB_LIBRARY:?explicit native z1.library required}
+    dos=${AROS_TEST_DOS_OVERLAY:?private DOS overlay required}
+    ata=${AROS_TEST_ATA_OVERLAY:?private ATA overlay required}
+    platform_maps=(-map "$dos/aros-base.pkg.xz" /boot/aros-base.pkg.xz
+        -map "$ata/aros-bsp.pkg.xz" /boot/pc-smp/aros-bsp.pkg.xz
+        -map "$zlib" /Libs/z1.library)
+    platform_inputs=("$dos/aros-base.pkg.xz" "$ata/aros-bsp.pkg.xz" "$zlib")
+fi
 posix=${AROS_TEST_POSIX_LIBRARY:?private POSIX library required}
 service=${AROS_TEST_SERVICE_BINARY:?public service executable required}
 client=${AROS_TEST_CLIENT_BINARY:?native acceptance client required}
@@ -266,15 +278,13 @@ tar -czf "$run/aros-source.tar.gz" aros/engine aros/ui aros/zpl aros/cli aros/pl
 git rev-parse HEAD >"$run/source.txt"
 git diff --binary >"$run/source.patch"
 sha256sum "$base" "$run/OpenZFSServiceNative" "$run/OpenZFSPublicServiceTest" \
-    "$dos/aros-base.pkg.xz" "$ata/aros-bsp.pkg.xz" "$posix" \
-    "$zlib" >"$run/inputs.sha256"
+    "${platform_inputs[@]}" "$posix" >"$run/inputs.sha256"
+printf '%s\n' "$base_platform" >"$run/base-platform.txt"
 if [[ -n $shared ]];then sha256sum "$shared/openzfs.library" >>"$run/inputs.sha256";fi
 xorriso -indev "$base" -outdev "$run/test.iso" \
     -map aros/engine/grub-qemu-test.cfg /boot/grub/grub.cfg \
-    -map "$dos/aros-base.pkg.xz" /boot/aros-base.pkg.xz \
-    -map "$ata/aros-bsp.pkg.xz" /boot/pc-smp/aros-bsp.pkg.xz \
+    "${platform_maps[@]}" \
     -map "$posix" /Libs/posixc.library \
-    -map "$zlib" /Libs/z1.library \
     -map "$run/security-fixture" /Security \
     -map "$run/OpenZFSServiceNative" /C/OpenZFSServiceNative \
     -map "$run/OpenZFSPublicServiceTest" /C/OpenZFSPublicServiceTest \
@@ -454,9 +464,8 @@ if [[ $persistent == 1 ]];then
         'C:OpenZFSPublicServiceTest STORAGE-COLD' 'EndCLI' >"$run/Startup-Cold"
     xorriso -indev "$base" -outdev "$run/cold.iso" \
         -map aros/engine/grub-qemu-test.cfg /boot/grub/grub.cfg \
-        -map "$dos/aros-base.pkg.xz" /boot/aros-base.pkg.xz \
-        -map "$ata/aros-bsp.pkg.xz" /boot/pc-smp/aros-bsp.pkg.xz \
-        -map "$posix" /Libs/posixc.library -map "$zlib" /Libs/z1.library \
+        "${platform_maps[@]}" \
+        -map "$posix" /Libs/posixc.library \
         -map "$run/security-fixture" /Security \
         -map "$run/OpenZFSServiceNative" /C/OpenZFSServiceNative \
         -map "$run/OpenZFSPublicServiceTest" /C/OpenZFSPublicServiceTest \

@@ -16,6 +16,9 @@ gen = release / 'bin/pc-x86_64-smp/gen/rom/filesys/fat/fat'
 cc = os.environ['AROS_CC']
 fat_only = os.environ.get('AROS_FAT_ONLY', '0') == '1'
 readonly = os.environ.get('AROS_FAT_READONLY_FIX', '0') == '1'
+full_fat = os.environ.get('AROS_FAT_FULL_REBUILD', '0') == '1'
+if full_fat and not fat_only:
+    raise RuntimeError('full FAT rebuild requires AROS_FAT_ONLY=1')
 if shutil.disk_usage(repo).free < 100 * 2**30:
     raise RuntimeError('100 GiB workspace reserve required')
 out = pathlib.Path(tempfile.mkdtemp(prefix='flush-overlay.', dir=repo / 'build-aros'))
@@ -42,6 +45,23 @@ assert objects[0].name == 'fat_start.o' and objects[-1].name == 'fat_end.o'
 assert all(p.is_relative_to(release) and p.is_file() for p in objects)
 inputs.extend(objects)
 objects = [out / p.name if p.name in ['cache.o', 'packet.o'] else p for p in objects]
+if full_fat:
+    # A two-object overlay is not sufficient across FAT source revisions (for
+    # example validate.c adds MarkVolumeDirty). Recompile every source in the
+    # current module, plus the configured generated startup, against one SDK.
+    names = ['cache', 'direntry', 'date', 'disk', 'fat', 'file', 'lock', 'main',
+             'names', 'notify', 'ops', 'packet', 'support', 'timer', 'validate', 'volume']
+    objects = []
+    for name in ['fat_start', *names, 'fat_end']:
+        src = gen / (name + '.c') if name in ('fat_start', 'fat_end') else source / 'rom/filesys/fat' / (name + '.c')
+        if name not in ('cache', 'packet'):
+            shutil.copy2(src, out / src.name)
+            inputs.append(src)
+        obj = out / (name + '.o')
+        subprocess.run(common + ['-O2', '-D__NOLIBBASE__',
+            '-I' + str(source / 'rom/filesys/fat'), '-I' + str(gen / 'include'),
+            '-c', str(out / src.name), '-o', str(obj)], check=True)
+        objects.append(obj)
 subprocess.run(common + ['-nostartfiles', '-static', '-Wl,-Map,' + str(out / 'fat.map'),
     *map(str, objects), '-Wl,--start-group', '-lfatbpb', '-Wl,--end-group',
     '-o', str(out / 'fat.handler')], check=True)
@@ -51,7 +71,7 @@ if fat_only:
     inputs.extend([sdk / 'lib/libfatbpb.a', out / 'fat.handler'])
     (out / 'inputs.sha256').write_text(''.join(
         hashlib.sha256(p.read_bytes()).hexdigest() + '  ' + str(p) + '\n' for p in inputs))
-    (out / 'build-options.txt').write_text(f'fat_only=1\nreadonly_fix={int(readonly)}\n')
+    (out / 'build-options.txt').write_text(f'fat_only=1\nreadonly_fix={int(readonly)}\nfull_fat={int(full_fat)}\n')
     print('Overlay:', out, flush=True)
     raise SystemExit(0)
 src = source / 'compiler/crt/posixc/fsync.c'
