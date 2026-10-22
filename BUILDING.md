@@ -330,6 +330,16 @@ This adds encrypted cold persistence on the tested virtual mirror; it still
 does not establish physical USB durability or secure erasure of key memory.
 Nonpersistent tests continue to destroy their encrypted dataset during cleanup.
 
+The packaged CLI now also sends a snapshot with `zfs send -w` while its raw
+encryption key is unloaded, then receives the stream into a separate dataset.
+It checks AES-256-GCM and unavailable key status, requires a locked mount to
+fail, loads the fixture key, and reads the exact original payload through the
+handler before removing the received dataset and temporary stream.
+`public-service-run.0nQnnyCF` passed this raw encrypted replication test,
+the three cold encrypted imports, unchanged-member comparisons and independent
+host zdb check (no leaks). This is local full-stream replication through guest
+temporary files, not interrupted/resumable receive or network qualification.
+
 Prefer a coherent SDK and genmodule pair; do not define missing ABI constants
 in this project. Handler/device compilation is not runtime qualification.
 
