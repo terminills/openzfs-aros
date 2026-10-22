@@ -21,6 +21,13 @@ cp "$0" "$run/build-private-pthread.sh"
 printf 'sdk=%s\nsource=%s\ncompiler=%s\n' "$sdk" "$src" "$cc" >"$run/inputs.txt"
 git -C "$repo" rev-parse HEAD >"$run/source-head.txt"
 git -C "$repo" diff --binary >"$run/source.patch"
+if git -C "$src" rev-parse --show-toplevel >"$run/pthread-source-root.txt" 2>/dev/null;then
+    git -C "$src" rev-parse HEAD >"$run/pthread-source-head.txt"
+    git -C "$src" diff HEAD --binary -- . >"$run/pthread-source.patch"
+    git -C "$src" status --short -- . >"$run/pthread-source-status.txt"
+else
+    printf '%s\n' 'Source is not a Git checkout; snapshot hashes identify the inputs.' >"$run/pthread-source-status.txt"
+fi
 cp "$src/"*.c "$src/"*.h "$src/mmakefile.src" "$run/source/"
 # Consumers must use this snapshot's public headers as well as its archive.
 # The ADT and OPAL trees have different pthread_attr_t layouts.
@@ -34,6 +41,7 @@ sources=(pthread sched semaphore)
 while read -r name;do sources+=("$name");done < <(
     awk '/^PTHREADFUNCS :=/{active=1;next} active&&NF==0{exit} active{print $1}' "$run/source/mmakefile.src")
 objects=()
+printf '%s\n' "${sources[@]}" >"$run/source-inventory.txt"
 for name in "${sources[@]}";do
     [[ $name =~ ^[a-zA-Z0-9_]+$ ]]
     "$cc" --sysroot="$sdk" -B"$sdk/lib/" -I"$run/source" -O2 -g \
@@ -41,6 +49,7 @@ for name in "${sources[@]}";do
         >"$run/$name.log" 2>&1
     objects+=("$run/objects/$name.o")
 done
+sha256sum -c "$run/source.sha256" >"$run/source-after-check.log"
 archiver=$("$cc" -print-prog-name=ar)
 "$archiver" rcs "$run/libpthread.a" "${objects[@]}"
 sha256sum "${objects[@]}" >"$run/objects.sha256"

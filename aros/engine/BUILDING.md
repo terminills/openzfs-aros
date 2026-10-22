@@ -26,7 +26,41 @@ The default nvpair build verifies the archive's
 pinned SHA256 and extracts it if absent. It can download the pinned archive
 if necessary. SDK, pthread, zlib and crypto are not bootstrapped here.
 
-Run from the checkout:
+### Building the private pthread dependency
+
+`build-private-pthread.sh` can build the complete pthread source set from an
+explicit AROS source checkout; an old private archive is not required:
+
+```sh
+export AROS_CC=/path/to/x86_64-aros-gcc
+export AROS_SDK=/path/to/matching/Developer
+export AROS_PTHREAD_SOURCE=/path/to/AROS/compiler/pthread
+bash aros/engine/build-private-pthread.sh
+```
+
+Use the printed `AROS_PRIVATE_PTHREAD` and `AROS_PTHREAD_INCLUDE` paths together
+for subsequent builds. The helper snapshots the sources, records their Git
+revision and local changes when available, compiles every listed source unit,
+and verifies snapshot hashes after compilation. It never installs into the SDK.
+Do not combine a new core object with an older archive's remaining objects.
+If that source requires a newer `dos/dostags.h`, `AROS_PTHREAD_DOSTAGS` explicitly
+selects a matching header for the private snapshot. This is not a substitute
+for a runtime implementing those tags; do not invent tag values to force a build.
+Public header changes require rebuilding consumers, not merely relinking them.
+
+On 2026-10-22, `pthread-consistent.tNXnCvVm` compiled all 35 units from clean
+ADT pthread sources at `671efe3b321926332e3330a0e138ed4a3d4e820e` using the
+native SDK and explicit compatible dostags overlay. The three public pthread
+headers match the prior engine build. Shared candidate `shared-engine.p1N5gZAY`
+relinks the qualified engine against this complete new archive and freshly
+built nvpair. `public-service-run.6XxQhdGd` passed the native persistent mirror
+suite: CLI/handler, sparse64, full/incremental raw encrypted replication,
+healthy/degraded/restored encrypted cold reads, excessive-loss refusal,
+unchanged members and independent zdb (no leaks). This qualifies that selected
+dependency replacement, not an unpatched stock runtime or a new full SDK.
+The prior frozen binary handoff was not overwritten.
+
+Run the engine build from the checkout:
 
 ```sh
 bash aros/engine/build-source.sh
