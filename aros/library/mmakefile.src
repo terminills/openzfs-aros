@@ -2,8 +2,8 @@ include $(SRCDIR)/config/aros.cfg
 
 # The engine object is produced by the full source engine build. This target
 # packages it as an AROS library, never into any client executable.
-OPENZFS_ENGINE_OBJECT ?=
-OPENZFS_SERVICE_BUILD ?=
+OPENZFS_ENGINE_OBJECT ?= $(GENDIR)/$(CURDIR)/../engine/full/full-engine.o
+OPENZFS_SERVICE_BUILD ?= $(GENDIR)/$(CURDIR)/../engine/full
 OPENZFS_NVPAIR_ARCHIVE ?= $(AROS_LIB)/libnvpair.a
 OPENZFS_PTHREAD_ARCHIVE ?= $(AROS_LIB)/libpthread.a
 OPENZFS_CRYPTO_ARCHIVE ?= $(AROS_LIB)/libboringssl.a
@@ -28,7 +28,7 @@ $(OZ_LIBRARY_OBJ)/engine.o: $(OPENZFS_ENGINE_OBJECT) | openzfs-engine-provenance
 # USER_OBJS supplies only the engine and its matching archive dependencies.
 USER_OBJS := $(OZ_LIBRARY_OBJ)/engine.o $(OZ_LIBRARY_INPUTS)
 USER_LDFLAGS := -nix
-#MM contrib-openzfs-library : includes linklibs
+#MM contrib-openzfs-library : includes linklibs contrib-openzfs-engine contrib-openzfs-nvpair
 %build_module mmake=contrib-openzfs-library \
     modname=openzfs modtype=library conffile=openzfs.conf \
     files="engine-library" uselibs="m" stripdebug=no

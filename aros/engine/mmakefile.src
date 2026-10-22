@@ -3,7 +3,7 @@ include $(SRCDIR)/config/aros.cfg
 OZ_SOURCE := $(SRCDIR)/$(CURDIR)/../..
 OZ_NVPAIR_OBJ := $(GENDIR)/$(CURDIR)/nvpair
 OPENZFS_TIRPC_SOURCE ?=
-ifneq ($(filter contrib-openzfs-nvpair contrib-openzfs-nvpair-quick contrib-openzfs-nvpair-test contrib-openzfs-nvpair-test-quick,$(TARGET)),)
+ifneq ($(filter contrib-openzfs-engine contrib-openzfs-nvpair contrib-openzfs-nvpair-quick contrib-openzfs-nvpair-test contrib-openzfs-nvpair-test-quick,$(TARGET)),)
 ifeq ($(strip $(OPENZFS_TIRPC_SOURCE)),)
 $(error Set OPENZFS_TIRPC_SOURCE to the extracted libtirpc-1.3.7 source)
 endif
@@ -42,5 +42,8 @@ OZ_NVPAIR_SOURCES := $(addprefix $(OZ_SOURCE)/,module/nvpair/nvpair module/nvpai
     objs="$(OPENZFS_NVPAIR_LIBDIR)/libnvpair.a" \
     cflags="$(OZ_NVPAIR_FLAGS)" libdir="$(OPENZFS_PTHREAD_LIBDIR)" \
     uselibs="pthread" targetdir="$(AROS_C)"
+
+#MM contrib-openzfs-engine : includes
+include $(SRCDIR)/$(CURDIR)/build-system.mk
 
 %common

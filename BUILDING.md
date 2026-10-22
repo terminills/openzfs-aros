@@ -20,6 +20,8 @@ AROS Contrib build and regenerate its metamake files. Available targets:
 - `contrib-openzfs-service`: small `C/OpenZFSServiceNative` library launcher.
 - `contrib-openzfs-nvpair`: source-built `libnvpair.a` with memory XDR support.
 - `contrib-openzfs-nvpair-test`: native `C/OpenZFSNvpairTest` regression tool.
+- `contrib-openzfs-engine`: full normal engine object, compiled from source.
+- `contrib-openzfs`: aggregate of tools, CLI/startup, handler, library and service.
 
 Tools inherit the configured target compiler, SDK, flags and output directories.
 `OPENZFS_PTHREAD_INCLUDE` and `OPENZFS_PTHREAD_LIBDIR` can select matching private
@@ -49,9 +51,10 @@ in isolated hosted AROS. The shared engine relinked with that archive also
 passed the persistent mirror/cold/degraded regression. This does not remove
 the need for compatible pthread, crypto, zlib, and AROS runtime dependencies.
 
-The library target currently requires `OPENZFS_ENGINE_OBJECT` naming the full
-source build's `full-engine.o` and `OPENZFS_SERVICE_BUILD` naming its `service/`
-directory. It verifies the recorded engine hash and rejects diagnostic objects
+The library target depends on `contrib-openzfs-engine` and defaults to its
+`full/full-engine.o` and provenance directory in the generated build tree.
+`OPENZFS_ENGINE_OBJECT` and `OPENZFS_SERVICE_BUILD` can still select a matching
+standalone source build. It verifies the recorded engine hash and rejects diagnostic objects
 before renaming the service entry in a private copy. It uses the same archive
 overrides as the CLI, except `OPENZFS_ZLIB_IMPORT` selects the engine's zlib
 import archive. `OPENZFS_OBJCOPY` and `OPENZFS_NM` default to the enclosing
@@ -61,7 +64,14 @@ these provide header directories and the resident-entry object.
 The module-template library and launcher passed the isolated hosted persistent
 mirror regression, including cold and degraded reads, unchanged backing-file
 hashes, and an independent host `zdb` check. The launcher contains no engine
-entry symbols. This does not yet constitute a from-scratch metamake engine build.
+entry symbols. The subsequent engine target compiled all 360 normal engine
+source units, including whole upstream ZPL and ioctl units, using the configured
+target compiler. Its relocatable link does not use section garbage collection.
+The library built from this engine and the metamake nvpair archive passed the
+hosted persistent mirror, cold/degraded DOS read, and host `zdb` checks in
+`hosted-security-test.HZ3F4tC8`. The test helper came from the earlier public
+source build; its hash is retained separately. This does not prove the complete
+aggregate target from a pristine AROS checkout or stock SDK compatibility.
 
 All four CLI/startup executables linked through the generated makefile.
 The resulting `zfs --version`, `zpool --version`, and repeated `zfs --version`
@@ -93,9 +103,9 @@ alone does not redirect generated module installation. AROS make can rebuild
 `GENMODULE` automatically from source dependencies, so its output must also be
 private; an executable-path override alone does not pin its version.
 
-This integration is not yet a complete `make contrib-openzfs` port: engine-object
-compilation, dependency bootstrap and full package verification remain to be
-wired and tested. The standalone build sequence below remains available.
+The aggregate target is wired, but external dependency bootstrap and a complete
+clean-tree aggregate/package verification remain outstanding. The standalone
+build sequence below remains available.
 
 This is a developer source release, not a standalone SDK or prebuilt installer.
 The ordinary upstream Linux build does not build the AROS integration.

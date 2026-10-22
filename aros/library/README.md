@@ -36,8 +36,9 @@ This preserves failure status, including denied startup.
 
 The AROS build-system targets `contrib-openzfs-library` and
 `contrib-openzfs-service` now generate the native module/import ABI and launcher.
-They currently consume a full normal source engine object and its provenance;
-see the root BUILDING.md for overrides and remaining integration work.
+The library depends on the source-building `contrib-openzfs-engine` target;
+an explicit full normal engine object/provenance override remains available.
+See the root BUILDING.md for dependency inputs and remaining qualification work.
 Both build paths share `verify-engine.sh` so diagnostic-object and stale-hash
 rejection remain consistent.
 

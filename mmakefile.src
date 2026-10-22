@@ -15,6 +15,7 @@ OPENZFS_MANAGER_FILES := aros/ui/api aros/ui/admission-client \
     aros/ui/hostid-settings aros/engine/hostid-record
 
 #MM contrib-openzfs-tools : contrib-openzfs-manager contrib-openzfs-hostidentity contrib-openzfs-runtimecheck contrib-openzfs-device
+#MM contrib-openzfs : contrib-openzfs-tools contrib-openzfs-cli contrib-openzfs-handler contrib-openzfs-library contrib-openzfs-service
 #MM contrib-openzfs-manager : includes linklibs
 #MM contrib-openzfs-hostidentity : includes linklibs
 #MM contrib-openzfs-runtimecheck : includes linklibs
@@ -44,10 +45,10 @@ OPENZFS_MANAGER_FILES := aros/ui/api aros/ui/admission-client \
 include $(SRCDIR)/$(CURDIR)/aros/cli/build-system.mk
 
 #MM contrib-openzfs-cli : contrib-openzfs-zfs contrib-openzfs-zpool contrib-openzfs-startup contrib-openzfs-startupmount
-#MM contrib-openzfs-zfs : includes linklibs
-#MM contrib-openzfs-zpool : includes linklibs
-#MM contrib-openzfs-startup : includes linklibs
-#MM contrib-openzfs-startupmount : includes linklibs
+#MM contrib-openzfs-zfs : includes linklibs contrib-openzfs-nvpair
+#MM contrib-openzfs-zpool : includes linklibs contrib-openzfs-nvpair
+#MM contrib-openzfs-startup : includes linklibs contrib-openzfs-nvpair
+#MM contrib-openzfs-startupmount : includes linklibs contrib-openzfs-nvpair
 
 %rule_compile_multi mmake=contrib-openzfs-cli-vdev \
     basenames="cmd/zpool/zpool_vdev" targetdir="$(OZ_CLI_OBJ)" \
