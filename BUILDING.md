@@ -80,6 +80,18 @@ archive was produced. This establishes build/provenance behavior, not a new
 runtime qualification of that standalone archive or a complete dependency
 bootstrap. The earlier MetaMake package runtime evidence remains separate.
 
+The fresh standalone archive was subsequently linked into native shared-engine
+candidate `shared-engine.j0FGUlhp`, using the same full MetaMake engine object,
+native pthread archive, crypto archive and SDK `libz1.a` import library.
+`public-service-run.EkYSVMiY` passed service lifecycles, packaged CLI replication
+and rollback, standalone handler checks, normal export, fresh-boot healthy and
+degraded mirror reads, unchanged member bytes and host `zdb -bcc` with no leaks.
+CLI and acceptance-client objects were unchanged; this qualifies the new
+archive in the shared engine, not a fresh rebuild of every consumer. The
+earlier `shared-engine.SzmiKStH` used `libz.a` and was not runtime-tested; the
+corrected candidate deliberately matches MetaMake's `libz1.a` dependency.
+The frozen AmiWest handoff package was not replaced by this experiment.
+
 The metamake-built native nvpair test passed allocation, nested lists, XDR
 encode/decode, exact 64-bit values, file output, and truncated-input rejection
 in isolated hosted AROS. The shared engine relinked with that archive also
