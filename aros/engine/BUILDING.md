@@ -136,6 +136,16 @@ The test destroys that disposable dataset afterward. The surrounding cold
 raw-key mirror suite passes; this run does not yet prove cold persistence of
 the rotated passphrase itself.
 
+The following persistent test retains the rotated dataset with its key unloaded
+and removes both RAM passphrase files before export. Fresh-boot run
+`public-service-run.4C5TK2Ta` verifies the stored 400000-iteration property,
+locked mount refusal, old-passphrase rejection without unlocking, new-passphrase
+load and exact payload read. Healthy, degraded and restored imports all pass,
+then unload the key again. Member-file hashes remain unchanged and independent
+zdb reports no leaks. The fixture passphrases are public test strings recreated
+only in guest RAM; this does not test secure memory erasure or physical media
+power-loss behavior. Nonpersistent runs still destroy the disposable dataset.
+
 Run the engine build from the checkout:
 
 ```sh

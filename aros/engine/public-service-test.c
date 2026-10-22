@@ -50,6 +50,8 @@ static unsigned storage_members=2,storage_layout=OZ_MIRROR,storage_missing=1;
 static int storage_reply_received;
 static int native_file_fixture;
 static const char storage_payload[]="Public OpenZFS DOS payload\n";
+static const char storage_passphrase[]="AROS public passphrase fixture\n";
+static const char storage_rotated_passphrase[]="AROS rotated public passphrase fixture\n";
 static int storage_request(unsigned op,const char *target,const char *argument,const char *options){
     storage_reply_received=0;
     static struct oz_message m,out;memset(&m,0,sizeof(m));
@@ -846,9 +848,8 @@ static int storage_test(int gui){
         STORAGE_CHECK(DeleteFile((CONST_STRPTR)"RAM:public-wrong.key"));
         note("Public packaged encryption PASS create=1 unload=1 wrong-key-denied=1 reload=1 exact-read=1 cleanup=1\n");
         /* Exercise external PBKDF2 through the actual upstream CLI/dispatcher. */
-        const char passphrase[]="AROS public passphrase fixture\n";
         file=Open((CONST_STRPTR)"RAM:public-passphrase",MODE_NEWFILE);STORAGE_CHECK(file);
-        STORAGE_CHECK(Write(file,passphrase,sizeof(passphrase)-1)==sizeof(passphrase)-1);
+        STORAGE_CHECK(Write(file,storage_passphrase,sizeof(storage_passphrase)-1)==sizeof(storage_passphrase)-1);
         STORAGE_CHECK(Close(file));file=0;
         STORAGE_CHECK(cli_command("C:zfs create -u -o mountpoint=none -o encryption=aes-256-gcm -o keyformat=passphrase -o pbkdf2iters=350000 -o keylocation=file:///RAM/public-passphrase public_mirror/passphrase")==0);
         STORAGE_CHECK(!cli_result("C:zfs get -H -o value keyformat public_mirror/passphrase >T:cli-package-output.txt","passphrase"));
@@ -857,9 +858,8 @@ static int storage_test(int gui){
         STORAGE_CHECK(Write(file,payload,sizeof(storage_payload)-1)==sizeof(storage_payload)-1);
         STORAGE_CHECK(Flush(file));STORAGE_CHECK(Close(file));file=0;
         STORAGE_CHECK(!oz_mount_control(OZ_ADMISSION_PORT,"public_mirror/passphrase","",OZ_MOUNT_DETACH,0));
-        const char rotated_passphrase[]="AROS rotated public passphrase fixture\n";
         file=Open((CONST_STRPTR)"RAM:public-passphrase-new",MODE_NEWFILE);STORAGE_CHECK(file);
-        STORAGE_CHECK(Write(file,rotated_passphrase,sizeof(rotated_passphrase)-1)==sizeof(rotated_passphrase)-1);
+        STORAGE_CHECK(Write(file,storage_rotated_passphrase,sizeof(storage_rotated_passphrase)-1)==sizeof(storage_rotated_passphrase)-1);
         STORAGE_CHECK(Close(file));file=0;
         STORAGE_CHECK(cli_command("C:zfs change-key -o keyformat=passphrase -o pbkdf2iters=400000 -o keylocation=file:///RAM/public-passphrase-new public_mirror/passphrase")==0);
         STORAGE_CHECK(!cli_result("C:zfs get -H -o value pbkdf2iters public_mirror/passphrase >T:cli-package-output.txt","400000"));
@@ -874,7 +874,7 @@ static int storage_test(int gui){
         STORAGE_CHECK(Close(file));file=0;
         STORAGE_CHECK(!oz_mount_control(OZ_ADMISSION_PORT,"public_mirror/passphrase","",OZ_MOUNT_DETACH,0));
         STORAGE_CHECK(cli_command("C:zfs unload-key public_mirror/passphrase")==0);
-        STORAGE_CHECK(cli_command("C:zfs destroy public_mirror/passphrase")==0);
+        if(!native_file_fixture)STORAGE_CHECK(cli_command("C:zfs destroy public_mirror/passphrase")==0);
         STORAGE_CHECK(DeleteFile((CONST_STRPTR)"RAM:public-passphrase"));
         STORAGE_CHECK(DeleteFile((CONST_STRPTR)"RAM:public-passphrase-new"));
         note("Public passphrase rotation PASS iterations=400000 old-key-denied=1 still-locked=1 new-key-load=1 exact-read=1 cleanup=1\n");
@@ -964,6 +964,38 @@ static int storage_encrypted_cold(void)
     if(!error)note("Public cold encryption PASS locked=1 mount-denied=1 load=1 exact-read=1 unload=1\n");
     return error;
 }
+static int storage_rotated_passphrase_cold(void)
+{
+    if(!native_file_fixture)return 0;
+    BPTR marker=Lock((CONST_STRPTR)"SYS:openzfs-cli-package-test",SHARED_LOCK);
+    if(!marker)return 0;
+    UnLock(marker);
+    if(cli_result("C:zfs get -H -o value pbkdf2iters public_mirror/passphrase >T:cli-package-output.txt","400000")||
+        cli_result("C:zfs get -H -o value keystatus public_mirror/passphrase >T:cli-package-output.txt","unavailable"))return EIO;
+    if(!oz_mount_control(OZ_ADMISSION_PORT,"public_mirror/passphrase","OZPASSCOLD",OZ_MOUNT_ATTACH,OZ_MOUNT_READONLY))return EIO;
+    const char *keys[]={storage_passphrase,storage_rotated_passphrase};
+    for(unsigned i=0;i<2;i++){
+        BPTR file=Open((CONST_STRPTR)"RAM:public-cold-passphrase",MODE_NEWFILE);
+        if(!file)return EIO;
+        LONG n=Write(file,keys[i],strlen(keys[i]));
+        if(!Close(file)||n!=(LONG)strlen(keys[i]))return EIO;
+        LONG rc=cli_command("C:zfs load-key -L file:///RAM/public-cold-passphrase public_mirror/passphrase");
+        if(!DeleteFile((CONST_STRPTR)"RAM:public-cold-passphrase"))return EIO;
+        if((i==0&&rc==0)||(i==1&&rc!=0))return EIO;
+        if(i==0&&cli_result("C:zfs get -H -o value keystatus public_mirror/passphrase >T:cli-package-output.txt","unavailable"))return EIO;
+    }
+    int error=oz_mount_control(OZ_ADMISSION_PORT,"public_mirror/passphrase","OZPASSCOLD",OZ_MOUNT_ATTACH,OZ_MOUNT_READONLY);
+    if(error)return error;
+    BPTR file=Open((CONST_STRPTR)"OZPASSCOLD:payload",MODE_OLDFILE);
+    if(!file)return EIO;
+    char bytes[sizeof(storage_payload)+1];LONG n=Read(file,bytes,sizeof(bytes));
+    if(!Close(file)||n!=sizeof(storage_payload)-1||memcmp(bytes,storage_payload,sizeof(storage_payload)-1))error=EIO;
+    int detached=oz_mount_control(OZ_ADMISSION_PORT,"public_mirror/passphrase","",OZ_MOUNT_DETACH,0);
+    if(!error)error=detached;
+    if(!error&&cli_command("C:zfs unload-key public_mirror/passphrase"))error=EIO;
+    if(!error)note("Public cold passphrase rotation PASS iterations=400000 old-key-denied=1 locked=1 new-key-load=1 exact-read=1 unload=1\n");
+    return error;
+}
 static int storage_cold_once(void)
 {
     int error=storage_alias_request(7,1);
@@ -1004,6 +1036,7 @@ static int storage_cold_once(void)
     if(error)return error;
     error=oz_mount_control(OZ_ADMISSION_PORT,"public_mirror/files","",OZ_MOUNT_DETACH,0);
     if(!error)error=storage_encrypted_cold();
+    if(!error)error=storage_rotated_passphrase_cold();
     if(!error)error=storage_request(8,"public_mirror",NULL,NULL);
     if(!error)note("Public cold hosted DOS PASS exact=1 readonly-refusal=1 exported=1\n");
     return error;
