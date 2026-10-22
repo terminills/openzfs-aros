@@ -881,3 +881,17 @@ for EBUSY. All deliberate held-reference refusal tests remain single attempts,
 and persistent busy still fails. No handler busy protection is bypassed.
 The desktop fixture now explicitly asks WBRun to open OZPUBLIC: for visual
 inspection; command success alone is not drawer or file-display evidence.
+
+The GUI startup now runs the test client asynchronously and closes its original
+shell, and supplies the normal default THEME assignment. In
+`native-gui-run.YMOOWzut`, this exposed the mounted OZPUBLIC icon; after cancelling
+the then-missing-THEME requester, screenshot `03.png` visibly shows `hello.txt`
+in its Wanderer drawer. Closing the drawer and Manager normally left Wanderer
+running and the remaining storage suite passed. The next run, `kVHij1YN`, has no
+missing-theme requester and also passes post-UI exact reads and storage teardown,
+but its drawer remained empty during visual inspection (and the initial WBRun
+drawer title rendered incorrectly). Thus desktop presentation is not yet
+reliably qualified. Retain both observations rather than replacing the failed
+visual evidence with the successful storage result. The private client records
+screen/window names without modifying Wanderer; CrashReporter's ordinary startup
+message must not be called a crash.

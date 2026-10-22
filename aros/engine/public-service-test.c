@@ -11,6 +11,8 @@
 #include <proto/exec.h>
 #include <proto/dos.h>
 #include <proto/security.h>
+#include <proto/intuition.h>
+#include <intuition/intuitionbase.h>
 #include <libraries/security.h>
 #include <dos/dostags.h>
 #include <dos/dosextens.h>
@@ -49,6 +51,24 @@ static int desktop_detach(int gui,const char *phase)
     }
     char line[160];snprintf(line,sizeof(line),"Public desktop detach phase=%s retries=%u errno=%d\n",phase,retries,error);note(line);
     return error;
+}
+static void desktop_windows(void)
+{
+    struct IntuitionBase *IntuitionBase=(struct IntuitionBase *)OpenLibrary((CONST_STRPTR)"intuition.library",0);
+    if(!IntuitionBase)return;
+    BOOL front=WBenchToFront();
+    /* Copy under Intuition's lock, emit serial output only after releasing it. */
+    char titles[24][96];unsigned count=0;
+    ULONG key=LockIBase(0);
+    for(struct Screen *s=IntuitionBase->FirstScreen;s&&count<24;s=s->NextScreen){
+        snprintf(titles[count++],96,"Public desktop screen: %.65s\n",s->Title?(char *)s->Title:"(untitled)");
+        for(struct Window *w=s->FirstWindow;w&&count<24;w=w->NextWindow)
+            snprintf(titles[count++],96,"Public desktop window: %.65s\n",w->Title?(char *)w->Title:"(untitled)");
+    }
+    UnlockIBase(key);
+    note(front?"Public desktop WBenchToFront=1\n":"Public desktop WBenchToFront=0\n");
+    for(unsigned i=0;i<count;i++)note(titles[i]);
+    CloseLibrary((struct Library *)IntuitionBase);
 }
 char *zfs_version_kernel(void);
 #ifdef OZ_TEST_INVENTORY_WORKER
@@ -1367,6 +1387,7 @@ static int storage_test(int gui){
             STORAGE_CHECK(!cli_command("Run >T:wanderer-public.log SYS:System/Wanderer/Wanderer"));
             Delay(50);
             STORAGE_CHECK(!cli_command("C:WBRun OZPUBLIC:"));
+            Delay(50);desktop_windows();
             note("Public desktop READY: inspect mounted OZPUBLIC and hello.txt in Wanderer; close drawer windows before closing Manager. Wanderer stays running.\n");
         }
         BPTR volume_gui=Lock((CONST_STRPTR)"SYS:openzfs-gui-volume-test",SHARED_LOCK);
