@@ -1265,7 +1265,8 @@ static int storage_cold_test(void)
     if(error)return error;
     /* Hide the topology's tolerated number of disposable members without
      * changing their bytes; restore every name even if degraded import fails. */
-    char member[4][256],hidden[4][256];unsigned moved=0;
+    char member[OZ_MAX_DEVICES][256],hidden[OZ_MAX_DEVICES][256];unsigned moved=0;
+    if(storage_members>OZ_MAX_DEVICES||storage_missing>=storage_members)return EINVAL;
     for(unsigned i=0;i<storage_missing;i++){
         storage_member(member[i],sizeof(member[i]),storage_dspare?i:i+1);
         snprintf(hidden[i],sizeof(hidden[i]),"%s-held",member[i]);
@@ -1281,9 +1282,9 @@ static int storage_cold_test(void)
     if(!error&&storage_dspare)note("Public cold dRAID spare PASS original-absent=1 exact=1\n");
     if(error)return error;
     if(storage_dspare){
-        /* Once rebuilt, this 1-data/1-parity/3-child layout can still read
-         * after losing the original offline member AND one live child. */
-        for(unsigned i=0;i<2;i++){
+        /* Qualify the one-data/one-spare layouts after losing the original
+         * offline member plus as many live children as the parity width. */
+        for(unsigned i=0;i<=storage_missing;i++){
             storage_member(member[i],sizeof(member[i]),i);
             snprintf(hidden[i],sizeof(hidden[i]),"%s-held",member[i]);
             BPTR exists=Lock((CONST_STRPTR)hidden[i],SHARED_LOCK);
@@ -1294,7 +1295,7 @@ static int storage_cold_test(void)
         if(!error)error=storage_cold_once();
         while(moved){--moved;if(!Rename((CONST_STRPTR)hidden[moved],(CONST_STRPTR)member[moved])&&!error)error=EIO;}
         if(error)return error;
-        note("Public cold dRAID rebuilt redundancy PASS missing=2 exact=1 restored=1\n");
+        char line[128];snprintf(line,sizeof(line),"Public cold dRAID rebuilt redundancy PASS missing=%u exact=1 restored=1\n",storage_missing+1);note(line);
     }
     /* Exceed parity (both leaves for mirror). A transport failure alone is
      * not proof of rejection: require a backend reply and responsive queries. */
@@ -1369,7 +1370,7 @@ int main(int argc,char **argv){
     marker=Lock((CONST_STRPTR)"SYS:openzfs-dspare-test",SHARED_LOCK);
     if(marker){
         UnLock(marker);storage_dspare=1;
-        if(!native_file_fixture||storage_layout!=OZ_DRAID||storage_missing!=1)return 20;
+        if(!native_file_fixture||storage_layout!=OZ_DRAID)return 20;
     }
     marker=Lock((CONST_STRPTR)"SYS:openzfs-replacement-test",SHARED_LOCK);
     if(marker){

@@ -30,7 +30,7 @@ esac
 replace=${AROS_TEST_REPLACE:-0}
 [[ $replace == 0 || ( $replace == 1 && $layout == mirror && $persistent == 1 && -n $cli_dir ) ]]
 dspare=${AROS_TEST_DSPARE:-0}
-[[ $dspare == 0 || ( $dspare == 1 && $layout == draid1 && $persistent == 1 && -n $cli_dir ) ]]
+[[ $dspare == 0 || ( $dspare == 1 && $layout == draid[123] && $persistent == 1 && -n $cli_dir ) ]]
 gui=${AROS_PUBLIC_GUI:-0}
 cpus=${AROS_TEST_CPUS:-2}
 qemu=${AROS_TEST_QEMU:-qemu-system-x86_64}
@@ -439,7 +439,7 @@ if [[ $persistent == 1 ]];then
     fi
     if [[ $dspare == 1 ]];then
         rg -q '^Public cold dRAID spare PASS original-absent=1 exact=1' "$run/cold-results.log"
-        rg -q '^Public cold dRAID rebuilt redundancy PASS missing=2 exact=1 restored=1' "$run/cold-results.log"
+        rg -q "^Public cold dRAID rebuilt redundancy PASS missing=$((missing+1)) exact=1 restored=1" "$run/cold-results.log"
         [[ $(rg -c '^Public cold resilver payload PASS bytes=1048576 exact=1' "$run/cold-results.log") == 4 ]]
     fi
     for ((member=0;member<members;member++));do

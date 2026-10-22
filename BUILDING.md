@@ -477,6 +477,26 @@ The Manager was rebuilt; this qualification exercises its public API, not
 interactive operation of the newly labeled field. Hardware, higher-parity
 spare activation and sequential reconstruction remain separate gates.
 
+Follow-up higher-parity qualification extends `AROS_TEST_DSPARE=1` to
+`AROS_TEST_LAYOUT=draid2` and `draid3`. Runs `public-service-run.8Y8AWT8E`
+and `public-service-run.2aN8Shcv` pass the complete package suites: actual
+spare activation, finished error-free healing resilver, exact cold reads
+with respectively three/four original members hidden after rebuild, refusal
+with all four/five members absent, restoration, unchanged cold member hashes
+and independent zdb checks with no leaks. These remain small one-data,
+one-distributed-spare file-backed layouts, not arbitrary-layout throughput or
+hardware durability qualifications.
+
+Private GUI run `native-gui-run.tn6yiFhe` visually verifies the rebuilt
+Manager's Advanced/Pools replacement editor and typed preview. `07.png`
+shows the new backing/spare field; `08.png` shows operation `pool.replace`,
+the entered pool/GUID and the exact `draid1-0-0` leaf, with "Preview only -
+nothing submitted". No mutation was sent by that GUI test. Normal close
+returns to the remaining acceptance suite, which passes. The first pointer
+positioning attempts are retained alongside the successful captures. This
+supersedes the field-layout/preview gap above, not end-to-end GUI submission
+or sequential reconstruction qualification.
+
 Failed runs are retained: `VafOOFqR` and `jpwWJqGA` exposed a status adapter
 bug (an auxiliary SPARED handle was incorrectly labeled UNAVAIL). The fix
 matches upstream zpool's INUSE precedence, without changing in-tree health.
