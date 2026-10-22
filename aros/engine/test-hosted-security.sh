@@ -8,6 +8,11 @@ service=${AROS_TEST_HOSTED_SERVICE_BUILD:-}
 if [[ -n $service ]];then service=$(realpath -e "$service");fi
 mode=${AROS_TEST_HOSTED_SERVICE_MODE:-STORAGE}
 cli_dir=${AROS_TEST_CLI_DIR:-}
+handler=${AROS_TEST_HANDLER:-}
+if [[ -n $handler ]];then
+    handler=$(realpath -e "$handler")
+    [[ -n $service && -f $handler ]]
+fi
 if [[ -n $cli_dir ]];then
     cli_dir=$(realpath -e "$cli_dir")
     [[ -n $service && -f $cli_dir/zfs && -f $cli_dir/zpool ]]
@@ -68,6 +73,15 @@ if [[ -n $service ]];then
         cp "$shared/openzfs.library" "$run/Libs/"
     fi
     cp aros/engine/public-service-test.c "$run/"
+    if [[ -n $handler ]];then
+        cp "$handler" "$run/L/OpenZFS-Handler"
+        printf '%s\n' 'Disposable pool handler activation' >"$run/openzfs-handler-package-test"
+        printf '%s\n' 'FileSystem = L:OpenZFS-Handler' 'Device = openzfs' \
+            'Unit = 0' 'Flags = 0' 'Surfaces = 1' 'BlocksPerTrack = 1' \
+            'LowCyl = 0' 'HighCyl = 0' 'DosType = 0x5a465301' \
+            'Control = "public_mirror/files"' 'StackSize = 262144' \
+            'Activate = 0' >"$run/OZPACKAGE"
+    fi
     if [[ -n $cli_dir ]];then
         cp "$cli_dir/zfs" "$cli_dir/zpool" "$run/C/"
         printf '%s\n' 'Actual CLI tests on the disposable public_mirror only' >"$run/openzfs-cli-package-test"
@@ -117,6 +131,7 @@ if [[ -n $service ]];then
 fi
 if [[ -n $shared ]];then sha256sum "$run/Libs/openzfs.library" >>"$run/inputs.sha256";fi
 if [[ -n $cli_dir ]];then sha256sum "$run/C/zfs" "$run/C/zpool" >>"$run/inputs.sha256";fi
+if [[ -n $handler ]];then sha256sum "$run/L/OpenZFS-Handler" >>"$run/inputs.sha256";fi
 git rev-parse HEAD >"$run/source-head.txt"
 git diff --binary >"$run/source.patch"
 xpid=;guest=
@@ -155,6 +170,7 @@ rg -q '^RESULT hosted security login/logout PASS configured=1 uid77gid88=1 resto
 if [[ -n $service ]];then
     rg -q 'RESULT public service storage PASS' "$run/serial.log"
     if [[ -n $cli_dir ]];then rg -q 'Public packaged CLI PASS' "$run/serial.log";fi
+    if [[ -n $handler ]];then rg -q 'Public packaged handler PASS' "$run/serial.log";fi
 fi
 if [[ $persistent == 1 ]];then
     # The writer has reported orderly export. Stop only this private process

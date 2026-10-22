@@ -683,6 +683,19 @@ static int storage_test(int gui){
     STORAGE_CHECK(!oz_mount_control(OZ_ADMISSION_PORT,"public_mirror/files","",OZ_MOUNT_DETACH,0));
     STORAGE_CHECK(oz_mount_control(OZ_ADMISSION_PORT,"public_mirror/files","",OZ_MOUNT_DETACH,0)==ENOENT);
     STORAGE_CHECK(!verify_mounts(NULL,0));
+    BPTR handler_marker=Lock((CONST_STRPTR)"SYS:openzfs-handler-package-test",SHARED_LOCK);
+    if(handler_marker){
+        UnLock(handler_marker);
+        STORAGE_CHECK(SystemTags((CONST_STRPTR)"C:Mount SYS:OZPACKAGE",TAG_DONE)==0);
+        file=Open((CONST_STRPTR)"OZPACKAGE:hello.txt",MODE_OLDFILE);STORAGE_CHECK(file);
+        STORAGE_CHECK(Read(file,actual,sizeof(actual))==sizeof(storage_payload)-1&&!memcmp(actual,payload,sizeof(storage_payload)-1));
+        STORAGE_CHECK(Close(file));file=0;
+        file=Open((CONST_STRPTR)"OZPACKAGE:denied.txt",MODE_NEWFILE);
+        STORAGE_CHECK(!file&&IoErr()==ERROR_DISK_WRITE_PROTECTED);
+        STORAGE_CHECK(!oz_mount_control(OZ_ADMISSION_PORT,"public_mirror/files","",OZ_MOUNT_DETACH,0));
+        STORAGE_CHECK(!verify_mounts(NULL,0));
+        note("Public packaged handler PASS mount=1 exact-read=1 readonly=1 detach=1\n");
+    }
     STORAGE_CHECK(!storage_request(8,"public_mirror",NULL,NULL));
 #ifdef OZ_TEST_UPSTREAM_INIT
     STORAGE_CHECK(!oz_upstream_import_files_test());

@@ -97,3 +97,18 @@ suite and eight library lifecycle iterations. Runner exit zero and unchanged
 original backing hashes are recorded in `handler-invalid-bundle-native-1.log`.
 This strengthens package coverage; private-runtime and physical limitations
 remain unchanged.
+
+## Public MetaMake package verification
+
+The handler produced by the clean `contrib-openzfs` aggregate was exercised
+alongside that build's shared engine, launcher, and upstream CLI commands in
+isolated hosted AROS (`hosted-security-test.hNwsU0bS`). Actual `C:Mount`
+activation, exact DOS file reads, read-only write refusal, and detach passed;
+the same run also passed CLI snapshot operations and cold/degraded mirror
+verification. This is hosted package evidence, not a new bare-metal result.
+
+To repeat this coverage, set `AROS_TEST_HANDLER` to the staged handler when
+running `aros/engine/test-hosted-security.sh` with its normal full-service
+configuration. The runner copies and hashes that binary, creates a mount file
+for its disposable `public_mirror/files` dataset, and requires the packaged
+handler acceptance marker. No existing host or physical pool is used.
