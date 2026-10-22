@@ -213,6 +213,26 @@ read-only write denial and detach. CLI scratch lives in `T:`, not the
 read-only boot ISO. This run used the same explicit runtime overlays and a
 disposable RAM mirror; it does not prove cold persistence or hardware safety.
 
+Persistent native qualification is optional via `AROS_TEST_PERSISTENT=1`,
+requiring an explicit flush-capable `AROS_TEST_FAT_HANDLER` and executable
+`AROS_TEST_HOST_ZDB` (and its host library search path, if needed). The runner
+creates a new 512 MiB regular-file FAT disk and two 128 MiB pool members; it
+never accepts an existing backing disk for this mode. It runs the packaged
+CLI/handler tests, exports, then boots a fresh QEMU process for healthy and
+missing-member read-only imports, exact DOS payload checks, and write denial.
+Member files must remain byte-identical. Host `zdb -bcc` must then pass without
+leaks and without changing the extracted members. The historical client log
+label `Public cold hosted DOS` is also used by this native cold-import path.
+
+Final run `public-service-run.qA8HX86o` passed all these gates with the native
+MetaMake artifacts and explicit historical DOS/ATA/POSIX/FAT overlays.
+`public-service-run.t14Au7JK` passed the cold checks with a separate successful
+host zdb check. Earlier attempts `F9HXwqKf` and `K1L3FP0M` passed the writer but
+failed ISO repackaging before the cold guest launched; their evidence remains.
+Both boot images are now constructed directly from the original base image.
+This proves normal export/fresh-boot persistence on virtual storage, not
+stock-nightly compatibility, abrupt-power-loss recovery or physical flush.
+
 Prefer a coherent SDK and genmodule pair; do not define missing ABI constants
 in this project. Handler/device compilation is not runtime qualification.
 

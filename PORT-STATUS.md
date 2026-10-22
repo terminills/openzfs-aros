@@ -2,6 +2,21 @@
 
 Experimental development snapshot; not production-qualified storage software.
 
+## Current public-source qualification
+
+The native MetaMake package now passes isolated two-CPU QEMU tests of the
+shared engine, upstream `zfs`/`zpool` commands and standalone DOS handler.
+This includes clone/rename, LZ4 configuration, rollback checked through mounted
+data, full and incremental replication, and handler read-only enforcement.
+The persistent run `public-service-run.qA8HX86o` additionally passed a fresh
+guest boot, healthy and degraded mirror imports, exact file reads, unchanged
+pool-member bytes, and independent host `zdb -bcc` with no leaks.
+
+These tests use newly created virtual storage and explicitly selected patched
+runtime libraries. They supersede the initial startup-only qualification below,
+but do not establish stock-nightly or physical-device safety. See BUILDING.md
+for exact scope, inputs and evidence identifiers.
+
 ## Implemented integration
 
 The source contains the upstream OpenZFS engine, a shared AROS library/service,

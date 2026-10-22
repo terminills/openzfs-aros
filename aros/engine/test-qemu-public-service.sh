@@ -12,6 +12,8 @@ client=${AROS_TEST_CLIENT_BINARY:?native acceptance client required}
 shared=${AROS_TEST_SHARED_BUILD:-}
 cli_dir=${AROS_TEST_CLI_DIR:-}
 handler=${AROS_TEST_HANDLER_BINARY:-}
+persistent=${AROS_TEST_PERSISTENT:-0}
+[[ $persistent == 0 || $persistent == 1 ]]
 gui=${AROS_PUBLIC_GUI:-0}
 cpus=${AROS_TEST_CPUS:-2}
 qemu=${AROS_TEST_QEMU:-qemu-system-x86_64}
@@ -112,6 +114,23 @@ fi
 cp "$service" "$run/OpenZFSServiceNative"
 cp "$client" "$run/OpenZFSPublicServiceTest"
 cp "$startup" "$run/Startup-Sequence"
+if [[ $persistent == 1 ]];then
+    # Only a newly created regular file, never a supplied or physical disk.
+    [[ $gui == 0 && $partitions == 0 && -z $label_source && $ahci_query == 0 ]]
+    fat=${AROS_TEST_FAT_HANDLER:?explicit flush-capable FAT handler required}
+    host_zdb=${AROS_TEST_HOST_ZDB:?explicit host zdb required for persistent verification}
+    [[ -x $host_zdb ]]
+    sha256sum "$host_zdb" >"$run/host-zdb.sha256"
+    cp "$fat" "$run/fat-handler"
+    truncate -s 512M "$run/backing.raw"
+    mkfs.vfat -F 16 -n OZFILES "$run/backing.raw" >"$run/format.log" 2>&1
+    sed 's/^HighCyl .*/HighCyl = 1048575/' aros/engine/OZBACK >"$run/OZBACK"
+    sed '/^Stack /a Mount SYS:OZBACK' "$startup" >"$run/Startup-Sequence"
+    extra_maps+=(-map "$run/fat-handler" /L/fat-handler -map "$run/OZBACK" /OZBACK
+        -map aros/engine/public-service-test-only /openzfs-native-file-fixture)
+    extra_drives+=(-drive "file=$run/backing.raw,format=raw,if=ide,index=0")
+    sha256sum "$run/fat-handler" "$run/OZBACK" >"$run/backing-inputs.sha256"
+fi
 if [[ -n $cli_dir ]];then
     cp "$cli_dir/zfs" "$cli_dir/zpool" "$run/"
     extra_maps+=(-map "$run/zfs" /C/zfs -map "$run/zpool" /C/zpool
@@ -320,6 +339,59 @@ fi
 printf 'quit\n' | socat - "UNIX-CONNECT:$run/monitor" >/dev/null
 wait "$pid"
 trap - EXIT
+if [[ $persistent == 1 ]];then
+    mkdir "$run/members-before" "$run/members-after"
+    for member in 0 1;do
+        mcopy -i "$run/backing.raw" "::OZPublicPool/disk$member" "$run/members-before/disk$member"
+    done
+    sha256sum "$run/members-before/"* >"$run/members-before.sha256"
+    printf '%s\n' 'FailAt 20' 'MakeDir RAM:T RAM:ENV' 'Assign T: RAM:T' \
+        'Assign ENV: RAM:ENV' 'Stack 1048576' 'Mount SYS:OZBACK' \
+        'C:OpenZFSPublicServiceTest STORAGE-COLD' 'EndCLI' >"$run/Startup-Cold"
+    xorriso -indev "$base" -outdev "$run/cold.iso" \
+        -map aros/engine/grub-qemu-test.cfg /boot/grub/grub.cfg \
+        -map "$dos/aros-base.pkg.xz" /boot/aros-base.pkg.xz \
+        -map "$ata/aros-bsp.pkg.xz" /boot/pc-smp/aros-bsp.pkg.xz \
+        -map "$posix" /Libs/posixc.library -map "$zlib" /Libs/z1.library \
+        -map "$run/security-fixture" /Security \
+        -map "$run/OpenZFSServiceNative" /C/OpenZFSServiceNative \
+        -map "$run/OpenZFSPublicServiceTest" /C/OpenZFSPublicServiceTest \
+        "${extra_maps[@]}" \
+        -map aros/engine/public-service-test-only /openzfs-service-test-only \
+        -map "$run/Startup-Cold" /S/Startup-Sequence \
+        -boot_image any discard -boot_image grub bin_path=/boot/grub/i386-pc/eltorito.img \
+        -boot_image grub boot_info_table=on -boot_image grub grub2_boot_info=on >"$run/pack-cold.log" 2>&1
+    "$qemu" -name "openzfs-public-cold-$$" -machine pc,accel=kvm -cpu host \
+        -smp "$cpus" -m 2048 -drive "file=$run/cold.iso,media=cdrom,if=ide,index=2,readonly=on" \
+        -drive "file=$run/backing.raw,format=raw,if=ide,index=0" -display none -nic none \
+        -boot d -no-reboot -no-shutdown -serial "file:$run/cold-serial.log" \
+        -monitor "unix:$run/cold-monitor,server=on,wait=off" >"$run/cold-qemu.log" 2>&1 &
+    pid=$!
+    trap cleanup EXIT
+    deadline=$((SECONDS+duration))
+    while :;do
+        if [[ -f "$run/cold-serial.log" ]];then
+            sed -E 's/^[[:xdigit:]]{16} 0x[[:xdigit:]]{16} \| [0-9]+ \| //' "$run/cold-serial.log" >"$run/cold-results.log"
+            if rg -q '^RESULT .*FAIL|Public service test line=[1-9][0-9]*|\[PF-DBG\]|^ASSERT at' "$run/cold-results.log";then exit 1;fi
+            if rg -q '^RESULT public service storage PASS' "$run/cold-results.log" &&
+                rg -q '^Public cold degraded assign PASS' "$run/cold-results.log";then break;fi
+        fi
+        if ! kill -0 "$pid" 2>/dev/null || ((SECONDS>=deadline));then echo "Cold timeout/exit: $run" >&2;exit 1;fi
+        sleep 1
+    done
+    printf 'quit\n' | socat - "UNIX-CONNECT:$run/cold-monitor" >/dev/null
+    wait "$pid"
+    trap - EXIT
+    for member in 0 1;do
+        mcopy -i "$run/backing.raw" "::OZPublicPool/disk$member" "$run/members-after/disk$member"
+        cmp "$run/members-before/disk$member" "$run/members-after/disk$member"
+    done
+    sha256sum "$run/members-after/"* >"$run/members-after.sha256"
+    "$host_zdb" -e -p "$run/members-after" -bcc public_mirror >"$run/zdb-check.log" 2>&1
+    rg -q 'No leaks' "$run/zdb-check.log"
+    sha256sum -c "$run/members-after.sha256" >"$run/zdb-members-unchanged.log"
+    echo "PASS: fresh-boot healthy/degraded import, exact DOS data, unchanged pool members. Evidence: $run"
+fi
 if [[ $partitions == 1 ]];then sha256sum -c "$run/disks-before.sha256" > "$run/disks-after-check.txt";fi
 if [[ -n $label_source ]];then sha256sum -c "$run/label-original.sha256" >"$run/label-original-after-check.txt";fi
-echo "PASS: public service lifecycles and RAM-backed mirror DOS round trip. Evidence: $run"
+echo "PASS: public service lifecycles and mirror DOS round trip (persistent=$persistent). Evidence: $run"

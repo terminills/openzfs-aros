@@ -855,6 +855,8 @@ int main(int argc,char **argv){
     BPTR marker=Lock((CONST_STRPTR)"SYS:openzfs-service-test-only",SHARED_LOCK);
     if(!marker)return 20;
     UnLock(marker);
+    marker=Lock((CONST_STRPTR)"SYS:openzfs-native-file-fixture",SHARED_LOCK);
+    if(marker){UnLock(marker);storage_directory="OZBACK:OZPublicPool";}
     marker=Lock((CONST_STRPTR)"SYS:openzfs-hosted-file-fixture",SHARED_LOCK);
     if(marker){
         UnLock(marker);storage_directory="EMU:OZPublicPool";
