@@ -9,6 +9,22 @@ default distribution bundle or a separately loadable DOS handler.
 
 ## Host ABI and lifetime
 
+The standalone `build.sh` requires explicit `AROS_CC`, `AROS_SDK`,
+`AROS_GENMODULE`, `AROS_LINKED_OBJECT`, `AROS_SERVICE_BUILD_DIR`,
+`AROS_NVPAIR_ARCHIVE`, `AROS_PRIVATE_PTHREAD`, `AROS_CRYPTO_ARCHIVE`, and
+`AROS_ZLIB_IMPORT`. Select an ABI-matched SDK and generator; no historical
+workspace path is chosen automatically. The compiler selects `nm` and
+`objcopy` (`AROS_NM` can override the former). Input hashes are recorded before
+building and verified afterward; compiler identity and selected tool paths
+are retained. Output stays in a private directory with the storage reserve
+guard. This does not download or independently qualify dependency archives.
+
+Explicit-input build `shared-engine.GvCwxDH6` passed input stability checks
+and the selected hosted CLI replication/rollback, standalone handler and
+persistent/cold/degraded mirror suite in `hosted-security-test.QR9mtLvQ`.
+A missing-compiler invocation failed before allocation as intended. These
+checks do not establish arbitrary SDK compatibility or physical durability.
+
 Version 1, vector 5: `LONG OpenZFSRunService(ULONG mode)`.
 
 - Mode 0 is readonly; mode 1 requests WRITABLE and retains the real service's

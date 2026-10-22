@@ -3,26 +3,41 @@
 set -euo pipefail
 repo=$(cd -- "$(dirname -- "$0")/../.." && pwd)
 cd "$repo"
-source "$repo/aros/engine/storage-preflight.sh"
-artifact_root=$(oz_artifact_root "$repo/build-aros" "${AROS_ARTIFACT_ROOT:-}")
-cc=${AROS_CC:-/opt/aros-workspace/aros-adt-crosstools/x86_64-aros-gcc}
-sdk=${AROS_SDK:-/opt/aros-workspace/aros-amiwest-nightly-release/bin/pc-x86_64-smp/AROS/Developer}
-gen=${AROS_GENMODULE:-/opt/aros-workspace/aros-amiwest-nightly-release/bin/linux-x86_64/tools/genmodule}
+cc=${AROS_CC:?explicit AROS compiler required}
+sdk=${AROS_SDK:?explicit ABI-matched AROS SDK required}
+gen=${AROS_GENMODULE:?explicit SDK-matched genmodule required}
 engine=${AROS_LINKED_OBJECT:?full normal service engine object required}
 normal=${AROS_SERVICE_BUILD_DIR:?normal full service build provenance required}
-bash aros/library/verify-engine.sh "$engine" "$normal" "${AROS_NM:-nm}"
+nm_tool=${AROS_NM:-$("$cc" -print-prog-name=nm)}
+objcopy_tool=$("$cc" -print-prog-name=objcopy)
+bash aros/library/verify-engine.sh "$engine" "$normal" "$nm_tool"
 nvpair=${AROS_NVPAIR_ARCHIVE:?nvpair archive required}
 pthread=${AROS_PRIVATE_PTHREAD:?matching pthread archive required}
-crypto=${AROS_CRYPTO_ARCHIVE:-/opt/aros-workspace/chromium-aros/src/out/aros-chrome/obj/third_party/boringssl/libboringssl.a}
-zlib=${AROS_ZLIB_IMPORT:-/opt/aros-workspace/aros-adt-hosted-clean/bin/linux-x86_64/AROS/Developer/lib/libz1.a}
+crypto=${AROS_CRYPTO_ARCHIVE:?explicit target crypto archive required}
+zlib=${AROS_ZLIB_IMPORT:?explicit target zlib import archive required}
+sdk=$(realpath -e "$sdk")
+gen=$(realpath -e "$gen")
+[[ -x $gen && -f $sdk/include/exec/types.h && -d $sdk/lib ]]
+engine=$(realpath -e "$engine")
+nvpair=$(realpath -e "$nvpair")
+pthread=$(realpath -e "$pthread")
+crypto=$(realpath -e "$crypto")
+zlib=$(realpath -e "$zlib")
+source "$repo/aros/engine/storage-preflight.sh"
+mkdir -p "$repo/build-aros"
+artifact_root=$(oz_artifact_root "$repo/build-aros" "${AROS_ARTIFACT_ROOT:-}")
 out=$(mktemp -d "$artifact_root/shared-engine.XXXXXXXX")
 echo "Shared engine candidate: $out"
 mkdir -p "$out/gen" "$out/include"/{proto,clib,inline,defines,pragmas}
+"$cc" --version >"$out/compiler.txt"
+printf 'compiler=%s\nsdk=%s\ngenmodule=%s\nnm=%s\nobjcopy=%s\n' \
+    "$cc" "$sdk" "$gen" "$nm_tool" "$objcopy_tool" >"$out/toolchain.txt"
+sha256sum "$engine" "$nvpair" "$pthread" "$crypto" "$zlib" "$gen" >"$out/inputs.sha256"
 for operation in writefiles writelibdefs;do
     "$gen" -c aros/library/openzfs.conf -d "$out/gen" "$operation" openzfs library
 done
 "$gen" -c aros/library/openzfs.conf -d "$out/include" writeincludes openzfs library
-"${cc%gcc}objcopy" --redefine-sym main=oz_service_main "$engine" "$out/engine.o"
+"$objcopy_tool" --redefine-sym main=oz_service_main "$engine" "$out/engine.o"
 flags=(--sysroot="$sdk" -B"$sdk/lib/" -O2 -g -Wall -Wextra -I"$out/include" -I"$out/gen")
 "$cc" "${flags[@]}" -c "$out/gen/openzfs_start.c" -o "$out/start.o"
 "$cc" "${flags[@]}" -c "$out/gen/openzfs_end.c" -o "$out/end.o"
@@ -31,9 +46,9 @@ flags=(--sysroot="$sdk" -B"$sdk/lib/" -O2 -g -Wall -Wextra -I"$out/include" -I"$
     "$out/engine.o" "$nvpair" "$zlib" "$crypto" "$pthread" -lm "$out/end.o" -o "$out/openzfs.library"
 "$cc" "${flags[@]}" aros/library/service-launcher.c -o "$out/OpenZFSServiceNative"
 "$cc" "${flags[@]}" aros/library/lifetime-test.c -o "$out/OpenZFSLibraryTest"
-launcher_symbols=$(nm "$out/OpenZFSServiceNative")
+launcher_symbols=$("$nm_tool" "$out/OpenZFSServiceNative")
 [[ $launcher_symbols != *' T zfsdev_ioctl_common'* && $launcher_symbols != *' T oz_engine_start'* ]]
-sha256sum "$engine" "$nvpair" "$pthread" "$crypto" "$zlib" >"$out/inputs.sha256"
+sha256sum -c "$out/inputs.sha256" >"$out/input-stability.log"
 sha256sum "$out/openzfs.library" "$out/OpenZFSServiceNative" "$out/OpenZFSLibraryTest" >"$out/binaries.sha256"
 cp "$normal/engine-object.sha256" "$normal/engine-metadata.h" "$normal/engine-metadata.sha256" "$out/"
 printf 'service_test_modes=0\nfull_dispatcher=1\nshared_engine=1\n' >"$out/service-build-options.txt"
