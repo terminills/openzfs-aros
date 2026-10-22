@@ -26,6 +26,30 @@
 #include <aros/debug.h>
 /* Use one formatted kernel message, not independently interleavable bytes. */
 static void note(const char *s){bug("%s",s);}
+static void diagnostic_log(const char *path)
+{
+    BPTR f=Open((CONST_STRPTR)path,MODE_OLDFILE);
+    if(!f)return;
+    char line[300];snprintf(line,sizeof(line),"Public diagnostic begin %s\n",path);note(line);
+    for(unsigned total=0;total<16384;){
+        LONG n=Read(f,line,sizeof(line)-1);if(n<=0)break;
+        line[n]=0;note(line);total+=(unsigned)n;
+    }
+    Close(f);note("\nPublic diagnostic end\n");
+}
+static int desktop_detach(int gui,const char *phase)
+{
+    int error=oz_mount_control(OZ_ADMISSION_PORT,"public_mirror/files","",OZ_MOUNT_DETACH,0);
+    unsigned retries=0;
+    /* Only ordinary desktop teardown waits for transient inspection packets.
+     * Deliberate held-reference refusal tests must remain single attempts. */
+    while(gui&&error==EBUSY&&retries<50){
+        Delay(5);++retries;
+        error=oz_mount_control(OZ_ADMISSION_PORT,"public_mirror/files","",OZ_MOUNT_DETACH,0);
+    }
+    char line[160];snprintf(line,sizeof(line),"Public desktop detach phase=%s retries=%u errno=%d\n",phase,retries,error);note(line);
+    return error;
+}
 char *zfs_version_kernel(void);
 #ifdef OZ_TEST_INVENTORY_WORKER
 int oz_inventory_worker_test(void);
@@ -1341,6 +1365,8 @@ static int storage_test(int gui){
         if(desktop){
             UnLock(desktop);
             STORAGE_CHECK(!cli_command("Run >T:wanderer-public.log SYS:System/Wanderer/Wanderer"));
+            Delay(50);
+            STORAGE_CHECK(!cli_command("C:WBRun OZPUBLIC:"));
             note("Public desktop READY: inspect mounted OZPUBLIC and hello.txt in Wanderer; close drawer windows before closing Manager. Wanderer stays running.\n");
         }
         BPTR volume_gui=Lock((CONST_STRPTR)"SYS:openzfs-gui-volume-test",SHARED_LOCK);
@@ -1356,7 +1382,7 @@ static int storage_test(int gui){
         }
         note("Public storage GUI closed; verifying export and readonly reimport\n");
     }
-    STORAGE_CHECK(!oz_mount_control(OZ_ADMISSION_PORT,"public_mirror/files","",OZ_MOUNT_DETACH,0));
+    STORAGE_CHECK(!desktop_detach(gui,"post-ui"));
     STORAGE_CHECK(oz_mount_control(OZ_ADMISSION_PORT,"public_mirror/files","",OZ_MOUNT_DETACH,0)==ENOENT);
     STORAGE_CHECK(!verify_mounts(NULL,0));
     BPTR handler_marker=Lock((CONST_STRPTR)"SYS:openzfs-handler-package-test",SHARED_LOCK);
@@ -1368,7 +1394,7 @@ static int storage_test(int gui){
         STORAGE_CHECK(Close(file));file=0;
         file=Open((CONST_STRPTR)"OZPACKAGE:denied.txt",MODE_NEWFILE);
         STORAGE_CHECK(!file&&IoErr()==ERROR_DISK_WRITE_PROTECTED);
-        STORAGE_CHECK(!oz_mount_control(OZ_ADMISSION_PORT,"public_mirror/files","",OZ_MOUNT_DETACH,0));
+        STORAGE_CHECK(!desktop_detach(gui,"packaged-handler"));
         STORAGE_CHECK(!verify_mounts(NULL,0));
         note("Public packaged handler PASS mount=1 exact-read=1 readonly=1 detach=1\n");
     }
@@ -1391,7 +1417,7 @@ static int storage_test(int gui){
     STORAGE_CHECK(Close(file));file=0;
     file=Open((CONST_STRPTR)"OZPUBLICRO:denied.txt",MODE_NEWFILE);
     STORAGE_CHECK(!file&&IoErr()==ERROR_DISK_WRITE_PROTECTED);
-    STORAGE_CHECK(!oz_mount_control(OZ_ADMISSION_PORT,"public_mirror/files","",OZ_MOUNT_DETACH,0));
+    STORAGE_CHECK(!desktop_detach(gui,"readonly-reimport"));
     note("Public native mount control PASS writable=1 readonly=1 busy=1 duplicate=1 absent=1 invalid=1\n");
     STORAGE_CHECK(!storage_request(8,"public_mirror",NULL,NULL));
     STORAGE_CHECK(!verify_mounts(NULL,0));
@@ -1402,7 +1428,12 @@ done:
 #ifdef OZ_TEST_UPSTREAM_MOUNT_CACHE
     oz_upstream_mount_cache_finish();
 #endif
-    if(error){char line[96];snprintf(line,sizeof(line),"Public storage failure=%d\n",error);note(line);}
+    if(error){char line[96];snprintf(line,sizeof(line),"Public storage failure=%d\n",error);note(line);
+        diagnostic_log("T:wanderer-public.log");
+        diagnostic_log("T:service-first.log");
+        diagnostic_log("T:service-second.log");
+        diagnostic_log("T:service-writable.log");
+    }
     return error;
 }
 static int storage_encrypted_cold(void)

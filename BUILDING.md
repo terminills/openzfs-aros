@@ -870,7 +870,14 @@ is retained as incomplete, not desktop qualification.
 The alpha18 live-service attempt `native-gui-run.M4jeHkSj` showed Manager
 connecting and listing `public_mirror` ONLINE with capacity figures (`04.png`).
 Manager closed normally and the post-UI file read passed. However, Wanderer was
-not visually established and CrashReporter activity appeared; the later packaged
+not visually established; the later packaged
 handler detach assertion failed at public-service-test.c line 1371. This run is
-retained as a failure, not desktop integration proof. Desktop-held locks versus
-handler cleanup still require diagnosis; do not bypass busy-volume protection.
+retained as a failure, not desktop integration proof. The logged CrashReporter
+line was subsequently verified to be ordinary startup, not a crash report.
+Diagnostic run `sZ5k0Gfn` identified EBUSY; `Sg7uBeHS` cleared it on the first
+5-tick retry, then failed at a later teardown with the same one-shot assumption.
+The fixture now gives ordinary desktop teardown at most 50 such retries, only
+for EBUSY. All deliberate held-reference refusal tests remain single attempts,
+and persistent busy still fails. No handler busy protection is bypassed.
+The desktop fixture now explicitly asks WBRun to open OZPUBLIC: for visual
+inspection; command success alone is not drawer or file-display evidence.
