@@ -185,6 +185,7 @@ if [[ $persistent == 1 ]];then
     [[ $gui == 0 && $partitions == 0 && -z $label_source && $ahci_query == 0 ]]
     fat=${AROS_TEST_FAT_HANDLER:?explicit flush-capable FAT handler required}
     host_zdb=${AROS_TEST_HOST_ZDB:?explicit host zdb required for persistent verification}
+    command -v fsck.fat >/dev/null
     [[ -x $host_zdb ]]
     sha256sum "$host_zdb" >"$run/host-zdb.sha256"
     cp "$fat" "$run/fat-handler"
@@ -427,6 +428,9 @@ if [[ $persistent == 1 ]];then
         rg -q '^Public mirror resilver PASS offline=1 missed-write=1 online=1 finished=1 issued-nonzero=1 errors=0' "$run/serial-results.log"
     fi
     rg -q '^Public backing clean detach PASS' "$run/serial-results.log"
+    # Read-only host validation must agree with the guest's clean detach.
+    # In particular, do not bypass a dirty FAT bit with MTOOLS_SKIP_CHECK.
+    fsck.fat -n -v "$run/backing.raw" >"$run/fat-after-writer.log" 2>&1
     if [[ -n $device ]];then
         rg -q '^Public device PASS geometry=1 async-128KiB=1 reopen=3 exact-read=1 eject=1 busy-refused=1 bounds=1' "$run/serial-results.log"
     fi
@@ -515,6 +519,7 @@ if [[ $persistent == 1 ]];then
     wait "$pid"
     trap - EXIT
     rg -q '^Public backing clean detach PASS' "$run/cold-results.log"
+    fsck.fat -n -v "$run/backing.raw" >"$run/fat-after-cold.log" 2>&1
     if [[ -n $cli_dir ]];then
         zvol_imports=3
         if [[ $dspare == 1 ]];then zvol_imports=4;fi

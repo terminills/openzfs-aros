@@ -17,6 +17,9 @@ cc = os.environ['AROS_CC']
 fat_only = os.environ.get('AROS_FAT_ONLY', '0') == '1'
 readonly = os.environ.get('AROS_FAT_READONLY_FIX', '0') == '1'
 full_fat = os.environ.get('AROS_FAT_FULL_REBUILD', '0') == '1'
+clean_flush = os.environ.get('AROS_FAT_CLEAN_FLUSH', '0') == '1'
+if clean_flush and not full_fat:
+    raise RuntimeError('clean-bit integration requires full FAT rebuild')
 if full_fat and not fat_only:
     raise RuntimeError('full FAT rebuild requires AROS_FAT_ONLY=1')
 if shutil.disk_usage(repo).free < 100 * 2**30:
@@ -32,6 +35,12 @@ for name in ['cache', 'packet']:
     inputs.append(src)
     if name == 'packet' and readonly:
         patch = repo / 'aros/platform/fat-device-readonly.patch'
+        shutil.copy2(patch, out / patch.name)
+        inputs.append(patch)
+        subprocess.run(['patch', '--batch', '--fuzz=0', '-d', str(out), '-p0',
+                        '-i', str(out / patch.name)], check=True)
+    if name == 'packet' and clean_flush:
+        patch = repo / 'aros/platform/fat-flush-clean.patch'
         shutil.copy2(patch, out / patch.name)
         inputs.append(patch)
         subprocess.run(['patch', '--batch', '--fuzz=0', '-d', str(out), '-p0',
@@ -71,7 +80,7 @@ if fat_only:
     inputs.extend([sdk / 'lib/libfatbpb.a', out / 'fat.handler'])
     (out / 'inputs.sha256').write_text(''.join(
         hashlib.sha256(p.read_bytes()).hexdigest() + '  ' + str(p) + '\n' for p in inputs))
-    (out / 'build-options.txt').write_text(f'fat_only=1\nreadonly_fix={int(readonly)}\nfull_fat={int(full_fat)}\n')
+    (out / 'build-options.txt').write_text(f'fat_only=1\nreadonly_fix={int(readonly)}\nfull_fat={int(full_fat)}\nclean_flush={int(clean_flush)}\n')
     print('Overlay:', out, flush=True)
     raise SystemExit(0)
 src = source / 'compiler/crt/posixc/fsync.c'

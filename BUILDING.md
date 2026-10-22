@@ -814,8 +814,8 @@ startup/UI evidence only. The reported older laptop binary's `.text+0x20819`
 matches GetMsg in old-ABI autoinit before main; its exact installed identity and
 runtime pairing must still be confirmed before closing that report.
 
-The corresponding private alpha18 backend migration has **RAM-backed QEMU
-qualification only**, not cold-persistence or physical-device qualification.
+The corresponding private alpha18 backend migration has **RAM-backed and
+cold-persistence QEMU qualification**, not physical-device qualification.
 `mmake-alpha18-20261022` rebuilt all 360 engine objects, nvpair, the shared
 library, service launcher, handler, device, Manager and public test client.
 It uses fresh pthread `ARVzbA2v`, fresh crypto `h7Dc9176`, and a privately built
@@ -839,6 +839,24 @@ rotation with old-key refusal. The ISO's kernel, DOS, ATA and zlib were untouche
 only the new POSIX library and matching OpenZFS package were mapped in.
 `AROS_TEST_BASE_PLATFORM=1` selects this mode and rejects simultaneous legacy
 platform-overlay inputs. Logs, source snapshots and input hashes are retained.
+
+Cold mirror run `public-service-run.WiWLybR2` passed fresh-boot healthy,
+one-member-missing and restored reads, total-loss import refusal, encrypted and
+rotated-passphrase datasets, and resident-device/zvol checks. Member hashes
+remained unchanged and independent host `zdb -bcc` reported no leaks. Its
+disposable images were pruned (9.78 GiB); logs and hashes remain.
+
+This required a matching private FAT rebuild, not the old two-object overlay:
+the current source adds `validate.c`. `AROS_FAT_FULL_REBUILD=1` rebuilds all FAT
+sources plus configured generated startup against one SDK. With that source,
+the initial `k02nVDqP` run and flush-only `HcN9UKMR` attempt left the FAT clean
+shutdown bit unset despite guest detach success. `fat-flush-clean.patch`,
+enabled with `AROS_FAT_CLEAN_FLUSH=1`, commits the marker and its cache block on
+explicit flush and before orderly inhibit clears the active volume pointer.
+It propagates cache/device failures instead of acknowledging a completed detach.
+This patch is separate from physical-media removal and does not prove power-loss
+durability. The persistence runner now additionally requires read-only host
+`fsck.fat -n` checks after each guest phase; it never repairs test images to pass.
 
 `AROS_TEST_GUI_DESKTOP=1` enables an interactive Wanderer fixture in the public
 GUI runner. It leaves Wanderer running, asks the tester to inspect OZPUBLIC

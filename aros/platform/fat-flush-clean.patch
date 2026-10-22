@@ -1,0 +1,39 @@
+--- packet.c
++++ packet.c
+@@ -514,1 +514,10 @@
+-            glob->diskioreq->iotd_Req.io_Command = CMD_UPDATE;
++            /* Cache_Flush commits data but the validator's clean-shutdown
++             * bit is a separate cached FAT write. Commit that too before
++             * acknowledging an explicit filesystem flush. */
++            if (MarkVolumeClean(glob) && !Cache_Flush(glob->sb->cache))
++            {
++                err = IoErr();
++                if (err == 0) err = ERROR_UNKNOWN;
++                break;
++            }
++            glob->diskioreq->iotd_Req.io_Command = CMD_UPDATE;
+@@ -537,1 +546,23 @@
+-                    glob->disk_inhibited++;
++                    /* Explicit inhibit is an orderly detach, unlike media
++                     * disappearance. Commit while glob->sb still exists;
++                     * DoDiskRemove clears it before destroying the cache. */
++                    if (glob->disk_inhibited == 0 && glob->sb != NULL)
++                    {
++                        if (!Cache_Flush(glob->sb->cache) ||
++                            (MarkVolumeClean(glob) &&
++                             !Cache_Flush(glob->sb->cache)))
++                        {
++                            err = IoErr();
++                            if (err == 0) err = ERROR_UNKNOWN;
++                            break;
++                        }
++                        glob->diskioreq->iotd_Req.io_Command = CMD_UPDATE;
++                        glob->diskioreq->iotd_Req.io_Data = NULL;
++                        glob->diskioreq->iotd_Req.io_Length = 0;
++                        if (DoIO((struct IORequest *)glob->diskioreq) != 0)
++                        {
++                            err = ERROR_UNKNOWN;
++                            break;
++                        }
++                    }
++                    glob->disk_inhibited++;
