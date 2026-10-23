@@ -28,6 +28,13 @@ the writer but its cold QEMU invocation rejected a read-only IDE block node.
 The passing run uses a writable IDE node and proves no cold archive change
 by comparing the entire disk hash; it does not claim hardware write protection.
 
+The standalone native IFF suite was then rerun as `preferences-run.GcvgmhuK`
+on the same alpha18 platform with only the verified DOS module replacement.
+Startup and UI preferences both pass, including compact transaction recovery,
+legacy pending-transaction refusal, malformed IFF, ownership preservation and
+untrusted copied-record rejection. Its runner now supports this base-platform
+selection without requiring an unrelated older ATA overlay.
+
 ## Alpha18 companion qualification (2026-10-22)
 
 The opt-in public-service runner `AROS_TEST_COMPANION_TOOLS=1` installs and

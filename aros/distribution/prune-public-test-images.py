@@ -17,8 +17,14 @@ ROOT = Path(__file__).resolve().parents[2] / "build-aros"
 
 def eligible(run):
     if run.is_symlink() or run.parent != ROOT or not re.fullmatch(
-            r"(?:public-service|native-gui)-run\.[A-Za-z0-9]+", run.name):
+            r"(?:public-service|native-gui|preferences)-run\.[A-Za-z0-9]+", run.name):
         return False
+    if run.name.startswith("preferences-run."):
+        path = run / "serial-results.log"
+        if not path.is_file() or (run / "backing.raw").exists():
+            return False
+        text = path.read_text(errors="replace")
+        return "RESULT native IFF preferences PASS" in text and not re.search(r"\bFAIL\b", text)
     ram_mode = run / "persistent.txt"
     ram_only = (ram_mode.is_file() and ram_mode.read_text().strip() == "0"
                 and not (run / "cold-results.log").exists())
@@ -65,8 +71,8 @@ def main():
     parser.add_argument("--apply", action="store_true")
     parser.add_argument("--run", help="one basename under this repository's build-aros")
     args = parser.parse_args()
-    if args.run and not re.fullmatch(r"(?:public-service|native-gui)-run\.[A-Za-z0-9]+", args.run):
-        parser.error("--run must be a public-service-run or native-gui-run basename")
+    if args.run and not re.fullmatch(r"(?:public-service|native-gui|preferences)-run\.[A-Za-z0-9]+", args.run):
+        parser.error("--run must be a public-service-run, native-gui-run or preferences-run basename")
     runs = [ROOT / args.run] if args.run else sorted(ROOT.glob("public-service-run.*"))
     total = 0
     for run in runs:

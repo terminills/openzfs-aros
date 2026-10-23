@@ -5,8 +5,22 @@ cd "$repo"
 source "$repo/aros/engine/storage-preflight.sh"
 artifact_root=$(oz_artifact_root "$repo/build-aros" "${AROS_ARTIFACT_ROOT:-}")
 base=${AROS_TEST_ISO:-/opt/aros-workspace/aros-amiwest-nightly-release/distfiles/aros-smp-pc-x86_64.iso}
-dos=${AROS_TEST_DOS_OVERLAY:?private DOS overlay required}
-ata=${AROS_TEST_ATA_OVERLAY:?private ATA overlay required}
+platform_maps=() platform_inputs=()
+if [[ ${AROS_TEST_BASE_PLATFORM:-0} == 1 ]];then
+    [[ -z ${AROS_TEST_DOS_OVERLAY:-}${AROS_TEST_ATA_OVERLAY:-} ]]
+    if [[ -n ${AROS_TEST_BASE_DOS_PACKAGE:-} ]];then
+        python3 aros/engine/verify-dos-package-overlay.py "$base" \
+            "$AROS_TEST_BASE_DOS_PACKAGE" "${AROS_PACKAGE_TOOL:?package tool required}"
+        platform_maps=(-map "$AROS_TEST_BASE_DOS_PACKAGE" /boot/aros-base.pkg.xz)
+        platform_inputs=("$AROS_TEST_BASE_DOS_PACKAGE")
+    fi
+else
+    dos=${AROS_TEST_DOS_OVERLAY:?private DOS overlay required}
+    ata=${AROS_TEST_ATA_OVERLAY:?private ATA overlay required}
+    platform_maps=(-map "$dos/aros-base.pkg.xz" /boot/aros-base.pkg.xz
+        -map "$ata/aros-bsp.pkg.xz" /boot/pc-smp/aros-bsp.pkg.xz)
+    platform_inputs=("$dos/aros-base.pkg.xz" "$ata/aros-bsp.pkg.xz")
+fi
 posix=${AROS_TEST_POSIX_LIBRARY:?private POSIX library required}
 qemu=$(command -v "${AROS_TEST_QEMU:-qemu-system-x86_64}")
 gui=${AROS_PREFERENCES_GUI:-0}
@@ -46,11 +60,10 @@ if [[ -f build-aros/preferences-build-inputs.sha256 ]];then
 fi
 git rev-parse HEAD >"$run/source.txt"
 git diff --binary >"$run/source.patch"
-sha256sum "$qemu" "$base" "$run/OpenZFSPreferencesTest" "$dos/aros-base.pkg.xz" "$ata/aros-bsp.pkg.xz" "$posix" >"$run/inputs.sha256"
+sha256sum "$qemu" "$base" "$run/OpenZFSPreferencesTest" "${platform_inputs[@]}" "$posix" >"$run/inputs.sha256"
 xorriso -indev "$base" -outdev "$run/test.iso" \
     -map aros/engine/grub-qemu-test.cfg /boot/grub/grub.cfg \
-    -map "$dos/aros-base.pkg.xz" /boot/aros-base.pkg.xz \
-    -map "$ata/aros-bsp.pkg.xz" /boot/pc-smp/aros-bsp.pkg.xz \
+    "${platform_maps[@]}" \
     -map "$posix" /Libs/posixc.library \
     -map "$run/security-fixture" /Security \
     -map "$run/OpenZFSPreferencesTest" /C/OpenZFSPreferencesTest \
@@ -69,8 +82,9 @@ trap cleanup EXIT
 deadline=$((SECONDS+timeout))
 while :;do
     if [[ -f "$run/serial.log" ]];then
-        if rg -q '^RESULT .*FAIL|\[PF-DBG\]|^ASSERT at' "$run/serial.log";then exit 1;fi
-        if rg -q "^$marker" "$run/serial.log";then break;fi
+        sed -E 's/^[[:xdigit:]]{16} 0x[[:xdigit:]]{16} \| [0-9]+ \| //' "$run/serial.log" >"$run/serial-results.log"
+        if rg -q '^RESULT .*FAIL|\[PF-DBG\]|^ASSERT at' "$run/serial-results.log";then exit 1;fi
+        if rg -q "^$marker" "$run/serial-results.log";then break;fi
     fi
     if ! kill -0 "$pid" 2>/dev/null || ((SECONDS>=deadline));then echo "Timeout/exit: $run" >&2;exit 1;fi
     sleep 1
@@ -79,3 +93,6 @@ printf 'quit\n' | socat - "UNIX-CONNECT:$run/monitor" >/dev/null
 wait "$pid"
 trap - EXIT
 echo "PASS: native IFF preferences. Evidence: $run"
+if [[ $prefix == preferences-run ]];then
+    python3 aros/distribution/prune-public-test-images.py --run "$(basename "$run")" --apply
+fi

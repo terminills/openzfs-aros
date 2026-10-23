@@ -67,6 +67,15 @@ class Retention(unittest.TestCase):
         (gui / "serial-results.log").write_text("RESULT public service storage FAIL\n")
         self.assertFalse(prune.eligible(gui))
 
+    def test_preferences_require_native_marker(self):
+        prefs = self.run.with_name("preferences-run.test")
+        self.run.rename(prefs)
+        self.assertFalse(prune.eligible(prefs))
+        (prefs / "serial-results.log").write_text("RESULT native IFF preferences PASS\n")
+        self.assertTrue(prune.eligible(prefs))
+        (prefs / "backing.raw").write_bytes(b"keep")
+        self.assertFalse(prune.eligible(prefs))
+
     def test_failed_run_preserves(self):
         (self.run / "cold-results.log").write_text("RESULT public service storage FAIL\n")
         self.invoke(True)
