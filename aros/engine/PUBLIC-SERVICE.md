@@ -252,3 +252,12 @@ source snapshot and source patch remain. Candidate library SHA256:
 `0073dd441d2628014a028e2d988005c9ebc5267d447119d0adc39e632e7c47c2`.
 This is not physical USB qualification or a resolution of the separately
 reported Manager startup crash (TRIG-1523).
+
+The same candidate also passed persistent writer/fresh-boot qualification in
+`public-service-run.PdrbuDoG`: healthy, degraded and restored mirror imports,
+trusted ENVARC startup restore and read-only automatic mounting, exact DOS
+data and links, encryption/key rotation, zvol readback, and beyond-parity
+refusal. Host zdb traversal passed; pool member and startup archive hashes
+remained unchanged during the reader. The harness pruned 9.78 GiB of test
+images and retained logs, source, binaries and hash records. This does not
+substitute for fresh GUI qualification of this engine candidate.
