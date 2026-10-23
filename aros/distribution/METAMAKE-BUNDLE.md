@@ -20,9 +20,12 @@ Those tests do not prove that arbitrary backing filesystems flush safely.
 Metadata/qualification.json identifies the exact selected inputs and evidence.
 The GUI and cold runs qualify the selected shared library, launcher, zfs/zpool,
 handler, device and runtime dependency; Manager is covered by the GUI run.
-The four startup/runtime/host-identity utilities are included as build-only
-companions: this bundle's referenced tests did not execute those utilities
-individually. Do not infer their current standalone runtime qualification.
+The four startup/runtime/host-identity utilities are hash-bound to native
+companion tests, including persistent trusted ENVARC restore, import and mount
+in healthy/degraded/restored mirror cases. This is file-backed QEMU evidence,
+not physical USB/NVMe qualification. The tested DOS execute-policy module is
+an additional platform prerequisite, not silently installed by this archive;
+see Docs/EXEC-POLICY.md. Stock alpha18's loader failed the execute-veto test.
 
 Metadata retains test logs, source identities and checksums. SHA256SUMS covers
 the staged files. Validate it after transfer. Metadata may contain the build

@@ -9,7 +9,7 @@ import time
 
 p = argparse.ArgumentParser()
 p.add_argument('run', type=Path)
-p.add_argument('action', choices=['capture', 'click', 'doubleclick', 'move', 'leftdown', 'leftup', 'rightdown', 'rightup', 'type', 'key', 'status', 'quit'])
+p.add_argument('action', choices=['capture', 'click', 'doubleclick', 'move', 'relative', 'press', 'leftdown', 'leftup', 'rightdown', 'rightup', 'type', 'key', 'status', 'quit'])
 p.add_argument('args', nargs='*')
 p.add_argument('--phase', choices=['Create', 'Read'], default='Create')
 a = p.parse_args()
@@ -56,6 +56,18 @@ if a.action == 'capture':
     cmd('screendump', {'filename': str(raw), 'format': 'ppm'})
     with Image.open(raw) as framebuffer:
         framebuffer.save(run / name)
+elif a.action == 'press':
+    # Click at the current PS/2 pointer without injecting tablet coordinates.
+    for down in (True, False):
+        cmd('input-send-event', {'events': [{'type': 'btn', 'data': {'button': 'left', 'down': down}}]})
+        time.sleep(.1)
+elif a.action == 'relative':
+    x, y = map(int, a.args)
+    if abs(x) > 4096 or abs(y) > 4096:
+        p.error('relative movement limited to 4096 per axis')
+    cmd('input-send-event', {'events': [
+        {'type': 'rel', 'data': {'axis': 'x', 'value': x}},
+        {'type': 'rel', 'data': {'axis': 'y', 'value': y}}]})
 elif a.action in ['click', 'doubleclick', 'move', 'leftdown', 'leftup', 'rightdown', 'rightup']:
     x, y, width, height = map(int, a.args)
     if not (0 <= x < width and 0 <= y < height):

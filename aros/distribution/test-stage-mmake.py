@@ -11,6 +11,24 @@ spec.loader.exec_module(stage)
 
 
 class EvidenceTests(unittest.TestCase):
+    def test_companions_require_all_cold_cases(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = pathlib.Path(directory)
+            (root / "serial-results.log").write_text(
+                "Public companion tools PASS runtime-prerequisites=1\n"
+                "Public companion configuration PASS hostid-save=1\n"
+                "Public companion mount PASS guid-bound=1\n")
+            marker = "Public persistent enabled restore PASS trusted-envarc=1 imported=1 mounted=1 readonly=1\n"
+            (root / "cold-results.log").write_text(marker * 2)
+            (root / "archive-unchanged.log").write_text("archive: OK\n")
+            with self.assertRaises(ValueError):
+                stage.require_companions(root)
+            (root / "cold-results.log").write_text(marker * 3)
+            stage.require_companions(root)
+            (root / "archive-unchanged.log").write_text("archive: FAILED\n")
+            with self.assertRaises(ValueError):
+                stage.require_companions(root)
+
     def test_selected_bytes_not_old_manifest_path(self):
         with tempfile.TemporaryDirectory() as directory:
             root = pathlib.Path(directory)

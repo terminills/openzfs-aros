@@ -53,6 +53,22 @@ def member_hashes(path):
     return values
 
 
+def require_companions(run):
+    writer = (run / "serial-results.log").read_text()
+    cold = (run / "cold-results.log").read_text()
+    for marker in ("Public companion tools PASS runtime-prerequisites=1",
+                   "Public companion configuration PASS hostid-save=1",
+                   "Public companion mount PASS guid-bound=1"):
+        if marker not in writer:
+            raise ValueError(f"Missing companion runtime evidence: {marker}")
+    marker = "Public persistent enabled restore PASS trusted-envarc=1 imported=1 mounted=1 readonly=1"
+    if cold.count(marker) != 3 or "FAIL" in cold:
+        raise ValueError("Missing persistent enabled startup qualification")
+    unchanged = (run / "archive-unchanged.log").read_text()
+    if ": OK" not in unchanged or "FAILED" in unchanged:
+        raise ValueError("Missing archive unchanged evidence")
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("build", type=pathlib.Path)
@@ -109,13 +125,13 @@ def main():
     for value in ("service_test_modes=0", "full_dispatcher=1", "shared_engine=1", "status_trace=0"):
         if value not in options:
             raise ValueError(f"Missing release provenance: {value}")
-    # These utilities are built by the same MetaMake aggregate, but the current
-    # public service fixture does not execute them as standalone commands.
-    build_only = ("OpenZFSStartup", "OpenZFSStartupMount", "OpenZFSRuntimeCheck", "OpenZFSHostIdentity")
-    for name in build_only:
+    require_companions(cold)
+    companions = ("OpenZFSStartup", "OpenZFSStartupMount", "OpenZFSRuntimeCheck", "OpenZFSHostIdentity")
+    for name in companions:
         source = stage / "C" / name
         if not source.is_file():
             raise ValueError(f"Missing companion utility: {source}")
+        require_match(source, cold, name)
         selected["C/" + name] = source
     selected_hashes = {name: digest(path) for name, path in selected.items()}
     parent = args.output_parent.resolve(strict=True)
@@ -130,7 +146,7 @@ def main():
     metadata.mkdir()
     record = {"packaging_commit": subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=repo, text=True).strip(),
               "gui_run": str(gui), "cold_run": str(cold), "build": str(build),
-              "build_only_utilities": list(build_only),
+              "build_only_utilities": [], "native_companion_utilities": list(companions),
               "inputs": {name: {"path": str(path), "sha256": selected_hashes[name]} for name, path in selected.items()}}
     (metadata / "qualification.json").write_text(json.dumps(record, indent=2) + "\n")
     (metadata / "packaging.patch").write_bytes(subprocess.check_output(["git", "diff", "--binary"], cwd=repo))
@@ -145,6 +161,7 @@ def main():
     docs.mkdir()
     for name in ("LICENSE", "COPYRIGHT", "NOTICE", "BUILDING.md", "PORT-STATUS.md"):
         shutil.copy2(repo / name, docs / name)
+    shutil.copy2(repo / "aros/engine/EXEC-POLICY.md", docs / "EXEC-POLICY.md")
     shutil.copy2(repo / "aros/distribution/METAMAKE-BUNDLE.md", output / "README.md")
     files = sorted(p for p in output.rglob("*") if p.is_file())
     (output / "SHA256SUMS").write_text("".join(f"{digest(p)}  {p.relative_to(output)}\n" for p in files))

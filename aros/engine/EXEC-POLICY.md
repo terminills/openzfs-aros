@@ -35,6 +35,14 @@ legacy pending-transaction refusal, malformed IFF, ownership preservation and
 untrusted copied-record rejection. Its runner now supports this base-platform
 selection without requiring an unrelated older ATA overlay.
 
+The refreshed Manager passed `native-gui-run.IOWqwfGX`: startup connection,
+interactive List pools (public_mirror ONLINE), Save UI settings acknowledgement
+for ENV/ENVARC, mounted files visible in Wanderer, clean Manager close, and
+post-UI exact DOS read plus export/read-only reimport. Screenshots and input
+actions are retained. This VM required PS/2 relative input rather than tablet
+coordinates; `qmp-ui.py relative` and `press` support that explicitly without
+changing the guest or physical KVM. Wanderer stayed running throughout.
+
 ## Alpha18 companion qualification (2026-10-22)
 
 The opt-in public-service runner `AROS_TEST_COMPANION_TOOLS=1` installs and
