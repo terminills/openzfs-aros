@@ -83,6 +83,14 @@ arguments. Wanderer visibly lists both a small file and a >4 GiB sparse file;
 exact post-UI readback and teardown pass. See `aros/handler/README.md` for runs
 and API limits. This does not qualify every desktop workflow or hardware.
 
+Native DOS notifications now pass both message and signal delivery, initial
+notifications, deletion, wait-reply coalescing, unsubscribe, and request reuse
+with outstanding replies. In `native-gui-run.wdcMRy2K`, Wanderer automatically
+adds and removes a directory icon in an already-open pool drawer after shell
+create/delete commands. Retained screenshots document both transitions;
+post-UI exact readback and the complete storage suite pass. See the handler
+README for the evidence sequence and remaining desktop limitations.
+
 The source contains the upstream OpenZFS engine, a shared AROS library/service,
 native DOS handler, management UI, upstream command-line tools, startup support,
 and device adapters. The UI sends backend requests rather than simulating pool

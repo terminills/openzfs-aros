@@ -70,6 +70,20 @@ New delivery and its outstanding count remain correct, with no extra messages
 after removal. Both notification variants and the full storage suite pass.
 The run retains logs and provenance, not its disposable ISO.
 
+### Wanderer live refresh
+
+Native QEMU run `native-gui-run.wdcMRy2K` visually qualifies create/delete
+refresh in an already-open mounted-pool drawer. From that drawer, Right-Meta-W
+opened a shell; `makedir OZPUBLIC:LiveRefresh` created a directory and `endcli`
+closed the shell. Without reopening the drawer, screenshot `03-created.png`
+shows its new icon. Repeating with `delete OZPUBLIC:LiveRefresh` removes the
+icon (`04-deleted.png`). `01-before.png`, `02-shell.png`, the original PPM
+captures and `ui-actions.jsonl` retain the sequence. After closing the drawer
+and Manager, native directory enumeration, exact file readback, export and
+read-only reimport all pass. No production changes were needed. This is an
+isolated patched-alpha18 guest with file-backed storage, not hardware evidence.
+The existing WBRun drawer-title defect remains separate from live refresh.
+
 ### Persistent desktop metadata
 
 Current public-package native run `public-service-run.F9NlIusK` sets and
