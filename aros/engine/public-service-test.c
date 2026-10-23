@@ -22,6 +22,7 @@
 #include <dos/dosextens.h>
 #include <dos/exall.h>
 #include <dos/dos64.h>
+#include <dos/notify.h>
 #include <dos/filesystemids.h>
 #include <exec/memory.h>
 #include <exec/io.h>
@@ -1253,6 +1254,53 @@ static int storage_sparse64(const char *root,int write)
 }
 /* Exercise the shipped transport, not engine-internal test entry points.
  * Retain the volume for independent cold/degraded imports. */
+static struct NotifyMessage *notification_wait(struct MsgPort *port)
+{
+    for(unsigned i=0;i<100;i++){
+        struct NotifyMessage *message=(void *)GetMsg(port);
+        if(message)return message;
+        Delay(1);
+    }
+    return NULL;
+}
+static int storage_notifications(void)
+{
+    const char *path="OZPUBLIC:notification.txt";
+    struct MsgPort *port=CreateMsgPort();if(!port)return ENOMEM;
+    struct NotifyRequest request={0};
+    request.nr_Name=(STRPTR)path;request.nr_Flags=NRF_SEND_MESSAGE|NRF_WAIT_REPLY;
+    request.nr_stuff.nr_Msg.nr_Port=port;
+    int active=0,error=0;BPTR file=0;struct NotifyMessage *held=NULL;
+#define NOTIFY_CHECK(x) do{if(!(x)){error=__LINE__;goto cleanup;}}while(0)
+    NOTIFY_CHECK(StartNotify(&request));active=1;
+    file=Open((CONST_STRPTR)path,MODE_NEWFILE);NOTIFY_CHECK(file);
+    NOTIFY_CHECK(Write(file,"notify",6)==6);
+    int closed=Close(file);file=0;NOTIFY_CHECK(closed);
+    held=notification_wait(port);NOTIFY_CHECK(held);
+    NOTIFY_CHECK(held->nm_Class==NOTIFY_CLASS&&held->nm_Code==NOTIFY_CODE&&held->nm_NReq==&request);
+    NOTIFY_CHECK(SetComment((CONST_STRPTR)path,(CONST_STRPTR)"pending"));
+    struct Message *extra=GetMsg(port);
+    if(extra){ReplyMsg(extra);NOTIFY_CHECK(0);}
+    ReplyMsg(&held->nm_ExecMessage);held=NULL;
+    held=notification_wait(port);NOTIFY_CHECK(held);
+    NOTIFY_CHECK(held->nm_NReq==&request&&held->nm_Class==NOTIFY_CLASS&&held->nm_Code==NOTIFY_CODE);
+    ReplyMsg(&held->nm_ExecMessage);held=NULL;
+    EndNotify(&request);active=0;
+    NOTIFY_CHECK(SetComment((CONST_STRPTR)path,(CONST_STRPTR)"after removal"));
+    Delay(2);extra=GetMsg(port);
+    if(extra){ReplyMsg(extra);NOTIFY_CHECK(0);}
+cleanup:
+    if(file)Close(file);
+    if(held)ReplyMsg(&held->nm_ExecMessage);
+    if(active)EndNotify(&request);
+    struct Message *message;while((message=GetMsg(port)))ReplyMsg(message);
+    DeleteMsgPort(port);
+    if(!DeleteFile((CONST_STRPTR)path)&&!error)error=__LINE__;
+    if(error)bug("Public DOS notifications FAIL line=%d DOS=%ld\n",error,(long)IoErr());
+    else note("Public DOS notifications PASS absent-watch=1 create=1 wait-reply=1 coalesced=1 end=1\n");
+#undef NOTIFY_CHECK
+    return error;
+}
 static int storage_metadata(const char *volume,int write)
 {
     char path[128];snprintf(path,sizeof(path),"%smetadata.txt",volume);
@@ -1751,6 +1799,7 @@ static int storage_test(int gui){
     STORAGE_CHECK(!storage_sparse64("OZPUBLIC:",1));
     STORAGE_CHECK(!storage_links("OZPUBLIC:",1));
     STORAGE_CHECK(!storage_metadata("OZPUBLIC:",1));
+    STORAGE_CHECK(!storage_notifications());
     STORAGE_CHECK(!desktop_directory("OZPUBLIC:","post-sparse64"));
     {
         char dataset[256];

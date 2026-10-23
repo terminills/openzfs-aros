@@ -44,6 +44,18 @@ it must not depend on an uninitialized executable C runtime.
 
 ## Acceptance and retained failures
 
+### Native change notifications
+
+Public-package QEMU run `public-service-run.ZIesn4Ri` passes native
+`StartNotify`/`EndNotify` message delivery through the shipped handler. It
+watches a nonexistent file, creates it, validates the message class/code and
+request identity, holds a reply while changing metadata, and verifies
+`NRF_WAIT_REPLY` coalescing and subsequent delivery. After `EndNotify`, another
+metadata change produces no notification. The complete storage suite passes
+in the same boot. This is protocol evidence, not a claim that Wanderer redraw
+or signal-delivery subscriptions have been visually qualified. Logs, source
+patch and binary hashes are retained; the disposable 4.52 GiB ISO was pruned.
+
 ### Persistent desktop metadata
 
 Current public-package native run `public-service-run.F9NlIusK` sets and
