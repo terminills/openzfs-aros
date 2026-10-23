@@ -847,6 +847,67 @@ cleanup:
 #undef CM_CHECK
     return error;
 }
+/* The persisted fixture is data, not a trusted boot policy: FAT cannot retain
+ * MuFS ownership. Cold validation checks its exact allowed settings/paths and
+ * explicitly provisions a private trusted ENV record before invoking the
+ * production command. Durable trusted ENVARC remains a separate test gate. */
+static int storage_no_pools(void);
+static int companion_import_test(int write)
+{
+    BPTR marker=Lock((CONST_STRPTR)"SYS:openzfs-startup-import-test",SHARED_LOCK);
+    if(!marker)return write?0:ENOENT;
+    UnLock(marker);
+    struct oz_startup_settings record={0};char path[256],command[256],text[64]={0};
+    snprintf(path,sizeof(path),"%s/startup.prefs",storage_directory);
+    int error=0;BPTR file=0;unsigned published=0;
+#define CI_CHECK(x) do{if(!(x)){error=__LINE__;goto cleanup;}}while(0)
+    CI_CHECK(native_file_fixture);
+    if(write){
+        CI_CHECK(!cli_command("C:zpool get -H -p -o value guid public_mirror >T:companion-guid.txt"));
+        file=Open((CONST_STRPTR)"T:companion-guid.txt",MODE_OLDFILE);CI_CHECK(file);
+        LONG length=Read(file,text,sizeof(text)-1);int closed=Close(file);file=0;
+        CI_CHECK(length>0&&closed);char *end=NULL;
+        record.guid=strtoull(text,&end,10);CI_CHECK(record.guid&&end!=text&&(*end=='\n'||*end=='\r'||!*end));
+        record.flags=OZ_STARTUP_ENABLED|OZ_STARTUP_READONLY;record.count=storage_members;
+        strcpy(record.pool,"public_mirror");
+        for(unsigned i=0;i<record.count;i++)storage_member(record.paths[i],sizeof(record.paths[i]),i);
+        file=Open((CONST_STRPTR)path,MODE_NEWFILE);CI_CHECK(file);
+        CI_CHECK(!oz_startup_settings_write(file,&record));
+        closed=Close(file);file=0;CI_CHECK(closed);
+        note("Public startup import record PASS persisted-fixture=1 readonly=1 enabled=1\n");
+    }else{
+        file=Open((CONST_STRPTR)path,MODE_OLDFILE);CI_CHECK(file);
+        int result=oz_startup_settings_read(file,&record),closed=Close(file);file=0;
+        CI_CHECK(!result&&closed&&record.count==storage_members&&!strcmp(record.pool,"public_mirror")&&
+            record.flags==(OZ_STARTUP_ENABLED|OZ_STARTUP_READONLY));
+        for(unsigned i=0;i<record.count;i++){
+            char expected[256];storage_member(expected,sizeof(expected),i);CI_CHECK(!strcmp(record.paths[i],expected));
+        }
+        /* The device paths alone must not authorize importing another pool. */
+        uint64_t actual_guid=record.guid;record.guid^=UINT64_C(0x8000000000000000);
+        if(!record.guid)record.guid=1;
+        CI_CHECK(!oz_startup_settings_apply_trusted(&record,0,&published));
+        snprintf(command,sizeof(command),"C:OpenZFSStartup %016llx >T:companion-import-wrong.log",(unsigned long long)record.guid);
+        LONG refused=cli_command(command);diagnostic_log("T:companion-import-wrong.log");
+        snprintf(path,sizeof(path),"ENV:OpenZFS-%016llx.prefs",(unsigned long long)record.guid);
+        CI_CHECK(DeleteFile((CONST_STRPTR)path));published=0;record.guid=actual_guid;
+        CI_CHECK(refused==1&&!storage_no_pools());
+        CI_CHECK(!oz_startup_settings_apply_trusted(&record,0,&published));
+        CI_CHECK(published==OZ_STARTUP_PUBLISHED_ENV);
+        snprintf(command,sizeof(command),"C:OpenZFSStartup %016llx >T:companion-import.log",(unsigned long long)record.guid);
+        LONG status=cli_command(command);diagnostic_log("T:companion-import.log");CI_CHECK(!status);
+        note("Public startup import command PASS fresh-guest=1 guid-bound=1 readonly=1 no-mount-request=1 wrong-guid-refused=1\n");
+    }
+cleanup:
+    if(file)Close(file);
+    if(published&OZ_STARTUP_PUBLISHED_ENV){
+        snprintf(path,sizeof(path),"ENV:OpenZFS-%016llx.prefs",(unsigned long long)record.guid);
+        if(!DeleteFile((CONST_STRPTR)path)&&!error)error=__LINE__;
+    }
+    if(error){char line[100];snprintf(line,sizeof(line),"Public startup import command FAIL write=%d line=%d DOS=%ld\n",write,error,(long)IoErr());note(line);}
+#undef CI_CHECK
+    return error;
+}
 /* Exercise repair through the shipped API/commands, not linked SPA internals.
  * disk0 is later the only available mirror member in the cold degraded test. */
 static int storage_repair_data(const char *root,int write)
@@ -1362,6 +1423,7 @@ static int storage_test(int gui){
     STORAGE_CHECK(!storage_request(37,"public_mirror/files",NULL,NULL));
 #endif
     STORAGE_CHECK(!companion_mount_test());
+    STORAGE_CHECK(!companion_import_test(1));
     STORAGE_CHECK(oz_mount_control(OZ_ADMISSION_PORT,"public_mirror/files","bad:name",OZ_MOUNT_ATTACH,0)==EINVAL);
     STORAGE_CHECK(!oz_mount_control(OZ_ADMISSION_PORT,"public_mirror/files","OZPUBLIC",OZ_MOUNT_ATTACH,0));
     STORAGE_CHECK(oz_mount_control(OZ_ADMISSION_PORT,"public_mirror/files","OZDUPLICATE",OZ_MOUNT_ATTACH,0)==EEXIST);
@@ -1767,7 +1829,8 @@ static int storage_rotated_passphrase_cold(void)
 }
 static int storage_cold_once(void)
 {
-    int error=storage_alias_request(7,1);
+    int error=companion_import_test(0);
+    if(error==ENOENT)error=storage_alias_request(7,1);
     if(error)return error;
     if(storage_sequential){
         char guid[32];error=storage_spare_status(guid,sizeof(guid),1);

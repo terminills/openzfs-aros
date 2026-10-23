@@ -1,6 +1,14 @@
 #!/usr/bin/env bash
 set -euo pipefail
-repo=$(cd -- "$(dirname -- "$0")/../.." && pwd)
+repo=${AROS_TEST_SOURCE_ROOT:-$(cd -- "$(dirname -- "$0")/../.." && pwd)}
+if [[ ${AROS_TEST_RUNNER_SNAPSHOT:-} != "$0" ]];then
+    # Bash reads a script incrementally. Execute a private snapshot so source
+    # edits during a guest run cannot shift the shell's read offset mid-test.
+    snapshot=$(mktemp -d "$repo/build-aros/public-runner.XXXXXXXX")
+    cp "$0" "$snapshot/runner.sh"
+    exec env AROS_TEST_SOURCE_ROOT="$repo" AROS_TEST_RUNNER_SNAPSHOT="$snapshot/runner.sh" \
+        bash "$snapshot/runner.sh" "$@"
+fi
 cd "$repo"
 base=${AROS_TEST_ISO:?explicit native test ISO required}
 base_platform=${AROS_TEST_BASE_PLATFORM:-0}
@@ -37,6 +45,8 @@ device=${AROS_TEST_DEVICE_BINARY:-}
 pbkdf2=${AROS_TEST_PBKDF2_BINARY:-}
 persistent=${AROS_TEST_PERSISTENT:-0}
 [[ $persistent == 0 || $persistent == 1 ]]
+startup_import=${AROS_TEST_STARTUP_IMPORT:-0}
+[[ $startup_import == 0 || ( $startup_import == 1 && $persistent == 1 && $companions == 1 ) ]]
 keep_images=${AROS_TEST_KEEP_IMAGES:-0}
 [[ $keep_images == 0 || $keep_images == 1 ]]
 zvol_fs=${AROS_TEST_ZVOL_FILESYSTEM:-0}
@@ -61,6 +71,7 @@ dspare=${AROS_TEST_DSPARE:-0}
 [[ $dspare == 0 || ( $dspare == 1 && $layout == draid[123] && $persistent == 1 && -n $cli_dir ) ]]
 sequential=${AROS_TEST_SEQUENTIAL:-0}
 [[ $sequential == 0 || ( $sequential == 1 && $dspare == 1 ) ]]
+[[ $startup_import == 0 || ( $layout == mirror && $replace == 0 && $dspare == 0 ) ]]
 gui=${AROS_PUBLIC_GUI:-0}
 gui_desktop=${AROS_TEST_GUI_DESKTOP:-0}
 [[ $gui_desktop == 0 || ( $gui_desktop == 1 && $gui == 1 ) ]]
@@ -85,6 +96,9 @@ prefix=public-service-run
 startup=aros/engine/Startup-Public-Service
 duration=600
 extra_maps=()
+if [[ $startup_import == 1 ]];then
+    extra_maps+=(-map aros/engine/public-service-test-only /openzfs-startup-import-test)
+fi
 if [[ $gui_desktop == 1 ]];then
     extra_maps+=(-map aros/engine/public-service-test-only /openzfs-gui-desktop-test)
 fi
@@ -150,6 +164,8 @@ source "$repo/aros/engine/storage-preflight.sh"
 mkdir -p "$repo/build-aros"
 artifact_root=$(oz_artifact_root "$repo/build-aros" "${AROS_TEST_ARTIFACT_ROOT:-}")
 run=$(mktemp -d "$artifact_root/$prefix.XXXXXXXX")
+cp "$0" "$run/runner.sh"
+sha256sum "$run/runner.sh" >"$run/runner.sha256"
 echo "Evidence: $run"
 qemu_path=$(command -v "$qemu")
 "$qemu" --version > "$run/qemu-version.txt"
@@ -445,6 +461,9 @@ printf 'quit\n' | socat - "UNIX-CONNECT:$run/monitor" >/dev/null
 wait "$pid"
 trap - EXIT
 if [[ $persistent == 1 ]];then
+    if [[ $startup_import == 1 ]];then
+        rg -q '^Public startup import record PASS persisted-fixture=1 readonly=1 enabled=1' "$run/serial-results.log"
+    fi
     if [[ $layout == mirror && -n $cli_dir ]];then
         rg -q '^Public mirror resilver PASS offline=1 missed-write=1 online=1 finished=1 issued-nonzero=1 errors=0' "$run/serial-results.log"
     fi
@@ -540,6 +559,9 @@ if [[ $persistent == 1 ]];then
     wait "$pid"
     trap - EXIT
     rg -q '^Public backing clean detach PASS' "$run/cold-results.log"
+    if [[ $startup_import == 1 ]];then
+        [[ $(rg -c '^Public startup import command PASS fresh-guest=1 guid-bound=1 readonly=1 no-mount-request=1' "$run/cold-results.log") == 3 ]]
+    fi
     fsck.fat -n -v "$run/backing.raw" >"$run/fat-after-cold.log" 2>&1
     if [[ -n $cli_dir ]];then
         zvol_imports=3

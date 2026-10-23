@@ -109,6 +109,33 @@ the runner; source/input manifests and serial logs remain. Configuration
 records in this test remain RAM-backed and must not be described as durable
 boot-time settings qualification.
 
+## Enabled startup imports in a fresh native guest (2026-10-22)
+
+`AROS_TEST_STARTUP_IMPORT=1` requires the persistent mirror and companion
+fixtures. The writer records the actual pool GUID and exact member paths in
+IFF. The cold client reads this persisted fixture, checks the fixed pool name,
+read-only/enabled flags and every member path, then explicitly publishes a
+trusted RAM ENV record. The shipped OpenZFSStartup command performs each
+import; the existing handler tests verify exact data and write refusal.
+
+`public-service-run.guD7mq9N` passes healthy, degraded and restored imports.
+Before each import, a trusted record with a deliberately wrong GUID is rejected
+and the public pool query confirms no pool was imported. The correct GUID
+then succeeds. All three command markers, exact DOS data, unchanged reader
+member hashes and independent zdb/no-leaks checks pass. Mounting is explicitly
+disabled in these records; StartupMount is qualified separately above.
+
+This is not yet durable trusted-ENVARC qualification: the FAT backing disk
+preserves fixture bytes but not MuFS ownership. No production trust check is
+bypassed. A separate ownership-preserving boot-settings volume is still needed
+to test direct trusted ENVARC restoration across reboot.
+
+Earlier `wy0mqAQv` completed guest and independent checks, but its shell runner
+exited 2 after a source edit shifted Bash's ongoing script read. The runner now
+executes a private snapshot, retained and hashed with each run. Clean repeat
+`dRPDbgYM` exits zero; `guD7mq9N` adds the wrong-GUID negative checks and also
+exits zero. Successful test images are pruned; evidence remains.
+
 ## User-facing runtime detection (2026-09-30)
 
 OpenZFSRuntimeCheck now checks both loader APIs using a copied executable in
