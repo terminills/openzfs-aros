@@ -49,6 +49,15 @@ then passes. This covers nondelegated denial through worker/child identity
 inheritance; it does not yet qualify a user with selectively delegated clone
 and property permissions.
 
+`public-service-run.PnXbHX1E` adds selective delegation: UID 77 receives clone
+permission on the source and create/mount/compression/mountpoint permissions
+on a dedicated destination parent. The actual worker succeeds, and independent
+queries verify origin, compression and no automatic mount. After both grants
+are revoked, another worker request is denied and its destination is absent.
+Fixture cleanup and the full storage suite pass. This checks permission
+inheritance and revocation for this explicit grant set, not every delegation
+combination. Successful-run logs are retained and the ISO is pruned.
+
 The root `mmakefile.src` uses native `%build_prog` templates, not the standalone
 shell build scripts. Place the source in a directory scanned by the configured
 AROS Contrib build and regenerate its metamake files. Available targets:

@@ -1744,7 +1744,7 @@ static int storage_native_discovery(void)
     note("Public native discovery coexistence PASS separate-partitions=1 neighbor-online=1 neighbor-property=1 cleanup=1\n");
     return 0;
 }
-static int clone_worker_denied(void)
+static int clone_worker_identity(const char *destination,int permitted)
 {
     struct Library *secBase=OpenLibrary((CONST_STRPTR)SECURITYNAME,SECURITYVERSION);
     if(!secBase)return ENOENT;
@@ -1758,7 +1758,7 @@ static int clone_worker_denied(void)
     request.magic=OZ_MAGIC;request.version=OZ_VERSION;request.msg.mn_Length=sizeof(request);
     request.operation=52;request.flags=OZ_CONFIRMED;
     strcpy(request.target,"public_mirror/files@cli_roundtrip");
-    strcpy(request.argument,"public_mirror/denied_clone");
+    snprintf(request.argument,sizeof(request.argument),"%s",destination);
     strcpy(request.options,"compression=off;mountpoint=none");
     if(!error)error=oz_project_worker_start(&request,&worker);
     if(!error){
@@ -1769,14 +1769,15 @@ static int clone_worker_denied(void)
         }
         if(!error){
             error=oz_project_worker_free(worker);worker=NULL;
-            if(!error&&(request.status!=OZ_ENGINE_ERROR||
-               !strstr(request.detail,"Upstream zfs clone: exit=1")))error=EACCES;
+            if(!error&&(request.status!=(permitted?OZ_OK:OZ_ENGINE_ERROR)||
+               !strstr(request.detail,permitted?"Upstream zfs clone: exit=0":
+                   "Upstream zfs clone: exit=1")))error=EACCES;
         }
     }
     /* Restore the fixture identity even when the denial assertion fails. */
     secLogoutA(quiet);if(secLoginA(root)!=secOWNER_SYSTEM)error=EACCES;
     CloseLibrary(secBase);
-    if(error)bug("Public clone denied worker errno=%d detail=%s\n",error,request.detail);
+    if(error)bug("Public clone identity worker permitted=%d errno=%d detail=%s\n",permitted,error,request.detail);
     return error;
 }
 static int storage_test(int gui){
@@ -1970,9 +1971,23 @@ static int storage_test(int gui){
             STORAGE_CHECK(!cli_result("C:zfs get -H -o value compression public_mirror/manager_clone >T:cli-package-output.txt","off"));
             STORAGE_CHECK(!cli_result("C:zfs get -H -o value mounted public_mirror/manager_clone >T:cli-package-output.txt","no"));
             STORAGE_CHECK(!cli_command("C:zfs destroy public_mirror/manager_clone"));
-            STORAGE_CHECK(!clone_worker_denied());
+            STORAGE_CHECK(!clone_worker_identity("public_mirror/denied_clone",0));
             STORAGE_CHECK(cli_command("C:zfs list public_mirror/denied_clone")!=0);
             note("Public Manager clone authorization PASS nonroot-worker=1 upstream-denied=1 absent-destination=1 identity-restored=1\n");
+            STORAGE_CHECK(!cli_command("C:zfs create -o mountpoint=none public_mirror/delegated_clones"));
+            STORAGE_CHECK(!cli_command("C:zfs allow -u 77 clone public_mirror/files"));
+            STORAGE_CHECK(!cli_command("C:zfs allow -u 77 create,mount,compression,mountpoint public_mirror/delegated_clones"));
+            STORAGE_CHECK(!clone_worker_identity("public_mirror/delegated_clones/child",1));
+            STORAGE_CHECK(!cli_result("C:zfs get -H -o value origin public_mirror/delegated_clones/child >T:cli-package-output.txt","public_mirror/files@cli_roundtrip"));
+            STORAGE_CHECK(!cli_result("C:zfs get -H -o value compression public_mirror/delegated_clones/child >T:cli-package-output.txt","off"));
+            STORAGE_CHECK(!cli_result("C:zfs get -H -o value mounted public_mirror/delegated_clones/child >T:cli-package-output.txt","no"));
+            STORAGE_CHECK(!cli_command("C:zfs unallow -u 77 clone public_mirror/files"));
+            STORAGE_CHECK(!cli_command("C:zfs unallow -u 77 create,mount,compression,mountpoint public_mirror/delegated_clones"));
+            STORAGE_CHECK(!clone_worker_identity("public_mirror/delegated_clones/after_revoke",0));
+            STORAGE_CHECK(cli_command("C:zfs list public_mirror/delegated_clones/after_revoke")!=0);
+            STORAGE_CHECK(!cli_command("C:zfs destroy public_mirror/delegated_clones/child"));
+            STORAGE_CHECK(!cli_command("C:zfs destroy public_mirror/delegated_clones"));
+            note("Public Manager clone delegation PASS granted=1 property=1 no-mount=1 revoked=1 no-stale-authority=1 cleanup=1\n");
             strcpy(clone.options,"quota=not-a-size");
             STORAGE_CHECK(!oz_clone_execute(&clone)&&clone.status==OZ_ENGINE_ERROR);
             STORAGE_CHECK(cli_command("C:zfs list public_mirror/manager_clone")!=0);
