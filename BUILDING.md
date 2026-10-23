@@ -28,6 +28,19 @@ error and an independent dataset query confirms no destination was created.
 The complete storage suite passes. This closes the asynchronous-worker test
 gap, not the remaining visual interaction check.
 
+Visual run `native-gui-run.A56TMiQN` closes that interaction check for this
+fixture. With `AROS_PUBLIC_GUI=1 AROS_TEST_GUI_CLONE=1`, the harness prepares
+`public_mirror/files@gui_clone`. Advanced / Snapshots / clone was selected in
+Manager; destination `public_mirror/gui_clone` and options
+`compression=off;quota=32M;mountpoint=none` were entered and confirmed.
+Screenshots `05-request.png`, `06-confirm.png`, and `07-result.png` retain
+the request, confirmation and upstream exit-zero response. After Manager
+closed, independent CLI queries confirmed origin, quota, compression and
+`mounted=no`; both fixture objects were destroyed and the complete storage
+suite passed. The optional harness mode requires its own PASS marker before
+pruning the disposable ISO. This does not qualify all properties, delegation
+combinations, or physical media.
+
 The root `mmakefile.src` uses native `%build_prog` templates, not the standalone
 shell build scripts. Place the source in a directory scanned by the configured
 AROS Contrib build and regenerate its metamake files. Available targets:

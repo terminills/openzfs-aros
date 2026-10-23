@@ -2112,6 +2112,12 @@ static int storage_test(int gui){
         note("Public passphrase encryption PASS create-pbkdf2=350000 locked-mount-denied=1 reload=1 exact-read=1 cleanup=1\n");
     }
     if(gui){
+        BPTR clone_gui=Lock((CONST_STRPTR)"SYS:openzfs-gui-clone-test",SHARED_LOCK);
+        if(clone_gui){
+            UnLock(clone_gui);
+            STORAGE_CHECK(!cli_command("C:zfs snapshot public_mirror/files@gui_clone"));
+            note("Public GUI clone READY source=public_mirror/files@gui_clone destination=public_mirror/gui_clone options=compression=off;quota=32M;mountpoint=none\n");
+        }
         BPTR desktop=Lock((CONST_STRPTR)"SYS:openzfs-gui-desktop-test",SHARED_LOCK);
         if(desktop){
             UnLock(desktop);
@@ -2127,6 +2133,15 @@ static int storage_test(int gui){
         if(volume_gui){UnLock(volume_gui);note("Public GUI volume READY: Devices, unit 5, public_mirror/public_volume, read-only Remap; save whole-volume FFS mount file T:OZBLOCK, then close Manager\n");}
         note("Public storage GUI ready: mounted public_mirror/files with hello.txt\n");
         STORAGE_CHECK(SystemTags((CONST_STRPTR)"C:OpenZFSManagerNative",TAG_DONE)==0);
+        if(clone_gui){
+            STORAGE_CHECK(!cli_result("C:zfs get -Hp -o value quota public_mirror/gui_clone >T:cli-package-output.txt","33554432"));
+            STORAGE_CHECK(!cli_result("C:zfs get -H -o value compression public_mirror/gui_clone >T:cli-package-output.txt","off"));
+            STORAGE_CHECK(!cli_result("C:zfs get -H -o value mounted public_mirror/gui_clone >T:cli-package-output.txt","no"));
+            STORAGE_CHECK(!cli_result("C:zfs get -H -o value origin public_mirror/gui_clone >T:cli-package-output.txt","public_mirror/files@gui_clone"));
+            STORAGE_CHECK(!cli_command("C:zfs destroy public_mirror/gui_clone"));
+            STORAGE_CHECK(!cli_command("C:zfs destroy public_mirror/files@gui_clone"));
+            note("Public GUI clone PASS quota=1 compression=1 no-mount=1 origin=1 cleanup=1\n");
+        }
         if(volume_gui)STORAGE_CHECK(!storage_gui_volume_verify());
         if(desktop){
             STORAGE_CHECK(!desktop_directory("OZPUBLIC:","after-ui"));
