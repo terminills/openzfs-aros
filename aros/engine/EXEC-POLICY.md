@@ -7,9 +7,17 @@ to the persistent companion suite. Writer and fresh-boot reader exercise
 HostIdentity SAVE, IFF readback, trusted Startup PREPARE, and disabled
 Startup RESTORE using ENVARC on that disk and fresh RAM ENV directories.
 Run `public-service-run.Lffxaiig` passed both phases, the complete mirror
-suite, and the full archive image unchanged-hash check. Enabled pool imports
-are separately exercised by the existing startup-import fixture; this does
-not yet qualify an enabled record restored from persistent ENVARC.
+suite, and the full archive image unchanged-hash check.
+
+Follow-up `public-service-run.DlBHnVii` also publishes the actual pool GUID,
+member paths and enabled/read-only/mount policy to trusted muFS ENVARC.
+On a fresh boot, the shipped `OpenZFSStartup GUID RESTORE` command restores
+ENV, imports and mounts the dataset. All three healthy/degraded/restored
+cases reported `mounted=1 already=0 skipped=3 failed=0`; the test checks
+the mount table before any manual mount, reads exact file contents through
+DOS, and verifies write refusal. Wrong-GUID import is refused. Both archive
+and pool-member unchanged-hash checks pass. This qualifies the isolated
+file-backed mirror boot workflow, not physical USB/NVMe throughput or boot.
 
 This exposed a real filename limit: a 30-character GUID preferences name
 plus `.txn` is rejected by muFS with DOS error 210. Staging now replaces

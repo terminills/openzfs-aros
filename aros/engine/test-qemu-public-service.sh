@@ -583,7 +583,10 @@ if [[ $persistent == 1 ]];then
         sha256sum -c "$run/archive-before.sha256" >"$run/archive-unchanged.log"
     fi
     if [[ $startup_import == 1 ]];then
-        [[ $(rg -c '^Public startup import command PASS fresh-guest=1 guid-bound=1 readonly=1 no-mount-request=1' "$run/cold-results.log") == 3 ]]
+        [[ $(rg -c '^Public startup import command PASS fresh-guest=1 guid-bound=1 readonly=1' "$run/cold-results.log") == 3 ]]
+        if [[ $startup_archive == 1 ]];then
+            [[ $(rg -c '^Public persistent enabled restore PASS trusted-envarc=1 imported=1 mounted=1 readonly=1' "$run/cold-results.log") == 3 ]]
+        fi
     fi
     fsck.fat -n -v "$run/backing.raw" >"$run/fat-after-cold.log" 2>&1
     if [[ -n $cli_dir ]];then

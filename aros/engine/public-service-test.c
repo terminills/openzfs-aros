@@ -928,10 +928,8 @@ cleanup:
 #undef CM_CHECK
     return error;
 }
-/* The persisted fixture is data, not a trusted boot policy: FAT cannot retain
- * MuFS ownership. Cold validation checks its exact allowed settings/paths and
- * explicitly provisions a private trusted ENV record before invoking the
- * production command. Durable trusted ENVARC remains a separate test gate. */
+/* FAT is only fixture data. When the independent muFS archive is enabled,
+ * publish policy there and use the production trusted RESTORE path on boot. */
 static int storage_no_pools(void);
 static int companion_import_test(int write)
 {
@@ -940,9 +938,18 @@ static int companion_import_test(int write)
     UnLock(marker);
     struct oz_startup_settings record={0};char path[256],command[256],text[64]={0};
     snprintf(path,sizeof(path),"%s/startup.prefs",storage_directory);
-    int error=0;BPTR file=0;unsigned published=0;
+    int error=0,archive=0,assigned=0;BPTR file=0,saved=0;unsigned published=0;
 #define CI_CHECK(x) do{if(!(x)){error=__LINE__;goto cleanup;}}while(0)
     CI_CHECK(native_file_fixture);
+    marker=Lock((CONST_STRPTR)"SYS:openzfs-startup-archive-test",SHARED_LOCK);
+    if(marker){
+        UnLock(marker);archive=1;
+        CI_CHECK(Inhibit((CONST_STRPTR)"OZARCH:",DOSFALSE));
+        saved=Lock((CONST_STRPTR)"ENVARC:",SHARED_LOCK);CI_CHECK(saved);
+        BPTR root=Lock((CONST_STRPTR)"OZARCH:Prefs",SHARED_LOCK);CI_CHECK(root);
+        if(!AssignLock((CONST_STRPTR)"ENVARC",root)){UnLock(root);CI_CHECK(0);}
+        assigned=1;
+    }
     if(write){
         CI_CHECK(!cli_command("C:zpool get -H -p -o value guid public_mirror >T:companion-guid.txt"));
         file=Open((CONST_STRPTR)"T:companion-guid.txt",MODE_OLDFILE);CI_CHECK(file);
@@ -950,17 +957,22 @@ static int companion_import_test(int write)
         CI_CHECK(length>0&&closed);char *end=NULL;
         record.guid=strtoull(text,&end,10);CI_CHECK(record.guid&&end!=text&&(*end=='\n'||*end=='\r'||!*end));
         record.flags=OZ_STARTUP_ENABLED|OZ_STARTUP_READONLY;record.count=storage_members;
+        if(archive)record.flags|=OZ_STARTUP_MOUNT;
         strcpy(record.pool,"public_mirror");
         for(unsigned i=0;i<record.count;i++)storage_member(record.paths[i],sizeof(record.paths[i]),i);
         file=Open((CONST_STRPTR)path,MODE_NEWFILE);CI_CHECK(file);
         CI_CHECK(!oz_startup_settings_write(file,&record));
         closed=Close(file);file=0;CI_CHECK(closed);
+        if(archive){
+            CI_CHECK(!oz_startup_settings_apply_trusted(&record,1,&published));
+            CI_CHECK(published==(OZ_STARTUP_PUBLISHED_ENV|OZ_STARTUP_PUBLISHED_ENVARC));
+        }
         note("Public startup import record PASS persisted-fixture=1 readonly=1 enabled=1\n");
     }else{
         file=Open((CONST_STRPTR)path,MODE_OLDFILE);CI_CHECK(file);
         int result=oz_startup_settings_read(file,&record),closed=Close(file);file=0;
         CI_CHECK(!result&&closed&&record.count==storage_members&&!strcmp(record.pool,"public_mirror")&&
-            record.flags==(OZ_STARTUP_ENABLED|OZ_STARTUP_READONLY));
+            record.flags==(OZ_STARTUP_ENABLED|OZ_STARTUP_READONLY|(archive?OZ_STARTUP_MOUNT:0)));
         for(unsigned i=0;i<record.count;i++){
             char expected[256];storage_member(expected,sizeof(expected),i);CI_CHECK(!strcmp(record.paths[i],expected));
         }
@@ -973,11 +985,18 @@ static int companion_import_test(int write)
         snprintf(path,sizeof(path),"ENV:OpenZFS-%016llx.prefs",(unsigned long long)record.guid);
         CI_CHECK(DeleteFile((CONST_STRPTR)path));published=0;record.guid=actual_guid;
         CI_CHECK(refused==1&&!storage_no_pools());
-        CI_CHECK(!oz_startup_settings_apply_trusted(&record,0,&published));
-        CI_CHECK(published==OZ_STARTUP_PUBLISHED_ENV);
-        snprintf(command,sizeof(command),"C:OpenZFSStartup %016llx >T:companion-import.log",(unsigned long long)record.guid);
+        if(!archive){
+            CI_CHECK(!oz_startup_settings_apply_trusted(&record,0,&published));
+            CI_CHECK(published==OZ_STARTUP_PUBLISHED_ENV);
+        }else published=OZ_STARTUP_PUBLISHED_ENV;
+        snprintf(command,sizeof(command),"C:OpenZFSStartup %016llx%s >T:companion-import.log",(unsigned long long)record.guid,archive?" RESTORE":"");
         LONG status=cli_command(command);diagnostic_log("T:companion-import.log");CI_CHECK(!status);
-        note("Public startup import command PASS fresh-guest=1 guid-bound=1 readonly=1 no-mount-request=1 wrong-guid-refused=1\n");
+        if(archive){
+            CI_CHECK(!verify_mounts("OZCOLD:",OZ_MOUNT_READONLY));
+            BPTR root=Lock((CONST_STRPTR)"OZCOLD:",SHARED_LOCK);CI_CHECK(root);UnLock(root);
+            note("Public persistent enabled restore PASS trusted-envarc=1 imported=1 mounted=1 readonly=1\n");
+        }
+        note("Public startup import command PASS fresh-guest=1 guid-bound=1 readonly=1 wrong-guid-refused=1\n");
     }
 cleanup:
     if(file)Close(file);
@@ -985,6 +1004,9 @@ cleanup:
         snprintf(path,sizeof(path),"ENV:OpenZFS-%016llx.prefs",(unsigned long long)record.guid);
         if(!DeleteFile((CONST_STRPTR)path)&&!error)error=__LINE__;
     }
+    if(assigned){if(AssignLock((CONST_STRPTR)"ENVARC",saved))saved=0;else if(!error)error=__LINE__;}
+    if(saved)UnLock(saved);
+    if(archive&&!Inhibit((CONST_STRPTR)"OZARCH:",DOSTRUE)&&!error)error=__LINE__;
     if(error){char line[100];snprintf(line,sizeof(line),"Public startup import command FAIL write=%d line=%d DOS=%ld\n",write,error,(long)IoErr());note(line);}
 #undef CI_CHECK
     return error;
@@ -1808,6 +1830,13 @@ static int storage_test(int gui){
         STORAGE_CHECK(!verify_mounts(NULL,0));
         note("Public packaged handler PASS mount=1 exact-read=1 readonly=1 detach=1\n");
     }
+    BPTR archive_marker=Lock((CONST_STRPTR)"SYS:openzfs-startup-archive-test",SHARED_LOCK);
+    if(archive_marker){
+        UnLock(archive_marker);
+        STORAGE_CHECK(!cli_command("C:zfs set mountpoint=none public_mirror"));
+        STORAGE_CHECK(!cli_command("C:zfs set mountpoint=OZCOLD: public_mirror/files"));
+        STORAGE_CHECK(!cli_command("C:zfs unmount public_mirror/files"));
+    }
     STORAGE_CHECK(!storage_request(8,"public_mirror",NULL,NULL));
 #ifdef OZ_TEST_UPSTREAM_INIT
     STORAGE_CHECK(!oz_upstream_import_files_test());
@@ -1940,7 +1969,9 @@ static int storage_cold_once(void)
         if(error)return error;
         note("Public cold GUI snapshot retained PASS\n");
     }
-    error=oz_mount_control(OZ_ADMISSION_PORT,"public_mirror/files","OZCOLD",OZ_MOUNT_ATTACH,OZ_MOUNT_READONLY);
+    marker=Lock((CONST_STRPTR)"SYS:openzfs-startup-archive-test",SHARED_LOCK);
+    if(marker){UnLock(marker);error=verify_mounts("OZCOLD:",OZ_MOUNT_READONLY);}
+    else error=oz_mount_control(OZ_ADMISSION_PORT,"public_mirror/files","OZCOLD",OZ_MOUNT_ATTACH,OZ_MOUNT_READONLY);
     if(error)return error;
     char bytes[sizeof(storage_payload)+1];
     BPTR file=Open((CONST_STRPTR)"OZCOLD:hello.txt",MODE_OLDFILE);
