@@ -272,3 +272,12 @@ The evidence-bound bundle `mmake-bundle._bkcuna0` matches this GUI run and
 `PdrbuDoG` cold run byte-for-byte and passed its complete SHA256SUMS check.
 Platform prerequisites remain explicit; this is not stock-nightly or physical
 USB qualification.
+
+`public-service-run.RDq1KM4o` extends discovery qualification with a second
+writable pool on the same virtual disk's disjoint partition 2. That neighbor
+stays imported throughout partition 0 pool discovery, readonly import/export,
+and writable import/destroy. Its ONLINE health and stored user property are
+checked afterward, then it is explicitly destroyed. Both snapshot backing
+hashes stayed unchanged, the full storage suite passed, and the ISO was pruned.
+The runner now requires both discovery and coexistence markers; those exact
+checks were also run against this retained result. Production bytes are unchanged.

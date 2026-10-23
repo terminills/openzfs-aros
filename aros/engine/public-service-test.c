@@ -1525,8 +1525,16 @@ static int storage_native_discovery(void)
     if(!catalog)return ENOMEM;
     error=oz_partitions_read(OZ_ADMISSION_PORT,"ata.device",0,catalog);
     int valid=!error&&catalog->count==2&&catalog->entries[0].position==0&&
-        catalog->entries[0].first_sector==4097&&catalog->entries[0].last_sector==135168;
+        catalog->entries[0].first_sector==4097&&catalog->entries[0].last_sector==135168&&
+        catalog->entries[1].position==2&&catalog->entries[1].first_sector==139265&&
+        catalog->entries[1].last_sector==270336;
     free(catalog);if(!valid)return EINVAL;
+    /* Keep a different writable pool active on the other extent throughout
+     * discovery/import. An unrelated scan candidate must not be reserved or
+     * accidentally exported/adopted as part of the selected pool. */
+    error=cli_result("C:zpool create -o cachefile=none -O mountpoint=none public_neighbor /AROS/ata.device/0/partition/2 >T:cli-package-output.txt", "");
+    if(!error)error=cli_result("C:zfs set org.openzfs:discovery=preserved public_neighbor >T:cli-package-output.txt", "");
+    if(error)return error;
     const char *commands[]={
         "C:zpool create -o cachefile=none -O mountpoint=none public_discovery /AROS/ata.device/0/partition/0",
         "C:zpool export public_discovery",
@@ -1551,7 +1559,12 @@ static int storage_native_discovery(void)
         diagnostic_log("T:cli-package-output.txt");
         if(error){char line[100];snprintf(line,sizeof(line),"Public native discovery FAIL step=%u errno=%d\n",i,error);note(line);return error;}
     }
+    error=cli_result("C:zpool list -H -o health public_neighbor >T:cli-package-output.txt", "ONLINE");
+    if(!error)error=cli_result("C:zfs get -H -o value org.openzfs:discovery public_neighbor >T:cli-package-output.txt", "preserved");
+    if(!error)error=cli_result("C:zpool destroy public_neighbor >T:cli-package-output.txt", "");
+    if(error)return error;
     note("Public native discovery PASS create=1 default-scan=1 readonly-import=1 rw-import=1 destroy=1\n");
+    note("Public native discovery coexistence PASS separate-partitions=1 neighbor-online=1 neighbor-property=1 cleanup=1\n");
     return 0;
 }
 static int storage_test(int gui){
