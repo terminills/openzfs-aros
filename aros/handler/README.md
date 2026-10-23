@@ -63,6 +63,13 @@ the test allocates and releases its own signal bit. Both notification paths
 and the full storage suite pass in this boot. This still does not substitute
 for visually checking a desktop application's automatic refresh.
 
+Run `public-service-run.fvohDP7Y` adds three late-reply/re-registration cycles:
+the caller holds a notification across `EndNotify`, reuses the same request
+storage for a new subscription, then replies to the retired watch's message.
+New delivery and its outstanding count remain correct, with no extra messages
+after removal. Both notification variants and the full storage suite pass.
+The run retains logs and provenance, not its disposable ISO.
+
 ### Persistent desktop metadata
 
 Current public-package native run `public-service-run.F9NlIusK` sets and

@@ -1289,6 +1289,31 @@ static int storage_notifications(void)
     NOTIFY_CHECK(SetComment((CONST_STRPTR)path,(CONST_STRPTR)"after removal"));
     Delay(2);extra=GetMsg(port);
     if(extra){ReplyMsg(extra);NOTIFY_CHECK(0);}
+    for(unsigned cycle=0;cycle<3;cycle++){
+        memset(&request,0,sizeof(request));
+        request.nr_Name=(STRPTR)path;
+        request.nr_Flags=NRF_SEND_MESSAGE|NRF_WAIT_REPLY|NRF_NOTIFY_INITIAL;
+        request.nr_stuff.nr_Msg.nr_Port=port;
+        NOTIFY_CHECK(StartNotify(&request));active=1;
+        held=notification_wait(port);NOTIFY_CHECK(held);
+        EndNotify(&request);active=0;
+        /* EndNotify cannot reclaim a message already held by its caller.
+         * Reuse the request before replying, so the retired watch must not
+         * decrement the new subscription's count or deliver pending events. */
+        memset(&request,0,sizeof(request));
+        request.nr_Name=(STRPTR)path;
+        request.nr_Flags=NRF_SEND_MESSAGE|NRF_WAIT_REPLY;
+        request.nr_stuff.nr_Msg.nr_Port=port;
+        NOTIFY_CHECK(StartNotify(&request));active=1;
+        ReplyMsg(&held->nm_ExecMessage);held=NULL;
+        NOTIFY_CHECK(SetComment((CONST_STRPTR)path,(CONST_STRPTR)"reused request"));
+        held=notification_wait(port);NOTIFY_CHECK(held);
+        NOTIFY_CHECK(held->nm_NReq==&request&&request.nr_MsgCount==1);
+        ReplyMsg(&held->nm_ExecMessage);held=NULL;
+        EndNotify(&request);active=0;
+        Delay(2);extra=GetMsg(port);
+        if(extra){ReplyMsg(extra);NOTIFY_CHECK(0);}
+    }
 cleanup:
     if(file)Close(file);
     if(held)ReplyMsg(&held->nm_ExecMessage);
@@ -1297,7 +1322,7 @@ cleanup:
     DeleteMsgPort(port);
     if(!DeleteFile((CONST_STRPTR)path)&&!error)error=__LINE__;
     if(error)bug("Public DOS notifications FAIL line=%d DOS=%ld\n",error,(long)IoErr());
-    else note("Public DOS notifications PASS absent-watch=1 create=1 wait-reply=1 coalesced=1 end=1\n");
+    else note("Public DOS notifications PASS absent-watch=1 create=1 wait-reply=1 coalesced=1 end=1 late-reply-reuse=3\n");
 #undef NOTIFY_CHECK
     return error;
 }
