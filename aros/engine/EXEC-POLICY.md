@@ -83,6 +83,24 @@ No publication security checks were relaxed. This qualifies command execution
 and explicit ENV provisioning, not an enabled boot import or durable ENVARC
 storage across a reboot.
 
+`public-service-run.TlvWh0Z2` additionally verifies the packaged
+OpenZFSStartupMount against the actual pool GUID. A mismatched GUID leaves
+the mount table empty. With a native `OZSTARTUP:` mountpoint and the parent
+dataset's canmount disabled, the first invocation reports one child mounted
+and one parent skipped; a second reports the same child already mounted.
+The test checks the live mount table and opens the DOS volume, then detaches
+and restores the temporary properties before the existing storage tests.
+The full RAM suite passes. This is command-level mount verification, not
+yet proof of a complete enabled OpenZFSStartup import across a reboot.
+
+Retained negative fixture evidence qD1pDPy4 used an inherited Unix-style
+mountpoint, unsupported by the native DOS-volume mount adapter. chHvNroI
+then observed the mount caused by `zfs set mountpoint` itself. The corrected
+test sets a native mountpoint and explicitly unmounts before exercising the
+startup command, so it cannot credit the property setter's side effect.
+Both failed-run ISOs are pruned after hash capture and open-use checks;
+their serial output and manifests remain.
+
 ## User-facing runtime detection (2026-09-30)
 
 OpenZFSRuntimeCheck now checks both loader APIs using a copied executable in

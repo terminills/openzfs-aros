@@ -806,6 +806,47 @@ cleanup:
 #undef CONFIG_CHECK
     return error;
 }
+static int companion_mount_test(void)
+{
+    BPTR marker=Lock((CONST_STRPTR)"SYS:openzfs-companion-tools-test",SHARED_LOCK);
+    if(!marker)return 0;
+    UnLock(marker);
+    int error=0,changed=0;char command[256],text[64]={0};
+    struct oz_mount_snapshot *snapshot=NULL;
+#define CM_CHECK(x) do{if(!(x)){error=__LINE__;goto cleanup;}}while(0)
+    CM_CHECK(!cli_command("C:zpool get -H -p -o value guid public_mirror >T:companion-guid.txt"));
+    BPTR file=Open((CONST_STRPTR)"T:companion-guid.txt",MODE_OLDFILE);CM_CHECK(file);
+    LONG length=Read(file,text,sizeof(text)-1);int closed=Close(file);CM_CHECK(length>0&&closed);
+    char *end=NULL;unsigned long long guid=strtoull(text,&end,10);
+    CM_CHECK(guid&&end!=text&&(*end=='\n'||*end=='\r'||!*end));
+    CM_CHECK(!cli_command("C:zfs set canmount=off public_mirror"));changed=1;
+    CM_CHECK(!cli_command("C:zfs set mountpoint=OZSTARTUP: public_mirror/files"));
+    /* Changing mountpoint may mount through libzfs's change list. Start the
+     * explicit startup test unmounted, rather than crediting that side effect. */
+    CM_CHECK(!cli_command("C:zfs unmount public_mirror/files"));
+    snprintf(command,sizeof(command),"C:OpenZFSStartupMount public_mirror %016llx",guid^UINT64_C(1));
+    CM_CHECK(cli_command(command)==1);CM_CHECK(!verify_mounts(NULL,0));
+    snprintf(command,sizeof(command),"C:OpenZFSStartupMount public_mirror %016llx >T:companion-mount.log",guid);
+    LONG status=cli_command(command);diagnostic_log("T:companion-mount.log");CM_CHECK(!status);
+    CM_CHECK(!oz_mounts_read(OZ_ADMISSION_PORT,&snapshot));
+    struct oz_mount_record *records=(void *)(snapshot+1);
+    CM_CHECK(snapshot->count==1&&!strcmp(records[0].dataset,"public_mirror/files"));
+    CM_CHECK(!verify_mounts(records[0].mountpoint,0));
+    BPTR lock=Lock((CONST_STRPTR)records[0].mountpoint,SHARED_LOCK);CM_CHECK(lock);UnLock(lock);
+    status=cli_command(command);diagnostic_log("T:companion-mount.log");CM_CHECK(!status);
+    CM_CHECK(!verify_mounts(records[0].mountpoint,0));
+cleanup:
+    free(snapshot);
+    int detached=oz_mount_control(OZ_ADMISSION_PORT,"public_mirror/files","",OZ_MOUNT_DETACH,0);
+    if(detached&&detached!=ENOENT&&!error)error=__LINE__;
+    if(changed&&cli_command("C:zfs set canmount=on public_mirror")&&!error)error=__LINE__;
+    if(changed&&cli_command("C:zfs inherit mountpoint public_mirror/files")&&!error)error=__LINE__;
+    if(!error)error=verify_mounts(NULL,0);
+    if(error){char line[96];snprintf(line,sizeof(line),"Public companion mount FAIL line=%d\n",error);note(line);}
+    else note("Public companion mount PASS guid-bound=1 wrong-guid-refused=1 parent-skipped=1 child-mounted=1 repeat-idempotent=1 detached=1\n");
+#undef CM_CHECK
+    return error;
+}
 /* Exercise repair through the shipped API/commands, not linked SPA internals.
  * disk0 is later the only available mirror member in the cold degraded test. */
 static int storage_repair_data(const char *root,int write)
@@ -1320,6 +1361,7 @@ static int storage_test(int gui){
 #else
     STORAGE_CHECK(!storage_request(37,"public_mirror/files",NULL,NULL));
 #endif
+    STORAGE_CHECK(!companion_mount_test());
     STORAGE_CHECK(oz_mount_control(OZ_ADMISSION_PORT,"public_mirror/files","bad:name",OZ_MOUNT_ATTACH,0)==EINVAL);
     STORAGE_CHECK(!oz_mount_control(OZ_ADMISSION_PORT,"public_mirror/files","OZPUBLIC",OZ_MOUNT_ATTACH,0));
     STORAGE_CHECK(oz_mount_control(OZ_ADMISSION_PORT,"public_mirror/files","OZDUPLICATE",OZ_MOUNT_ATTACH,0)==EEXIST);
