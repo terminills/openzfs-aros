@@ -102,6 +102,15 @@ rejection. The full service/storage suite also passes. This qualifies the
 standalone dependency test; it does not relink the resident engine or claim
 that every engine consumer was rebuilt against this archive.
 
+Expanded run `public-service-run.0rL96uTk`, using build
+`nvpair-arrays.WcB8JItW`, also passes uint64 arrays (including UINT64_MAX),
+string arrays with an empty member, nested vdev-list arrays, boolean values,
+and rejection of every truncated prefix of its packed fixture. Each assertion
+is retained in the native serial log. The complete storage suite passes in
+the same guest. Earlier fixture build `nvpair-arrays.EBFcrH4L` failed because
+its array inputs lacked the upstream API's const qualification; the associated
+runner stopped before ISO creation or guest boot. Those logs remain retained.
+
 The fresh standalone archive was subsequently linked into native shared-engine
 candidate `shared-engine.j0FGUlhp`, using the same full MetaMake engine object,
 native pthread archive, crypto archive and SDK `libz1.a` import library.
