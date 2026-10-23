@@ -41,6 +41,14 @@ suite passed. The optional harness mode requires its own PASS marker before
 pruning the disposable ISO. This does not qualify all properties, delegation
 combinations, or physical media.
 
+Run `public-service-run.peSQN9rk` additionally switches to the unprivileged
+`ozreader` fixture account before starting the actual clone worker. The
+upstream clone command returns exit 1, the fixture's root identity is restored,
+and a subsequent query confirms no destination exists. The full storage suite
+then passes. This covers nondelegated denial through worker/child identity
+inheritance; it does not yet qualify a user with selectively delegated clone
+and property permissions.
+
 The root `mmakefile.src` uses native `%build_prog` templates, not the standalone
 shell build scripts. Place the source in a directory scanned by the configured
 AROS Contrib build and regenerate its metamake files. Available targets:
