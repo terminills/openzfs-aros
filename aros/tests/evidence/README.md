@@ -48,6 +48,28 @@ separate limitation; screenshots have not been retouched to hide it.
 
 ## Adding evidence
 
+### Refreshed native package
+
+Run `native-gui-run.HtAMyLoU` tests the refreshed MetaMake command binaries
+and Manager against the selected shared engine. The live query reports
+`public_mirror` ONLINE, and Wanderer shows the mounted dataset's files.
+
+![Refreshed Manager and mounted files](package-refresh/01-desktop.png)
+
+![Live pool query](package-refresh/02-live-pool.png)
+
+The matching [serial log](package-refresh/serial.log) records post-UI exact
+file readback and the final storage PASS. Separate persistent run
+`public-service-run.iFt6XMEu` passes cold healthy/degraded/restored imports,
+trusted ENVARC startup restoration, unchanged member hashes and independent
+`zdb` verification. Package staging matches binary hashes across both runs.
+The earlier `native-gui-run.mh139zIJ` passed its GUI test but omitted desktop
+mode; the packager rejected it for lacking post-UI filesystem verification.
+That rejected attempt was retained locally and was not used to qualify the
+package. See BUILDING.md for the immutable archive identity.
+
+### Evidence retention
+
 Commit selected PNG captures with the matching run identity, relevant logs,
 source changes and input hashes when qualifying a new visible behavior. Explain
 what is visible and what was verified independently. Do not commit test ISOs,

@@ -2,6 +2,26 @@
 
 ## AROS build-system integration (in progress)
 
+### Refreshed development package, 2026-10-23
+
+The MetaMake tools, CLI and acceptance client were rebuilt and qualified with
+native GUI/desktop run `native-gui-run.HtAMyLoU` and persistent run
+`public-service-run.iFt6XMEu`. The latter covers healthy/degraded/restored cold
+imports, trusted ENVARC startup restoration, unchanged member hashes and
+independent `zdb` verification. The GUI run checks exact data after UI closure.
+`stage-mmake.py` accepts matching input hashes across these runs, and every
+staged SHA256SUMS entry passes. The selected shared engine remains the explicit
+previously built candidate; this was not a clean rebuild of upstream OpenZFS.
+
+Retained archive: `build-aros/mmake-bundle.ch8cjgk8.tar.xz`.
+SHA-256: `ba715a81de8f282245c38f8543435f51dc5686531ad807b0f6e2b6079945ac0b`.
+It includes the clone-properties Manager and ExecHelper. Patched platform
+prerequisites remain explicit; it is not stock-nightly or physical-media proof.
+The archive is a local development artifact, not an uploaded release asset.
+Screenshots and matching GUI evidence are committed under
+`aros/tests/evidence/package-refresh`. Three disposable test runs pruned
+18.82 GiB of images while retaining logs and provenance.
+
 ### Manager clone properties
 
 Snapshot clone requests with nonempty Options now use the existing asynchronous
