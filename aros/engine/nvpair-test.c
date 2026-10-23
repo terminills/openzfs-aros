@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <proto/exec.h>
 static int failures;
 #define CHECK(x) do { int ok=!!(x); printf("%s %s\n",ok?"PASS":"FAIL",#x); if(!ok) failures++; } while(0)
 int main(int argc,char **argv) {
@@ -32,5 +33,8 @@ int main(int argc,char **argv) {
         nvlist_t *bad=NULL;CHECK(nvlist_unpack(packed,bytes/2,&bad,0)!=0);nvlist_free(bad);
     }
     nvlist_free(decoded);nvlist_free(leaf);nvlist_free(pool);free(packed);
-    printf("RESULT upstream nvpair failures=%d\n",failures);return failures?20:0;
+    printf("RESULT upstream nvpair failures=%d\n",failures);
+    const char *result=failures?"RESULT native nvpair XDR FAIL\n":"RESULT native nvpair XDR PASS\n";
+    for(const char *p=result;*p;p++)RawPutChar(*p);
+    return failures?20:0;
 }

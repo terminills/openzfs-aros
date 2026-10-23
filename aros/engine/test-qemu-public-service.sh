@@ -45,6 +45,7 @@ handler=${AROS_TEST_HANDLER_BINARY:-}
 device=${AROS_TEST_DEVICE_BINARY:-}
 [[ -z $device || -n $cli_dir ]]
 pbkdf2=${AROS_TEST_PBKDF2_BINARY:-}
+nvpair_test=${AROS_TEST_NVPAIR_BINARY:-}
 persistent=${AROS_TEST_PERSISTENT:-0}
 [[ $persistent == 0 || $persistent == 1 ]]
 startup_import=${AROS_TEST_STARTUP_IMPORT:-0}
@@ -256,6 +257,12 @@ if [[ -n $pbkdf2 ]];then
     extra_maps+=(-map "$run/OpenZFSPBKDF2Test" /C/OpenZFSPBKDF2Test)
     sed -i '/^Stack /a C:OpenZFSPBKDF2Test' "$run/Startup-Sequence"
 fi
+if [[ -n $nvpair_test ]];then
+    cp "$nvpair_test" "$run/OpenZFSNvpairTest"
+    sha256sum "$run/OpenZFSNvpairTest" >"$run/nvpair-input.sha256"
+    extra_maps+=(-map "$run/OpenZFSNvpairTest" /C/OpenZFSNvpairTest)
+    sed -i '/^Stack /a C:OpenZFSNvpairTest RAM:nvpair-aros.xdr' "$run/Startup-Sequence"
+fi
 if [[ -n $cli_dir ]];then
     cp "$cli_dir/zfs" "$cli_dir/zpool" "$run/"
     extra_maps+=(-map "$run/zfs" /C/zfs -map "$run/zpool" /C/zpool
@@ -391,6 +398,7 @@ while :;do
         controls=$(rg -c '^Public native control descriptors PASS capacity=64 ownership=1 stale=1 session-cleanup=1' "$run/serial-results.log" || true)
         if [[ $count == 3 && $sessions == 2 && $reaped == 2 ]] &&
            { [[ -z $pbkdf2 ]] || rg -q '^RESULT native PBKDF2 known answers PASS' "$run/serial-results.log"; } &&
+           { [[ -z $nvpair_test ]] || rg -q '^RESULT native nvpair XDR PASS' "$run/serial-results.log"; } &&
            { [[ ${AROS_TEST_REQUIRE_INVENTORY_WORKER:-0} != 1 ]] ||
              rg -q '^RESULT native inventory worker PASS delayed=1 busy-free=1 success=1 denied=1 malformed=10 absent=1 unchanged=1' "$run/serial-results.log"; } &&
            { [[ ${AROS_TEST_REQUIRE_CONTROL:-0} != 1 ]] ||

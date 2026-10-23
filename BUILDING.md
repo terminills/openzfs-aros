@@ -92,6 +92,16 @@ are checked again after the test executable has linked. Native cross-build
 its output manifest verifies. This is a fresh build/provenance result, not a
 new runtime qualification or a complete dependency bootstrap.
 
+Set `AROS_TEST_NVPAIR_BINARY` to a freshly built `OpenZFSNvpairTest` when
+running `aros/engine/test-qemu-public-service.sh` to require its native result
+alongside the storage suite. The runner records the executable hash and uses
+a RAM: output file, never the boot medium. Build `nvpair-runtime.YoPeUibc`
+passes this check in `public-service-run.rjCuKSSW`: allocation, nested lists,
+64-bit GUID preservation, XDR pack/unpack, file output and truncated-input
+rejection. The full service/storage suite also passes. This qualifies the
+standalone dependency test; it does not relink the resident engine or claim
+that every engine consumer was rebuilt against this archive.
+
 The fresh standalone archive was subsequently linked into native shared-engine
 candidate `shared-engine.j0FGUlhp`, using the same full MetaMake engine object,
 native pthread archive, crypto archive and SDK `libz1.a` import library.
