@@ -1,0 +1,56 @@
+diff --git a/aros/engine/public-service-test.c b/aros/engine/public-service-test.c
+index 2446a2e..7f79032 100644
+--- a/aros/engine/public-service-test.c
++++ b/aros/engine/public-service-test.c
+@@ -2112,6 +2112,12 @@ static int storage_test(int gui){
+         note("Public passphrase encryption PASS create-pbkdf2=350000 locked-mount-denied=1 reload=1 exact-read=1 cleanup=1\n");
+     }
+     if(gui){
++        BPTR clone_gui=Lock((CONST_STRPTR)"SYS:openzfs-gui-clone-test",SHARED_LOCK);
++        if(clone_gui){
++            UnLock(clone_gui);
++            STORAGE_CHECK(!cli_command("C:zfs snapshot public_mirror/files@gui_clone"));
++            note("Public GUI clone READY source=public_mirror/files@gui_clone destination=public_mirror/gui_clone options=compression=off;quota=32M;mountpoint=none\n");
++        }
+         BPTR desktop=Lock((CONST_STRPTR)"SYS:openzfs-gui-desktop-test",SHARED_LOCK);
+         if(desktop){
+             UnLock(desktop);
+@@ -2127,6 +2133,15 @@ static int storage_test(int gui){
+         if(volume_gui){UnLock(volume_gui);note("Public GUI volume READY: Devices, unit 5, public_mirror/public_volume, read-only Remap; save whole-volume FFS mount file T:OZBLOCK, then close Manager\n");}
+         note("Public storage GUI ready: mounted public_mirror/files with hello.txt\n");
+         STORAGE_CHECK(SystemTags((CONST_STRPTR)"C:OpenZFSManagerNative",TAG_DONE)==0);
++        if(clone_gui){
++            STORAGE_CHECK(!cli_result("C:zfs get -Hp -o value quota public_mirror/gui_clone >T:cli-package-output.txt","33554432"));
++            STORAGE_CHECK(!cli_result("C:zfs get -H -o value compression public_mirror/gui_clone >T:cli-package-output.txt","off"));
++            STORAGE_CHECK(!cli_result("C:zfs get -H -o value mounted public_mirror/gui_clone >T:cli-package-output.txt","no"));
++            STORAGE_CHECK(!cli_result("C:zfs get -H -o value origin public_mirror/gui_clone >T:cli-package-output.txt","public_mirror/files@gui_clone"));
++            STORAGE_CHECK(!cli_command("C:zfs destroy public_mirror/gui_clone"));
++            STORAGE_CHECK(!cli_command("C:zfs destroy public_mirror/files@gui_clone"));
++            note("Public GUI clone PASS quota=1 compression=1 no-mount=1 origin=1 cleanup=1\n");
++        }
+         if(volume_gui)STORAGE_CHECK(!storage_gui_volume_verify());
+         if(desktop){
+             STORAGE_CHECK(!desktop_directory("OZPUBLIC:","after-ui"));
+diff --git a/aros/engine/test-qemu-public-service.sh b/aros/engine/test-qemu-public-service.sh
+index a3f580d..02d94d8 100644
+--- a/aros/engine/test-qemu-public-service.sh
++++ b/aros/engine/test-qemu-public-service.sh
+@@ -79,6 +79,8 @@ sequential=${AROS_TEST_SEQUENTIAL:-0}
+ [[ $startup_import == 0 || ( $layout == mirror && $replace == 0 && $dspare == 0 ) ]]
+ gui=${AROS_PUBLIC_GUI:-0}
+ gui_desktop=${AROS_TEST_GUI_DESKTOP:-0}
++gui_clone=${AROS_TEST_GUI_CLONE:-0}
++[[ $gui_clone == 0 || ( $gui_clone == 1 && $gui == 1 && -n $cli_dir ) ]]
+ [[ $gui_desktop == 0 || ( $gui_desktop == 1 && $gui == 1 ) ]]
+ gui_volume=${AROS_TEST_GUI_VOLUME:-0}
+ [[ $gui_volume == 0 || ( $gui_volume == 1 && $gui == 1 && -n $device && -n $cli_dir ) ]]
+@@ -107,6 +109,9 @@ fi
+ if [[ $gui_desktop == 1 ]];then
+     extra_maps+=(-map aros/engine/public-service-test-only /openzfs-gui-desktop-test)
+ fi
++if [[ $gui_clone == 1 ]];then
++    extra_maps+=(-map aros/engine/public-service-test-only /openzfs-gui-clone-test)
++fi
+ if [[ $gui_volume == 1 ]];then
+     extra_maps+=(-map aros/engine/public-service-test-only /openzfs-gui-volume-test)
+ fi

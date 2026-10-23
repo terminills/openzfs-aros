@@ -22,6 +22,9 @@ Start with [build requirements](BUILDING.md), [status and limitations](PORT-STAT
 and [contributing](CONTRIBUTING.md). Detailed implementation and test references
 are under [aros](aros/README.md).
 
+See [native AROS screenshots and test evidence](aros/tests/evidence/README.md)
+for Manager operations and live pool-directory updates in Wanderer.
+
 This is not the older AROS private ZFS filesystem format. Existing volumes using
 that handler must not be imported or converted in place. Migration requires a
 verified file copy to a separate pool.
