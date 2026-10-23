@@ -628,10 +628,12 @@ if [[ $persistent == 1 ]];then
     rg -q 'No leaks' "$run/zdb-check.log"
     sha256sum -c "$run/members-after.sha256" >"$run/zdb-members-unchanged.log"
     echo "PASS: fresh-boot healthy/degraded import, exact DOS data, unchanged pool members. Evidence: $run"
+    rg -q '^Public DOS links PASS write=0 hard=1 relative-soft=1 unlinked-source=1 dangling-refused=1' "$run/cold-results.log"
 fi
 if [[ $partitions == 1 ]];then sha256sum -c "$run/disks-before.sha256" > "$run/disks-after-check.txt";fi
 if [[ -n $label_source ]];then sha256sum -c "$run/label-original.sha256" >"$run/label-original-after-check.txt";fi
 echo "PASS: public service lifecycles and $layout DOS round trip (persistent=$persistent). Evidence: $run"
+rg -q '^Public DOS links PASS write=1 hard=1 relative-soft=1 unlinked-source=1 dangling-refused=1' "$run/serial-results.log"
 if [[ $gui_volume == 1 ]];then
     rg -q '^Public GUI volume PASS actual-mapping=1 readonly=1 exact-data=1 saved-mountfile=1 eject=1' "$run/serial-results.log"
 fi

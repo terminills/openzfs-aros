@@ -1239,6 +1239,56 @@ static int storage_sparse64(const char *root,int write)
 }
 /* Exercise the shipped transport, not engine-internal test entry points.
  * Retain the volume for independent cold/degraded imports. */
+static int storage_links(const char *volume,int write)
+{
+    char source[96],hard[96],soft[96],dangling[96],denied[96];
+    snprintf(source,sizeof(source),"%slink-source",volume);
+    snprintf(hard,sizeof(hard),"%slink-hard",volume);
+    snprintf(soft,sizeof(soft),"%slink-soft",volume);
+    snprintf(dangling,sizeof(dangling),"%slink-dangling",volume);
+    snprintf(denied,sizeof(denied),"%slink-denied",volume);
+    const char payload[]="Persistent native DOS links";
+    int error=0;BPTR file=0,lock=0;
+#define LINK_CHECK(x) do{if(!(x)){error=__LINE__;goto done;}}while(0)
+    if(write){
+        file=Open((CONST_STRPTR)source,MODE_NEWFILE);LINK_CHECK(file);
+        LINK_CHECK(Write(file,payload,sizeof(payload))==sizeof(payload));
+        LINK_CHECK(Flush(file));int closed=Close(file);file=0;LINK_CHECK(closed);
+        lock=Lock((CONST_STRPTR)source,SHARED_LOCK);LINK_CHECK(lock);
+        LINK_CHECK(MakeLink((CONST_STRPTR)hard,(SIPTR)lock,LINK_HARD));
+        LINK_CHECK(!MakeLink((CONST_STRPTR)hard,(SIPTR)lock,LINK_HARD)&&IoErr()==ERROR_OBJECT_EXISTS);
+        UnLock(lock);lock=0;
+        LINK_CHECK(MakeLink((CONST_STRPTR)soft,(SIPTR)"link-hard",LINK_SOFT));
+        LINK_CHECK(MakeLink((CONST_STRPTR)dangling,(SIPTR)"link-absent",LINK_SOFT));
+        LINK_CHECK(DeleteFile((CONST_STRPTR)source));
+    }
+    const char *paths[]={hard,soft};
+    for(unsigned i=0;i<2;i++){
+        char bytes[sizeof(payload)+1];
+        file=Open((CONST_STRPTR)paths[i],MODE_OLDFILE);LINK_CHECK(file);
+        LINK_CHECK(Read(file,bytes,sizeof(bytes))==sizeof(payload)&&!memcmp(bytes,payload,sizeof(payload)));
+        int closed=Close(file);file=0;LINK_CHECK(closed);
+    }
+    lock=Lock((CONST_STRPTR)source,SHARED_LOCK);
+    LINK_CHECK(!lock&&IoErr()==ERROR_OBJECT_NOT_FOUND);
+    file=Open((CONST_STRPTR)dangling,MODE_OLDFILE);
+    LINK_CHECK(!file&&IoErr()==ERROR_OBJECT_NOT_FOUND);
+    if(!write){
+        lock=Lock((CONST_STRPTR)hard,SHARED_LOCK);LINK_CHECK(lock);
+        LINK_CHECK(!MakeLink((CONST_STRPTR)denied,(SIPTR)lock,LINK_HARD)&&IoErr()==ERROR_DISK_WRITE_PROTECTED);
+        UnLock(lock);lock=0;
+        LINK_CHECK(!MakeLink((CONST_STRPTR)denied,(SIPTR)"link-hard",LINK_SOFT)&&IoErr()==ERROR_DISK_WRITE_PROTECTED);
+    }
+done:
+    if(file)Close(file);
+    if(lock)UnLock(lock);
+    char line[160];
+    if(error)snprintf(line,sizeof(line),"Public DOS links FAIL write=%d line=%d DOS=%ld\n",write,error,(long)IoErr());
+    else snprintf(line,sizeof(line),"Public DOS links PASS write=%d hard=1 relative-soft=1 unlinked-source=1 dangling-refused=1\n",write);
+    note(line);
+#undef LINK_CHECK
+    return error;
+}
 static int storage_zvol_test(int create)
 {
     struct oz_ticket session={0};
@@ -1579,6 +1629,7 @@ static int storage_test(int gui){
     STORAGE_CHECK(Read(file,actual,sizeof(actual))==sizeof(storage_payload)-1&&!memcmp(actual,payload,sizeof(storage_payload)-1));
     STORAGE_CHECK(Close(file));file=0;
     STORAGE_CHECK(!storage_sparse64("OZPUBLIC:",1));
+    STORAGE_CHECK(!storage_links("OZPUBLIC:",1));
     STORAGE_CHECK(!desktop_directory("OZPUBLIC:","post-sparse64"));
     {
         char dataset[256];
@@ -1982,6 +2033,8 @@ static int storage_cold_once(void)
     if(file){Close(file);return EIO;}
     if(IoErr()!=ERROR_DISK_WRITE_PROTECTED)return EIO;
     error=storage_sparse64("OZCOLD:",0);
+    if(error)return error;
+    error=storage_links("OZCOLD:",0);
     if(error)return error;
     error=desktop_directory("OZCOLD:","cold-import");
     if(error)return error;

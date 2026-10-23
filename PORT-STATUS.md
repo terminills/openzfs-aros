@@ -61,6 +61,20 @@ a separate qualification gap.
 
 ## Implemented integration
 
+Current-package DOS links are qualified by `public-service-run.Hp9I60Hi`:
+hard links survive deletion of the original filename; relative soft links
+resolve to the retained data; dangling links return object-not-found. Writer
+and cold healthy/degraded/restored mirror imports read identical payloads,
+and read-only mounts reject both hard- and soft-link creation. Independent
+host `zdb` reports no leaks and the cold pool-member hashes remain unchanged.
+This is file-backed native QEMU evidence, not physical-media qualification.
+
+Persistent startup settings now have native muFS ENVARC evidence: the actual
+startup command restores trusted ENV records, imports and mounts read-only
+datasets in healthy/degraded/restored mirror cases. The refreshed Manager
+also passes live pool queries, UI settings save and post-UI DOS readback.
+See `aros/engine/EXEC-POLICY.md` for exact runs and platform prerequisites.
+
 Large-file directory metadata now has current alpha18 native evidence:
 legacy enumeration remains usable through size saturation, while the separate
 dos64.library examination APIs return exact 64-bit sizes. QEMU checks cover
