@@ -94,6 +94,7 @@ include $(SRCDIR)/$(CURDIR)/aros/cli/build-system.mk
 # Optional runtime acceptance client, not part of the installed production set.
 #MM contrib-openzfs-public-test : includes linklibs contrib-openzfs-nvpair
 OPENZFS_PUBLIC_TEST_FILES := aros/ui/api aros/ui/admission-client \
+    aros/ui/project-worker \
     aros/cli/process aros/cli/arguments aros/cli/output \
     aros/ui/startup-settings aros/ui/startup-settings-file \
     aros/ui/preferences aros/ui/preferences-file aros/engine/hostid-record \

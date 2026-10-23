@@ -8,6 +8,7 @@
 #include "../ui/zvol-api.h"
 #include "../device/mountfile.h"
 #include "../cli/process.h"
+#include "../ui/project-worker.h"
 #include "../ui/startup-settings.h"
 #include "hostid-record.h"
 #include "include/sys/mnttab.h"
@@ -1912,6 +1913,27 @@ static int storage_test(int gui){
         STORAGE_CHECK(!cli_result("C:zfs list -H -o name public_mirror/files >T:cli-package-output.txt","public_mirror/files"));
         STORAGE_CHECK(!cli_result("C:zfs get -H -o value type public_mirror/files >T:cli-package-output.txt","filesystem"));
         STORAGE_CHECK(SystemTags((CONST_STRPTR)"C:zfs snapshot public_mirror/files@cli_roundtrip",TAG_DONE)==0);
+        {
+            struct oz_message clone={0};
+            clone.magic=OZ_MAGIC;clone.version=OZ_VERSION;clone.msg.mn_Length=sizeof(clone);
+            clone.operation=52;clone.flags=OZ_CONFIRMED;
+            strcpy(clone.target,"public_mirror/files@cli_roundtrip");
+            strcpy(clone.argument,"public_mirror/manager_clone");
+            strcpy(clone.options,"compression=off;quota=32M;mountpoint=none");
+            STORAGE_CHECK(oz_request_route(&clone)==OZ_ROUTE_PROJECT);
+            STORAGE_CHECK(!oz_clone_execute(&clone)&&clone.status==OZ_OK);
+            STORAGE_CHECK(!cli_result("C:zfs get -Hp -o value quota public_mirror/manager_clone >T:cli-package-output.txt","33554432"));
+            STORAGE_CHECK(!cli_result("C:zfs get -H -o value compression public_mirror/manager_clone >T:cli-package-output.txt","off"));
+            STORAGE_CHECK(!cli_result("C:zfs get -H -o value mounted public_mirror/manager_clone >T:cli-package-output.txt","no"));
+            STORAGE_CHECK(!cli_command("C:zfs destroy public_mirror/manager_clone"));
+            strcpy(clone.options,"quota=1M;quota=2M");
+            STORAGE_CHECK(oz_clone_execute(&clone)==EINVAL);
+            strcpy(clone.options,"quota=32M;");
+            STORAGE_CHECK(oz_clone_execute(&clone)==EINVAL);
+            strcpy(clone.options,"quota=32M");clone.flags=0;
+            STORAGE_CHECK(oz_clone_execute(&clone)==EINVAL);
+            note("Public Manager clone properties PASS quota=1 compression=1 no-mount=1 duplicate-refused=1 malformed-refused=1 confirmation=1\n");
+        }
         STORAGE_CHECK(!cli_result("C:zfs list -H -o name -t snapshot public_mirror/files@cli_roundtrip >T:cli-package-output.txt","public_mirror/files@cli_roundtrip"));
         STORAGE_CHECK(SystemTags((CONST_STRPTR)"C:zfs clone -o mountpoint=none public_mirror/files@cli_roundtrip public_mirror/cli_clone",TAG_DONE)==0);
         STORAGE_CHECK(!cli_result("C:zfs get -H -o value origin public_mirror/cli_clone >T:cli-package-output.txt","public_mirror/files@cli_roundtrip"));

@@ -13,6 +13,34 @@
 
 static int command_capture(struct oz_message *,char **);
 
+int oz_clone_execute(struct oz_message *m)
+{
+    char why[256],options[sizeof(m->options)];
+    if(!m||oz_validate(m,why,sizeof(why))!=OZ_OK||m->operation!=52||
+       m->flags!=OZ_CONFIRMED||m->cursor||m->job_id||!m->options[0])return EINVAL;
+    char *args[39]={"C:zfs","clone","-u"};unsigned count=3,properties=0;
+    char *keys[16];size_t lengths[16];
+    strcpy(options,m->options);
+    for(char *item=options;*item;){
+        char *end=strchr(item,';');if(end)*end=0;
+        char *equals=strchr(item,'=');
+        if(!equals||equals==item||!equals[1]||item[0]=='-'||properties==16)return EINVAL;
+        size_t length=(size_t)(equals-item);
+        for(unsigned i=0;i<properties;i++)
+            if(lengths[i]==length&&!memcmp(keys[i],item,length))return EINVAL;
+        keys[properties]=item;lengths[properties++]=length;
+        args[count++]="-o";args[count++]=item;
+        if(!end)break;
+        item=end+1;if(!*item)return EINVAL;
+    }
+    /* Exact argv, not a shell command. libzfs validates property types and
+     * upstream clone enforces the inherited caller's permissions. -u keeps
+     * the existing explicit-mount workflow; no implicit parent creation. */
+    args[count++]="--";args[count++]=m->target;args[count++]=m->argument;
+    args[count]=NULL;
+    return command_capture(m,args);
+}
+
 static int pool_errors_execute(struct oz_message *m)
 {
     char why[256];
@@ -450,6 +478,7 @@ static void *project_run(void *arg)
         w->response.operation==77?cancel_execute(&w->response):
         w->response.operation==82?pool_errors_execute(&w->response):
         w->response.operation==81?vdev_set_execute(&w->response):
+        w->response.operation==52?oz_clone_execute(&w->response):
         w->response.operation==25?upgrade_execute(&w->response):
         w->response.operation==47?dataset_upgrade_execute(&w->response):
         w->response.operation==48?dataset_rewrite_execute(&w->response):

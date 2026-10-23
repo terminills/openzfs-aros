@@ -7,6 +7,7 @@ struct oz_project_worker;
  * drain/join the worker before destroying their process. No cancellation. */
 int oz_project_execute(struct oz_message *);
 int oz_diff_execute(struct oz_message *);
+int oz_clone_execute(struct oz_message *);
 int oz_project_worker_start(const struct oz_message *,struct oz_project_worker **);
 /* Local read-only prerequisite report; no service wire operation or shell. */
 int oz_runtime_worker_start(struct oz_project_worker **);

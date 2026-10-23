@@ -2,6 +2,25 @@
 
 ## AROS build-system integration (in progress)
 
+### Manager clone properties
+
+Snapshot clone requests with nonempty Options now use the existing asynchronous
+command worker and installed `C:zfs clone -u`. Options are up to 16
+semicolon-separated `property=value` pairs, passed as exact argv entries with
+no shell interpretation. Duplicate names, empty entries and missing
+confirmation are refused before execution; upstream libzfs and the native
+ioctl boundary own property validation and caller permissions. Empty Options
+retain the existing authenticated service route. No parents or mounts are
+created implicitly. Inspect the destination after a command failure rather
+than assuming atomicity or automatically retrying.
+
+Native QEMU run `public-service-run.CSAlCo0c` invokes the same clone-command
+adapter from the acceptance client, verifies quota/compression and `mounted=no`,
+and rejects duplicate/malformed/unconfirmed requests. The complete storage
+suite passes. Manager and client were rebuilt with the explicit alpha18 SDK.
+This is command-path runtime evidence; the new Manager interaction has not yet
+received visual qualification. No production storage was accessed.
+
 The root `mmakefile.src` uses native `%build_prog` templates, not the standalone
 shell build scripts. Place the source in a directory scanned by the configured
 AROS Contrib build and regenerate its metamake files. Available targets:
