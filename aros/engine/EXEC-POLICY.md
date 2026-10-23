@@ -101,6 +101,14 @@ startup command, so it cannot credit the property setter's side effect.
 Both failed-run ISOs are pruned after hash capture and open-use checks;
 their serial output and manifests remain.
 
+The expanded fixture also passes cold mirror run `public-service-run.omcqRDJB`:
+writer configuration and startup-mount command checks, loader policy, fresh
+healthy/degraded/restored readers, exact data, unchanged reader member hashes,
+and independent zdb with no leaks. Temporary runtime images are pruned by
+the runner; source/input manifests and serial logs remain. Configuration
+records in this test remain RAM-backed and must not be described as durable
+boot-time settings qualification.
+
 ## User-facing runtime detection (2026-09-30)
 
 OpenZFSRuntimeCheck now checks both loader APIs using a copied executable in
