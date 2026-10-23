@@ -61,6 +61,17 @@ a separate qualification gap.
 
 ## Implemented integration
 
+Manager clone requests with properties now execute through the asynchronous
+worker and upstream `zfs clone -u`, without implicitly mounting the result.
+Native GUI run `native-gui-run.A56TMiQN` exercises request entry, confirmation,
+and submission; independent queries verify origin, quota, compression and
+unmounted state before cleanup. Native run `public-service-run.PnXbHX1E`
+also verifies denial for an unprivileged caller, success with explicit clone,
+destination-create and property grants, and denial after those grants are
+revoked. Rejected requests leave no destination dataset. This qualifies the
+tested property/grant combinations, not every delegation policy or a physical
+installation. See BUILDING.md for the exact cases and retained evidence.
+
 Current-package DOS links are qualified by `public-service-run.Hp9I60Hi`:
 hard links survive deletion of the original filename; relative soft links
 resolve to the retained data; dangling links return object-not-found. Writer
