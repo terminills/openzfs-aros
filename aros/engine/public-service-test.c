@@ -1921,18 +1921,30 @@ static int storage_test(int gui){
             strcpy(clone.argument,"public_mirror/manager_clone");
             strcpy(clone.options,"compression=off;quota=32M;mountpoint=none");
             STORAGE_CHECK(oz_request_route(&clone)==OZ_ROUTE_PROJECT);
-            STORAGE_CHECK(!oz_clone_execute(&clone)&&clone.status==OZ_OK);
+            struct oz_project_worker *worker=NULL;
+            STORAGE_CHECK(!oz_project_worker_start(&clone,&worker));
+            int worker_error=EAGAIN;
+            for(unsigned tick=0;tick<1500&&worker_error==EAGAIN;tick++){
+                worker_error=oz_project_worker_poll(worker,&clone);
+                if(worker_error==EAGAIN)Delay(1);
+            }
+            STORAGE_CHECK(!worker_error);
+            STORAGE_CHECK(!oz_project_worker_free(worker));worker=NULL;
+            STORAGE_CHECK(clone.status==OZ_OK);
             STORAGE_CHECK(!cli_result("C:zfs get -Hp -o value quota public_mirror/manager_clone >T:cli-package-output.txt","33554432"));
             STORAGE_CHECK(!cli_result("C:zfs get -H -o value compression public_mirror/manager_clone >T:cli-package-output.txt","off"));
             STORAGE_CHECK(!cli_result("C:zfs get -H -o value mounted public_mirror/manager_clone >T:cli-package-output.txt","no"));
             STORAGE_CHECK(!cli_command("C:zfs destroy public_mirror/manager_clone"));
+            strcpy(clone.options,"quota=not-a-size");
+            STORAGE_CHECK(!oz_clone_execute(&clone)&&clone.status==OZ_ENGINE_ERROR);
+            STORAGE_CHECK(cli_command("C:zfs list public_mirror/manager_clone")!=0);
             strcpy(clone.options,"quota=1M;quota=2M");
             STORAGE_CHECK(oz_clone_execute(&clone)==EINVAL);
             strcpy(clone.options,"quota=32M;");
             STORAGE_CHECK(oz_clone_execute(&clone)==EINVAL);
             strcpy(clone.options,"quota=32M");clone.flags=0;
             STORAGE_CHECK(oz_clone_execute(&clone)==EINVAL);
-            note("Public Manager clone properties PASS quota=1 compression=1 no-mount=1 duplicate-refused=1 malformed-refused=1 confirmation=1\n");
+            note("Public Manager clone properties PASS quota=1 compression=1 no-mount=1 duplicate-refused=1 malformed-refused=1 confirmation=1 async-worker=1 invalid-property-no-create=1\n");
         }
         STORAGE_CHECK(!cli_result("C:zfs list -H -o name -t snapshot public_mirror/files@cli_roundtrip >T:cli-package-output.txt","public_mirror/files@cli_roundtrip"));
         STORAGE_CHECK(SystemTags((CONST_STRPTR)"C:zfs clone -o mountpoint=none public_mirror/files@cli_roundtrip public_mirror/cli_clone",TAG_DONE)==0);

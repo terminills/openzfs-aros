@@ -21,6 +21,13 @@ suite passes. Manager and client were rebuilt with the explicit alpha18 SDK.
 This is command-path runtime evidence; the new Manager interaction has not yet
 received visual qualification. No production storage was accessed.
 
+Follow-up `public-service-run.wFyWOuwW` exercises the actual Manager worker
+start/poll/join/free path with a bounded wait. The clone's properties and
+unmounted state remain correct. Invalid upstream quota input returns a command
+error and an independent dataset query confirms no destination was created.
+The complete storage suite passes. This closes the asynchronous-worker test
+gap, not the remaining visual interaction check.
+
 The root `mmakefile.src` uses native `%build_prog` templates, not the standalone
 shell build scripts. Place the source in a directory scanned by the configured
 AROS Contrib build and regenerate its metamake files. Available targets:
