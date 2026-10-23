@@ -1,5 +1,6 @@
 /* SPDX-License-Identifier: CDDL-1.0 */
-/* Non-pool runtime checks. No global assigns, credentials or disk writes. */
+/* Non-pool runtime checks. No global assign or credential changes. Temporary
+ * probes use RAM: and the process adapter's T: output capture. */
 #include "process.h"
 #include <proto/exec.h>
 #include <proto/dos.h>
@@ -84,8 +85,30 @@ static int streams(void)
     }
     return ok;
 }
+static int subprocess(void)
+{
+    /* Resolve before entering ExecHelper: PROGDIR there names its directory,
+     * not this executable's. Do not depend on ambient PATH for this probe. */
+    char path[1024];
+    BPTR lock=Lock((CONST_STRPTR)"PROGDIR:OpenZFSRuntimeCheck",SHARED_LOCK);
+    int resolved=lock&&NameFromLock(lock,(STRPTR)path,sizeof(path));
+    if(lock)UnLock(lock);
+    if(!resolved){puts("FAIL resolve subprocess probe executable");return 0;}
+    char *args[]={"OpenZFSRuntimeCheck","--exec-child",NULL};
+    char **lines=NULL;int count=0;
+    int status=oz_cli_run_process(path,args,NULL,4,&lines,&count);
+    int ok=status==23&&count==1&&!strcmp(lines[0],"OpenZFS exec probe");
+    printf("%s ExecHelper subprocess: status=%d lines=%d\n",ok?"PASS":"FAIL",status,count);
+    oz_cli_free_lines(lines,count);
+    if(!ok)puts("Verify SYS:Tools/OpenZFS/ExecHelper and the matching process runtime.");
+    return ok;
+}
 int main(int argc,char **argv)
 {
+    if(argc==2&&!strcmp(argv[1],"--exec-child")){
+        if(puts("OpenZFS exec probe")==EOF||fflush(stdout))return 20;
+        return 23;
+    }
     if(argc==2&&!strcmp(argv[1],"--stdio-child")){
         if(isatty(STDOUT_FILENO)||isatty(STDERR_FILENO))return 20;
         if(fputs("OpenZFS stdout probe\n",stdout)<0||
@@ -107,6 +130,7 @@ int main(int argc,char **argv)
     if(secBase)CloseLibrary(secBase);
     if(!configured)ok=0;
     if(!streams())ok=0;
+    if(!subprocess())ok=0;
     if(!execution())ok=0;
     puts("Not tested: pipe disconnects, storage I/O, durability, GUI or pool operations.");
     puts(ok?"PASS checked runtime prerequisites only":"FAIL runtime prerequisites; review diagnostics above");

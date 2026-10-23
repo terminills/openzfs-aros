@@ -21,7 +21,7 @@ contrib-openzfs contrib-openzfs-tools contrib-openzfs-cli:
 	@:
 #MM contrib-openzfs-manager : includes linklibs
 #MM contrib-openzfs-hostidentity : includes linklibs
-#MM contrib-openzfs-runtimecheck : includes linklibs
+#MM contrib-openzfs-runtimecheck : includes linklibs contrib-openzfs-exechelper
 #MM contrib-openzfs-device : includes linklibs
 #MM contrib-openzfs-exechelper : includes linklibs
 

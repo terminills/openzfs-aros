@@ -259,6 +259,15 @@ includes `Tools/OpenZFS/ExecHelper`, and passes all SHA256SUMS. Test images were
 pruned; screenshots, logs and provenance remain. Hardware and stock-runtime
 boundaries are unchanged.
 
+`OpenZFSRuntimeCheck` now directly probes the installed helper, using its own
+canonical executable path rather than a PROGDIR relative to the helper. Native
+run `public-service-run.UjXmlWsK` reports `PASS ExecHelper subprocess: status=23
+lines=1` and full storage PASS. This diagnostic changes no pool or global
+assign; its temporary capture uses T:. The helper-inclusive `biw8z7ob` archive
+predates this extra diagnostic and remains immutable. This run proves the
+positive execution path; a missing-helper runtime failure injection remains
+to be qualified separately.
+
 ## Discovery selection
 
 Automatic discovery can admit both a whole device and its partitions as scan

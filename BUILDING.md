@@ -10,6 +10,10 @@ AROS Contrib build and regenerate its metamake files. Available targets:
 - `contrib-openzfs-manager`: `Tools/OpenZFSManagerNative`.
 - `contrib-openzfs-hostidentity`: `C/OpenZFSHostIdentity`.
 - `contrib-openzfs-runtimecheck`: `C/OpenZFSRuntimeCheck`.
+- `contrib-openzfs-exechelper`: `Tools/OpenZFS/ExecHelper`, required by native
+  upstream subprocess calls and built with the CLI/runtime-check targets.
+  RuntimeCheck tests actual helper execution, captured stdout and child exit
+  status, without accessing a pool. It uses temporary RAM: and T: probe files.
 - `contrib-openzfs-device`: `C/OpenZFSDevice` (resident device installer).
 - `contrib-openzfs-handler`: generated module from `aros/handler/mmakefile.src`.
 - `contrib-openzfs-cli`: upstream `zfs`, `zpool`, and both startup commands.
