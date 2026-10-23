@@ -261,3 +261,14 @@ refusal. Host zdb traversal passed; pool member and startup archive hashes
 remained unchanged during the reader. The harness pruned 9.78 GiB of test
 images and retained logs, source, binaries and hash records. This does not
 substitute for fresh GUI qualification of this engine candidate.
+
+Fresh GUI qualification subsequently passed in `native-gui-run.t6xqK4TV`:
+Manager connected to the candidate, List pools returned `public_mirror ONLINE`,
+Save UI settings acknowledged ENV/ENVARC, and Wanderer displayed mounted pool
+files. After closing the drawer and Manager, exact-read/export/reimport checks
+completed with storage PASS. Screenshots `pools.png`, `preferences.png` and
+`drawer-closed.png` and input records are retained; the 4.52 GiB ISO was pruned.
+The evidence-bound bundle `mmake-bundle._bkcuna0` matches this GUI run and
+`PdrbuDoG` cold run byte-for-byte and passed its complete SHA256SUMS check.
+Platform prerequisites remain explicit; this is not stock-nightly or physical
+USB qualification.
