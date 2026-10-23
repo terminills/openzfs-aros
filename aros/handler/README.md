@@ -56,6 +56,13 @@ in the same boot. This is protocol evidence, not a claim that Wanderer redraw
 or signal-delivery subscriptions have been visually qualified. Logs, source
 patch and binary hashes are retained; the disposable 4.52 GiB ISO was pruned.
 
+Follow-up run `public-service-run.gjNrFBnd` additionally passes signal delivery:
+`NRF_NOTIFY_INITIAL` on an existing file, metadata change, deletion, and no
+signal after `EndNotify` when the file is recreated. Each wait is bounded;
+the test allocates and releases its own signal bit. Both notification paths
+and the full storage suite pass in this boot. This still does not substitute
+for visually checking a desktop application's automatic refresh.
+
 ### Persistent desktop metadata
 
 Current public-package native run `public-service-run.F9NlIusK` sets and

@@ -1301,6 +1301,48 @@ cleanup:
 #undef NOTIFY_CHECK
     return error;
 }
+static int notification_signal_wait(ULONG mask)
+{
+    for(unsigned i=0;i<100;i++){
+        if(SetSignal(0,mask)&mask)return 1;
+        Delay(1);
+    }
+    return 0;
+}
+static int storage_signal_notifications(void)
+{
+    const char *path="OZPUBLIC:signal-notification.txt";
+    BYTE signal=AllocSignal(-1);if(signal<0)return ENOMEM;
+    ULONG mask=1UL<<signal;SetSignal(0,mask);
+    struct NotifyRequest request={0};
+    request.nr_Name=(STRPTR)path;
+    request.nr_Flags=NRF_SEND_SIGNAL|NRF_NOTIFY_INITIAL;
+    request.nr_stuff.nr_Signal.nr_Task=FindTask(NULL);
+    request.nr_stuff.nr_Signal.nr_SignalNum=signal;
+    int active=0,error=0;BPTR file=0;
+#define SIGNAL_CHECK(x) do{if(!(x)){error=__LINE__;goto cleanup;}}while(0)
+    file=Open((CONST_STRPTR)path,MODE_NEWFILE);SIGNAL_CHECK(file);
+    int closed=Close(file);file=0;SIGNAL_CHECK(closed);
+    SIGNAL_CHECK(StartNotify(&request));active=1;
+    SIGNAL_CHECK(notification_signal_wait(mask));
+    SIGNAL_CHECK(SetComment((CONST_STRPTR)path,(CONST_STRPTR)"signal change"));
+    SIGNAL_CHECK(notification_signal_wait(mask));
+    SIGNAL_CHECK(DeleteFile((CONST_STRPTR)path));
+    SIGNAL_CHECK(notification_signal_wait(mask));
+    EndNotify(&request);active=0;SetSignal(0,mask);
+    file=Open((CONST_STRPTR)path,MODE_NEWFILE);SIGNAL_CHECK(file);
+    closed=Close(file);file=0;SIGNAL_CHECK(closed);
+    Delay(2);SIGNAL_CHECK(!(SetSignal(0,mask)&mask));
+cleanup:
+    if(file)Close(file);
+    if(active)EndNotify(&request);
+    SetSignal(0,mask);FreeSignal(signal);
+    if(!DeleteFile((CONST_STRPTR)path)&&!error)error=__LINE__;
+    if(error)bug("Public DOS signal notifications FAIL line=%d DOS=%ld\n",error,(long)IoErr());
+    else note("Public DOS signal notifications PASS initial=1 metadata=1 deletion=1 end=1\n");
+#undef SIGNAL_CHECK
+    return error;
+}
 static int storage_metadata(const char *volume,int write)
 {
     char path[128];snprintf(path,sizeof(path),"%smetadata.txt",volume);
@@ -1800,6 +1842,7 @@ static int storage_test(int gui){
     STORAGE_CHECK(!storage_links("OZPUBLIC:",1));
     STORAGE_CHECK(!storage_metadata("OZPUBLIC:",1));
     STORAGE_CHECK(!storage_notifications());
+    STORAGE_CHECK(!storage_signal_notifications());
     STORAGE_CHECK(!desktop_directory("OZPUBLIC:","post-sparse64"));
     {
         char dataset[256];
