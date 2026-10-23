@@ -19,6 +19,9 @@ provenance=$(mktemp -d "$out/nvpair-inputs.XXXXXXXX")
 echo "Nvpair provenance: $provenance"
 "$cc" --version >"$provenance/compiler.txt"
 printf 'compiler=%s\nsdk=%s\ntirpc=%s\n' "$cc" "$sdk" "$tirpc" >"$provenance/inputs.txt"
+cp "$0" "$provenance/build-nvpair.sh"
+git -C "$repo" rev-parse HEAD >"$provenance/source-head.txt"
+git -C "$repo" diff --binary >"$provenance/source.patch"
 pthread_lib=(-lpthread)
 if [[ -n ${AROS_PRIVATE_PTHREAD:-} ]];then
     : "${AROS_PTHREAD_INCLUDE:?private pthread archive requires matching headers}"
@@ -47,6 +50,22 @@ done
 diff -qr "$tirpc/tirpc" "$provenance/libtirpc-1.3.7/tirpc"
 find "$tirpc/tirpc" -type f -exec sha256sum {} + >"$provenance/source.sha256"
 sha256sum "$archive" "$tirpc/src/"{xdr,xdr_mem,xdr_array,xdr_float}.c >>"$provenance/source.sha256"
+sources=(module/nvpair/nvpair.c module/nvpair/fnvpair.c module/nvpair/nvpair_alloc_fixed.c
+    lib/libnvpair/nvpair_alloc_system.c lib/libspl/assert.c lib/libspl/backtrace.c)
+# Record the port inputs too, not only the external XDR codec. Include headers
+# and SDK files so an identical Git revision cannot hide a changed ABI input.
+for file in "${sources[@]}" aros/engine/nvpair-test.c aros/engine/config.h;do
+    sha256sum "$repo/$file" >>"$provenance/source.sha256"
+done
+find "$repo/include" "$repo/lib/libspl/include" "$sdk/include" -type f -print0 |
+    LC_ALL=C sort -z | xargs -0 sha256sum >>"$provenance/source.sha256"
+if [[ -n ${AROS_PTHREAD_INCLUDE:-} ]];then
+    find "$AROS_PTHREAD_INCLUDE" -type f -name '*.h' -print0 |
+        LC_ALL=C sort -z | xargs -0 sha256sum >>"$provenance/source.sha256"
+fi
+if [[ -n ${AROS_PRIVATE_PTHREAD:-} ]];then
+    sha256sum "$AROS_PRIVATE_PTHREAD" >>"$provenance/source.sha256"
+fi
 # Match upstream's aliasing and diagnostic policy for its portable sources.
 flags=(-O2 -g -fno-strict-aliasing -Wall -Wextra -Wno-unused-parameter
     -include "$repo/aros/engine/config.h"
@@ -54,8 +73,7 @@ flags=(-O2 -g -fno-strict-aliasing -Wall -Wextra -Wno-unused-parameter
     -I"$repo/lib/libspl/include" -I"$repo/lib/libspl/include/os/linux"
     -I"$repo/include" -I"$tirpc/tirpc" -include sys/sysmacros.h)
 objects=()
-for file in module/nvpair/nvpair.c module/nvpair/fnvpair.c module/nvpair/nvpair_alloc_fixed.c \
-    lib/libnvpair/nvpair_alloc_system.c lib/libspl/assert.c lib/libspl/backtrace.c; do
+for file in "${sources[@]}"; do
     obj="$object_dir/$(basename "$file" .c).o"
     "$cc" "${sdk_flags[@]}" "${flags[@]}" -c "$repo/$file" -o "$obj"
     objects+=("$obj")
@@ -66,8 +84,8 @@ for file in xdr xdr_mem xdr_array xdr_float; do
     "$cc" "${sdk_flags[@]}" -O2 -g -Wall -Wno-unused-variable -I"$tirpc/tirpc" -c "$tirpc/src/$file.c" -o "$obj"
     objects+=("$obj")
 done
-sha256sum -c "$provenance/source.sha256" >"$provenance/source-after-check.log"
 archiver=$("$cc" -print-prog-name=ar)
 "$archiver" rcs "$nvpair" "${objects[@]}"
 "$cc" "${sdk_flags[@]}" "${flags[@]}" "$repo/aros/engine/nvpair-test.c" "$nvpair" "${pthread_lib[@]}" -o "$out/OpenZFSNvpairTest"
+sha256sum -c "$provenance/source.sha256" >"$provenance/source-after-check.log"
 sha256sum "${objects[@]}" "$nvpair" "$out/OpenZFSNvpairTest" >"$provenance/outputs.sha256"

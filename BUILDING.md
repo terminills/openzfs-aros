@@ -84,6 +84,14 @@ archive was produced. This establishes build/provenance behavior, not a new
 runtime qualification of that standalone archive or a complete dependency
 bootstrap. The earlier MetaMake package runtime evidence remains separate.
 
+The standalone nvpair provenance also records its OpenZFS C sources and
+configuration, project and selected SDK headers, optional private pthread
+headers/archive, builder script, Git revision and local patch. Input hashes
+are checked again after the test executable has linked. Native cross-build
+`nvpair-provenance.l9f0JZ5l` passes this expanded check (18,468 input files) and
+its output manifest verifies. This is a fresh build/provenance result, not a
+new runtime qualification or a complete dependency bootstrap.
+
 The fresh standalone archive was subsequently linked into native shared-engine
 candidate `shared-engine.j0FGUlhp`, using the same full MetaMake engine object,
 native pthread archive, crypto archive and SDK `libz1.a` import library.
