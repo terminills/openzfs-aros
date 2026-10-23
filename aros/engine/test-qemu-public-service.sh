@@ -39,6 +39,8 @@ shared=${AROS_TEST_SHARED_BUILD:-}
 cli_dir=${AROS_TEST_CLI_DIR:-}
 companions=${AROS_TEST_COMPANION_TOOLS:-0}
 [[ $companions == 0 || ( $companions == 1 && -n $cli_dir ) ]]
+missing_helper=${AROS_TEST_MISSING_EXEC_HELPER:-0}
+[[ $missing_helper == 0 || ( $missing_helper == 1 && $companions == 1 ) ]]
 handler=${AROS_TEST_HANDLER_BINARY:-}
 device=${AROS_TEST_DEVICE_BINARY:-}
 [[ -z $device || -n $cli_dir ]]
@@ -172,6 +174,7 @@ source "$repo/aros/engine/storage-preflight.sh"
 mkdir -p "$repo/build-aros"
 artifact_root=$(oz_artifact_root "$repo/build-aros" "${AROS_TEST_ARTIFACT_ROOT:-}")
 run=$(mktemp -d "$artifact_root/$prefix.XXXXXXXX")
+printf '%s\n' "$missing_helper" >"$run/missing-exec-helper.txt"
 cp "$0" "$run/runner.sh"
 sha256sum "$run/runner.sh" >"$run/runner.sha256"
 echo "Evidence: $run"
@@ -261,6 +264,11 @@ if [[ -n $cli_dir ]];then
     if [[ $companions == 1 ]];then
         cp "$cli_dir/../Tools/OpenZFS/ExecHelper" "$run/ExecHelper"
         extra_maps+=(-map "$run/ExecHelper" /Tools/OpenZFS/ExecHelper)
+        # Negative installation diagnostic: remove only this private ISO's
+        # mapped helper. The suite must fail; never reinterpret this as PASS.
+        if [[ $missing_helper == 1 ]];then
+            extra_maps+=(-rm /Tools/OpenZFS/ExecHelper --)
+        fi
         sha256sum "$run/ExecHelper" >>"$run/cli-inputs.sha256"
         for command in OpenZFSStartup OpenZFSStartupMount OpenZFSRuntimeCheck OpenZFSHostIdentity;do
             cp "$cli_dir/$command" "$run/$command"

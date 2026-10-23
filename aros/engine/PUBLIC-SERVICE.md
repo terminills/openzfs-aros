@@ -268,6 +268,18 @@ predates this extra diagnostic and remains immutable. This run proves the
 positive execution path; a missing-helper runtime failure injection remains
 to be qualified separately.
 
+Missing-helper injection is now verified in `public-service-run.5Tfqf0EV`:
+the private ISO maps then explicitly removes only `Tools/OpenZFS/ExecHelper`.
+RuntimeCheck reports `FAIL ExecHelper subprocess: status=-8 lines=0`, names
+the required installation path, and returns failure; the suite exits 1 with
+storage FAIL rather than silently qualifying an incomplete installation.
+This is expected diagnostic failure, not successful storage qualification.
+Positive control is `UjXmlWsK`. The earlier `ofQYkMci` attempt never booted:
+xorriso removal lacked its list terminator and failed assembly (exit 32).
+Both attempts retain logs/provenance. The injection is opt-in through
+`AROS_TEST_MISSING_EXEC_HELPER=1`, requires companion tests, and cannot turn
+the failed suite into a pass.
+
 ## Discovery selection
 
 Automatic discovery can admit both a whole device and its partitions as scan
