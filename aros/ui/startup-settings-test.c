@@ -79,10 +79,18 @@ int oz_startup_settings_test(void)
     BPTR transaction=CreateDir((CONST_STRPTR)"RAM:OpenZFS-startup-saved.prefs.txn");
     CHECK(transaction);UnLock(transaction);
     CHECK(oz_startup_settings_store(saved,p,&published)==EBUSY&&!published);
+    /* Preserve legacy transactions, but never silently recover through them. */
     CHECK(Rename((CONST_STRPTR)saved,(CONST_STRPTR)"RAM:OpenZFS-startup-saved.prefs.txn/previous"));
-    CHECK(!oz_startup_settings_load(saved,loaded,&recovered)&&recovered==1&&loaded->flags==7);
+    CHECK(oz_startup_settings_load(saved,loaded,&recovered)==EBUSY);
     CHECK(Rename((CONST_STRPTR)"RAM:OpenZFS-startup-saved.prefs.txn/previous",(CONST_STRPTR)saved));
     CHECK(DeleteFile((CONST_STRPTR)"RAM:OpenZFS-startup-saved.prefs.txn"));
+    transaction=CreateDir((CONST_STRPTR)"RAM:OpenZFS-startup-saved.txn");
+    CHECK(transaction);UnLock(transaction);
+    CHECK(oz_startup_settings_store(saved,p,&published)==EBUSY&&!published);
+    CHECK(Rename((CONST_STRPTR)saved,(CONST_STRPTR)"RAM:OpenZFS-startup-saved.txn/previous"));
+    CHECK(!oz_startup_settings_load(saved,loaded,&recovered)&&recovered==1&&loaded->flags==7);
+    CHECK(Rename((CONST_STRPTR)"RAM:OpenZFS-startup-saved.txn/previous",(CONST_STRPTR)saved));
+    CHECK(DeleteFile((CONST_STRPTR)"RAM:OpenZFS-startup-saved.txn"));
     /* Invalid replacement must preserve the last good 32-device record. */
     p->count=0;
     CHECK(oz_startup_settings_store(saved,p,&published)==EINVAL&&!published);

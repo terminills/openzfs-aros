@@ -1,5 +1,25 @@
 # Native execution property
 
+## Persistent settings archive (2026-10-22)
+
+`AROS_TEST_STARTUP_ARCHIVE=1` adds an independent 32 MiB muFS IDE disk
+to the persistent companion suite. Writer and fresh-boot reader exercise
+HostIdentity SAVE, IFF readback, trusted Startup PREPARE, and disabled
+Startup RESTORE using ENVARC on that disk and fresh RAM ENV directories.
+Run `public-service-run.Lffxaiig` passed both phases, the complete mirror
+suite, and the full archive image unchanged-hash check. Enabled pool imports
+are separately exercised by the existing startup-import fixture; this does
+not yet qualify an enabled record restored from persistent ENVARC.
+
+This exposed a real filename limit: a 30-character GUID preferences name
+plus `.txn` is rejected by muFS with DOS error 210. Staging now replaces
+`.prefs` with `.txn` for long preferences names. Legacy pending transaction
+directories are preserved and rejected, not overwritten or silently adopted.
+`BmV4g2lW` and `CkSkvbmB` retain the pre-fix failures; `L4FQzBxT` passed
+the writer but its cold QEMU invocation rejected a read-only IDE block node.
+The passing run uses a writable IDE node and proves no cold archive change
+by comparing the entire disk hash; it does not claim hardware write protection.
+
 ## Alpha18 companion qualification (2026-10-22)
 
 The opt-in public-service runner `AROS_TEST_COMPANION_TOOLS=1` installs and

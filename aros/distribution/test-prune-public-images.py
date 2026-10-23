@@ -44,6 +44,19 @@ class Retention(unittest.TestCase):
         self.invoke()
         self.assertTrue((self.run / "test.iso").exists())
 
+    def test_archive_requires_cold_restore_and_hash_evidence(self):
+        archive = self.run / "startup-archive.raw"
+        archive.write_bytes(b"persistent settings")
+        self.assertNotIn(archive, prune.candidates(self.run))
+        (self.run / "archive-unchanged.log").write_text(f"{archive}: OK\n")
+        self.assertNotIn(archive, prune.candidates(self.run))
+        for name, mode in (("serial-results.log", 1), ("cold-results.log", 0)):
+            with (self.run / name).open("a") as log:
+                log.write(f"Public persistent settings PASS write={mode}\n")
+        self.assertIn(archive, prune.candidates(self.run))
+        self.invoke(True)
+        self.assertFalse(archive.exists())
+
     def test_gui_requires_pass_and_no_backing(self):
         gui = self.run.with_name("native-gui-run.test")
         self.run.rename(gui)

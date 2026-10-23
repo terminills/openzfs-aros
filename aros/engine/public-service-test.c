@@ -21,6 +21,7 @@
 #include <dos/dosextens.h>
 #include <dos/exall.h>
 #include <dos/dos64.h>
+#include <dos/filesystemids.h>
 #include <exec/memory.h>
 #include <exec/io.h>
 #include <exec/errors.h>
@@ -804,6 +805,86 @@ cleanup:
     if(error){char line[96];snprintf(line,sizeof(line),"Public companion configuration FAIL line=%d DOS=%ld\n",error,(long)IoErr());note(line);}
     else note("Public companion configuration PASS hostid-save=1 iff-readback=2 trusted-check=1 prepare=1 disabled-restore=1 assigns-restored=1\n");
 #undef CONFIG_CHECK
+    return error;
+}
+static int companion_persistent_settings(int cold)
+{
+    BPTR marker=Lock((CONST_STRPTR)"SYS:openzfs-startup-archive-test",SHARED_LOCK);
+    if(!marker)return 0;
+    UnLock(marker);
+    int error=0,mounted=0,created=0;BPTR saved[2]={0,0};int assigned[2]={0,0};
+    const char *assigns[]={"ENV","ENVARC"};
+    const char *roots[]={"RAM:OZPersistentEnv","OZARCH:Prefs"};
+    struct oz_startup_settings record={0},loaded={0};unsigned published=0;
+#define PS_CHECK(x) do{if(!(x)){error=__LINE__;goto cleanup;}}while(0)
+    marker=Lock((CONST_STRPTR)"RAM:OZArchiveReady",SHARED_LOCK);
+    if(marker)UnLock(marker);
+    else{
+        PS_CHECK(!cli_command("C:Mount SYS:OZARCH"));mounted=1;
+        if(!cold){
+            PS_CHECK(Inhibit((CONST_STRPTR)"OZARCH:",DOSTRUE));
+            PS_CHECK(Format((CONST_STRPTR)"OZARCH:",(CONST_STRPTR)"OZSettings",ID_DOS_muFS_DISK));
+        }
+        BPTR ready=Open((CONST_STRPTR)"RAM:OZArchiveReady",MODE_NEWFILE);PS_CHECK(ready);PS_CHECK(Close(ready));
+    }
+    mounted=1;PS_CHECK(Inhibit((CONST_STRPTR)"OZARCH:",DOSFALSE));
+    for(unsigned i=0;i<2;i++){
+        char path[32];snprintf(path,sizeof(path),"%s:",assigns[i]);
+        saved[i]=Lock((CONST_STRPTR)path,SHARED_LOCK);PS_CHECK(saved[i]);
+        BPTR directory=Lock((CONST_STRPTR)roots[i],SHARED_LOCK);
+        if(!directory){
+            PS_CHECK(i==0||!cold);
+            directory=CreateDir((CONST_STRPTR)roots[i]);PS_CHECK(directory);
+            if(i==0)created=1;
+            if(!SetOwner((STRPTR)roots[i],secOWNER_SYSTEM)||!SetProtection((CONST_STRPTR)roots[i],0)){
+                UnLock(directory);PS_CHECK(0);
+            }
+            UnLock(directory);directory=Lock((CONST_STRPTR)roots[i],SHARED_LOCK);PS_CHECK(directory);
+        }else if(i==0){UnLock(directory);PS_CHECK(0);} /* Never reuse a pre-existing RAM fixture. */
+        if(!AssignLock((CONST_STRPTR)assigns[i],directory)){UnLock(directory);PS_CHECK(0);}
+        assigned[i]=1;
+    }
+    record.guid=UINT64_C(0x5a46530000000002);record.count=1;
+    strcpy(record.pool,"persistent_disabled");strcpy(record.paths[0],"RAM:must-not-be-opened");
+    if(!cold){
+        LONG status=cli_command("C:OpenZFSHostIdentity 5a465302 SAVE >T:persistent-identity.log");
+        diagnostic_log("T:persistent-identity.log");PS_CHECK(!status);
+        int applied=oz_startup_settings_apply_trusted(&record,1,&published);
+        char detail[128];snprintf(detail,sizeof(detail),"Public persistent publish errno=%d published=%u DOS=%ld\n",applied,published,(long)IoErr());note(detail);
+        PS_CHECK(!applied);
+        PS_CHECK(published==(OZ_STARTUP_PUBLISHED_ENV|OZ_STARTUP_PUBLISHED_ENVARC));
+        PS_CHECK(DeleteFile((CONST_STRPTR)"ENV:OpenZFS-5a46530000000002.prefs"));
+    }
+    BPTR file=Open((CONST_STRPTR)"ENVARC:OpenZFSHost.prefs",MODE_OLDFILE);PS_CHECK(file);
+    uint32_t identity=0;int result=oz_hostid_record_read(file,&identity),closed=Close(file);
+    PS_CHECK(!result&&closed&&identity==UINT32_C(0x5a465302));
+    PS_CHECK(cli_command("C:OpenZFSStartup 5a46530000000002 CHECK")==1);
+    LONG status=cli_command("C:OpenZFSStartup 5a46530000000002 PREPARE >T:persistent-prepare.log");
+    diagnostic_log("T:persistent-prepare.log");PS_CHECK(!status);
+    PS_CHECK(!oz_startup_settings_trusted(record.guid,&loaded)&&loaded.guid==record.guid&&
+        !loaded.flags&&loaded.count==1&&!strcmp(loaded.pool,record.pool)&&!strcmp(loaded.paths[0],record.paths[0]));
+    PS_CHECK(!cli_command("C:OpenZFSStartup 5a46530000000002 RESTORE"));
+    PS_CHECK(!present(OZ_PORT)&&!present(OZ_ADMISSION_PORT));
+cleanup:
+    for(unsigned i=0;i<2;i++){
+        if(assigned[i]){
+            if(AssignLock((CONST_STRPTR)assigns[i],saved[i]))saved[i]=0;
+            else if(!error)error=__LINE__;
+        }
+        if(saved[i])UnLock(saved[i]);
+    }
+    if(created){
+        const char *names[]={"OpenZFSHost.prefs","OpenZFS-5a46530000000002.prefs"};
+        for(unsigned i=0;i<2;i++){
+            char path[128];snprintf(path,sizeof(path),"%s/%s",roots[0],names[i]);
+            if(!DeleteFile((CONST_STRPTR)path)&&IoErr()!=ERROR_OBJECT_NOT_FOUND&&!error)error=__LINE__;
+        }
+        if(!DeleteFile((CONST_STRPTR)roots[0])&&!error)error=__LINE__;
+    }
+    if(mounted&&!Inhibit((CONST_STRPTR)"OZARCH:",DOSTRUE)&&!error)error=__LINE__;
+    char line[160];snprintf(line,sizeof(line),error?"Public persistent settings FAIL write=%d line=%d DOS=%ld\n":
+        "Public persistent settings PASS write=%d archive-mufs=1 hostid-iff=1 trusted-prepare=1 disabled-restore=1\n",!cold,error,(long)IoErr());note(line);
+#undef PS_CHECK
     return error;
 }
 static int companion_mount_test(void)
@@ -2041,6 +2122,7 @@ int main(int argc,char **argv){
         secLogoutA(quiet);logged=0;
         CHECK(secLoginA(root)==secOWNER_SYSTEM);logged=1;
         CHECK(!companion_configuration_test());
+        CHECK(!companion_persistent_settings(cold));
         CHECK(SystemTags((CONST_STRPTR)"Run >T:service-writable.log C:OpenZFSServiceNative WRITABLE",TAG_DONE)==0);
         note("Public startup invalid-mode and non-root denial PASS\n");
     }

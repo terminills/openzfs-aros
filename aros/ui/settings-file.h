@@ -13,4 +13,7 @@ struct oz_settings_codec {
 };
 int oz_settings_load(const char *,void *,int *,const struct oz_settings_codec *);
 int oz_settings_store(const char *,const void *,int *,const struct oz_settings_codec *);
+/* Long .prefs basenames use .txn instead of .prefs.txn to fit classic
+ * 30-character filesystems. Existing legacy transactions fail closed. */
+int oz_settings_transaction_path(const char *,char *,size_t);
 #endif

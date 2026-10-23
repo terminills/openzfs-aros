@@ -95,7 +95,7 @@ static int trusted_record(const char *volume,uint64_t guid,struct oz_startup_set
     struct oz_startup_settings *candidate=NULL;
     char path[80],transaction[88];
     record_path(path,sizeof(path),volume,guid);
-    snprintf(transaction,sizeof(transaction),"%s.txn",path);
+    if(!error)error=oz_settings_transaction_path(path,transaction,sizeof(transaction));
     if(!error){
         BPTR pending=Lock((CONST_STRPTR)transaction,SHARED_LOCK);
         if(pending){UnLock(pending);error=EBUSY;}

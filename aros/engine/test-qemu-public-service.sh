@@ -47,6 +47,8 @@ persistent=${AROS_TEST_PERSISTENT:-0}
 [[ $persistent == 0 || $persistent == 1 ]]
 startup_import=${AROS_TEST_STARTUP_IMPORT:-0}
 [[ $startup_import == 0 || ( $startup_import == 1 && $persistent == 1 && $companions == 1 ) ]]
+startup_archive=${AROS_TEST_STARTUP_ARCHIVE:-0}
+[[ $startup_archive == 0 || ( $startup_archive == 1 && $persistent == 1 && $companions == 1 ) ]]
 keep_images=${AROS_TEST_KEEP_IMAGES:-0}
 [[ $keep_images == 0 || $keep_images == 1 ]]
 zvol_fs=${AROS_TEST_ZVOL_FILESYSTEM:-0}
@@ -137,6 +139,7 @@ if [[ ${AROS_TEST_LOADER_POLICY:-0} == 1 ]];then
     extra_maps+=(-map aros/engine/public-service-test-only /openzfs-loader-policy-test)
 fi
 extra_drives=()
+archive_cold_drives=()
 partitions=${AROS_TEST_REQUIRE_PARTITIONS:-0}
 ahci_query=${AROS_TEST_AHCI_QUERY:-0}
 [[ $ahci_query == 0 || ( $ahci_query == 1 && $partitions == 1 ) ]]
@@ -227,6 +230,17 @@ if [[ $persistent == 1 ]];then
         -map aros/engine/public-service-test-only /openzfs-native-file-fixture)
     extra_drives+=(-drive "file=$run/backing.raw,format=raw,if=ide,index=0")
     sha256sum "$run/fat-handler" "$run/OZBACK" >"$run/backing-inputs.sha256"
+    if [[ $startup_archive == 1 ]];then
+        truncate -s 32M "$run/startup-archive.raw"
+        cp aros/engine/OZARCH "$run/OZARCH"
+        sha256sum "$run/OZARCH" >"$run/archive-inputs.sha256"
+        extra_maps+=(-map "$run/OZARCH" /OZARCH
+            -map aros/engine/public-service-test-only /openzfs-startup-archive-test)
+        extra_drives+=(-drive "file=$run/startup-archive.raw,format=raw,if=ide,index=1")
+        # IDE hard disks require a writable QEMU block node. Verify absence of
+        # cold-restore writes with the full-image before/after hash below.
+        archive_cold_drives=(-drive "file=$run/startup-archive.raw,format=raw,if=ide,index=1")
+    fi
 fi
 if [[ -n $pbkdf2 ]];then
     cp "$pbkdf2" "$run/OpenZFSPBKDF2Test"
@@ -503,6 +517,10 @@ if [[ $persistent == 1 ]];then
         mcopy -i "$run/backing.raw" "::OZPublicPool/disk$member$suffix" "$run/members-before/disk$member"
     done
     sha256sum "$run/members-before/"* >"$run/members-before.sha256"
+    if [[ $startup_archive == 1 ]];then
+        rg -q '^Public persistent settings PASS write=1' "$run/serial-results.log"
+        sha256sum "$run/startup-archive.raw" >"$run/archive-before.sha256"
+    fi
     printf '%s\n' 'FailAt 20' 'MakeDir RAM:T RAM:ENV' 'Assign T: RAM:T' \
         'Assign ENV: RAM:ENV' 'Stack 1048576' 'Mount SYS:OZBACK' \
         'C:OpenZFSPublicServiceTest STORAGE-COLD' 'EndCLI' >"$run/Startup-Cold"
@@ -521,6 +539,7 @@ if [[ $persistent == 1 ]];then
     "$qemu" -name "openzfs-public-cold-$$" -machine pc,accel=kvm -cpu host \
         -smp "$cpus" -m 2048 -drive "file=$run/cold.iso,media=cdrom,if=ide,index=2,readonly=on" \
         -drive "file=$run/backing.raw,format=raw,if=ide,index=0" -display none -nic none \
+        "${archive_cold_drives[@]}" \
         -boot d -no-reboot -no-shutdown -serial "file:$run/cold-serial.log" \
         -monitor "unix:$run/cold-monitor,server=on,wait=off" >"$run/cold-qemu.log" 2>&1 &
     pid=$!
@@ -559,6 +578,10 @@ if [[ $persistent == 1 ]];then
     wait "$pid"
     trap - EXIT
     rg -q '^Public backing clean detach PASS' "$run/cold-results.log"
+    if [[ $startup_archive == 1 ]];then
+        rg -q '^Public persistent settings PASS write=0' "$run/cold-results.log"
+        sha256sum -c "$run/archive-before.sha256" >"$run/archive-unchanged.log"
+    fi
     if [[ $startup_import == 1 ]];then
         [[ $(rg -c '^Public startup import command PASS fresh-guest=1 guid-bound=1 readonly=1 no-mount-request=1' "$run/cold-results.log") == 3 ]]
     fi

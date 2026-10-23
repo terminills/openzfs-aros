@@ -33,6 +33,28 @@ static int load_one(const char *path,void *out,const struct oz_settings_codec *c
     free(candidate);
     return error;
 }
+int oz_settings_transaction_path(const char *path,char *out,size_t size)
+{
+    if(!path||!out||!size)return EINVAL;
+    size_t length=strlen(path);const char *base=path;
+    for(const char *p=path;*p;p++)if(*p==':'||*p=='/')base=p+1;
+    int compact=strlen(base)>26&&length>=6&&!strcmp(path+length-6,".prefs");
+    if(!compact){
+        if(length+5>size)return ENAMETOOLONG;
+        snprintf(out,size,"%s.txn",path);return 0;
+    }
+    if(length+1>size)return ENAMETOOLONG;
+    char legacy[1024];
+    if(length+5>sizeof(legacy))return ENAMETOOLONG;
+    snprintf(legacy,sizeof(legacy),"%s.txn",path);
+    BPTR pending=Lock((CONST_STRPTR)legacy,SHARED_LOCK);
+    if(pending){UnLock(pending);return EBUSY;}
+    LONG error=IoErr();
+    if(error!=ERROR_OBJECT_NOT_FOUND&&error!=ERROR_DIR_NOT_FOUND&&
+       error!=ERROR_INVALID_COMPONENT_NAME&&error!=ERROR_LINE_TOO_LONG)return file_error(error);
+    memcpy(out,path,length-6);memcpy(out+length-6,".txn",5);
+    return 0;
+}
 static int verify_lock(BPTR lock,const struct oz_settings_codec *codec,int directory)
 {
     if(!codec->verify)return 0;
@@ -85,7 +107,9 @@ int oz_settings_load(const char *path,void *out,int *recovered,const struct oz_s
     if(!path||!out||strlen(path)>900)return EINVAL;
     int error=load_one(path,out,codec);
     if(error!=ENOENT)return error;
-    char previous[1024];snprintf(previous,sizeof(previous),"%s.txn/previous",path);
+    char stage[1024],previous[1040];
+    error=oz_settings_transaction_path(path,stage,sizeof(stage));if(error)return error;
+    snprintf(previous,sizeof(previous),"%s/previous",stage);
     error=load_one(previous,out,codec);
     if(!error&&recovered)*recovered=1;
     return error;
@@ -94,15 +118,15 @@ int oz_settings_store(const char *path,const void *p,int *published,const struct
 {
     if(published)*published=0;
     if(!path||!p||!strchr(path,':')||strlen(path)>900)return EINVAL;
-    char stage[1024],next[1024],previous[1024];
-    snprintf(stage,sizeof(stage),"%s.txn",path);
-    snprintf(next,sizeof(next),"%s.txn/next",path);
-    snprintf(previous,sizeof(previous),"%s.txn/previous",path);
+    char stage[1024],next[1040],previous[1040];
+    int error=oz_settings_transaction_path(path,stage,sizeof(stage));if(error)return error;
+    snprintf(next,sizeof(next),"%s/next",stage);
+    snprintf(previous,sizeof(previous),"%s/previous",stage);
     /* Atomic creation claims a fresh private staging namespace. Existing
      * transactions belong to another writer or need explicit recovery. */
     BPTR lock=CreateDir((CONST_STRPTR)stage);
     if(!lock)return file_error(IoErr());
-    int error=verify_lock(lock,codec,1);
+    error=verify_lock(lock,codec,1);
     UnLock(lock);
     if(error){DeleteFile((CONST_STRPTR)stage);return error;}
     int created=0,moved=0,committed=0;

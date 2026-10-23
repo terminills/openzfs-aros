@@ -45,6 +45,14 @@ def eligible(run):
 
 def candidates(run):
     result = [run / name for name in ("test.iso", "cold.iso", "backing.raw", "retired-disk0")]
+    archive = run / "startup-archive.raw"
+    unchanged = run / "archive-unchanged.log"
+    if (unchanged.is_file() and f"{archive}: OK" in unchanged.read_text()
+            and "FAILED" not in unchanged.read_text()
+            and "Public persistent settings PASS write=1" in (run / "serial-results.log").read_text()
+            and (run / "cold-results.log").is_file()
+            and "Public persistent settings PASS write=0" in (run / "cold-results.log").read_text()):
+        result.append(archive)
     for name in ("members-before", "members-after"):
         folder = run / name
         if folder.is_dir() and not folder.is_symlink():

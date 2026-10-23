@@ -1,0 +1,17 @@
+FileSystem     = L:afs-handler
+Device         = ata.device
+Unit           = 1
+Flags          = 0
+LowCyl         = 0
+HighCyl        = 65535
+Surfaces       = 1
+BlocksPerTrack = 1
+BlockSize      = 512
+Reserved       = 2
+Buffers        = 64
+BufMemType     = 1
+Stacksize      = 65536
+Priority       = 5
+GlobVec        = -1
+DosType        = 0x6d754600
+Activate       = 0
