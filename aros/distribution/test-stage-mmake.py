@@ -16,6 +16,7 @@ class EvidenceTests(unittest.TestCase):
             root = pathlib.Path(directory)
             (root / "serial-results.log").write_text(
                 "Public companion tools PASS runtime-prerequisites=1\n"
+                "Public exec helper PASS real-zpool=1 captured-output=1 missing-executable=1\n"
                 "Public companion configuration PASS hostid-save=1\n"
                 "Public companion mount PASS guid-bound=1\n")
             marker = "Public persistent enabled restore PASS trusted-envarc=1 imported=1 mounted=1 readonly=1\n"

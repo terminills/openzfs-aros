@@ -7,6 +7,7 @@
 #include "../ui/partition-api.h"
 #include "../ui/zvol-api.h"
 #include "../device/mountfile.h"
+#include "../cli/process.h"
 #include "../ui/startup-settings.h"
 #include "hostid-record.h"
 #include "include/sys/mnttab.h"
@@ -894,6 +895,17 @@ static int companion_mount_test(void)
     BPTR marker=Lock((CONST_STRPTR)"SYS:openzfs-companion-tools-test",SHARED_LOCK);
     if(!marker)return 0;
     UnLock(marker);
+    char *args[]={"zpool","list","-H","-o","name","public_mirror",NULL};
+    char **lines=NULL;int count=0;
+    int child=oz_cli_run_process("C:zpool",args,NULL,4,&lines,&count);
+    int helper_ok=!child&&count==1&&!strcmp(lines[0],"public_mirror");
+    oz_cli_free_lines(lines,count);lines=NULL;count=0;
+    if(!helper_ok)return EIO;
+    child=oz_cli_run_process("C:OpenZFSAbsentChild",args,NULL,4,&lines,&count);
+    helper_ok=child==255&&count==0;
+    oz_cli_free_lines(lines,count);
+    if(!helper_ok)return EIO;
+    note("Public exec helper PASS real-zpool=1 captured-output=1 missing-executable=1\n");
     int error=0,changed=0;char command[256],text[64]={0};
     struct oz_mount_snapshot *snapshot=NULL;
 #define CM_CHECK(x) do{if(!(x)){error=__LINE__;goto cleanup;}}while(0)

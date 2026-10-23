@@ -236,6 +236,21 @@ creating and verifying the mounted file. Close it only after recording GUI
 checks; no shared hosted session or DUT is involved.
 # Native discovery admission regression (2026-10-22)
 
+## Native CLI subprocess packaging
+
+The MetaMake aggregate previously omitted `SYS:Tools/OpenZFS/ExecHelper`,
+required by the native upstream process adapter. The helper now has a native
+MetaMake target and is a dependency of both CLI targets. The package stager
+includes it and requires runtime evidence plus matching GUI/cold hashes.
+`public-service-run.ySc0xoyJ` passed a real `zpool list` through
+`oz_cli_run_process`, exact captured pool-name output and exit 255 for a missing
+executable, followed by the full storage suite. The test ISO was pruned.
+Earlier bundles lack the helper; their ordinary CLI/storage evidence does not
+establish external-command support. Fresh GUI/cold bundle qualification is
+still required after this packaging change.
+
+## Discovery selection
+
 Automatic discovery can admit both a whole device and its partitions as scan
 candidates. Writable import must reserve only the leaves referenced by the
 validated pool configuration, not every scanned candidate: reserving a whole

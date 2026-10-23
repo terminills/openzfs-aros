@@ -8,6 +8,12 @@ before mounting an imported dataset. Do not replace a running resident engine;
 export pools and restart AROS after binary changes. No installer or automatic
 pool creation is included. Never guess a physical device's unit or partition.
 
+Keep `Tools/OpenZFS/ExecHelper` at that exact SYS: location. The upstream CLI
+process adapter launches this native child-process trampoline; omitting it
+breaks external-command execution even when ordinary pool queries work.
+Packaging requires matching GUI/cold input hashes and native real-zpool/output
+capture/missing-executable acceptance, not merely the presence of the file.
+
 **Platform/ is separate and must not be blindly installed.** Its posixc.library
 is the matching alpha18 runtime with the appended pipe2 vector used by the
 native test suite. It is an explicit platform integration dependency, not an

@@ -57,6 +57,7 @@ def require_companions(run):
     writer = (run / "serial-results.log").read_text()
     cold = (run / "cold-results.log").read_text()
     for marker in ("Public companion tools PASS runtime-prerequisites=1",
+                   "Public exec helper PASS real-zpool=1 captured-output=1 missing-executable=1",
                    "Public companion configuration PASS hostid-save=1",
                    "Public companion mount PASS guid-bound=1"):
         if marker not in writer:
@@ -105,6 +106,7 @@ def main():
         "Libs/openzfs.library": build / "package/openzfs.library",
         "L/OpenZFS-Handler": stage / "L/OpenZFS-handler",
         "Tools/OpenZFSManagerNative": stage / "Tools/OpenZFSManagerNative",
+        "Tools/OpenZFS/ExecHelper": stage / "Tools/OpenZFS/ExecHelper",
         "Platform/Libs/posixc.library": stage / "Libs/posixc.library",
     }
     for destination, source in selected.items():

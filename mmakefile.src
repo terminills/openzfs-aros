@@ -14,7 +14,7 @@ OPENZFS_MANAGER_FILES := aros/ui/api aros/ui/admission-client \
     aros/ui/startup-settings aros/ui/startup-settings-file \
     aros/ui/hostid-settings aros/engine/hostid-record
 
-#MM contrib-openzfs-tools : contrib-openzfs-manager contrib-openzfs-hostidentity contrib-openzfs-runtimecheck contrib-openzfs-device
+#MM contrib-openzfs-tools : contrib-openzfs-manager contrib-openzfs-hostidentity contrib-openzfs-runtimecheck contrib-openzfs-device contrib-openzfs-exechelper
 #MM contrib-openzfs : contrib-openzfs-tools contrib-openzfs-cli contrib-openzfs-handler contrib-openzfs-library contrib-openzfs-service
 .PHONY: contrib-openzfs contrib-openzfs-tools contrib-openzfs-cli
 contrib-openzfs contrib-openzfs-tools contrib-openzfs-cli:
@@ -23,6 +23,11 @@ contrib-openzfs contrib-openzfs-tools contrib-openzfs-cli:
 #MM contrib-openzfs-hostidentity : includes linklibs
 #MM contrib-openzfs-runtimecheck : includes linklibs
 #MM contrib-openzfs-device : includes linklibs
+#MM contrib-openzfs-exechelper : includes linklibs
+
+%build_prog mmake=contrib-openzfs-exechelper progname=ExecHelper \
+    files="aros/cli/exec-helper" usetree=yes nix=yes \
+    targetdir="$(OPENZFS_TOOLSDIR)/OpenZFS"
 
 %build_prog mmake=contrib-openzfs-manager progname=OpenZFSManagerNative \
     files="$(OPENZFS_MANAGER_FILES)" usetree=yes \
@@ -47,9 +52,9 @@ contrib-openzfs contrib-openzfs-tools contrib-openzfs-cli:
 
 include $(SRCDIR)/$(CURDIR)/aros/cli/build-system.mk
 
-#MM contrib-openzfs-cli : contrib-openzfs-zfs contrib-openzfs-zpool contrib-openzfs-startup contrib-openzfs-startupmount
-#MM contrib-openzfs-zfs : includes linklibs contrib-openzfs-nvpair
-#MM contrib-openzfs-zpool : includes linklibs contrib-openzfs-nvpair
+#MM contrib-openzfs-cli : contrib-openzfs-zfs contrib-openzfs-zpool contrib-openzfs-startup contrib-openzfs-startupmount contrib-openzfs-exechelper
+#MM contrib-openzfs-zfs : includes linklibs contrib-openzfs-nvpair contrib-openzfs-exechelper
+#MM contrib-openzfs-zpool : includes linklibs contrib-openzfs-nvpair contrib-openzfs-exechelper
 #MM contrib-openzfs-startup : includes linklibs contrib-openzfs-nvpair
 #MM contrib-openzfs-startupmount : includes linklibs contrib-openzfs-nvpair
 
@@ -89,6 +94,7 @@ include $(SRCDIR)/$(CURDIR)/aros/cli/build-system.mk
 # Optional runtime acceptance client, not part of the installed production set.
 #MM contrib-openzfs-public-test : includes linklibs contrib-openzfs-nvpair
 OPENZFS_PUBLIC_TEST_FILES := aros/ui/api aros/ui/admission-client \
+    aros/cli/process aros/cli/arguments aros/cli/output \
     aros/ui/startup-settings aros/ui/startup-settings-file \
     aros/ui/preferences aros/ui/preferences-file aros/engine/hostid-record \
     aros/cli/version aros/engine/public-service-test aros/cli/ioctl-public-test \

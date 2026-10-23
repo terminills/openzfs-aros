@@ -259,6 +259,9 @@ if [[ -n $cli_dir ]];then
         -map aros/engine/public-service-test-only /openzfs-cli-package-test)
     sha256sum "$run/zfs" "$run/zpool" >"$run/cli-inputs.sha256"
     if [[ $companions == 1 ]];then
+        cp "$cli_dir/../Tools/OpenZFS/ExecHelper" "$run/ExecHelper"
+        extra_maps+=(-map "$run/ExecHelper" /Tools/OpenZFS/ExecHelper)
+        sha256sum "$run/ExecHelper" >>"$run/cli-inputs.sha256"
         for command in OpenZFSStartup OpenZFSStartupMount OpenZFSRuntimeCheck OpenZFSHostIdentity;do
             cp "$cli_dir/$command" "$run/$command"
             extra_maps+=(-map "$run/$command" "/C/$command")
@@ -639,6 +642,9 @@ if [[ $partitions == 1 ]];then sha256sum -c "$run/disks-before.sha256" > "$run/d
 if [[ $native_discovery == 1 ]];then
     rg -q '^Public native discovery PASS create=1 default-scan=1 readonly-import=1 rw-import=1 destroy=1' "$run/serial-results.log"
     rg -q '^Public native discovery coexistence PASS separate-partitions=1 neighbor-online=1 neighbor-property=1 cleanup=1' "$run/serial-results.log"
+fi
+if [[ $companions == 1 ]];then
+    rg -q '^Public exec helper PASS real-zpool=1 captured-output=1 missing-executable=1' "$run/serial-results.log"
 fi
 if [[ -n $label_source ]];then sha256sum -c "$run/label-original.sha256" >"$run/label-original-after-check.txt";fi
 echo "PASS: public service lifecycles and $layout DOS round trip (persistent=$persistent). Evidence: $run"
