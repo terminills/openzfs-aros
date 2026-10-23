@@ -694,8 +694,10 @@ static int storage_loader_test(int initially_enabled)
 }
 static LONG cli_command(const char *command)
 {
-    LONG result=SystemTags((CONST_STRPTR)command,SYS_Error,Output(),TAG_DONE);
+    BPTR errors=Open((CONST_STRPTR)"T:public-cli-errors.log",MODE_NEWFILE);
+    LONG result=SystemTags((CONST_STRPTR)command,SYS_Error,errors?errors:Output(),TAG_DONE);
     LONG io_error=IoErr();
+    if(errors){Close(errors);if(result)diagnostic_log("T:public-cli-errors.log");}
     char message[512];
     snprintf(message,sizeof(message),"Public CLI command result=%ld ioerr=%ld: %s\n",
         (long)result,(long)io_error,command);
@@ -1509,6 +1511,49 @@ done:
     return error;
 #undef GCHECK
 }
+static int storage_native_discovery(void)
+{
+    BPTR marker=Lock((CONST_STRPTR)"SYS:openzfs-native-discovery-test",SHARED_LOCK);
+    if(!marker)return 0;
+    UnLock(marker);
+    /* Runner supplies only fresh snapshot-backed virtual disks. Use its
+     * explicit MBR extent; implicit whole-disk provisioning is not allowed. */
+    struct oz_device_geometry geometry={0};
+    int error=oz_device_geometry_read(OZ_ADMISSION_PORT,"ata.device",0,&geometry);
+    if(error||geometry.bytes!=UINT64_C(268435456)||geometry.sector_size!=512)return EINVAL;
+    struct oz_partition_catalog *catalog=malloc(sizeof(*catalog));
+    if(!catalog)return ENOMEM;
+    error=oz_partitions_read(OZ_ADMISSION_PORT,"ata.device",0,catalog);
+    int valid=!error&&catalog->count==2&&catalog->entries[0].position==0&&
+        catalog->entries[0].first_sector==4097&&catalog->entries[0].last_sector==135168;
+    free(catalog);if(!valid)return EINVAL;
+    const char *commands[]={
+        "C:zpool create -o cachefile=none -O mountpoint=none public_discovery /AROS/ata.device/0/partition/0",
+        "C:zpool export public_discovery",
+        "C:zpool import",
+        "C:zpool import -N -o cachefile=none -o readonly=on public_discovery",
+        "C:zpool get -H -o value readonly public_discovery",
+        "C:zpool export public_discovery",
+        "C:zpool import -N -o cachefile=none public_discovery",
+        "C:zpool destroy public_discovery"
+    };
+    for(unsigned i=0;i<sizeof(commands)/sizeof(commands[0]);i++){
+        char command[256];snprintf(command,sizeof(command),"%s >T:cli-package-output.txt",commands[i]);
+        if(i==2){
+            error=cli_command(command)?EIO:0;
+            BPTR output=Open((CONST_STRPTR)"T:cli-package-output.txt",MODE_OLDFILE);
+            if(!output)error=EIO;
+            else{
+                char text[2048]={0};LONG count=Read(output,text,sizeof(text)-1);
+                if(!Close(output)||count<=0||!strstr(text,"public_discovery"))error=EIO;
+            }
+        }else error=cli_result(command,i==4?"on":"");
+        diagnostic_log("T:cli-package-output.txt");
+        if(error){char line[100];snprintf(line,sizeof(line),"Public native discovery FAIL step=%u errno=%d\n",i,error);note(line);return error;}
+    }
+    note("Public native discovery PASS create=1 default-scan=1 readonly-import=1 rw-import=1 destroy=1\n");
+    return 0;
+}
 static int storage_test(int gui){
     int error=0;BPTR file=0,lock=CreateDir((CONST_STRPTR)storage_directory);
     if(!lock)return EIO;
@@ -1535,6 +1580,7 @@ static int storage_test(int gui){
     if(error)return error;
     note("Public pool alias identity PASS duplicate-refused=1\n");
 #define STORAGE_CHECK(x) do{if(!(x)){error=__LINE__;goto done;}}while(0)
+    STORAGE_CHECK(!storage_native_discovery());
     STORAGE_CHECK(!companion_tools_test());
     STORAGE_CHECK(!verify_mounts(NULL,0));
     STORAGE_CHECK(!partition_rpc_test());

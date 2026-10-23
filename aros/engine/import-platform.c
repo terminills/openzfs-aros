@@ -19,7 +19,7 @@
 #endif
 
 static int check_tree(struct oz_import_paths *allowed,nvlist_t *tree,
-    unsigned depth,unsigned *nodes)
+    unsigned depth,unsigned *nodes,uint32_t *used)
 {
     const char *type,*path;
     if(depth>16||++*nodes>256||nvlist_lookup_string(tree,ZPOOL_CONFIG_TYPE,&type))
@@ -39,6 +39,7 @@ static int check_tree(struct oz_import_paths *allowed,nvlist_t *tree,
         /* Do not stat/open a path before it has been explicitly admitted. */
         for(i=0;i<allowed->count;i++)if(!strcmp(path,allowed->paths[i]))break;
         if(i==allowed->count)return EACCES;
+        if(used)*used|=UINT32_C(1)<<i;
     } else if(distributed) {
         /* Upstream resolves this synthetic name by top-level GUID and spare
          * index. It never opens it as a file/device. Real descendants still
@@ -65,7 +66,7 @@ static int check_tree(struct oz_import_paths *allowed,nvlist_t *tree,
          * It has no external path and must not contain real descendants. */
         if((leaf||absent||distributed)&&count)return EINVAL;
         for(unsigned i=0;i<count;i++) {
-            int error=check_tree(allowed,children[i],depth+1,nodes);
+            int error=check_tree(allowed,children[i],depth+1,nodes,used);
             if(error)return error;
         }
     }
@@ -79,7 +80,22 @@ int oz_import_config_check(struct oz_import_paths *allowed,nvlist_t *config)
     for(unsigned i=0;i<allowed->count;i++)
         if(!allowed->paths[i]||!allowed->paths[i][0])return EINVAL;
     if(nvlist_lookup_nvlist(config,ZPOOL_CONFIG_VDEV_TREE,&tree))return EINVAL;
-    return check_tree(allowed,tree,0,&nodes);
+    return check_tree(allowed,tree,0,&nodes,NULL);
+}
+int oz_import_config_select(struct oz_import_paths *allowed,nvlist_t *config,
+    char **selected,unsigned *count)
+{
+    if(!selected||!count)return EINVAL;
+    *count=0;
+    int error=oz_import_config_check(allowed,config);
+    if(error)return error;
+    nvlist_t *tree=NULL;unsigned nodes=0;uint32_t used=0;
+    error=nvlist_lookup_nvlist(config,ZPOOL_CONFIG_VDEV_TREE,&tree);
+    if(!error)error=check_tree(allowed,tree,0,&nodes,&used);
+    if(error)return error;
+    for(unsigned i=0;i<allowed->count;i++)if(used&(UINT32_C(1)<<i))
+        selected[(*count)++]=allowed->paths[i];
+    return *count?0:EINVAL;
 }
 static nvlist_t *refresh_config(void *context,nvlist_t *config)
 {

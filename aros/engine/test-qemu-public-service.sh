@@ -141,6 +141,11 @@ fi
 extra_drives=()
 archive_cold_drives=()
 partitions=${AROS_TEST_REQUIRE_PARTITIONS:-0}
+native_discovery=${AROS_TEST_NATIVE_DISCOVERY:-0}
+[[ $native_discovery == 0 || ( $native_discovery == 1 && $partitions == 1 && $persistent == 0 && -n $cli_dir ) ]]
+if [[ $native_discovery == 1 ]];then
+    extra_maps+=(-map aros/engine/public-service-test-only /openzfs-native-discovery-test)
+fi
 ahci_query=${AROS_TEST_AHCI_QUERY:-0}
 [[ $ahci_query == 0 || ( $ahci_query == 1 && $partitions == 1 ) ]]
 sector_quirk=${AROS_TEST_SECTOR_QUIRK:-0}

@@ -234,3 +234,21 @@ Reproduce the interactive variant with `AROS_PUBLIC_GUI=1` and
 existing public-service runner variables. The fixture opens the Manager after
 creating and verifying the mounted file. Close it only after recording GUI
 checks; no shared hosted session or DUT is involved.
+# Native discovery admission regression (2026-10-22)
+
+Automatic discovery can admit both a whole device and its partitions as scan
+candidates. Writable import must reserve only the leaves referenced by the
+validated pool configuration, not every scanned candidate: reserving a whole
+device and its partition produces a false overlapping-device busy error.
+Configuration admission and extent-overlap protections remain enforced.
+
+Isolated native QEMU evidence: `public-service-run.OYEaC9cB` reproduced the
+writable automatic-import failure after successful readonly import/export.
+With the selection fix, `public-service-run.ONdHQ42N` passed create, default
+scan, readonly import, writable import and destroy, followed by the full
+public service storage suite. Both backing-file hashes remained unchanged
+(QEMU snapshot mode). The successful test ISO was pruned; logs, input hashes,
+source snapshot and source patch remain. Candidate library SHA256:
+`0073dd441d2628014a028e2d988005c9ebc5267d447119d0adc39e632e7c47c2`.
+This is not physical USB qualification or a resolution of the separately
+reported Manager startup crash (TRIG-1523).

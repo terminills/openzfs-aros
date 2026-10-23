@@ -15,6 +15,8 @@ struct oz_import_paths {
 extern pool_config_ops_t oz_aros_config_ops;
 struct oz_packet_security;
 int oz_import_config_check(struct oz_import_paths *,nvlist_t *);
+/* selected has room for allowed->count borrowed pointers. No paths opened. */
+int oz_import_config_select(struct oz_import_paths *,nvlist_t *,char **selected,unsigned *count);
 int oz_cli_tryimport_begin(const void *,size_t,cred_t *,const struct oz_packet_security *,void **);
 int oz_cli_tryimport_end(void *);
 int oz_cli_import_begin(const char *,uint64_t,void *,size_t *,const void *,size_t,cred_t *,const struct oz_packet_security *,void **);

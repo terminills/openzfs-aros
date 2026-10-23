@@ -374,7 +374,12 @@ static int cli_import_prepare(const void *bytes,size_t size,cred_t *caller,
         for(unsigned j=0;!error&&j<i;j++)if(!strcmp(paths[i],paths[j]))error=EEXIST;
     }
     struct oz_import_paths allowed={.paths=paths,.count=count};
-    if(!error)error=oz_import_config_check(&allowed,config);
+    /* Discovery authorizes candidates, not simultaneous writable ownership
+     * of every scanned extent. Whole units overlap their partitions and may
+     * belong to unrelated pools. Pin only config-referenced admitted leaves. */
+    char *selected[OZ_MAX_DEVICES];unsigned selected_count=0;
+    if(!error)error=oz_import_config_select(&allowed,config,selected,&selected_count);
+    if(!error){paths=selected;count=selected_count;allowed.paths=paths;allowed.count=count;}
     uint64_t guid=0;
     if(!error)error=nvlist_lookup_uint64(config,ZPOOL_CONFIG_POOL_GUID,&guid);
     if(!error&&expected_guid&&guid!=expected_guid)error=EINVAL;
