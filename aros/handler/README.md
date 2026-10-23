@@ -44,6 +44,19 @@ it must not depend on an uninitialized executable C runtime.
 
 ## Acceptance and retained failures
 
+### Persistent desktop metadata
+
+Current public-package native run `public-service-run.F9NlIusK` sets and
+examines a file comment, script/archive protection bits, and an exact DateStamp
+including subsecond ticks. Healthy/degraded/restored fresh imports retain the
+metadata and exact file data, reject SetComment/SetProtection/SetFileDate on
+readonly mounts, and pass independent zdb/no-leaks and unchanged-member checks.
+No production handler changes were needed. Earlier test failures `ge5ieJUa`
+and `wh8fzqLG` incorrectly expected the writable protection display on readonly
+mounts. Examine intentionally adds FIBF_WRITE/FIBF_DELETE restrictions there;
+the corrected test requires those bits rather than suppressing them. Logs and
+source provenance remain; disposable test ISOs are not required evidence.
+
 ### Large-file directory metadata
 
 The engine implements `ACTION_EXAMINE_OBJECT64`, `ACTION_EXAMINE_NEXT64`,

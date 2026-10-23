@@ -1253,6 +1253,55 @@ static int storage_sparse64(const char *root,int write)
 }
 /* Exercise the shipped transport, not engine-internal test entry points.
  * Retain the volume for independent cold/degraded imports. */
+static int storage_metadata(const char *volume,int write)
+{
+    char path[128];snprintf(path,sizeof(path),"%smetadata.txt",volume);
+    const char *comment="OpenZFS native metadata";
+    struct DateStamp date={17000,721,1234};
+    const ULONG protection=FIBF_SCRIPT|FIBF_ARCHIVE;
+    if(write){
+        BPTR file=Open((CONST_STRPTR)path,MODE_NEWFILE);
+        if(!file)return EIO;
+        int okay=Write(file,"metadata",8)==8;
+        if(!Close(file)||!okay)return EIO;
+        if(!SetComment((CONST_STRPTR)path,(CONST_STRPTR)comment)||
+           !SetProtection((CONST_STRPTR)path,protection)||
+           !SetFileDate((CONST_STRPTR)path,&date))return EIO;
+    }else{
+        LONG result=SetComment((CONST_STRPTR)path,(CONST_STRPTR)"must not persist"),dos=IoErr();
+        bug("Metadata readonly comment result=%ld DOS=%ld\n",(long)result,(long)dos);
+        if(result||dos!=ERROR_DISK_WRITE_PROTECTED)return EIO;
+        result=SetProtection((CONST_STRPTR)path,0);dos=IoErr();
+        bug("Metadata readonly protection result=%ld DOS=%ld\n",(long)result,(long)dos);
+        if(result||dos!=ERROR_DISK_WRITE_PROTECTED)return EIO;
+        struct DateStamp changed={17001,0,0};
+        result=SetFileDate((CONST_STRPTR)path,&changed);dos=IoErr();
+        bug("Metadata readonly timestamp result=%ld DOS=%ld\n",(long)result,(long)dos);
+        if(result||dos!=ERROR_DISK_WRITE_PROTECTED)return EIO;
+    }
+    BPTR lock=Lock((CONST_STRPTR)path,SHARED_LOCK);
+    struct FileInfoBlock *fib=AllocDosObject(DOS_FIB,NULL);
+    /* Examine presents effective readonly restrictions in addition to stored
+     * protection. This must not be mistaken for changed on-disk metadata. */
+    ULONG shown=protection|(write?0:FIBF_WRITE|FIBF_DELETE);
+    int examined=lock&&fib&&Examine(lock,fib);
+    int okay=examined&&!strcmp(fib->fib_Comment,comment)&&
+        fib->fib_Protection==shown&&fib->fib_Size==8&&
+        fib->fib_Date.ds_Days==date.ds_Days&&fib->fib_Date.ds_Minute==date.ds_Minute&&
+        fib->fib_Date.ds_Tick==date.ds_Tick;
+    if(examined)bug("Metadata observed write=%d comment='%s' protection=%lx size=%ld date=%ld/%ld/%ld DOS=%ld\n",
+        write,fib->fib_Comment,(unsigned long)fib->fib_Protection,(long)fib->fib_Size,
+        (long)fib->fib_Date.ds_Days,(long)fib->fib_Date.ds_Minute,(long)fib->fib_Date.ds_Tick,(long)IoErr());
+    if(fib)FreeDosObject(DOS_FIB,fib);
+    if(lock)UnLock(lock);
+    if(!okay)return EIO;
+    BPTR file=Open((CONST_STRPTR)path,MODE_OLDFILE);char bytes[8];
+    if(!file)return EIO;
+    okay=Read(file,bytes,sizeof(bytes))==sizeof(bytes)&&!memcmp(bytes,"metadata",8);
+    if(!Close(file)||!okay)return EIO;
+    char line[160];snprintf(line,sizeof(line),"Public DOS metadata PASS write=%d comment=1 protection=1 timestamp=1 exact-data=1\n",write);note(line);
+    return 0;
+}
 static int storage_links(const char *volume,int write)
 {
     char source[96],hard[96],soft[96],dangling[96],denied[96];
@@ -1701,6 +1750,7 @@ static int storage_test(int gui){
     STORAGE_CHECK(Close(file));file=0;
     STORAGE_CHECK(!storage_sparse64("OZPUBLIC:",1));
     STORAGE_CHECK(!storage_links("OZPUBLIC:",1));
+    STORAGE_CHECK(!storage_metadata("OZPUBLIC:",1));
     STORAGE_CHECK(!desktop_directory("OZPUBLIC:","post-sparse64"));
     {
         char dataset[256];
@@ -2106,6 +2156,7 @@ static int storage_cold_once(void)
     error=storage_sparse64("OZCOLD:",0);
     if(error)return error;
     error=storage_links("OZCOLD:",0);
+    if(!error)error=storage_metadata("OZCOLD:",0);
     if(error)return error;
     error=desktop_directory("OZCOLD:","cold-import");
     if(error)return error;
