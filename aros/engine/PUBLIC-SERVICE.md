@@ -249,6 +249,16 @@ Earlier bundles lack the helper; their ordinary CLI/storage evidence does not
 establish external-command support. Fresh GUI/cold bundle qualification is
 still required after this packaging change.
 
+That refresh subsequently passed: `public-service-run.sWX1IgC5` qualifies the
+helper-inclusive writer and fresh healthy/degraded/restored imports, persistent
+startup restore/mount and independent zdb verification. `native-gui-run.mNvyyTl6`
+qualifies live Manager pool queries, settings save, mounted Wanderer files and
+post-UI data checks with the same helper-inclusive payload. Both runs execute
+the real subprocess test. `mmake-bundle.biw8z7ob` is hash-bound to those runs,
+includes `Tools/OpenZFS/ExecHelper`, and passes all SHA256SUMS. Test images were
+pruned; screenshots, logs and provenance remain. Hardware and stock-runtime
+boundaries are unchanged.
+
 ## Discovery selection
 
 Automatic discovery can admit both a whole device and its partitions as scan
