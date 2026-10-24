@@ -106,6 +106,11 @@ identities from `public-service-run.rlEPj1HF`. The freshly rebuilt shared engine
 passes recursive deferred snapshot destruction and the full mirror storage
 suite. Read the [serial results](recursive-defer/serial-results.log) for the
 held/unheld lifecycle and rejected-input checks. No GUI capture is implied.
+Persistent repeat `public-service-run.OwggK2Ne` passes the same writer fixture
+and fresh healthy/degraded/restored mirror imports, exact file readback,
+unchanged pool members and independent host `zdb`. The deferred snapshots are
+released and cleaned up during the writer fixture; this is not a test of a
+pending hold surviving reboot. Cold results and input hashes are retained here.
 
 The `fresh-engine` directory retains the writer/cold-import logs and hashes for
 `public-service-run.KKc6pmMp`, using the clean source engine build described in
