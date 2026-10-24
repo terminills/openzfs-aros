@@ -906,7 +906,22 @@ staging directory with SHA256SUMS and evidence metadata. Platform overrides
 are separated under Platform/, never silently installed. Four companion
 utilities remain explicitly build-only in the bundle's qualification record.
 
-The key-verification development archive `mmake-bundle.av7y0i95.tar.xz` has
+The key-format development archive `mmake-bundle.w5_grp_3.tar.xz` has SHA256
+`59c47b607213fa6144188c22bef933026cdeefcd7ed9f6a2631aedc8080a88b7`.
+It binds the engine/CLI/handler to persistent run `public-service-run.8Cq8R435`
+and Manager to interactive run `native-gui-run.l9Yuy70p`. The latter confirms
+raw-to-passphrase replacement, PBKDF2 iterations and key location through the
+GUI, followed by independent property and old/new key checks. All staged and
+freshly extracted manifest entries pass. Run `public-service-run.igbcD2Pq`
+then passes the full native RAM-backed suite using the extracted engine,
+service, CLI, handler and companion tools, with an external acceptance client.
+Manager's GUI evidence and cold-import evidence are the matching earlier
+runs, not additional phases of this package test. Evidence is retained in
+`aros/tests/evidence/key-format-package`; the two GUI/package runs pruned
+9.14 GiB of disposable ISOs. This is a local development archive, not an
+uploaded release or stock-nightly/physical-media qualification.
+
+The earlier key-verification development archive `mmake-bundle.av7y0i95.tar.xz` has
 SHA256 `e31fb588285507270effd58ea2dc4b1726df426351759c7caff6f8f0d9591801`.
 It binds the updated engine to cold run `public-service-run.NJTixzKq` and
 Manager to interactive run `native-gui-run.Q2LH3GdX`. After fresh extraction,
