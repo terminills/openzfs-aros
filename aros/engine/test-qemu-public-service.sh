@@ -272,6 +272,7 @@ if [[ $persistent == 1 ]];then
     sha256sum "$host_zdb" >"$run/host-zdb.sha256"
     cp "$fat" "$run/fat-handler"
     backing_mib=$((members*128+256))
+    if [[ -n $cli_dir ]];then backing_mib=$((backing_mib+384));fi
     truncate -s "${backing_mib}M" "$run/backing.raw"
     mkfs.vfat -F 16 -n OZFILES "$run/backing.raw" >"$run/format.log" 2>&1
     sed "s/^HighCyl .*/HighCyl = $((backing_mib*2048-1))/" aros/engine/OZBACK >"$run/OZBACK"
@@ -588,6 +589,13 @@ if [[ $persistent == 1 ]];then
         mcopy -i "$run/backing.raw" "::OZPublicPool/disk$member$suffix" "$run/members-before/disk$member"
     done
     sha256sum "$run/members-before/"* >"$run/members-before.sha256"
+    if [[ -n $cli_dir ]];then
+        mkdir "$run/reuse-before" "$run/reuse-after"
+        for member in 0 1 2 3 4;do
+            mcopy -i "$run/backing.raw" "::OZReuseChanges/disk$member" "$run/reuse-before/disk$member"
+        done
+        sha256sum "$run/reuse-before/"* >"$run/reuse-before.sha256"
+    fi
     if [[ $startup_archive == 1 ]];then
         rg -q '^Public persistent settings PASS write=1' "$run/serial-results.log"
         sha256sum "$run/startup-archive.raw" >"$run/archive-before.sha256"
@@ -699,6 +707,17 @@ if [[ $persistent == 1 ]];then
         cmp "$run/members-before/disk$member" "$run/members-after/disk$member"
     done
     sha256sum "$run/members-after/"* >"$run/members-after.sha256"
+    if [[ -n $cli_dir ]];then
+        [[ $(rg -c '^Public changed pool cold PASS phase=[012] exact-read=1 readonly-write-denied=1 exported=1' "$run/cold-results.log") == 3 ]]
+        for member in 0 1 2 3 4;do
+            mcopy -i "$run/backing.raw" "::OZReuseChanges/disk$member" "$run/reuse-after/disk$member"
+            cmp "$run/reuse-before/disk$member" "$run/reuse-after/disk$member"
+        done
+        sha256sum "$run/reuse-after/"* >"$run/reuse-after.sha256"
+        "$host_zdb" -e -p "$run/reuse-after" -bcc public_reuse_target >"$run/reuse-zdb-check.log" 2>&1
+        rg -q 'No leaks' "$run/reuse-zdb-check.log"
+        sha256sum -c "$run/reuse-after.sha256" >"$run/reuse-zdb-unchanged.log"
+    fi
     "$host_zdb" -e -p "$run/members-after" -bcc public_mirror >"$run/zdb-check.log" 2>&1
     rg -q 'No leaks' "$run/zdb-check.log"
     sha256sum -c "$run/members-after.sha256" >"$run/zdb-members-unchanged.log"
@@ -839,7 +858,9 @@ if [[ -n $cli_dir ]];then
     rg -q '^Public file destroyed reuse PASS cli=1 manager-api=1 old-payload-absent=2 exact-read=3 exported-refused=2 cleanup=1' "$run/serial-results.log"
     rg -q '^Public file label denial PASS corrupt=4 conflicting-member=4 checksum=4 manager-denied=12 forced-cli-denied=12 whole-members-unchanged=12 restored=12' "$run/serial-results.log"
     rg -q '^Public destroyed changes CLI PASS attach=1 replace=1 add=1 active-force-refused=3 exported-force-refused=3 exact-read=5 cleanup=1' "$run/serial-results.log"
-    rg -q '^Public destroyed changes Manager PASS attach=1 replace=1 add=1 active-refused=3 exported-refused=3 exact-read=5 cleanup=1' "$run/serial-results.log"
+    reuse_finish=cleanup
+    if [[ $persistent == 1 ]];then reuse_finish=retained;fi
+    rg -q "^Public destroyed changes Manager PASS attach=1 replace=1 add=1 active-refused=3 exported-refused=3 exact-read=5 $reuse_finish=1" "$run/serial-results.log"
 fi
 rg -q '^Public DOS links PASS write=1 hard=1 relative-soft=1 unlinked-source=1 dangling-refused=1' "$run/serial-results.log"
 if [[ $gui_volume == 1 ]];then

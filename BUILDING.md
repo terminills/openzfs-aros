@@ -1089,6 +1089,16 @@ durability. The persistence runner now additionally requires read-only host
 Repeat `public-service-run.D3BzNOn1` passed both new FAT checks and the full cold
 suite; another 9.78 GiB of disposable images was automatically pruned.
 
+The larger retained add/attach/replace fixture exposed a separate FAT BPB bug:
+geometry padding was counted as allocatable filesystem clusters. The private
+`AROS_FAT_BPB_BOUND=1` full rebuild applies `fat-bpb-volume-bound.patch` and links
+a matching private parser object, without changing the SDK archive. Host parser
+tests reproduce the old off-by-one allocation and verify the correction.
+Native run `public-service-run.yp3paeiP` passes read-only fsck after both boots,
+changed-pool cold recovery, full-member byte comparisons and independent zdb.
+See `aros/tests/evidence/fat-bpb-bound` and `changed-pool-cold`; the earlier local
+bundle does not include this FAT prerequisite.
+
 `AROS_TEST_GUI_DESKTOP=1` enables an interactive Wanderer fixture in the public
 GUI runner. It leaves Wanderer running, asks the tester to inspect OZPUBLIC
 and hello.txt, and rereads the file after Manager closes. This read assertion

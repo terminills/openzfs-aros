@@ -191,8 +191,11 @@ results, not a fresh qualification of this public snapshot.
   nonzero media and force-create over exported members remain incomplete.
   Add/attach/replace now use the same checked destroyed-member admission as
   create. CLI and Manager API file-backed lifecycles pass; native-device reuse
-  for all three operations and cold recovery of the changed fixture remain
-  unqualified. See `aros/tests/evidence/destroyed-member-changes`,
+  for all three operations remains unqualified. The actual changed two-mirror
+  fixture now passes separate-VM healthy/degraded/restored read-only recovery,
+  unchanged full-member hashes and independent zdb checks, using the additional
+  private FAT BPB-boundary fix. See `aros/tests/evidence/changed-pool-cold`,
+  `aros/tests/evidence/fat-bpb-bound`, `aros/tests/evidence/destroyed-member-changes`,
   `aros/tests/evidence/native-destroyed-reuse` and
   `aros/tests/evidence/file-destroyed-reuse` for runtime coverage.
   File-backed QEMU tests also verify refusal by both entry points for each

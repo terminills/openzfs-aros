@@ -1858,23 +1858,24 @@ static int reuse_change_request(int manager,unsigned op,const char *guid,
 }
 static int storage_destroyed_changes(void)
 {
-    const char *paths[]={"/RAM/OZReuseChanges/disk0","/RAM/OZReuseChanges/disk1","/RAM/OZReuseChanges/disk2",
-        "/RAM/OZReuseChanges/disk3","/RAM/OZReuseChanges/disk4"};
+    const char *directory_name=native_file_fixture?"OZBACK:OZReuseChanges":"RAM:OZReuseChanges";
+    char paths[5][96],command[768];
+    for(unsigned i=0;i<5;i++)snprintf(paths[i],sizeof(paths[i]),"/%s/OZReuseChanges/disk%u",native_file_fixture?"OZBACK":"RAM",i);
     BPTR file=0;void *zeros=AllocVec(1024*1024,MEMF_PUBLIC|MEMF_CLEAR);int error=0;
     char guid[32];
 #define XCHECK(x) do{if(!(x)){char line[96];snprintf(line,sizeof(line),"Public destroyed changes FAIL line=%d\n",__LINE__);note(line);error=EIO;goto done;}}while(0)
     XCHECK(zeros);
-    BPTR directory=CreateDir((CONST_STRPTR)"RAM:OZReuseChanges");XCHECK(directory);UnLock(directory);
+    BPTR directory=CreateDir((CONST_STRPTR)directory_name);XCHECK(directory);UnLock(directory);
     for(int manager=0;manager<2;manager++){
         for(unsigned i=0;i<5;i++){
-            char path[80];snprintf(path,sizeof(path),"RAM:OZReuseChanges/disk%u",i);
+            char path[80];snprintf(path,sizeof(path),"%s/disk%u",directory_name,i);
             file=Open((CONST_STRPTR)path,MODE_NEWFILE);XCHECK(file);
             for(unsigned n=0;n<64;n++)XCHECK(Write(file,zeros,1024*1024)==1024*1024);
             XCHECK(Flush(file));int closed=Close(file);file=0;XCHECK(closed);
         }
-        XCHECK(!cli_command("C:zpool create -o cachefile=none -o ashift=12 -O mountpoint=none public_reuse_source mirror /RAM/OZReuseChanges/disk0 /RAM/OZReuseChanges/disk1"));
-        XCHECK(!cli_command("C:zpool create -o cachefile=none -o ashift=12 -O mountpoint=none public_reuse_target /RAM/OZReuseChanges/disk2"));
-        XCHECK(!cli_command("C:zpool create -o cachefile=none -o ashift=12 -O mountpoint=none public_reuse_donor mirror /RAM/OZReuseChanges/disk3 /RAM/OZReuseChanges/disk4"));
+        snprintf(command,sizeof(command),"C:zpool create -o cachefile=none -o ashift=12 -O mountpoint=none public_reuse_source mirror %s %s",paths[0],paths[1]);XCHECK(!cli_command(command));
+        snprintf(command,sizeof(command),"C:zpool create -o cachefile=none -o ashift=12 -O mountpoint=none public_reuse_target %s",paths[2]);XCHECK(!cli_command(command));
+        snprintf(command,sizeof(command),"C:zpool create -o cachefile=none -o ashift=12 -O mountpoint=none public_reuse_donor mirror %s %s",paths[3],paths[4]);XCHECK(!cli_command(command));
         XCHECK(!pool_root_payload("public_reuse_target",1,0));
         XCHECK(!reuse_change_guid("/disk2",guid,1));
         for(unsigned exported=0;exported<2;exported++){
@@ -1885,7 +1886,7 @@ static int storage_destroyed_changes(void)
             XCHECK(!reuse_change_guid("/disk2",guid,1));
             XCHECK(!pool_root_payload("public_reuse_target",0,0));
         }
-        XCHECK(!cli_command("C:zpool import -N -o cachefile=none -d /RAM/OZReuseChanges/disk0 -d /RAM/OZReuseChanges/disk1 public_reuse_source"));
+        snprintf(command,sizeof(command),"C:zpool import -N -o cachefile=none -d %s -d %s public_reuse_source",paths[0],paths[1]);XCHECK(!cli_command(command));
         XCHECK(!cli_command("C:zpool destroy public_reuse_source"));
         XCHECK(!reuse_change_request(manager,11,guid,paths[0],NULL,0));
         XCHECK(!cli_command("C:zpool wait -t resilver public_reuse_target"));
@@ -1899,17 +1900,53 @@ static int storage_destroyed_changes(void)
         XCHECK(!reuse_change_request(manager,9,NULL,paths[3],paths[4],0));
         XCHECK(!reuse_change_guid("/disk4",guid,4));
         XCHECK(!pool_root_payload("public_reuse_target",0,0));
+        if(manager&&native_file_fixture){
+            XCHECK(!cli_command("C:zpool export public_reuse_target"));
+            note("Public destroyed changes Manager PASS attach=1 replace=1 add=1 active-refused=3 exported-refused=3 exact-read=5 retained=1\n");
+            goto done;
+        }
         XCHECK(!cli_command("C:zpool destroy public_reuse_target"));
         for(unsigned i=0;i<5;i++){
-            char path[80];snprintf(path,sizeof(path),"RAM:OZReuseChanges/disk%u",i);XCHECK(DeleteFile((CONST_STRPTR)path));
+            char path[80];snprintf(path,sizeof(path),"%s/disk%u",directory_name,i);XCHECK(DeleteFile((CONST_STRPTR)path));
         }
         note(manager?"Public destroyed changes Manager PASS attach=1 replace=1 add=1 active-refused=3 exported-refused=3 exact-read=5 cleanup=1\n":
             "Public destroyed changes CLI PASS attach=1 replace=1 add=1 active-force-refused=3 exported-force-refused=3 exact-read=5 cleanup=1\n");
     }
-    XCHECK(DeleteFile((CONST_STRPTR)"RAM:OZReuseChanges"));
+    XCHECK(DeleteFile((CONST_STRPTR)directory_name));
 done:
     if(file)Close(file);if(zeros)FreeVec(zeros);return error;
 #undef XCHECK
+}
+static int storage_destroyed_cold(void)
+{
+    BPTR marker=Lock((CONST_STRPTR)"SYS:openzfs-cli-package-test",SHARED_LOCK);
+    if(!marker)return 0;
+    UnLock(marker);
+    if(!native_file_fixture)return 0;
+    const char *members[]={"OZBACK:OZReuseChanges/disk0","OZBACK:OZReuseChanges/disk2","OZBACK:OZReuseChanges/disk4"};
+    const char *hidden[]={"OZBACK:OZReuseChanges/retired0","OZBACK:OZReuseChanges/held2","OZBACK:OZReuseChanges/held4"};
+    unsigned moved=0;int error=0;
+    for(unsigned phase=0;phase<3&&!error;phase++){
+        if(phase==1){
+            for(;moved<3;moved++){
+                BPTR exists=Lock((CONST_STRPTR)hidden[moved],SHARED_LOCK);
+                if(exists){UnLock(exists);error=EEXIST;break;}
+                if(IoErr()!=ERROR_OBJECT_NOT_FOUND||!Rename((CONST_STRPTR)members[moved],(CONST_STRPTR)hidden[moved])){error=EIO;break;}
+            }
+        }
+        if(!error)error=cli_command("C:zpool import -N -o cachefile=none -o readonly=on -d /OZBACK/OZReuseChanges/disk1 -d /OZBACK/OZReuseChanges/disk2 -d /OZBACK/OZReuseChanges/disk3 -d /OZBACK/OZReuseChanges/disk4 public_reuse_target")?EIO:0;
+        if(!error){
+            error=pool_root_payload("public_reuse_target",0,1);
+            int exported=cli_command("C:zpool export public_reuse_target");
+            if(!error&&exported)error=EIO;
+        }
+        if(phase==1){
+            while(moved){--moved;if(!Rename((CONST_STRPTR)hidden[moved],(CONST_STRPTR)members[moved]))error=EIO;}
+        }
+        if(!error){char line[160];snprintf(line,sizeof(line),"Public changed pool cold PASS phase=%u exact-read=1 readonly-write-denied=1 exported=1\n",phase);note(line);}
+    }
+    while(moved){--moved;if(!Rename((CONST_STRPTR)hidden[moved],(CONST_STRPTR)members[moved]))error=EIO;}
+    return error;
 }
 static int storage_file_reuse(void)
 {
@@ -3228,7 +3265,8 @@ static int storage_no_pools(void)
 }
 static int storage_cold_test(void)
 {
-    int error=storage_cold_once();
+    int error=storage_destroyed_cold();
+    if(!error)error=storage_cold_once();
     if(error)return error;
     /* Hide the topology's tolerated number of disposable members without
      * changing their bytes; restore every name even if degraded import fails. */
