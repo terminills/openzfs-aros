@@ -121,6 +121,19 @@ AROS Contrib build and regenerate its metamake files. Available targets:
 - `contrib-openzfs`: aggregate of tools, CLI/startup, handler, library and service.
 - `contrib-openzfs-public-test`: optional native acceptance client, built from
   current source in its own object directory; not installed by the aggregate.
+  It includes the same native processor.resource CPU-count helper used by the
+  engine and commands, querying it 128 times for consistency. Set
+  `AROS_TEST_REQUIRE_CPU=1` with `AROS_TEST_CPUS=1..8` in the public QEMU runner
+  to require the reported count to match the requested virtual topology.
+
+The same MetaMake acceptance binary passes the complete native RAM-backed
+suite with one CPU (`public-service-run.4myrPlwM`) and eight CPUs
+(`public-service-run.sBdi1Rhe`), reporting exactly 1 and 8 respectively on all
+128 queries. Both use the extracted `mmake-bundle.w5_grp_3` production binaries
+and explicit patched platform inputs. This verifies topology detection and
+these bounded regression runs, not long-duration stress or physical SMP.
+Logs and hashes are retained in `aros/tests/evidence/native-cpu`; both test
+ISOs were pruned after success.
 
 Tools inherit the configured target compiler, SDK, flags and output directories.
 `OPENZFS_PTHREAD_INCLUDE` and `OPENZFS_PTHREAD_LIBDIR` can select matching private

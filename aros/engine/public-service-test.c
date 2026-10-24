@@ -81,6 +81,9 @@ static void desktop_windows(void)
     CloseLibrary((struct Library *)IntuitionBase);
 }
 char *zfs_version_kernel(void);
+#ifdef OZ_TEST_NATIVE_CPU
+int aros_zfs_ncpus(void);
+#endif
 #ifdef OZ_TEST_INVENTORY_WORKER
 int oz_inventory_worker_test(void);
 #endif
@@ -1893,6 +1896,13 @@ static int storage_test(int gui){
     STORAGE_CHECK(oz_support_query(OZ_ADMISSION_PORT,"unknown.scope","name",&supported)==ENOTSUP&&!supported);
     STORAGE_CHECK(oz_support_query("OpenZFS.Test.Missing","features.pool","org.illumos:lz4_compress",&supported)==ENOENT&&!supported);
     note("Public native supported tables PASS feature=1 properties=3 unknown=1 missing=1\n");
+#ifdef OZ_TEST_NATIVE_CPU
+    int cpus=aros_zfs_ncpus();
+    STORAGE_CHECK(cpus>0);
+    for(unsigned i=0;i<128;i++)STORAGE_CHECK(aros_zfs_ncpus()==cpus);
+    char cpu_result[96];snprintf(cpu_result,sizeof(cpu_result),
+        "Public native CPU topology PASS cpus=%d queries=128\n",cpus);note(cpu_result);
+#endif
 #ifdef OZ_TEST_UPSTREAM_INIT
     STORAGE_CHECK(!oz_upstream_init_test());
 #endif

@@ -444,6 +444,8 @@ while :;do
                rg -q 'Public upstream mount cache PASS state=OZPUBLICRO: iterations=32' "$run/serial-results.log"; }; } &&
            rg -q '^Public native supported tables PASS feature=1 properties=3 unknown=1 missing=1' "$run/serial-results.log" &&
            rg -q '^Public native engine version PASS query=1 upstream=1 bounds=1 missing=1' "$run/serial-results.log" &&
+           { [[ ${AROS_TEST_REQUIRE_CPU:-0} != 1 ]] ||
+             rg -q "^Public native CPU topology PASS cpus=$cpus queries=128" "$run/serial-results.log"; } &&
            rg -q '^Public native mount policy PASS properties=4 transitions=8 missing=1 absent=1' "$run/serial-results.log" &&
            rg -q '^Public native shares object PASS absent=1 unmounted=1 missing=1 invalid=1' "$run/serial-results.log" &&
            rg -q '^Public native mount control PASS writable=1 readonly=1 busy=1 duplicate=1 absent=1 invalid=1' "$run/serial-results.log" &&

@@ -98,7 +98,7 @@ OPENZFS_PUBLIC_TEST_FILES := aros/ui/api aros/ui/admission-client \
     aros/cli/process aros/cli/arguments aros/cli/output \
     aros/ui/startup-settings aros/ui/startup-settings-file \
     aros/ui/preferences aros/ui/preferences-file aros/engine/hostid-record \
-    aros/cli/version aros/engine/public-service-test aros/cli/ioctl-public-test \
+    aros/cli/version aros/platform/cpu aros/engine/public-service-test aros/cli/ioctl-public-test \
     aros/cli/control-client aros/cli/stream-client aros/cli/stream-channel \
     lib/libzfs_core/libzfs_core lib/libnvpair/libnvpair
 OPENZFS_PUBLIC_TEST_OBJ := $(GENDIR)/$(CURDIR)/public-test
@@ -107,7 +107,7 @@ $(addprefix $(OPENZFS_PUBLIC_TEST_OBJ)/,$(addsuffix .d,$(OPENZFS_PUBLIC_TEST_FIL
     $(OZ_CLI_OBJ)/metadata.h $(OZ_CLI_OBJ)/zfs_gitrev.h
 %build_prog mmake=contrib-openzfs-public-test progname=OpenZFSPublicServiceTest \
     files="$(OPENZFS_PUBLIC_TEST_FILES)" usetree=yes \
-    cflags="$(OZ_CLI_FLAGS) -DOZ_NATIVE_DISPATCHER -DOZ_NATIVE_ONEXIT" \
+    cflags="$(OZ_CLI_FLAGS) -DOZ_NATIVE_DISPATCHER -DOZ_NATIVE_ONEXIT -DOZ_TEST_NATIVE_CPU" \
     ldflags="$(OZ_CLI_LINK)" objdir="$(OPENZFS_PUBLIC_TEST_OBJ)" \
     targetdir="$(AROS_C)"
 
