@@ -752,6 +752,7 @@ if [[ $partitions == 1 ]];then sha256sum -c "$run/disks-before.sha256" > "$run/d
 if [[ $native_discovery == 1 ]];then
     rg -q '^Public native discovery PASS create=1 default-scan=1 readonly-import=1 rw-import=1 destroy=1' "$run/serial-results.log"
     rg -q '^Public native discovery coexistence PASS separate-partitions=1 neighbor-online=1 neighbor-property=1 cleanup=1' "$run/serial-results.log"
+    rg -q '^Public native discovery data PASS handler-write=1 readonly-import-read=1 readonly-write-denied=1 writable-import-read=1 cleanup=1' "$run/serial-results.log"
 fi
 if [[ $companions == 1 ]];then
     rg -q '^Public exec helper PASS real-zpool=1 captured-output=1 missing-executable=1' "$run/serial-results.log"

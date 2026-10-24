@@ -52,6 +52,11 @@
 #include <sys/trace_zfs.h>
 #include <sys/mmp.h>
 
+#if defined(__AROS__) && !defined(_KERNEL)
+/* The resident AROS ZPL supplies this initializer without Unix vnode headers. */
+extern void zfs_create_fs(objset_t *, cred_t *, nvlist_t *, dmu_tx_t *);
+#endif
+
 /*
  * ZFS Write Throttle
  * ------------------
@@ -480,7 +485,7 @@ dsl_pool_create(spa_t *spa, nvlist_t *zplprops __attribute__((unused)),
 	int err;
 	dsl_pool_t *dp = dsl_pool_open_impl(spa, txg);
 	dmu_tx_t *tx = dmu_tx_create_assigned(dp, txg);
-#ifdef _KERNEL
+#if defined(_KERNEL) || defined(__AROS__)
 	objset_t *os;
 #else
 	objset_t *os __attribute__((unused));
@@ -552,7 +557,10 @@ dsl_pool_create(spa_t *spa, nvlist_t *zplprops __attribute__((unused)),
 	os = dmu_objset_create_impl(dp->dp_spa, ds,
 	    dsl_dataset_get_blkptr(ds), DMU_OST_ZFS, tx);
 	rrw_exit(&ds->ds_bp_rwlock, FTAG);
-#ifdef _KERNEL
+/* The AROS resident engine is not compiled as a Unix kernel, but supplies
+ * the native ZPL initializer. Its pool root must be a usable filesystem,
+ * not the intentionally empty objset used by upstream libzpool tests. */
+#if defined(_KERNEL) || defined(__AROS__)
 	zfs_create_fs(os, kcred, zplprops, tx);
 #endif
 	dsl_dataset_rele_flags(ds, DS_HOLD_FLAG_DECRYPT, FTAG);

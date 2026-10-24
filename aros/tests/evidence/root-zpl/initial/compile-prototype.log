@@ -1,0 +1,42 @@
+In file included from /home/terminills/Documents/GitHub/openzfs-aros-public/include/sys/zfs_context.h:96,
+                 from /home/terminills/Documents/GitHub/openzfs-aros-public/include/sys/spa.h:39,
+                 from /home/terminills/Documents/GitHub/openzfs-aros-public/include/sys/dsl_pool.h:31,
+                 from /home/terminills/Documents/GitHub/openzfs-aros-public/module/zfs/dsl_pool.c:30:
+/home/terminills/Documents/GitHub/openzfs-aros-public/build-aros/pthread-consistent.ARVzbA2v/source/pthread.h:57:9: warning: 'PTHREAD_KEYS_MAX' redefined
+   57 | #define PTHREAD_KEYS_MAX                      64
+      |         ^~~~~~~~~~~~~~~~
+In file included from /home/terminills/Documents/GitHub/aros-adt-crosstools/lib/gcc/x86_64-aros/15.2.0/include/limits.h:210,
+                 from /home/terminills/Documents/GitHub/aros-adt-crosstools/lib/gcc/x86_64-aros/15.2.0/include/syslimits.h:9,
+                 from /home/terminills/Documents/GitHub/aros-adt-crosstools/lib/gcc/x86_64-aros/15.2.0/include/limits.h:34,
+                 from /home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/sys/param.h:19,
+                 from /home/terminills/Documents/GitHub/openzfs-aros-public/lib/libspl/include/os/linux/sys/param.h:31,
+                 from /home/terminills/Documents/GitHub/openzfs-aros-public/lib/libspl/include/sys/types.h:55,
+                 from /home/terminills/Documents/GitHub/openzfs-aros-public/aros/engine/include/sys/stat.h:4,
+                 from /home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/fcntl.h:14,
+                 from /home/terminills/Documents/GitHub/openzfs-aros-public/include/sys/zfs_context.h:92:
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/limits.h:40:9: note: this is the location of the previous definition
+   40 | #define PTHREAD_KEYS_MAX                        _POSIX_THREAD_KEYS_MAX
+      |         ^~~~~~~~~~~~~~~~
+/home/terminills/Documents/GitHub/openzfs-aros-public/build-aros/pthread-consistent.ARVzbA2v/source/pthread.h:58:9: warning: 'PTHREAD_STACK_MIN' redefined
+   58 | #define PTHREAD_STACK_MIN                     40960
+      |         ^~~~~~~~~~~~~~~~~
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/limits.h:41:9: note: this is the location of the previous definition
+   41 | #define PTHREAD_STACK_MIN                       0
+      |         ^~~~~~~~~~~~~~~~~
+/home/terminills/Documents/GitHub/openzfs-aros-public/build-aros/pthread-consistent.ARVzbA2v/source/pthread.h:59:9: warning: 'PTHREAD_THREADS_MAX' redefined
+   59 | #define PTHREAD_THREADS_MAX                   2019
+      |         ^~~~~~~~~~~~~~~~~~~
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/limits.h:42:9: note: this is the location of the previous definition
+   42 | #define PTHREAD_THREADS_MAX                     _POSIX_THREAD_THREADS_MAX
+      |         ^~~~~~~~~~~~~~~~~~~
+/home/terminills/Documents/GitHub/openzfs-aros-public/build-aros/pthread-consistent.ARVzbA2v/source/pthread.h:60:9: warning: 'PTHREAD_DESTRUCTOR_ITERATIONS' redefined
+   60 | #define PTHREAD_DESTRUCTOR_ITERATIONS         4
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/limits.h:39:9: note: this is the location of the previous definition
+   39 | #define PTHREAD_DESTRUCTOR_ITERATIONS           _POSIX_THREAD_DESTRUCTOR_ITERATIONS
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/terminills/Documents/GitHub/openzfs-aros-public/module/zfs/dsl_pool.c: In function 'dsl_pool_create':
+/home/terminills/Documents/GitHub/openzfs-aros-public/module/zfs/dsl_pool.c:559:9: error: implicit declaration of function 'zfs_create_fs'; did you mean 'zap_create_flags'? [-Wimplicit-function-declaration]
+  559 |         zfs_create_fs(os, kcred, zplprops, tx);
+      |         ^~~~~~~~~~~~~
+      |         zap_create_flags

@@ -1712,6 +1712,33 @@ done:
     return error;
 #undef GCHECK
 }
+static int native_discovery_payload(int create,int readonly)
+{
+    const char *dataset="public_discovery",*volume="OZDISCOVERY";
+    int error=oz_mount_control(OZ_ADMISSION_PORT,dataset,volume,OZ_MOUNT_ATTACH,
+        readonly?OZ_MOUNT_READONLY:0);
+    if(error)return error;
+    BPTR file=Open((CONST_STRPTR)"OZDISCOVERY:payload",create?MODE_NEWFILE:MODE_OLDFILE);
+    if(!file)error=EIO;
+    if(file){
+        if(create){
+            if(Write(file,storage_payload,sizeof(storage_payload)-1)!=sizeof(storage_payload)-1||!Flush(file))error=EIO;
+        }else{
+            char data[sizeof(storage_payload)]={0};
+            if(Read(file,data,sizeof(data))!=sizeof(storage_payload)-1||
+                memcmp(data,storage_payload,sizeof(storage_payload)-1))error=EIO;
+        }
+        if(!Close(file))error=EIO;
+    }
+    if(!error&&readonly){
+        file=Open((CONST_STRPTR)"OZDISCOVERY:denied",MODE_NEWFILE);
+        LONG dos_error=IoErr();
+        if(file){Close(file);error=EIO;}
+        else if(dos_error!=ERROR_DISK_WRITE_PROTECTED)error=EIO;
+    }
+    int detached=oz_mount_control(OZ_ADMISSION_PORT,dataset,"",OZ_MOUNT_DETACH,0);
+    return error?error:detached;
+}
 static int storage_native_discovery(void)
 {
     BPTR marker=Lock((CONST_STRPTR)"SYS:openzfs-native-discovery-test",SHARED_LOCK);
@@ -1758,6 +1785,7 @@ static int storage_native_discovery(void)
             }
         }else error=cli_result(command,i==4?"on":"");
         diagnostic_log("T:cli-package-output.txt");
+        if(!error&&(i==0||i==3||i==6))error=native_discovery_payload(i==0,i==3);
         if(error){char line[100];snprintf(line,sizeof(line),"Public native discovery FAIL step=%u errno=%d\n",i,error);note(line);return error;}
     }
     error=cli_result("C:zpool list -H -o health public_neighbor >T:cli-package-output.txt", "ONLINE");
@@ -1766,6 +1794,7 @@ static int storage_native_discovery(void)
     if(error)return error;
     note("Public native discovery PASS create=1 default-scan=1 readonly-import=1 rw-import=1 destroy=1\n");
     note("Public native discovery coexistence PASS separate-partitions=1 neighbor-online=1 neighbor-property=1 cleanup=1\n");
+    note("Public native discovery data PASS handler-write=1 readonly-import-read=1 readonly-write-denied=1 writable-import-read=1 cleanup=1\n");
     return 0;
 }
 static int destroy_identity(const char *snapshot,unsigned flags,int permitted)
@@ -1874,10 +1903,12 @@ static int storage_test(int gui){
     if(error)return error;
     note("Public pool alias identity PASS duplicate-refused=1\n");
 #define STORAGE_CHECK(x) do{if(!(x)){error=__LINE__;goto done;}}while(0)
-    STORAGE_CHECK(!storage_native_discovery());
     STORAGE_CHECK(!companion_tools_test());
     STORAGE_CHECK(!verify_mounts(NULL,0));
     STORAGE_CHECK(!partition_rpc_test());
+    /* Blank-label assertions must precede deliberate pool creation. Destroy
+     * retains destroyed-pool labels, so discovery is not a blanking step. */
+    STORAGE_CHECK(!storage_native_discovery());
     char engine_version[128],small_version[1]={'x'};
     STORAGE_CHECK(!oz_engine_version_query(OZ_ADMISSION_PORT,engine_version,sizeof(engine_version)));
     STORAGE_CHECK(!strncmp(engine_version,"zfs-",4));
