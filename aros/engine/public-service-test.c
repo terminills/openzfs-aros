@@ -2012,6 +2012,16 @@ static int storage_test(int gui){
             STORAGE_CHECK(cli_command("C:zfs list -t snapshot public_mirror/defer_tree/child@held")!=0);
             STORAGE_CHECK(!cli_command("C:zfs destroy -r public_mirror/defer_tree"));
             note("Public recursive deferred destroy PASS confirmation=1 dataset-refused=1 unheld-removed=1 held-retained=1 release-removes=1 cleanup=1\n");
+            /* Leave real held/deferred snapshots in the exported pool for
+             * the fresh-guest healthy/degraded/restored import checks. */
+            STORAGE_CHECK(!cli_command("C:zfs create -o mountpoint=none public_mirror/defer_pending"));
+            STORAGE_CHECK(!cli_command("C:zfs create -o mountpoint=none public_mirror/defer_pending/child"));
+            STORAGE_CHECK(!cli_command("C:zfs snapshot -r public_mirror/defer_pending@pending"));
+            STORAGE_CHECK(!cli_command("C:zfs hold -r cold_keep public_mirror/defer_pending@pending"));
+            STORAGE_CHECK(!storage_request_flags(38,"public_mirror/defer_pending@pending",NULL,"defer=on",OZ_CONFIRMED|OZ_RECURSIVE));
+            STORAGE_CHECK(!cli_result("C:zfs get -H -o value defer_destroy public_mirror/defer_pending@pending >T:cli-package-output.txt","on"));
+            STORAGE_CHECK(!cli_result("C:zfs get -H -o value defer_destroy public_mirror/defer_pending/child@pending >T:cli-package-output.txt","on"));
+            note("Public pending deferred snapshots PASS recursive=1 parent-held=1 child-held=1 retained-for-cold=1\n");
         }
         {
             struct oz_message clone={0};
@@ -2397,6 +2407,29 @@ static int storage_cold_once(void)
     int error=companion_import_test(0);
     if(error==ENOENT)error=storage_alias_request(7,1);
     if(error)return error;
+    BPTR cli_defer=Lock((CONST_STRPTR)"SYS:openzfs-cli-package-test",SHARED_LOCK);
+    if(cli_defer){
+        UnLock(cli_defer);
+        const char *snapshots[]={"public_mirror/defer_pending@pending",
+            "public_mirror/defer_pending/child@pending"};
+        for(unsigned i=0;i<2&&!error;i++){
+            char command[384];
+            snprintf(command,sizeof(command),"C:zfs get -H -o value defer_destroy %s >T:cli-package-output.txt",snapshots[i]);
+            error=cli_result(command,"on");
+            if(!error){
+                snprintf(command,sizeof(command),"C:zfs get -H -o value userrefs %s >T:cli-package-output.txt",snapshots[i]);
+                error=cli_result(command,"1");
+            }
+        }
+        if(!error&&!cli_command("C:zfs release -r cold_keep public_mirror/defer_pending@pending"))error=EIO;
+        for(unsigned i=0;i<2&&!error;i++){
+            char command[384];
+            snprintf(command,sizeof(command),"C:zfs get -H -o value userrefs %s >T:cli-package-output.txt",snapshots[i]);
+            error=cli_result(command,"1");
+        }
+        if(error)return error;
+        note("Public cold deferred snapshots PASS parent=1 child=1 pending=1 holds=1 readonly-release-refused=1 unchanged=1\n");
+    }
     if(storage_sequential){
         char guid[32];error=storage_spare_status(guid,sizeof(guid),1);
         if(error)return error;

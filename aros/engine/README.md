@@ -876,6 +876,15 @@ The fixture restores its root identity on every return. Earlier run
 grant permitted a snapshot: upstream `dsl_deleg_access_impl` deliberately treats
 snapshots as descendants. That failure is retained, not counted as a pass.
 
+Pending-state persistence is qualified by `public-service-run.no4FZbtl`.
+The writer leaves both parent and child snapshots held and marked for deferred
+destruction. A fresh guest imports the mirror healthy, degraded and restored;
+each import reports `defer_destroy=on` and one user reference for both snapshots.
+Recursive hold release on the read-only pool fails and leaves both counts
+unchanged. The harness requires all three results, byte-identical pool members
+and host `zdb -bcc` with no leaks. This proves pending-state retention across
+cold imports; release after a writable cold import is not covered by this run.
+
 Authenticated recursive dataset destruction is deliberately non-atomic and
 narrower than recursive snapshot destruction. The Manager first refuses any
 service-mounted descendant, then enumerates the tree without mutation,

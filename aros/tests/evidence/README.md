@@ -101,6 +101,13 @@ This is not proof that the automatic drawer title is fixed: see the
 
 ### Evidence retention policy
 
+`pending-defer-cold` retains `public-service-run.no4FZbtl`: recursive deferred
+parent/child snapshots survive fresh healthy/degraded/restored imports with
+their holds intact. Read-only release fails without changing reference counts;
+all pool-member byte checks and host `zdb` pass. The retained writer and cold
+logs, source patch and input hashes identify the exact tested code. No writable
+cold-release or GUI-interaction claim is made by this fixture.
+
 `recursive-defer` retains the native API results, source patch and binary
 identities from `public-service-run.rlEPj1HF`. The freshly rebuilt shared engine
 passes recursive deferred snapshot destruction and the full mirror storage

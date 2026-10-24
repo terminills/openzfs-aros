@@ -621,6 +621,8 @@ if [[ $persistent == 1 ]];then
     if [[ -n $cli_dir ]];then
         zvol_imports=3
         if [[ $dspare == 1 ]];then zvol_imports=4;fi
+        rg -q '^Public pending deferred snapshots PASS recursive=1 parent-held=1 child-held=1 retained-for-cold=1' "$run/serial-results.log"
+        [[ $(rg -c '^Public cold deferred snapshots PASS parent=1 child=1 pending=1 holds=1 readonly-release-refused=1 unchanged=1' "$run/cold-results.log") == "$zvol_imports" ]]
         [[ $(rg -c '^Public cold zvol PASS exact-read=1 discard-edges=1 readonly=1 bounds=1 stale-descriptor=1' "$run/cold-results.log") == "$zvol_imports" ]]
         if [[ -n $device ]];then
             [[ $(rg -c '^Public cold device PASS geometry=1 readonly=1 reopen=3 exact-read=1 eject=1 busy-refused=1 bounds=1' "$run/cold-results.log") == "$zvol_imports" ]]
