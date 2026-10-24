@@ -1806,6 +1806,111 @@ done:
     return error;
 #undef FCHECK
 }
+static int reuse_change_guid(const char *suffix,char *guid,unsigned wanted_leaves)
+{
+    struct oz_client client;static struct oz_message request;
+    if(!oz_client_open(&client))return ENOMEM;
+    memset(&request,0,sizeof(request));request.operation=4;
+    strcpy(request.target,"public_reuse_target");
+    int error=oz_submit(&client,&request)==OZ_OK?0:EIO;
+    if(!error){
+        struct oz_message *reply=NULL;while(!(reply=oz_poll(&client)))Delay(1);
+        unsigned leaves=0;error=EIO;guid[0]=0;
+        if(reply->status==OZ_OK&&!reply->next_cursor){
+            for(unsigned i=0;i<reply->row_count;i++){
+                struct oz_row *row=&reply->rows[i];size_t n=strlen(row->name),s=strlen(suffix);
+                if(strcmp(row->kind,"file"))continue;
+                if(strcmp(row->state,"ONLINE"))break;
+                leaves++;
+                if(n<s||strcmp(row->name+n-s,suffix))continue;
+                const char *field=strstr(row->value," guid=");char *end=NULL;
+                unsigned long long value=field?strtoull(field+6,&end,10):0;
+                if(value&&*end==' ')snprintf(guid,32,"%llu",value);
+            }
+            if(guid[0]&&leaves==wanted_leaves)error=0;
+        }
+        oz_message_free(reply);
+    }
+    oz_client_close(&client);return error;
+}
+static int reuse_change_request(int manager,unsigned op,const char *guid,
+    const char *first,const char *second,int force)
+{
+    if(!manager){
+        char command[768];
+        if(op==9)snprintf(command,sizeof(command),"C:zpool add %s public_reuse_target mirror %s %s",force?"-f":"",first,second);
+        else snprintf(command,sizeof(command),"C:zpool %s %s public_reuse_target %s %s",op==11?"attach":"replace",force?"-f":"",guid,first);
+        return cli_command(command);
+    }
+    static struct oz_message m,out;memset(&m,0,sizeof(m));
+    m.magic=OZ_MAGIC;m.version=OZ_VERSION;m.msg.mn_Length=sizeof(m);
+    m.operation=op;m.flags=OZ_CONFIRMED;strcpy(m.target,"public_reuse_target");
+    if(op!=9)snprintf(m.argument,sizeof(m.argument),"%s",guid);
+    m.topology.group_count=1;m.topology.device_count=second?2:1;m.topology.ashift=12;
+    m.topology.groups[0].layout=second?OZ_MIRROR:OZ_STRIPE;
+    snprintf(m.topology.devices[0].path,sizeof(m.topology.devices[0].path),"%s",first);
+    if(second)snprintf(m.topology.devices[1].path,sizeof(m.topology.devices[1].path),"%s",second);
+    struct oz_ticket ticket={0};int error=oz_admission_submit(OZ_ADMISSION_PORT,&m,&ticket);
+    if(!error){do{error=oz_admission_query(OZ_ADMISSION_PORT,&ticket,&out);if(error==EAGAIN)Delay(1);}while(error==EAGAIN);}
+    if(!error&&out.status!=OZ_OK)error=EIO;
+    if(ticket.number){int released=oz_admission_release(OZ_ADMISSION_PORT,&ticket);if(!error)error=released;}
+    return error;
+}
+static int storage_destroyed_changes(void)
+{
+    const char *paths[]={"/RAM/OZReuseChanges/disk0","/RAM/OZReuseChanges/disk1","/RAM/OZReuseChanges/disk2",
+        "/RAM/OZReuseChanges/disk3","/RAM/OZReuseChanges/disk4"};
+    BPTR file=0;void *zeros=AllocVec(1024*1024,MEMF_PUBLIC|MEMF_CLEAR);int error=0;
+    char guid[32];
+#define XCHECK(x) do{if(!(x)){char line[96];snprintf(line,sizeof(line),"Public destroyed changes FAIL line=%d\n",__LINE__);note(line);error=EIO;goto done;}}while(0)
+    XCHECK(zeros);
+    BPTR directory=CreateDir((CONST_STRPTR)"RAM:OZReuseChanges");XCHECK(directory);UnLock(directory);
+    for(int manager=0;manager<2;manager++){
+        for(unsigned i=0;i<5;i++){
+            char path[80];snprintf(path,sizeof(path),"RAM:OZReuseChanges/disk%u",i);
+            file=Open((CONST_STRPTR)path,MODE_NEWFILE);XCHECK(file);
+            for(unsigned n=0;n<64;n++)XCHECK(Write(file,zeros,1024*1024)==1024*1024);
+            XCHECK(Flush(file));int closed=Close(file);file=0;XCHECK(closed);
+        }
+        XCHECK(!cli_command("C:zpool create -o cachefile=none -o ashift=12 -O mountpoint=none public_reuse_source mirror /RAM/OZReuseChanges/disk0 /RAM/OZReuseChanges/disk1"));
+        XCHECK(!cli_command("C:zpool create -o cachefile=none -o ashift=12 -O mountpoint=none public_reuse_target /RAM/OZReuseChanges/disk2"));
+        XCHECK(!cli_command("C:zpool create -o cachefile=none -o ashift=12 -O mountpoint=none public_reuse_donor mirror /RAM/OZReuseChanges/disk3 /RAM/OZReuseChanges/disk4"));
+        XCHECK(!pool_root_payload("public_reuse_target",1,0));
+        XCHECK(!reuse_change_guid("/disk2",guid,1));
+        for(unsigned exported=0;exported<2;exported++){
+            if(exported)XCHECK(!cli_command("C:zpool export public_reuse_source"));
+            XCHECK(reuse_change_request(manager,11,guid,paths[0],NULL,1)!=0);
+            XCHECK(reuse_change_request(manager,13,guid,paths[0],NULL,1)!=0);
+            XCHECK(reuse_change_request(manager,9,NULL,paths[0],paths[1],1)!=0);
+            XCHECK(!reuse_change_guid("/disk2",guid,1));
+            XCHECK(!pool_root_payload("public_reuse_target",0,0));
+        }
+        XCHECK(!cli_command("C:zpool import -N -o cachefile=none -d /RAM/OZReuseChanges/disk0 -d /RAM/OZReuseChanges/disk1 public_reuse_source"));
+        XCHECK(!cli_command("C:zpool destroy public_reuse_source"));
+        XCHECK(!reuse_change_request(manager,11,guid,paths[0],NULL,0));
+        XCHECK(!cli_command("C:zpool wait -t resilver public_reuse_target"));
+        XCHECK(!reuse_change_guid("/disk0",guid,2));
+        XCHECK(!pool_root_payload("public_reuse_target",0,0));
+        XCHECK(!reuse_change_request(manager,13,guid,paths[1],NULL,0));
+        XCHECK(!cli_command("C:zpool wait -t resilver,replace public_reuse_target"));
+        XCHECK(!reuse_change_guid("/disk1",guid,2));
+        XCHECK(!pool_root_payload("public_reuse_target",0,0));
+        XCHECK(!cli_command("C:zpool destroy public_reuse_donor"));
+        XCHECK(!reuse_change_request(manager,9,NULL,paths[3],paths[4],0));
+        XCHECK(!reuse_change_guid("/disk4",guid,4));
+        XCHECK(!pool_root_payload("public_reuse_target",0,0));
+        XCHECK(!cli_command("C:zpool destroy public_reuse_target"));
+        for(unsigned i=0;i<5;i++){
+            char path[80];snprintf(path,sizeof(path),"RAM:OZReuseChanges/disk%u",i);XCHECK(DeleteFile((CONST_STRPTR)path));
+        }
+        note(manager?"Public destroyed changes Manager PASS attach=1 replace=1 add=1 active-refused=3 exported-refused=3 exact-read=5 cleanup=1\n":
+            "Public destroyed changes CLI PASS attach=1 replace=1 add=1 active-force-refused=3 exported-force-refused=3 exact-read=5 cleanup=1\n");
+    }
+    XCHECK(DeleteFile((CONST_STRPTR)"RAM:OZReuseChanges"));
+done:
+    if(file)Close(file);if(zeros)FreeVec(zeros);return error;
+#undef XCHECK
+}
 static int storage_file_reuse(void)
 {
     BPTR marker=Lock((CONST_STRPTR)"SYS:openzfs-cli-package-test",SHARED_LOCK);
@@ -1847,6 +1952,7 @@ static int storage_file_reuse(void)
     RCHECK(DeleteFile((CONST_STRPTR)"RAM:OZFileReuse/disk0"));
     RCHECK(DeleteFile((CONST_STRPTR)"RAM:OZFileReuse/disk1"));
     RCHECK(DeleteFile((CONST_STRPTR)"RAM:OZFileReuse"));
+    RCHECK(!storage_destroyed_changes());
 done:
     if(file)Close(file);if(zeros)FreeVec(zeros);
     storage_directory=saved_directory;storage_members=saved_members;storage_layout=saved_layout;storage_replaced=saved_replaced;

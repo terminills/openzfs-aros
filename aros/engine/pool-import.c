@@ -520,10 +520,10 @@ static int destroyed_label_checksum(vdev_phys_t *label,uint64_t offset)
     return ZIO_CHECKSUM_EQUAL(actual,expected)?0:ECKSUM;
 }
 
-/* Create may reuse an explicitly destroyed member. Require every label to
+/* New pool members may reuse an explicitly destroyed member. Require every label to
  * agree under the retained native reservation or checked file identity lock,
  * rather than trusting client preflight or accepting arbitrary nonzero media.
- * Add/replace keep their blank-member policy. This is not force-create. */
+ * This is not force-create or an override for active/exported members. */
 static int destroyed_backing(struct oz_device *device,int fd,uint64_t bytes)
 {
     uint64_t size=P2ALIGN_TYPED(bytes,sizeof(vdev_label_t),uint64_t);
@@ -721,7 +721,7 @@ int oz_cli_add_begin(const char *name,const void *bytes,size_t size,cred_t *call
         struct imported_files *p=s->files;p->count=count;p->guid=spa_guid(spa);strcpy(p->name,name);
         for(unsigned i=0;!error&&i<count;i++){
             error=!strncmp(paths[i],"/AROS/",6)?pin_native(p,i,paths[i],0):pin_file(p,i,paths[i],security,0);
-            if(!error)error=blank_backing(p,i,buffer,0);
+            if(!error)error=blank_backing(p,i,buffer,1);
         }
         if(!error){allowed.paths=p->paths;error=oz_import_config_check(&allowed,config);}
         if(!error)error=writable_handoff(p);

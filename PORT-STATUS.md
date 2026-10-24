@@ -4,6 +4,11 @@ Experimental development snapshot; not production-qualified storage software.
 
 ## Current local package (2026-10-24)
 
+Source now also permits consistently destroyed members for add/attach/replace.
+CLI and Manager API file-backed lifecycle tests pass; see
+`aros/tests/evidence/destroyed-member-changes` for precise runtime limits.
+The current local archive predates that expanded reuse policy.
+
 The source now additionally validates embedded label checksums before allowing
 destroyed-member reuse. Old-engine reproduction and three fresh eight-CPU
 QEMU runs qualify the repair; see `aros/tests/evidence/destroyed-label-checksum`.
@@ -184,8 +189,10 @@ results, not a fresh qualification of this public snapshot.
   members (all four checksummed labels must agree on destroyed state and pool/member GUIDs).
   Active and exported members remain refused even with CLI force. Arbitrary
   nonzero media and force-create over exported members remain incomplete.
-  Add/attach/replace retain their blank-member policy. Both Manager API and CLI
-  use the same destroyed-label validator for file create. See
+  Add/attach/replace now use the same checked destroyed-member admission as
+  create. CLI and Manager API file-backed lifecycles pass; native-device reuse
+  for all three operations and cold recovery of the changed fixture remain
+  unqualified. See `aros/tests/evidence/destroyed-member-changes`,
   `aros/tests/evidence/native-destroyed-reuse` and
   `aros/tests/evidence/file-destroyed-reuse` for runtime coverage.
   File-backed QEMU tests also verify refusal by both entry points for each
