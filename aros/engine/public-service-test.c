@@ -2354,7 +2354,7 @@ static int storage_test(int gui){
             STORAGE_CHECK(Write(file,"invalid hex\n",12)==12);STORAGE_CHECK(Close(file));file=0;
             STORAGE_CHECK(storage_request_flags(62,"public_mirror/check_hex","RAM:public-hex.key",NULL,OZ_CONFIRMED|OZ_DRYRUN)!=0);
             STORAGE_CHECK(!cli_result("C:zfs get -H -o value keystatus public_mirror/check_hex >T:cli-package-output.txt","unavailable"));
-            STORAGE_CHECK(!cli_command("C:zfs destroy public_mirror/check_hex"));
+            if(!native_file_fixture)STORAGE_CHECK(!cli_command("C:zfs destroy public_mirror/check_hex"));
             STORAGE_CHECK(DeleteFile((CONST_STRPTR)"RAM:public-hex.key"));
             note("Public hex key verification PASS newline=1 repeated=3 locked-preserved=1 loaded-preserved=1 malformed-refused=1 cleanup=1\n");
         }
@@ -2580,6 +2580,37 @@ static int storage_encrypted_cold(void)
     if(!error)note("Public cold encryption PASS locked=1 mount-denied=1 load=1 exact-read=1 unload=1\n");
     return error;
 }
+static int storage_rotated_format_cold(void)
+{
+    if(!native_file_fixture)return 0;
+    BPTR marker=Lock((CONST_STRPTR)"SYS:openzfs-cli-package-test",SHARED_LOCK);
+    if(!marker)return 0;
+    UnLock(marker);
+    if(cli_result("C:zfs get -H -o value keyformat public_mirror/check_hex >T:cli-package-output.txt","hex")||
+       cli_result("C:zfs get -H -o value keylocation public_mirror/check_hex >T:cli-package-output.txt","file:///RAM/public-hex.key")||
+       cli_result("C:zfs get -H -o value keystatus public_mirror/check_hex >T:cli-package-output.txt","unavailable"))return EIO;
+    const char key[]="0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef\n";
+    BPTR file=Open((CONST_STRPTR)"RAM:public-hex.key",MODE_NEWFILE);if(!file)return EIO;
+    int error=Write(file,key,sizeof(key)-1)==sizeof(key)-1?0:EIO;
+    if(!Close(file))error=EIO;
+    if(!error)error=storage_request(62,"public_mirror/check_hex","RAM:public-hex.key",NULL);
+    if(!DeleteFile((CONST_STRPTR)"RAM:public-hex.key"))error=EIO;
+    if(error)return error;
+    error=oz_mount_control(OZ_ADMISSION_PORT,"public_mirror/check_hex","OZREKEYCOLD",OZ_MOUNT_ATTACH,OZ_MOUNT_READONLY);
+    if(error)return error;
+    char bytes[sizeof(storage_payload)+1];
+    file=Open((CONST_STRPTR)"OZREKEYCOLD:payload",MODE_OLDFILE);
+    if(!file)error=EIO;
+    else{
+        LONG count=Read(file,bytes,sizeof(bytes));
+        if(!Close(file)||count!=sizeof(storage_payload)-1||memcmp(bytes,storage_payload,sizeof(storage_payload)-1))error=EIO;
+    }
+    int detached=oz_mount_control(OZ_ADMISSION_PORT,"public_mirror/check_hex","",OZ_MOUNT_DETACH,0);
+    if(!error)error=detached;
+    if(!error)error=storage_request(63,"public_mirror/check_hex",NULL,NULL);
+    if(!error)note("Public cold key format rotation PASS format=hex location=1 locked=1 reload=1 exact-data=1 unload=1\n");
+    return error;
+}
 static int storage_rotated_passphrase_cold(void)
 {
     if(!native_file_fixture)return 0;
@@ -2692,6 +2723,7 @@ static int storage_cold_once(void)
     }
     error=oz_mount_control(OZ_ADMISSION_PORT,"public_mirror/files","",OZ_MOUNT_DETACH,0);
     if(!error)error=storage_encrypted_cold();
+    if(!error)error=storage_rotated_format_cold();
     if(!error)error=storage_rotated_passphrase_cold();
     if(!error){
         BPTR cli=Lock((CONST_STRPTR)"SYS:openzfs-cli-package-test",SHARED_LOCK);

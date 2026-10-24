@@ -880,7 +880,13 @@ combinations, hex-to-passphrase with 400000 iterations and a new location,
 old-key rejection, passphrase-to-raw and raw-to-hex, reloads and exact readback
 of data written before rotation. The full storage suite passes. Evidence is
 in `aros/tests/evidence/key-format-rotation`; this is native API evidence,
-not yet an interactive Manager or cold-import qualification of these options.
+not yet an interactive Manager qualification of these options.
+Persistent follow-up `public-service-run.8Cq8R435` retains the rotated dataset.
+Fresh healthy, degraded and restored read-only imports independently confirm
+final hex format, stored location, initial locked state, reload and exact data
+written before rotation. All three unload cleanly; pool-member hashes remain
+unchanged during cold reads and independent `zdb` reports no leaks. The full
+suite passes. Evidence is in `aros/tests/evidence/key-format-cold`.
 
 ## Native dataset rename and destroy (2026-09-21)
 
