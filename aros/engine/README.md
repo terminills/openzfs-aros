@@ -825,6 +825,14 @@ passphrase lifecycle, unchanged cold-read member hashes and independent
 The cold checks qualify the updated engine's existing lifecycle behavior;
 the new check-only request itself is exercised in the writer boot.
 
+Interactive Manager run `native-gui-run.Q2LH3GdX` additionally submits load-key
+with Dry-run for a locked disposable encryption root. The confirmation
+describes verification only and the result reports authenticated verification,
+not loading. Independent post-UI checks prove the dataset is still locked,
+mounting is refused, and a subsequent normal load succeeds. Fixture cleanup,
+unrelated DOS readback and the full storage suite pass. Screenshots, binary
+hashes, action trace and serial results are in `aros/tests/evidence/gui-key-check`.
+
 ## Native dataset rename and destroy (2026-09-21)
 
 ### Snapshot holds and releases

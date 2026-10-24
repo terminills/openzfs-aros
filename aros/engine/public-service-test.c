@@ -2278,6 +2278,16 @@ static int storage_test(int gui){
         note("Public passphrase encryption PASS create-pbkdf2=350000 locked-mount-denied=1 reload=1 exact-read=1 cleanup=1\n");
     }
     if(gui){
+        BPTR key_gui=Lock((CONST_STRPTR)"SYS:openzfs-gui-key-check-test",SHARED_LOCK);
+        if(key_gui){
+            UnLock(key_gui);
+            unsigned char gui_key[32];for(unsigned i=0;i<sizeof(gui_key);i++)gui_key[i]=(unsigned char)(i+1);
+            file=Open((CONST_STRPTR)"RAM:gui-check.key",MODE_NEWFILE);STORAGE_CHECK(file);
+            STORAGE_CHECK(Write(file,gui_key,sizeof(gui_key))==sizeof(gui_key));STORAGE_CHECK(Close(file));file=0;
+            STORAGE_CHECK(!cli_command("C:zfs create -u -o mountpoint=none -o encryption=aes-256-gcm -o keyformat=raw -o keylocation=file:///RAM/gui-check.key public_mirror/gui_key"));
+            STORAGE_CHECK(!cli_command("C:zfs unload-key public_mirror/gui_key"));
+            note("Public GUI key check READY target=public_mirror/gui_key argument=RAM:gui-check.key dry-run=1\n");
+        }
         BPTR preview_gui=Lock((CONST_STRPTR)"SYS:openzfs-gui-destroy-preview-test",SHARED_LOCK);
         if(preview_gui)UnLock(preview_gui);
         BPTR defer_gui=Lock((CONST_STRPTR)"SYS:openzfs-gui-defer-test",SHARED_LOCK);
@@ -2310,6 +2320,16 @@ static int storage_test(int gui){
         if(volume_gui){UnLock(volume_gui);note("Public GUI volume READY: Devices, unit 5, public_mirror/public_volume, read-only Remap; save whole-volume FFS mount file T:OZBLOCK, then close Manager\n");}
         note("Public storage GUI ready: mounted public_mirror/files with hello.txt\n");
         STORAGE_CHECK(SystemTags((CONST_STRPTR)"C:OpenZFSManagerNative",TAG_DONE)==0);
+        if(key_gui){
+            STORAGE_CHECK(!cli_result("C:zfs get -H -o value keystatus public_mirror/gui_key >T:cli-package-output.txt","unavailable"));
+            STORAGE_CHECK(oz_mount_control(OZ_ADMISSION_PORT,"public_mirror/gui_key","OZGUIKEY",OZ_MOUNT_ATTACH,OZ_MOUNT_READONLY)!=0);
+            STORAGE_CHECK(!storage_request(62,"public_mirror/gui_key","RAM:gui-check.key",NULL));
+            STORAGE_CHECK(!cli_result("C:zfs get -H -o value keystatus public_mirror/gui_key >T:cli-package-output.txt","available"));
+            STORAGE_CHECK(!cli_command("C:zfs unload-key public_mirror/gui_key"));
+            STORAGE_CHECK(!cli_command("C:zfs destroy public_mirror/gui_key"));
+            STORAGE_CHECK(DeleteFile((CONST_STRPTR)"RAM:gui-check.key"));
+            note("Public GUI key check PASS locked=1 mount-refused=1 normal-load=1 cleanup=1\n");
+        }
         if(preview_gui){
             STORAGE_CHECK(defer_gui);
             STORAGE_CHECK(!cli_result("C:zfs get -H -o value defer_destroy public_mirror/gui_defer@gui >T:cli-package-output.txt","off"));

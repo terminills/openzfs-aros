@@ -84,6 +84,8 @@ gui_defer=${AROS_TEST_GUI_DEFER:-0}
 [[ $gui_defer == 0 || ( $gui_defer == 1 && $gui == 1 && -n $cli_dir ) ]]
 gui_destroy_preview=${AROS_TEST_GUI_DESTROY_PREVIEW:-0}
 [[ $gui_destroy_preview == 0 || ( $gui_destroy_preview == 1 && $gui_defer == 1 ) ]]
+gui_key_check=${AROS_TEST_GUI_KEY_CHECK:-0}
+[[ $gui_key_check == 0 || ( $gui_key_check == 1 && $gui == 1 && -n $cli_dir ) ]]
 gui_desktop=${AROS_TEST_GUI_DESKTOP:-0}
 gui_clone=${AROS_TEST_GUI_CLONE:-0}
 [[ $gui_clone == 0 || ( $gui_clone == 1 && $gui == 1 && -n $cli_dir ) ]]
@@ -120,6 +122,9 @@ if [[ $gui_clone == 1 ]];then
 fi
 if [[ $gui_defer == 1 ]];then
     extra_maps+=(-map aros/engine/public-service-test-only /openzfs-gui-defer-test)
+fi
+if [[ $gui_key_check == 1 ]];then
+    extra_maps+=(-map aros/engine/public-service-test-only /openzfs-gui-key-check-test)
 fi
 if [[ $gui_destroy_preview == 1 ]];then
     extra_maps+=(-map aros/engine/public-service-test-only /openzfs-gui-destroy-preview-test)
@@ -743,6 +748,9 @@ echo "PASS: public service lifecycles and $layout DOS round trip (persistent=$pe
 rg -q '^Public DOS links PASS write=1 hard=1 relative-soft=1 unlinked-source=1 dangling-refused=1' "$run/serial-results.log"
 if [[ $gui_volume == 1 ]];then
     rg -q '^Public GUI volume PASS actual-mapping=1 readonly=1 exact-data=1 saved-mountfile=1 eject=1' "$run/serial-results.log"
+fi
+if [[ $gui_key_check == 1 ]];then
+    rg -q '^Public GUI key check PASS locked=1 mount-refused=1 normal-load=1 cleanup=1' "$run/serial-results.log"
 fi
 if [[ $gui_destroy_preview == 1 ]];then
     rg -q '^Public GUI destruction preview PASS parent-unchanged=1 child-unchanged=1 hold-retained=1 release-does-not-destroy=1 cleanup=1' "$run/serial-results.log"
