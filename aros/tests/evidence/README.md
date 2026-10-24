@@ -70,6 +70,24 @@ package. See BUILDING.md for the immutable archive identity.
 
 ### Evidence retention
 
+### Clean engine GUI qualification
+
+`native-gui-run.KQyxomdW` uses the cleanly rebuilt shared engine, not the older
+candidate shown in the preceding screenshots. Its
+[serial log](fresh-engine-gui/serial.log) contains the post-UI exact-read and
+storage PASS results. Package staging checks this run's binary identities
+against the matching cold-import run. See [engine build notes](../../engine/BUILDING.md)
+for the immutable archive hash and runtime prerequisites.
+
+![Cleanly rebuilt engine with Manager and Wanderer](fresh-engine-gui/01-desktop.png)
+
+![Pool ONLINE through the rebuilt engine](fresh-engine-gui/02-live-pool.png)
+
+The garbled drawer title is a known, separately tracked limitation, not a
+successful title-rendering test.
+
+### Evidence retention policy
+
 The `fresh-engine` directory retains the writer/cold-import logs and hashes for
 `public-service-run.KKc6pmMp`, using the clean source engine build described in
 [engine build notes](../../engine/BUILDING.md). This is a non-GUI test; the

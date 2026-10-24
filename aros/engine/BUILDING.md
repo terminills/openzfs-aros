@@ -14,8 +14,19 @@ suite, including trusted ENVARC startup restoration and healthy, degraded and
 restored cold imports. Independent `zdb` verification and unchanged pool-member
 hashes pass. Selected logs and manifests are committed under
 `aros/tests/evidence/fresh-engine`. This does not replace the prior package's
-binary identity or qualify physical storage; the new candidate still needs its
-own GUI/package qualification.
+binary identity or qualify physical storage.
+
+Follow-up `native-gui-run.KQyxomdW` qualifies the same rebuilt shared engine
+with Manager and Wanderer: live pool enumeration reports ONLINE, the mounted
+drawer lists its files, and post-UI exact readback/export/read-only reimport
+pass. Screenshots and matching logs are in `aros/tests/evidence/fresh-engine-gui`.
+The known garbled initial WBRun drawer title remains visible and unresolved.
+Strict staging binds this run and `KKc6pmMp` to the selected binaries; all
+staged SHA256SUMS pass. The new local development archive is
+`build-aros/mmake-bundle.p3p760rd.tar.xz`, SHA-256
+`d4bb4f5b798d478d33f77c847530831386ca42d5d7ea51408945312ccf97a087`.
+The previous archive remains unchanged. This is not an uploaded release or
+stock-nightly qualification. The GUI run pruned its 4.57 GiB disposable ISO.
 
 The first attempt, `source-engine.E3DnS3hs`, compiled all engine units but failed
 to link the acceptance client: the standalone management builder omitted the
