@@ -819,11 +819,13 @@ if [[ $native_discovery == 1 ]];then
     rg -q '^Public native cold retained PASS properties=6 locked-import=2 wrong-key-denied=2 key-reload=2 exact-data=1 neighbor-cleanup=1' "$run/serial-results.log"
   else
     rg -q '^Public native discovery PASS create=1 default-scan=1 readonly-import=1 rw-import=1 destroy=1' "$run/serial-results.log"
+    rg -q '^Public native destroyed reuse PASS same-extent=1 no-force=1 old-payload-absent=1 new-write=1 destroyed=1' "$run/serial-results.log"
     rg -q '^Public native discovery coexistence PASS separate-partitions=1 neighbor-online=1 neighbor-property=1 cleanup=1' "$run/serial-results.log"
     rg -q '^Public native discovery data PASS handler-write=1 readonly-import-read=1 readonly-write-denied=1 writable-import-read=1 cleanup=1' "$run/serial-results.log"
     rg -q '^Public native encrypted root PASS properties=6 locked-import=2 mount-denied=2 key-reload=2 exact-data=1 cleanup=1' "$run/serial-results.log"
     rg -q '^Public native encrypted root wrong key PASS denied=2 remains-locked=2 mount-denied=2 correct-recovery=2' "$run/serial-results.log"
   fi
+    rg -q '^Public native reuse guards PASS active-force-denied=1 exported-force-denied=1 original-data-preserved=1' "$run/serial-results.log"
 fi
 if [[ $companions == 1 ]];then
     rg -q '^Public exec helper PASS real-zpool=1 captured-output=1 missing-executable=1' "$run/serial-results.log"

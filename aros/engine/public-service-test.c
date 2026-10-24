@@ -1798,6 +1798,11 @@ static int storage_native_discovery(void)
             }
         }else error=cli_result(command,i==4?"on":"");
         diagnostic_log("T:cli-package-output.txt");
+        if(!error&&(i==0||i==1)){
+            /* Force must not bypass active reservations or the service's
+             * exported-member policy. Subsequent exact reads prove retention. */
+            if(!cli_command("C:zpool create -f -o cachefile=none -O mountpoint=none public_reuse_denied /AROS/ata.device/0/partition/0"))error=EIO;
+        }
         if(!error&&(i==3||i==6)){
             error=cli_result("C:zfs get -H -o value keystatus public_discovery >T:cli-package-output.txt","unavailable");
             if(!error&&!cli_command("C:zfs load-key -L file:///RAM/discovery-wrong.key public_discovery"))error=EIO;
@@ -1820,12 +1825,23 @@ static int storage_native_discovery(void)
         if(!error&&(i==0||i==3||i==6))error=pool_root_payload("public_discovery",i==0,i==3);
         if(error){char line[100];snprintf(line,sizeof(line),"Public native discovery FAIL step=%u errno=%d\n",i,error);note(line);return error;}
     }
+    if(!retain){
+        /* Reuse the exact destroyed extent, never clear it in the harness.
+         * A new root must not expose the previous pool's payload. */
+        error=cli_command(commands[0])?EIO:0;
+        if(!error&&pool_root_payload("public_discovery",0,0)!=EIO)error=EIO;
+        if(!error)error=pool_root_payload("public_discovery",1,0);
+        if(!error)error=cli_command("C:zpool destroy public_discovery")?EIO:0;
+        if(error)return error;
+        note("Public native destroyed reuse PASS same-extent=1 no-force=1 old-payload-absent=1 new-write=1 destroyed=1\n");
+    }
     error=cli_result("C:zpool list -H -o health public_neighbor >T:cli-package-output.txt", "ONLINE");
     if(!error)error=cli_result("C:zfs get -H -o value org.openzfs:discovery public_neighbor >T:cli-package-output.txt", "preserved");
     if(!error)error=cli_result("C:zpool destroy public_neighbor >T:cli-package-output.txt", "");
     if(error)return error;
     if(!DeleteFile((CONST_STRPTR)"RAM:discovery-root.key"))return EIO;
     if(!DeleteFile((CONST_STRPTR)"RAM:discovery-wrong.key"))return EIO;
+    note("Public native reuse guards PASS active-force-denied=1 exported-force-denied=1 original-data-preserved=1\n");
     if(retain){
         note("Public native cold writer PASS encrypted-root=1 exact-write=1 detached=1 exported=1\n");
         note("Public native cold retained PASS properties=6 locked-import=2 wrong-key-denied=2 key-reload=2 exact-data=1 neighbor-cleanup=1\n");

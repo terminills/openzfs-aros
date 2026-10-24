@@ -497,7 +497,33 @@ static int create_paths(nvlist_t *tree,char **paths,unsigned *count,unsigned dep
     }
     return 0;
 }
-static int blank_backing(struct imported_files *p,unsigned i,unsigned char *buffer)
+/* Create may reuse an explicitly destroyed native member. Require every label
+ * to agree, under the retained writable reservation, rather than trusting a
+ * client-side preflight or accepting arbitrary nonzero media. Add/replace keep
+ * their existing blank-member policy. This does not implement force-create. */
+static int destroyed_native_backing(struct oz_device *device)
+{
+    uint64_t size=P2ALIGN_TYPED(oz_device_size(device),sizeof(vdev_label_t),uint64_t);
+    if(size<VDEV_LABELS*sizeof(vdev_label_t))return EINVAL;
+    vdev_phys_t *label=malloc(sizeof(*label));if(!label)return ENOMEM;
+    uint64_t pool=0,member=0;int error=0;
+    for(unsigned l=0;l<VDEV_LABELS&&!error;l++){
+        uint64_t offset=l*sizeof(vdev_label_t)+(l<VDEV_LABELS/2?0:size-VDEV_LABELS*sizeof(vdev_label_t))+VDEV_SKIP_SIZE;
+        error=oz_device_transfer(device,label,sizeof(*label),offset,0);
+        nvlist_t *config=NULL;
+        if(!error)error=nvlist_unpack(label->vp_nvlist,sizeof(label->vp_nvlist),&config,0);
+        uint64_t state=0,current_pool=0,current_member=0;
+        if(!error&&(nvlist_lookup_uint64(config,ZPOOL_CONFIG_POOL_STATE,&state)||
+            nvlist_lookup_uint64(config,ZPOOL_CONFIG_POOL_GUID,&current_pool)||
+            nvlist_lookup_uint64(config,ZPOOL_CONFIG_GUID,&current_member)||
+            state!=POOL_STATE_DESTROYED||!current_pool||!current_member))error=EEXIST;
+        if(!error&&l&&(pool!=current_pool||member!=current_member))error=EEXIST;
+        if(!error){pool=current_pool;member=current_member;}
+        nvlist_free(config);
+    }
+    free(label);return error;
+}
+static int blank_backing(struct imported_files *p,unsigned i,unsigned char *buffer,int reuse_destroyed)
 {
     if(p->missing[i])return ENODEV;
     struct oz_device *device=NULL;int fd=-1,error=0;uint64_t size=0;
@@ -520,6 +546,7 @@ static int blank_backing(struct imported_files *p,unsigned i,unsigned char *buff
         for(size_t b=0;!error&&b<n;b++)if(buffer[b])error=EEXIST;
         offset+=n;
     }
+    if(error==EEXIST&&device&&reuse_destroyed)error=destroyed_native_backing(device);
     if(fd>=0)close(fd);
     oz_device_close(device);return error;
 }
@@ -562,7 +589,7 @@ int oz_cli_create_begin(const char *name,const void *bytes,size_t size,
         p->count=count;strcpy(p->name,active_name);
         for(unsigned i=0;!error&&i<count;i++) {
             error=!strncmp(paths[i],"/AROS/",6)?pin_native(p,i,paths[i],0):pin_file(p,i,paths[i],security,0);
-            if(!error)error=blank_backing(p,i,buffer);
+            if(!error)error=blank_backing(p,i,buffer,1);
         }
     }
     if(!error){allowed.paths=p->paths;error=oz_import_config_check(&allowed,config);}
@@ -663,7 +690,7 @@ int oz_cli_add_begin(const char *name,const void *bytes,size_t size,cred_t *call
         struct imported_files *p=s->files;p->count=count;p->guid=spa_guid(spa);strcpy(p->name,name);
         for(unsigned i=0;!error&&i<count;i++){
             error=!strncmp(paths[i],"/AROS/",6)?pin_native(p,i,paths[i],0):pin_file(p,i,paths[i],security,0);
-            if(!error)error=blank_backing(p,i,buffer);
+            if(!error)error=blank_backing(p,i,buffer,0);
         }
         if(!error){allowed.paths=p->paths;error=oz_import_config_check(&allowed,config);}
         if(!error)error=writable_handoff(p);

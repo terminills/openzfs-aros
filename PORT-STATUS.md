@@ -164,11 +164,12 @@ results, not a fresh qualification of this public snapshot.
 - Physical storage flush, disconnect, and abrupt power-loss behavior require
   hardware qualification. Virtual-disk tests do not establish these guarantees.
 - Not every upstream feature or topology has end-to-end AROS validation.
-- Native CLI pool creation currently requires a blank backing extent in the
-  service admission path. Reusing a destroyed pool's nonzero extent is not
-  yet equivalent to upstream force-create behavior; it can surface EEXIST as
-  "pool already exists" even when no live pool has that name. Explicit safe
-  reuse policy and clearer error reporting remain software work.
+- Native pool creation accepts blank extents or consistently labeled destroyed
+  members (all four labels must agree on destroyed state and pool/member GUIDs).
+  Active and exported members remain refused even with CLI force. Arbitrary
+  nonzero media, force-create over exported members, and reuse of nonblank file
+  backings remain incomplete. Add/attach/replace retain their blank-member
+  policy. See `aros/tests/evidence/native-destroyed-reuse` for runtime coverage.
 - TRIM/discard is not implemented for AROS file or native-device backings;
   requests report unsupported rather than claiming successful discard.
 - This does not provide an NFS/SMB client or server for browsing a remote ZFS
