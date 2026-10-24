@@ -1744,6 +1744,8 @@ static int storage_native_discovery(void)
     BPTR marker=Lock((CONST_STRPTR)"SYS:openzfs-native-discovery-test",SHARED_LOCK);
     if(!marker)return 0;
     UnLock(marker);
+    marker=Lock((CONST_STRPTR)"SYS:openzfs-native-cold-test",SHARED_LOCK);
+    int retain=marker!=0;if(marker)UnLock(marker);
     /* Runner supplies only fresh snapshot-backed virtual disks. Use its
      * explicit MBR extent; implicit whole-disk provisioning is not allowed. */
     struct oz_device_geometry geometry={0};
@@ -1784,7 +1786,8 @@ static int storage_native_discovery(void)
         "C:zpool destroy public_discovery"
     };
     for(unsigned i=0;i<sizeof(commands)/sizeof(commands[0]);i++){
-        char command[1024];snprintf(command,sizeof(command),"%s >T:cli-package-output.txt",commands[i]);
+        char command[1024];snprintf(command,sizeof(command),"%s >T:cli-package-output.txt",
+            retain&&i==7?"C:zpool export public_discovery":commands[i]);
         if(i==2){
             error=cli_command(command)?EIO:0;
             BPTR output=Open((CONST_STRPTR)"T:cli-package-output.txt",MODE_OLDFILE);
@@ -1823,12 +1826,49 @@ static int storage_native_discovery(void)
     if(error)return error;
     if(!DeleteFile((CONST_STRPTR)"RAM:discovery-root.key"))return EIO;
     if(!DeleteFile((CONST_STRPTR)"RAM:discovery-wrong.key"))return EIO;
+    if(retain){
+        note("Public native cold writer PASS encrypted-root=1 exact-write=1 detached=1 exported=1\n");
+        note("Public native cold retained PASS properties=6 locked-import=2 wrong-key-denied=2 key-reload=2 exact-data=1 neighbor-cleanup=1\n");
+        return 0;
+    }
     note("Public native discovery PASS create=1 default-scan=1 readonly-import=1 rw-import=1 destroy=1\n");
     note("Public native discovery coexistence PASS separate-partitions=1 neighbor-online=1 neighbor-property=1 cleanup=1\n");
     note("Public native discovery data PASS handler-write=1 readonly-import-read=1 readonly-write-denied=1 writable-import-read=1 cleanup=1\n");
     note("Public native encrypted root PASS properties=6 locked-import=2 mount-denied=2 key-reload=2 exact-data=1 cleanup=1\n");
     note("Public native encrypted root wrong key PASS denied=2 remains-locked=2 mount-denied=2 correct-recovery=2\n");
     return 0;
+}
+static int storage_native_cold(int create)
+{
+    /* This fixture is only enabled by the isolated runner. The writer exports
+     * cleanly; the reader runs in a different VM with no retained ARC or keys. */
+    BPTR marker=Lock((CONST_STRPTR)"SYS:openzfs-native-cold-test",SHARED_LOCK);
+    if(!marker)return create?0:EINVAL;
+    UnLock(marker);
+    if(create)return 0; /* storage_native_discovery retained the exported pool. */
+    unsigned char key[32];for(unsigned i=0;i<sizeof(key);i++)key[i]=(unsigned char)(i+1);
+    BPTR file=Open((CONST_STRPTR)"RAM:discovery-root.key",MODE_NEWFILE);
+    if(!file)return EIO;
+    LONG written=Write(file,key,sizeof(key));int closed=Close(file);
+    if(written!=sizeof(key)||!closed)return EIO;
+    int error=cli_command("C:zpool import -N -o cachefile=none -o readonly=on public_discovery")?EIO:0;
+    if(!error&&!create){
+        error=cli_result("C:zfs get -H -o value keystatus public_discovery >T:cli-package-output.txt","unavailable");
+        if(!error){
+            int mounted=oz_mount_control(OZ_ADMISSION_PORT,"public_discovery","OZDISCOVERY",OZ_MOUNT_ATTACH,OZ_MOUNT_READONLY);
+            if(!mounted){oz_mount_control(OZ_ADMISSION_PORT,"public_discovery","",OZ_MOUNT_DETACH,0);error=EIO;}
+            else if(mounted!=EACCES)error=mounted;
+        }
+        if(!error)error=cli_command("C:zfs load-key public_discovery")?EIO:0;
+        if(!error)error=cli_result("C:zpool get -H -o value readonly public_discovery >T:cli-package-output.txt","on");
+    }
+    if(!error)error=pool_root_payload("public_discovery",0,1);
+    if(!error)error=cli_command("C:zpool export public_discovery")?EIO:0;
+    if(!DeleteFile((CONST_STRPTR)"RAM:discovery-root.key")&&!error)error=EIO;
+    if(!error)note(create?
+        "Public native cold writer PASS encrypted-root=1 exact-write=1 detached=1 exported=1\n":
+        "Public native cold reader PASS locked=1 mount-denied=1 key-loaded=1 exact-read=1 readonly-write-denied=1 exported=1\n");
+    return error;
 }
 static int destroy_identity(const char *snapshot,unsigned flags,int permitted)
 {
@@ -3028,6 +3068,7 @@ int main(int argc,char **argv){
     struct oz_client client;int error=0,opened=0;
     struct Library *secBase=NULL;int logged=0;
     int gui=argc==2&&!strcmp(argv[1],"GUI");
+    int native_cold=argc==2&&!strcmp(argv[1],"NATIVE-COLD");
     int cold_release=argc==2&&!strcmp(argv[1],"STORAGE-COLD-RELEASE");
     int cold=cold_release||(argc==2&&!strcmp(argv[1],"STORAGE-COLD"));
     marker=Lock((CONST_STRPTR)"SYS:openzfs-sequential-test",SHARED_LOCK);
@@ -3044,7 +3085,7 @@ int main(int argc,char **argv){
         if(!native_file_fixture||storage_layout!=OZ_MIRROR)return 20;
     }
     if(cold&&!strcmp(storage_directory,"RAM:OZPublicPool"))return 20;
-    int storage=cold||gui||(argc==2&&!strcmp(argv[1],"STORAGE"));
+    int storage=native_cold||cold||gui||(argc==2&&!strcmp(argv[1],"STORAGE"));
     int startup=storage||(argc==2&&!strcmp(argv[1],"STARTUP"));
 #define CHECK(x) do{if(!(x)){error=__LINE__;goto done;}}while(0)
     if(startup){
@@ -3177,7 +3218,8 @@ int main(int argc,char **argv){
         oz_message_free(reply);CHECK(denied);
         note("Public mutation requires authenticated admission PASS\n");
     }
-    if(storage)CHECK(!(cold_release?storage_cold_release():cold?storage_cold_test():storage_test(gui)));
+    if(storage)CHECK(!(native_cold?storage_native_cold(0):cold_release?storage_cold_release():cold?storage_cold_test():storage_test(gui)));
+    if(storage&&!native_cold&&!cold&&!gui)CHECK(!storage_native_cold(1));
     if(storage&&native_file_fixture){
         /* Close the disposable FAT backing volume after all pools export.
          * DOS file Flush does not drain deferred FAT directory renames.

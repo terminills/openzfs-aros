@@ -19,6 +19,12 @@ cold-start and freshly extracted eight-CPU QEMU acceptance runs. Packaging now
 requires the encrypted-root results as well as the GUI and cold evidence.
 See `aros/tests/evidence/arc-package` for hashes, screenshots and retained logs.
 
+An eight-CPU two-VM test also passes clean-export recovery of an encrypted pool
+root on a native ATA partition: fresh import starts locked, mounting is denied
+until key loading, exact DOS data is recovered read-only, and the entire disk
+hash remains unchanged. See `aros/tests/evidence/native-encrypted-cold`. This
+does not establish abrupt-power-loss or physical-media durability.
+
 ## Current public-source qualification
 
 The native MetaMake package now passes isolated two-CPU QEMU tests of the
@@ -158,6 +164,11 @@ results, not a fresh qualification of this public snapshot.
 - Physical storage flush, disconnect, and abrupt power-loss behavior require
   hardware qualification. Virtual-disk tests do not establish these guarantees.
 - Not every upstream feature or topology has end-to-end AROS validation.
+- Native CLI pool creation currently requires a blank backing extent in the
+  service admission path. Reusing a destroyed pool's nonzero extent is not
+  yet equivalent to upstream force-create behavior; it can surface EEXIST as
+  "pool already exists" even when no live pool has that name. Explicit safe
+  reuse policy and clearer error reporting remain software work.
 - TRIM/discard is not implemented for AROS file or native-device backings;
   requests report unsupported rather than claiming successful discard.
 - This does not provide an NFS/SMB client or server for browsing a remote ZFS

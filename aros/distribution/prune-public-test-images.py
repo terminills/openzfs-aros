@@ -19,6 +19,17 @@ def eligible(run):
     if run.is_symlink() or run.parent != ROOT or not re.fullmatch(
             r"(?:public-service|native-gui|preferences)-run\.[A-Za-z0-9]+", run.name):
         return False
+    if (run / "Startup-Native-Cold").exists():
+        for name, required in (("native-cold-results.log", "RESULT public service storage PASS"),
+                               ("native-cold-unchanged.log", ": OK")):
+            path = run / name
+            if not path.is_file():
+                return False
+            text = path.read_text(errors="replace")
+            if required not in text or re.search(r"\bFAIL(?:ED)?\b|ASSERT at", text):
+                return False
+        if "Public native cold reader PASS locked=1 mount-denied=1 key-loaded=1 exact-read=1 readonly-write-denied=1 exported=1" not in (run / "native-cold-results.log").read_text():
+            return False
     if (run / "cold-release.txt").exists():
         for name, required in (("release-results.log", "RESULT public service storage PASS"),
                                ("release-zdb-check.log", "No leaks"),
@@ -60,7 +71,7 @@ def eligible(run):
 
 
 def candidates(run):
-    result = [run / name for name in ("test.iso", "cold.iso", "release.iso", "backing.raw", "retired-disk0")]
+    result = [run / name for name in ("test.iso", "cold.iso", "native-cold.iso", "release.iso", "backing.raw", "retired-disk0")]
     archive = run / "startup-archive.raw"
     unchanged = run / "archive-unchanged.log"
     if (unchanged.is_file() and f"{archive}: OK" in unchanged.read_text()
@@ -77,10 +88,18 @@ def candidates(run):
 
 
 def main():
+    global ROOT
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--apply", action="store_true")
     parser.add_argument("--run", help="one basename under this repository's build-aros")
+    parser.add_argument("--artifact-root", type=Path,
+                        help="explicit private artifact directory on a separate filesystem")
     args = parser.parse_args()
+    if args.artifact_root:
+        external = args.artifact_root.resolve(strict=True)
+        if not args.run or not external.is_dir() or external.stat().st_dev == ROOT.stat().st_dev:
+            parser.error("external artifact root requires one run and a separate mounted filesystem")
+        ROOT = external
     if args.run and not re.fullmatch(r"(?:public-service|native-gui|preferences)-run\.[A-Za-z0-9]+", args.run):
         parser.error("--run must be a public-service-run, native-gui-run or preferences-run basename")
     runs = [ROOT / args.run] if args.run else sorted(ROOT.glob("public-service-run.*"))

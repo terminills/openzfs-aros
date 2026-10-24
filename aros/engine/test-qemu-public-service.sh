@@ -178,6 +178,11 @@ extra_drives=()
 archive_cold_drives=()
 partitions=${AROS_TEST_REQUIRE_PARTITIONS:-0}
 native_discovery=${AROS_TEST_NATIVE_DISCOVERY:-0}
+native_cold=${AROS_TEST_NATIVE_COLD:-0}
+[[ $native_cold == 0 || ( $native_cold == 1 && $native_discovery == 1 && $gui == 0 ) ]]
+if [[ $native_cold == 1 ]];then
+    extra_maps+=(-map aros/engine/public-service-test-only /openzfs-native-cold-test)
+fi
 [[ $native_discovery == 0 || ( $native_discovery == 1 && $partitions == 1 && $persistent == 0 && -n $cli_dir ) ]]
 if [[ $native_discovery == 1 ]];then
     extra_maps+=(-map aros/engine/public-service-test-only /openzfs-native-discovery-test)
@@ -348,6 +353,10 @@ if [[ $partitions == 1 ]];then
         -map aros/engine/public-service-test-only /openzfs-partition-test-only)
     extra_drives=(-drive "file=$run/partition.raw,format=raw,if=ide,index=0,snapshot=on$disk_aio_option"
         -drive "file=$run/blank.raw,format=raw,if=ide,index=1,snapshot=on$disk_aio_option")
+    if [[ $native_cold == 1 ]];then
+        # Only this newly generated private fixture persists between guests.
+        extra_drives[1]="file=$run/partition.raw,format=raw,if=ide,index=0$disk_aio_option"
+    fi
     if [[ $sector_quirk == 1 ]];then
         extra_drives+=(-global 'ide-hd.model=ATA     ADATA SSD S396 3')
         extra_maps+=(-map aros/engine/public-service-test-only /openzfs-sector-quirk-test)
@@ -753,13 +762,68 @@ if [[ $persistent == 1 ]];then
         echo "PASS: writable cold release, persisted deletion and independent zdb. Evidence: $run"
     fi
 fi
-if [[ $partitions == 1 ]];then sha256sum -c "$run/disks-before.sha256" > "$run/disks-after-check.txt";fi
+if [[ $partitions == 1 ]];then
+    if [[ $native_cold == 1 ]];then
+        # The writer intentionally changes partition.raw; other disks must not.
+        grep -v '/partition.raw$' "$run/disks-before.sha256" > "$run/disks-protected.sha256"
+        sha256sum -c "$run/disks-protected.sha256" > "$run/disks-after-check.txt"
+    else
+        sha256sum -c "$run/disks-before.sha256" > "$run/disks-after-check.txt"
+    fi
+fi
+if [[ $native_cold == 1 ]];then
+    rg -q '^Public native cold writer PASS encrypted-root=1 exact-write=1 detached=1 exported=1' "$run/serial-results.log"
+    sha256sum "$run/partition.raw" > "$run/native-before-cold.sha256"
+    printf '%s\n' 'FailAt 20' 'MakeDir RAM:T RAM:ENV' 'Assign T: RAM:T' \
+        'Assign ENV: RAM:ENV' 'Stack 1048576' \
+        'C:OpenZFSPublicServiceTest NATIVE-COLD' 'EndCLI' > "$run/Startup-Native-Cold"
+    xorriso -indev "$base" -outdev "$run/native-cold.iso" \
+        -map aros/engine/grub-qemu-test.cfg /boot/grub/grub.cfg \
+        "${platform_maps[@]}" \
+        -map "$posix" /Libs/posixc.library \
+        -map "$run/security-fixture" /Security \
+        -map "$run/OpenZFSServiceNative" /C/OpenZFSServiceNative \
+        -map "$run/OpenZFSPublicServiceTest" /C/OpenZFSPublicServiceTest \
+        "${extra_maps[@]}" \
+        -map aros/engine/public-service-test-only /openzfs-service-test-only \
+        -map "$run/Startup-Native-Cold" /S/Startup-Sequence \
+        -boot_image any discard -boot_image grub bin_path=/boot/grub/i386-pc/eltorito.img \
+        -boot_image grub boot_info_table=on -boot_image grub grub2_boot_info=on > "$run/pack-native-cold.log" 2>&1
+    "$qemu" -name "openzfs-native-cold-$$" -machine pc,accel=kvm -cpu host \
+        -smp "$cpus" -m 2048 -drive "file=$run/native-cold.iso,media=cdrom,if=ide,index=2,readonly=on" \
+        -drive "file=$run/partition.raw,format=raw,if=ide,index=0" \
+        -display none -nic none -boot d -no-reboot -no-shutdown \
+        -serial "file:$run/native-cold-serial.log" \
+        -monitor "unix:$run/native-cold-monitor,server=on,wait=off" > "$run/native-cold-qemu.log" 2>&1 &
+    pid=$!
+    trap cleanup EXIT
+    deadline=$((SECONDS+duration))
+    while :;do
+        if [[ -f "$run/native-cold-serial.log" ]];then
+            sed -E 's/^[[:xdigit:]]{16} 0x[[:xdigit:]]{16} \| [0-9]+ \| //' "$run/native-cold-serial.log" > "$run/native-cold-results.log"
+            if rg -q '^RESULT .*FAIL|Public service test line=[1-9][0-9]*|\[PF-DBG\]|^ASSERT at' "$run/native-cold-results.log";then exit 1;fi
+            if rg -q '^RESULT public service storage PASS' "$run/native-cold-results.log" &&
+               rg -q '^Public native cold reader PASS locked=1 mount-denied=1 key-loaded=1 exact-read=1 readonly-write-denied=1 exported=1' "$run/native-cold-results.log";then break;fi
+        fi
+        if ! kill -0 "$pid" 2>/dev/null || ((SECONDS>=deadline));then echo "Native cold timeout/exit: $run" >&2;exit 1;fi
+        sleep 1
+    done
+    printf 'quit\n' | socat - "UNIX-CONNECT:$run/native-cold-monitor" >/dev/null
+    wait "$pid"
+    trap - EXIT
+    sha256sum -c "$run/native-before-cold.sha256" > "$run/native-cold-unchanged.log"
+    echo "PASS: fresh native encrypted-root import, locked mount denial, exact read, unchanged disk. Evidence: $run"
+fi
 if [[ $native_discovery == 1 ]];then
+  if [[ $native_cold == 1 ]];then
+    rg -q '^Public native cold retained PASS properties=6 locked-import=2 wrong-key-denied=2 key-reload=2 exact-data=1 neighbor-cleanup=1' "$run/serial-results.log"
+  else
     rg -q '^Public native discovery PASS create=1 default-scan=1 readonly-import=1 rw-import=1 destroy=1' "$run/serial-results.log"
     rg -q '^Public native discovery coexistence PASS separate-partitions=1 neighbor-online=1 neighbor-property=1 cleanup=1' "$run/serial-results.log"
     rg -q '^Public native discovery data PASS handler-write=1 readonly-import-read=1 readonly-write-denied=1 writable-import-read=1 cleanup=1' "$run/serial-results.log"
     rg -q '^Public native encrypted root PASS properties=6 locked-import=2 mount-denied=2 key-reload=2 exact-data=1 cleanup=1' "$run/serial-results.log"
     rg -q '^Public native encrypted root wrong key PASS denied=2 remains-locked=2 mount-denied=2 correct-recovery=2' "$run/serial-results.log"
+  fi
 fi
 if [[ $companions == 1 ]];then
     rg -q '^Public exec helper PASS real-zpool=1 captured-output=1 missing-executable=1' "$run/serial-results.log"
@@ -789,7 +853,9 @@ if [[ $gui_desktop == 1 ]];then
     rg -q '^Public desktop post-UI data PASS exact-read=1' "$run/serial-results.log"
 fi
 if [[ $keep_images == 0 ]];then
-    python3 aros/distribution/prune-public-test-images.py --apply --run "$(basename "$run")" \
+    prune_root=()
+    if [[ $artifact_root != "$repo/build-aros" ]];then prune_root=(--artifact-root "$artifact_root");fi
+    python3 aros/distribution/prune-public-test-images.py --apply "${prune_root[@]}" --run "$(basename "$run")" \
         >"$run/image-pruning.log" 2>&1
 fi
 echo "PASS: public service lifecycles and $layout DOS round trip (persistent=$persistent). Evidence: $run"

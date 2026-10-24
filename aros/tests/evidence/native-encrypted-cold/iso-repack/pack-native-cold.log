@@ -1,0 +1,50 @@
+xorriso 1.5.6 : RockRidge filesystem manipulator, libburnia project.
+
+xorriso : NOTE : Loading ISO image tree from LBA 0
+libburn : SORRY : Read start address 2396342s larger than number of readable blocks 2395104
+libisofs: NOTE : Found Protective MBR with size range larger than the medium capacity
+xorriso : UPDATE :   91303 nodes read in 1 seconds
+xorriso : NOTE : Detected El-Torito boot information which currently is set to be discarded
+Drive current: -indev '/mnt/short-term/openzfs-qualification-20261024.aGFlVF7T/public-service-run.yHAgJcCI/test.iso'
+Media current: stdio file, overwriteable
+Media status : is written , is appendable
+Boot record  : El Torito , MBR protective-msdos-label cyl-align-off GPT APM
+Media summary: 1 session, 2394893 data blocks, 4678m data,  808g free
+Volume id    : 'AROS Live CD'
+xorriso : NOTE : Tolerated problem event of severity 'SORRY'
+Drive current: -outdev '/mnt/short-term/openzfs-qualification-20261024.aGFlVF7T/public-service-run.yHAgJcCI/native-cold.iso'
+Media current: stdio file, overwriteable
+Media status : is blank
+Media summary: 0 sessions, 0 data blocks, 0 data,  808g free
+xorriso : UPDATE :       1 files added in 1 seconds
+Added to ISO image: file '/S/Startup-Sequence'='/mnt/short-term/openzfs-qualification-20261024.aGFlVF7T/public-service-run.yHAgJcCI/Startup-Native-Cold'
+xorriso : UPDATE : Writing:       8192s    0.3%   fifo 100%  buf  50%
+xorriso : UPDATE : Writing:      57344s    2.4%   fifo 100%  buf  50%   72.6xD 
+xorriso : UPDATE : Writing:     131072s    5.5%   fifo 100%  buf  50%  108.9xD 
+xorriso : UPDATE : Writing:     163840s    6.8%   fifo 100%  buf  50%   48.4xD 
+xorriso : UPDATE : Writing:     286720s   12.0%   fifo 100%  buf  50%  181.4xD 
+xorriso : UPDATE : Writing:     442982s   18.5%   fifo  99%  buf  50%  230.6xD 
+xorriso : UPDATE : Writing:     606208s   25.3%   fifo 100%  buf  50%  240.9xD 
+xorriso : UPDATE : Writing:     770048s   32.2%   fifo 100%  buf  50%  242.0xD 
+xorriso : UPDATE : Writing:     933888s   39.0%   fifo 100%  buf  50%  242.0xD 
+xorriso : UPDATE : Writing:    1002656s   41.9%   fifo 100%  buf  50%  101.5xD 
+xorriso : UPDATE : Writing:    1024000s   42.8%   fifo 100%  buf  50%   31.5xD 
+xorriso : UPDATE : Writing:    1040384s   43.4%   fifo 100%  buf  50%   24.2xD 
+xorriso : UPDATE : Writing:    1064960s   44.5%   fifo 100%  buf  50%   36.3xD 
+xorriso : UPDATE : Writing:    1081344s   45.1%   fifo 100%  buf  50%   24.2xD 
+xorriso : UPDATE : Writing:    1186928s   49.6%   fifo  99%  buf  50%  155.9xD 
+xorriso : UPDATE : Writing:    1315296s   54.9%   fifo  99%  buf  50%  189.5xD 
+xorriso : UPDATE : Writing:    1441792s   60.2%   fifo 100%  buf  50%  186.8xD 
+xorriso : UPDATE : Writing:    1572626s   65.7%   fifo  99%  buf  50%  193.2xD 
+xorriso : UPDATE : Writing:    1703936s   71.1%   fifo 100%  buf  50%  193.9xD 
+xorriso : UPDATE : Writing:    1835008s   76.6%   fifo 100%  buf  50%  193.5xD 
+xorriso : UPDATE : Writing:    1967584s   82.2%   fifo  99%  buf  50%  195.8xD 
+xorriso : UPDATE : Writing:    2101552s   87.7%   fifo 100%  buf  50%  197.9xD 
+xorriso : UPDATE : Writing:    2235424s   93.3%   fifo  99%  buf  50%  197.7xD 
+xorriso : UPDATE : Writing:    2301952s   96.1%   fifo 100%  buf  50%   98.3xD 
+xorriso : UPDATE : Writing:    2359296s   98.5%   fifo 100%  buf  50%   84.7xD 
+ISO image produced: 2394893 sectors
+Written to medium : 2395072 sectors at LBA 32
+Writing to '/mnt/short-term/openzfs-qualification-20261024.aGFlVF7T/public-service-run.yHAgJcCI/native-cold.iso' completed successfully.
+
+xorriso : NOTE : -return_with SORRY 32 triggered by problem severity SORRY

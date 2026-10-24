@@ -44,6 +44,35 @@ class Retention(unittest.TestCase):
         self.invoke()
         self.assertTrue((self.run / "test.iso").exists())
 
+    def test_external_root_rejects_same_filesystem(self):
+        with patch("sys.argv", ["prune", "--run", self.run.name,
+                                 "--artifact-root", str(self.run.parent)]), contextlib.redirect_stderr(io.StringIO()):
+            with self.assertRaises(SystemExit):
+                prune.main()
+        self.assertTrue((self.run / "test.iso").exists())
+
+    def test_native_cold_requires_reader_and_unchanged_disk(self):
+        (self.run / "Startup-Native-Cold").write_text("NATIVE-COLD\n")
+        image = self.run / "native-cold.iso"
+        image.write_bytes(b"cold image")
+        self.invoke(True)
+        self.assertTrue(image.exists())
+        marker = "Public native cold reader PASS locked=1 mount-denied=1 key-loaded=1 exact-read=1 readonly-write-denied=1 exported=1\n"
+        result = self.run / "native-cold-results.log"
+        result.write_text("RESULT public service storage PASS\n" + marker)
+        self.assertFalse(prune.eligible(self.run))
+        hashes = self.run / "native-cold-unchanged.log"
+        hashes.write_text("partition.raw: FAILED\n")
+        self.assertFalse(prune.eligible(self.run))
+        hashes.write_text("partition.raw: OK\n")
+        self.assertTrue(prune.eligible(self.run))
+        result.write_text("RESULT public service storage PASS\n")
+        self.assertFalse(prune.eligible(self.run))
+        result.write_text("RESULT public service storage PASS\n" + marker)
+        self.invoke(True)
+        self.assertFalse(image.exists())
+        self.assertTrue(result.exists())
+
     def test_archive_requires_cold_restore_and_hash_evidence(self):
         archive = self.run / "startup-archive.raw"
         archive.write_bytes(b"persistent settings")
