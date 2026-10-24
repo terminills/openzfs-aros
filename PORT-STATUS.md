@@ -4,6 +4,11 @@ Experimental development snapshot; not production-qualified storage software.
 
 ## Current local package (2026-10-24)
 
+The source now additionally validates embedded label checksums before allowing
+destroyed-member reuse. Old-engine reproduction and three fresh eight-CPU
+QEMU runs qualify the repair; see `aros/tests/evidence/destroyed-label-checksum`.
+The archive below predates that repair and needs another package refresh.
+
 `mmake-bundle.exm_ebrp.tar.xz` includes the ARC repair, native/file destroyed
 member reuse, and updated Manager guidance. Exact-binary GUI, persistent cold
 start, native encrypted-root and freshly extracted runtime tests pass in
@@ -173,7 +178,7 @@ results, not a fresh qualification of this public snapshot.
   hardware qualification. Virtual-disk tests do not establish these guarantees.
 - Not every upstream feature or topology has end-to-end AROS validation.
 - Native and file-backed pool creation accept blank extents or consistently labeled destroyed
-  members (all four labels must agree on destroyed state and pool/member GUIDs).
+  members (all four checksummed labels must agree on destroyed state and pool/member GUIDs).
   Active and exported members remain refused even with CLI force. Arbitrary
   nonzero media and force-create over exported members remain incomplete.
   Add/attach/replace retain their blank-member policy. Both Manager API and CLI

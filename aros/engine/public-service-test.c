@@ -1758,12 +1758,13 @@ static int file_reuse_label_denials(void)
         FCHECK(Read(file,check,1)==0);
         int closed=Close(file);file=0;FCHECK(closed);
     }
-    for(unsigned conflict=0;conflict<2;conflict++){
+    for(unsigned conflict=0;conflict<3;conflict++){
         /* The other destroyed mirror member has a different member GUID. */
         if(conflict)memcpy(replacement,before[1]+16UL*1024,label_bytes);
         for(unsigned label=0;label<4;label++){
             damaged=label*256UL*1024+(label<2?0:extent-4UL*256*1024)+16UL*1024;
             memcpy(saved,before[0]+damaged,label_bytes);
+            if(conflict==2){memcpy(replacement,saved,label_bytes);replacement[label_bytes-1]^=1;}
             memcpy(before[0]+damaged,replacement,label_bytes);
             file=Open((CONST_STRPTR)"RAM:OZFileReuse/disk0",MODE_READWRITE);FCHECK(file);
             FCHECK(Seek(file,damaged,OFFSET_BEGINNING)!=-1);changed=1;
@@ -1801,7 +1802,7 @@ done:
     }
     for(unsigned i=0;i<2;i++)if(before[i])FreeVec(before[i]);
     if(check)FreeVec(check);if(saved)FreeVec(saved);if(replacement)FreeVec(replacement);
-    if(!error)note("Public file label denial PASS corrupt=4 conflicting-member=4 manager-denied=8 forced-cli-denied=8 whole-members-unchanged=8 restored=8\n");
+    if(!error)note("Public file label denial PASS corrupt=4 conflicting-member=4 checksum=4 manager-denied=12 forced-cli-denied=12 whole-members-unchanged=12 restored=12\n");
     return error;
 #undef FCHECK
 }

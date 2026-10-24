@@ -6,6 +6,8 @@
 #include <sys/spa_impl.h>
 #include <sys/vdev_impl.h>
 #include <sys/vdev_draid.h>
+#include <sys/abd.h>
+#include <sys/zio_checksum.h>
 #include <sys/stat.h>
 #include <sys/aros_vdev_policy.h>
 #include <zfs_namecheck.h>
@@ -497,6 +499,27 @@ static int create_paths(nvlist_t *tree,char **paths,unsigned *count,unsigned dep
     }
     return 0;
 }
+/* Verify the embedded label checksum before trusting destructive-reuse
+ * metadata. No spa exists for this candidate yet, so use the upstream label
+ * checksum function with its offset verifier (no template is required).
+ * As in zio_checksum_error_impl, restore the borrowed buffer afterwards. */
+static int destroyed_label_checksum(vdev_phys_t *label,uint64_t offset)
+{
+    zio_eck_t saved=label->vp_zbt;
+    boolean_t swapped=saved.zec_magic==BSWAP_64(ZEC_MAGIC);
+    if(saved.zec_magic!=ZEC_MAGIC&&!swapped)return ECKSUM;
+    zio_cksum_t expected=saved.zec_cksum,actual;
+    ZIO_SET_CHECKSUM(&label->vp_zbt.zec_cksum,offset,0,0,0);
+    if(swapped){
+        byteswap_uint64_array(&label->vp_zbt.zec_cksum,sizeof(zio_cksum_t));
+        byteswap_uint64_array(&expected,sizeof(expected));
+    }
+    abd_t *abd=abd_get_from_buf(label,sizeof(*label));
+    zio_checksum_table[ZIO_CHECKSUM_LABEL].ci_func[swapped](abd,sizeof(*label),NULL,&actual);
+    abd_free(abd);label->vp_zbt=saved;
+    return ZIO_CHECKSUM_EQUAL(actual,expected)?0:ECKSUM;
+}
+
 /* Create may reuse an explicitly destroyed member. Require every label to
  * agree under the retained native reservation or checked file identity lock,
  * rather than trusting client preflight or accepting arbitrary nonzero media.
@@ -513,6 +536,7 @@ static int destroyed_backing(struct oz_device *device,int fd,uint64_t bytes)
         else if(lseek64(fd,offset,SEEK_SET)!=(off64_t)offset||
             read(fd,label,sizeof(*label))!=(ssize_t)sizeof(*label))error=EIO;
         nvlist_t *config=NULL;
+        if(!error)error=destroyed_label_checksum(label,offset);
         if(!error)error=nvlist_unpack(label->vp_nvlist,sizeof(label->vp_nvlist),&config,0);
         uint64_t state=0,current_pool=0,current_member=0;
         if(!error&&(nvlist_lookup_uint64(config,ZPOOL_CONFIG_POOL_STATE,&state)||

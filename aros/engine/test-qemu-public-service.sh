@@ -837,7 +837,7 @@ if [[ -n $label_source ]];then sha256sum -c "$run/label-original.sha256" >"$run/
 if [[ -n $cli_dir ]];then
     rg -q '^Public key change authorization PASS no-grant-denied=1 load-only-denied=1 private-file-denied=1 explicit-grant=1 revoke-denied=1 properties-preserved=1 root-restored=1' "$run/serial-results.log"
     rg -q '^Public file destroyed reuse PASS cli=1 manager-api=1 old-payload-absent=2 exact-read=3 exported-refused=2 cleanup=1' "$run/serial-results.log"
-    rg -q '^Public file label denial PASS corrupt=4 conflicting-member=4 manager-denied=8 forced-cli-denied=8 whole-members-unchanged=8 restored=8' "$run/serial-results.log"
+    rg -q '^Public file label denial PASS corrupt=4 conflicting-member=4 checksum=4 manager-denied=12 forced-cli-denied=12 whole-members-unchanged=12 restored=12' "$run/serial-results.log"
 fi
 rg -q '^Public DOS links PASS write=1 hard=1 relative-soft=1 unlinked-source=1 dangling-refused=1' "$run/serial-results.log"
 if [[ $gui_volume == 1 ]];then
