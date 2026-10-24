@@ -61,6 +61,12 @@ a separate qualification gap.
 
 ## Implemented integration
 
+Authenticated recursive snapshot destruction supports `defer=on` through the
+upstream snapshot-destruction ioctl. Native QEMU run `public-service-run.rlEPj1HF`
+checks unheld removal, held-snapshot retention and removal on release, plus
+confirmation and snapshot-only restrictions. This is not a physical-device
+qualification or an exhaustive delegation-policy test.
+
 Manager clone requests with properties now execute through the asynchronous
 worker and upstream `zfs clone -u`, without implicitly mounting the result.
 Native GUI run `native-gui-run.A56TMiQN` exercises request entry, confirmation,

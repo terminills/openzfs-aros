@@ -101,6 +101,12 @@ This is not proof that the automatic drawer title is fixed: see the
 
 ### Evidence retention policy
 
+`recursive-defer` retains the native API results, source patch and binary
+identities from `public-service-run.rlEPj1HF`. The freshly rebuilt shared engine
+passes recursive deferred snapshot destruction and the full mirror storage
+suite. Read the [serial results](recursive-defer/serial-results.log) for the
+held/unheld lifecycle and rejected-input checks. No GUI capture is implied.
+
 The `fresh-engine` directory retains the writer/cold-import logs and hashes for
 `public-service-run.KKc6pmMp`, using the clean source engine build described in
 [engine build notes](../../engine/BUILDING.md). This is a non-GUI test; the

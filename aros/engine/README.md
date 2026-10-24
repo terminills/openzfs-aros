@@ -858,7 +858,14 @@ options cannot request deferred destruction. Confirmed recursive snapshot
 destruction is also supported: operation 38 collects the same snapshot name
 from the target dataset and all descendants, then submits one upstream
 `ZFS_IOC_DESTROY_SNAPS` request so the set is accepted or refused atomically.
-Recursive deferred destruction, force and dry-run remain unsupported.
+Authenticated recursive snapshot destruction also accepts `defer=on`, using
+the same upstream ioctl's defer flag and per-snapshot permission checks. Native
+public-package run `public-service-run.rlEPj1HF` verifies immediate removal of
+an unheld parent snapshot, retention of a held child with `defer_destroy=on`,
+and removal after its last hold is released. Missing confirmation and deferred
+dataset destruction are refused. The fresh shared engine and complete mirror
+storage suite pass; this is API/runtime evidence, not a GUI interaction or
+physical-media test. Force and dry-run remain unsupported.
 
 Authenticated recursive dataset destruction is deliberately non-atomic and
 narrower than recursive snapshot destruction. The Manager first refuses any

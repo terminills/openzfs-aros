@@ -233,11 +233,11 @@ done:
         error?"FAIL":"PASS",phase,stage,next_found,next_count,all_found,all_count,error,(long)doserr);note(line);
     return error;
 }
-static int storage_request(unsigned op,const char *target,const char *argument,const char *options){
+static int storage_request_flags(unsigned op,const char *target,const char *argument,const char *options,unsigned flags){
     storage_reply_received=0;
     static struct oz_message m,out;memset(&m,0,sizeof(m));
     m.magic=OZ_MAGIC;m.version=OZ_VERSION;m.msg.mn_Length=sizeof(m);
-    m.operation=op;m.flags=OZ_CONFIRMED;
+    m.operation=op;m.flags=flags;
     snprintf(m.target,sizeof(m.target),"%s",target);
     if(argument)snprintf(m.argument,sizeof(m.argument),"%s",argument);
     if(options)snprintf(m.options,sizeof(m.options),"%s",options);
@@ -267,6 +267,9 @@ static int storage_request(unsigned op,const char *target,const char *argument,c
     }
     if(ticket.number){int release=oz_admission_release(OZ_ADMISSION_PORT,&ticket);if(!error)error=release;}
     return error;
+}
+static int storage_request(unsigned op,const char *target,const char *argument,const char *options){
+    return storage_request_flags(op,target,argument,options,OZ_CONFIRMED);
 }
 /* Send alias spelling unchanged to the service, unlike CLI realpath(). */
 static int storage_alias_request(unsigned op,unsigned kind)
@@ -1962,6 +1965,22 @@ static int storage_test(int gui){
         STORAGE_CHECK(!cli_result("C:zfs list -H -o name public_mirror/files >T:cli-package-output.txt","public_mirror/files"));
         STORAGE_CHECK(!cli_result("C:zfs get -H -o value type public_mirror/files >T:cli-package-output.txt","filesystem"));
         STORAGE_CHECK(SystemTags((CONST_STRPTR)"C:zfs snapshot public_mirror/files@cli_roundtrip",TAG_DONE)==0);
+        {
+            STORAGE_CHECK(!cli_command("C:zfs create -o mountpoint=none public_mirror/defer_tree"));
+            STORAGE_CHECK(!cli_command("C:zfs create -o mountpoint=none public_mirror/defer_tree/child"));
+            STORAGE_CHECK(!cli_command("C:zfs snapshot -r public_mirror/defer_tree@held"));
+            STORAGE_CHECK(!cli_command("C:zfs hold keep public_mirror/defer_tree/child@held"));
+            STORAGE_CHECK(storage_request_flags(38,"public_mirror/defer_tree@held",NULL,"defer=on",OZ_RECURSIVE)!=0);
+            STORAGE_CHECK(!cli_result("C:zfs get -H -o value defer_destroy public_mirror/defer_tree@held >T:cli-package-output.txt","off"));
+            STORAGE_CHECK(storage_request_flags(38,"public_mirror/defer_tree",NULL,"defer=on",OZ_CONFIRMED|OZ_RECURSIVE)!=0);
+            STORAGE_CHECK(!storage_request_flags(38,"public_mirror/defer_tree@held",NULL,"defer=on",OZ_CONFIRMED|OZ_RECURSIVE));
+            STORAGE_CHECK(cli_command("C:zfs list -t snapshot public_mirror/defer_tree@held")!=0);
+            STORAGE_CHECK(!cli_result("C:zfs get -H -o value defer_destroy public_mirror/defer_tree/child@held >T:cli-package-output.txt","on"));
+            STORAGE_CHECK(!cli_command("C:zfs release keep public_mirror/defer_tree/child@held"));
+            STORAGE_CHECK(cli_command("C:zfs list -t snapshot public_mirror/defer_tree/child@held")!=0);
+            STORAGE_CHECK(!cli_command("C:zfs destroy -r public_mirror/defer_tree"));
+            note("Public recursive deferred destroy PASS confirmation=1 dataset-refused=1 unheld-removed=1 held-retained=1 release-removes=1 cleanup=1\n");
+        }
         {
             struct oz_message clone={0};
             clone.magic=OZ_MAGIC;clone.version=OZ_VERSION;clone.msg.mn_Length=sizeof(clone);

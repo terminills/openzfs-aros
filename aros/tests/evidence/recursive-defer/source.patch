@@ -1,0 +1,91 @@
+diff --git a/aros/engine/admission.c b/aros/engine/admission.c
+index 5d0b245..43f77e6 100644
+--- a/aros/engine/admission.c
++++ b/aros/engine/admission.c
+@@ -197,8 +197,7 @@ int oz_admitted_capture(struct DosPacket *packet, struct MsgPort *service,
+         int deferred=!strcmp(m->options,"defer=on");
+         int recursive=m->flags==(OZ_CONFIRMED|OZ_RECURSIVE);
+         if(!lifecycle||(m->flags!=OZ_CONFIRMED&&!recursive)||m->argument[0]||m->cursor||m->job_id||
+-            (m->options[0]&&!deferred)||(deferred&&!strchr(m->target,'@'))||
+-            (recursive&&deferred))error=ENOTSUP;
++            (m->options[0]&&!deferred)||(deferred&&!strchr(m->target,'@')))error=ENOTSUP;
+     }
+     /* Only bound, credential-aware operations are admitted for now.
+      * Other operations must acquire their own policy adapters before enabling. */
+diff --git a/aros/engine/management.c b/aros/engine/management.c
+index e09441c..6a59bcf 100644
+--- a/aros/engine/management.c
++++ b/aros/engine/management.c
+@@ -732,7 +732,7 @@ static int dataset_lifecycle(struct oz_message *m,int authenticated,cred_t *call
+     int snapshot=strchr(name,'@')!=NULL;
+     int deferred=m->operation==38&&!strcmp(m->options,"defer=on");
+     int recursive=(m->flags&OZ_RECURSIVE)!=0;
+-    if(recursive&&(!authenticated||deferred||
++    if(recursive&&(!authenticated||
+         (snapshot?(m->operation!=38&&m->operation!=39):m->operation!=38)))return EINVAL;
+     if(m->operation==38&&((m->options[0]&&!deferred)||(deferred&&!snapshot)))return EINVAL;
+     if(dataset_namecheck(name,NULL,NULL)||strchr(name,'#')||
+diff --git a/aros/engine/public-service-test.c b/aros/engine/public-service-test.c
+index 8895aa1..a73f139 100644
+--- a/aros/engine/public-service-test.c
++++ b/aros/engine/public-service-test.c
+@@ -233,11 +233,11 @@ done:
+         error?"FAIL":"PASS",phase,stage,next_found,next_count,all_found,all_count,error,(long)doserr);note(line);
+     return error;
+ }
+-static int storage_request(unsigned op,const char *target,const char *argument,const char *options){
++static int storage_request_flags(unsigned op,const char *target,const char *argument,const char *options,unsigned flags){
+     storage_reply_received=0;
+     static struct oz_message m,out;memset(&m,0,sizeof(m));
+     m.magic=OZ_MAGIC;m.version=OZ_VERSION;m.msg.mn_Length=sizeof(m);
+-    m.operation=op;m.flags=OZ_CONFIRMED;
++    m.operation=op;m.flags=flags;
+     snprintf(m.target,sizeof(m.target),"%s",target);
+     if(argument)snprintf(m.argument,sizeof(m.argument),"%s",argument);
+     if(options)snprintf(m.options,sizeof(m.options),"%s",options);
+@@ -268,6 +268,9 @@ static int storage_request(unsigned op,const char *target,const char *argument,c
+     if(ticket.number){int release=oz_admission_release(OZ_ADMISSION_PORT,&ticket);if(!error)error=release;}
+     return error;
+ }
++static int storage_request(unsigned op,const char *target,const char *argument,const char *options){
++    return storage_request_flags(op,target,argument,options,OZ_CONFIRMED);
++}
+ /* Send alias spelling unchanged to the service, unlike CLI realpath(). */
+ static int storage_alias_request(unsigned op,unsigned kind)
+ {
+@@ -1962,6 +1965,22 @@ static int storage_test(int gui){
+         STORAGE_CHECK(!cli_result("C:zfs list -H -o name public_mirror/files >T:cli-package-output.txt","public_mirror/files"));
+         STORAGE_CHECK(!cli_result("C:zfs get -H -o value type public_mirror/files >T:cli-package-output.txt","filesystem"));
+         STORAGE_CHECK(SystemTags((CONST_STRPTR)"C:zfs snapshot public_mirror/files@cli_roundtrip",TAG_DONE)==0);
++        {
++            STORAGE_CHECK(!cli_command("C:zfs create -o mountpoint=none public_mirror/defer_tree"));
++            STORAGE_CHECK(!cli_command("C:zfs create -o mountpoint=none public_mirror/defer_tree/child"));
++            STORAGE_CHECK(!cli_command("C:zfs snapshot -r public_mirror/defer_tree@held"));
++            STORAGE_CHECK(!cli_command("C:zfs hold keep public_mirror/defer_tree/child@held"));
++            STORAGE_CHECK(storage_request_flags(38,"public_mirror/defer_tree@held",NULL,"defer=on",OZ_RECURSIVE)!=0);
++            STORAGE_CHECK(!cli_result("C:zfs get -H -o value defer_destroy public_mirror/defer_tree@held >T:cli-package-output.txt","off"));
++            STORAGE_CHECK(storage_request_flags(38,"public_mirror/defer_tree",NULL,"defer=on",OZ_CONFIRMED|OZ_RECURSIVE)!=0);
++            STORAGE_CHECK(!storage_request_flags(38,"public_mirror/defer_tree@held",NULL,"defer=on",OZ_CONFIRMED|OZ_RECURSIVE));
++            STORAGE_CHECK(cli_command("C:zfs list -t snapshot public_mirror/defer_tree@held")!=0);
++            STORAGE_CHECK(!cli_result("C:zfs get -H -o value defer_destroy public_mirror/defer_tree/child@held >T:cli-package-output.txt","on"));
++            STORAGE_CHECK(!cli_command("C:zfs release keep public_mirror/defer_tree/child@held"));
++            STORAGE_CHECK(cli_command("C:zfs list -t snapshot public_mirror/defer_tree/child@held")!=0);
++            STORAGE_CHECK(!cli_command("C:zfs destroy -r public_mirror/defer_tree"));
++            note("Public recursive deferred destroy PASS confirmation=1 dataset-refused=1 unheld-removed=1 held-retained=1 release-removes=1 cleanup=1\n");
++        }
+         {
+             struct oz_message clone={0};
+             clone.magic=OZ_MAGIC;clone.version=OZ_VERSION;clone.msg.mn_Length=sizeof(clone);
+diff --git a/aros/ui/operations.def b/aros/ui/operations.def
+index 7ea9ff0..493d1a6 100644
+--- a/aros/ui/operations.def
++++ b/aros/ui/operations.def
+@@ -37,7 +37,7 @@ OZ_OP(34, "Pools", "pool.events", "events", 0, "Optional pool filter", "", "Read
+ OZ_OP(35, "Pools", "pool.iostat", "iostat", 0, "Pool name", "", "Live upstream byte/operation totals. Options: histogram=latency (nanoseconds) or histogram=size (bytes). Histograms are cumulative, not rates. Next page continues metrics/topology; pages are live, not a frozen snapshot. Inactive devices report unavailable.")
+ OZ_OP(36, "Datasets", "dataset.list", "list", 0, "Root dataset", "", "List a dataset; Recursive includes descendants. Options: snapshots=on. Alternatively bookmarks=on lists one filesystem's bookmarks, without recursion.")
+ OZ_OP(37, "Datasets", "dataset.create", "create", 1, "New dataset / volume", "", "Comma-separated options: filesystem defaults, or type=volume,volsize=2G,volblocksize=8K. Both accept reservation/refreservation; filesystems also quota/refquota/recordsize, normalization, utf8only, casesensitivity. Sizes accept K/M/G; quota/reservations accept none. Encryption: encryption=on,keyformat=raw (or hex/passphrase), native key-file path in Argument; optional pbkdf2iters (minimum 100000). No secret text. Confirm; no dry-run.")
+-OZ_OP(38, "Datasets", "dataset.destroy", "destroy", 1, "Dataset/snapshot/bookmark", "", "Destroy one unmounted dataset or snapshot, or one dataset#bookmark; dependencies checked upstream. Recursive snapshot destruction is atomic. Recursive dataset destruction requires a snapshot-free unmounted tree, preflights delegated rights, then destroys deepest-first; a runtime failure may leave partial progress reported in detail. A held snapshot accepts defer=on and is removed after its last hold is released. Authenticated bookmarks require destroy, not mount. Confirm; no force/dry-run/recursive defer.")
++OZ_OP(38, "Datasets", "dataset.destroy", "destroy", 1, "Dataset/snapshot/bookmark", "", "Destroy one unmounted dataset or snapshot, or one dataset#bookmark; dependencies checked upstream. Recursive snapshot destruction is atomic and accepts defer=on: held snapshots remain until their last hold or clone is removed. Recursive dataset destruction requires a snapshot-free unmounted tree, preflights delegated rights, then destroys deepest-first; a runtime failure may leave partial progress reported in detail. Authenticated bookmarks require destroy, not mount. Confirm; no force/dry-run. Deferred destruction is snapshot-only.")
+ OZ_OP(39, "Datasets", "dataset.rename", "rename", 1, "Dataset or snapshot", "Destination name", "Rename an unmounted dataset within its pool, or snapshots within their filesystem. Recursive applies to snapshots only. Idle snapshot volumes detach; busy references refuse the request. Confirm; no force, options or dry-run.")
+ OZ_OP(40, "Datasets", "dataset.get", "get", 0, "Dataset / zvol", "Property name", "Read one exact upstream dataset property, or all with live pagination. Recursive exact-property and all-property views use one global live cursor across descendants. property-long rows require an exact query. No options.")
+ OZ_OP(41, "Datasets", "dataset.set", "set", 1, "Dataset or snapshot", "property=value", "Set properties, numeric user/group/project quota@ID or objquota@ID, and six default quotas. Upstream delegation/features required. Sync=disabled sacrifices durability. Use none to clear a limit; per-ID quotas cannot inherit. Zvol shrinking discards data: unmount first. Confirm; no options/dry-run.")

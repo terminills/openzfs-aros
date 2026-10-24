@@ -197,8 +197,7 @@ int oz_admitted_capture(struct DosPacket *packet, struct MsgPort *service,
         int deferred=!strcmp(m->options,"defer=on");
         int recursive=m->flags==(OZ_CONFIRMED|OZ_RECURSIVE);
         if(!lifecycle||(m->flags!=OZ_CONFIRMED&&!recursive)||m->argument[0]||m->cursor||m->job_id||
-            (m->options[0]&&!deferred)||(deferred&&!strchr(m->target,'@'))||
-            (recursive&&deferred))error=ENOTSUP;
+            (m->options[0]&&!deferred)||(deferred&&!strchr(m->target,'@')))error=ENOTSUP;
     }
     /* Only bound, credential-aware operations are admitted for now.
      * Other operations must acquire their own policy adapters before enabling. */

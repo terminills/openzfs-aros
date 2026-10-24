@@ -732,7 +732,7 @@ static int dataset_lifecycle(struct oz_message *m,int authenticated,cred_t *call
     int snapshot=strchr(name,'@')!=NULL;
     int deferred=m->operation==38&&!strcmp(m->options,"defer=on");
     int recursive=(m->flags&OZ_RECURSIVE)!=0;
-    if(recursive&&(!authenticated||deferred||
+    if(recursive&&(!authenticated||
         (snapshot?(m->operation!=38&&m->operation!=39):m->operation!=38)))return EINVAL;
     if(m->operation==38&&((m->options[0]&&!deferred)||(deferred&&!snapshot)))return EINVAL;
     if(dataset_namecheck(name,NULL,NULL)||strchr(name,'#')||
