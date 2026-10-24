@@ -833,6 +833,16 @@ mounting is refused, and a subsequent normal load succeeds. Fixture cleanup,
 unrelated DOS readback and the full storage suite pass. Screenshots, binary
 hashes, action trace and serial results are in `aros/tests/evidence/gui-key-check`.
 
+Native follow-up `public-service-run.MSv7U60d` checks the actual UID 77 admission
+path: denial without load-key delegation, success after an explicit local grant,
+and denial after revocation. The test restores root identity and verifies the
+dataset remains locked. It additionally checks three repeated hex-key dry-runs
+with a newline-terminated file, preservation of both locked and already-loaded
+state, malformed hex rejection, and current/old passphrase verification after
+rotation with 400000 PBKDF2 iterations. The full suite passes; evidence is in
+`aros/tests/evidence/key-check-formats`. This does not exhaust file-permission
+or delegation-policy combinations, nor prove absence of all allocation leaks.
+
 ## Native dataset rename and destroy (2026-09-21)
 
 ### Snapshot holds and releases

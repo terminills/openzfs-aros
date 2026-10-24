@@ -1779,6 +1779,24 @@ static int destroy_identity(const char *snapshot,unsigned flags,int permitted)
     CloseLibrary(secBase);
     return error;
 }
+static int key_check_identity(int permitted)
+{
+    struct Library *secBase=OpenLibrary((CONST_STRPTR)SECURITYNAME,SECURITYVERSION);
+    if(!secBase)return ENOENT;
+    struct TagItem reader[]={{secT_UserID,(IPTR)"ozreader"},{secT_Password,(IPTR)""},{TAG_DONE,0}};
+    struct TagItem root[]={{secT_UserID,(IPTR)"oztestroot"},{secT_Password,(IPTR)""},{TAG_DONE,0}};
+    struct TagItem quiet[]={{secT_Quiet,TRUE},{TAG_DONE,0}};
+    int error=0;
+    secLogoutA(quiet);
+    if(secLoginA(reader)!=((77UL<<16)|88))error=EACCES;
+    if(!error){
+        int result=storage_request_flags(62,"public_mirror/encrypted","RAM:public-test.key",NULL,OZ_CONFIRMED|OZ_DRYRUN);
+        if(!storage_reply_received||(permitted?result!=0:result!=EIO))error=EACCES;
+    }
+    secLogoutA(quiet);if(secLoginA(root)!=secOWNER_SYSTEM)error=EACCES;
+    CloseLibrary(secBase);
+    return error;
+}
 static int clone_worker_identity(const char *destination,int permitted)
 {
     struct Library *secBase=OpenLibrary((CONST_STRPTR)SECURITYNAME,SECURITYVERSION);
@@ -2188,6 +2206,14 @@ static int storage_test(int gui){
         STORAGE_CHECK(storage_request_flags(64,"public_mirror/encrypted","RAM:public-test.key",NULL,OZ_CONFIRMED|OZ_DRYRUN)!=0);
         STORAGE_CHECK(!cli_result("C:zfs get -H -o value keystatus public_mirror/encrypted >T:cli-package-output.txt","unavailable"));
         note("Public authenticated key dry-run PASS correct=1 wrong-refused=1 locked=1 mount-refused=1 confirmation=1 force-refused=1 change-key-refused=1\n");
+        STORAGE_CHECK(!key_check_identity(0));
+        STORAGE_CHECK(!cli_command("C:zfs allow -l -u 77 load-key public_mirror/encrypted"));
+        STORAGE_CHECK(!key_check_identity(1));
+        STORAGE_CHECK(!cli_result("C:zfs get -H -o value keystatus public_mirror/encrypted >T:cli-package-output.txt","unavailable"));
+        STORAGE_CHECK(!cli_command("C:zfs unallow -l -u 77 load-key public_mirror/encrypted"));
+        STORAGE_CHECK(!key_check_identity(0));
+        STORAGE_CHECK(!cli_result("C:zfs get -H -o value keystatus public_mirror/encrypted >T:cli-package-output.txt","unavailable"));
+        note("Public key verification delegation PASS unprivileged-denied=1 explicit-grant=1 remains-locked=1 revoke-denied=1 root-restored=1\n");
         STORAGE_CHECK(cli_command("C:zfs load-key -L file:///RAM/public-test.key public_mirror/encrypted")==0);
         STORAGE_CHECK(!cli_result("C:zfs get -H -o value keystatus public_mirror/encrypted >T:cli-package-output.txt","available"));
         STORAGE_CHECK(!oz_mount_control(OZ_ADMISSION_PORT,"public_mirror/encrypted","OZCRYPT",OZ_MOUNT_ATTACH,OZ_MOUNT_READONLY));
@@ -2244,6 +2270,27 @@ static int storage_test(int gui){
         STORAGE_CHECK(DeleteFile((CONST_STRPTR)"RAM:public-test.key"));
         STORAGE_CHECK(DeleteFile((CONST_STRPTR)"RAM:public-wrong.key"));
         note("Public packaged encryption PASS create=1 unload=1 wrong-key-denied=1 reload=1 exact-read=1 cleanup=1\n");
+        {
+            const char hexkey[]="0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef\n";
+            file=Open((CONST_STRPTR)"RAM:public-hex.key",MODE_NEWFILE);STORAGE_CHECK(file);
+            STORAGE_CHECK(Write(file,hexkey,sizeof(hexkey)-1)==sizeof(hexkey)-1);STORAGE_CHECK(Close(file));file=0;
+            STORAGE_CHECK(!cli_command("C:zfs create -u -o mountpoint=none -o encryption=aes-256-gcm -o keyformat=hex -o keylocation=file:///RAM/public-hex.key public_mirror/check_hex"));
+            STORAGE_CHECK(!cli_command("C:zfs unload-key public_mirror/check_hex"));
+            for(unsigned repeat=0;repeat<3;repeat++)
+                STORAGE_CHECK(!storage_request_flags(62,"public_mirror/check_hex","RAM:public-hex.key",NULL,OZ_CONFIRMED|OZ_DRYRUN));
+            STORAGE_CHECK(!cli_result("C:zfs get -H -o value keystatus public_mirror/check_hex >T:cli-package-output.txt","unavailable"));
+            STORAGE_CHECK(!storage_request(62,"public_mirror/check_hex","RAM:public-hex.key",NULL));
+            STORAGE_CHECK(!storage_request_flags(62,"public_mirror/check_hex","RAM:public-hex.key",NULL,OZ_CONFIRMED|OZ_DRYRUN));
+            STORAGE_CHECK(!cli_result("C:zfs get -H -o value keystatus public_mirror/check_hex >T:cli-package-output.txt","available"));
+            STORAGE_CHECK(!cli_command("C:zfs unload-key public_mirror/check_hex"));
+            file=Open((CONST_STRPTR)"RAM:public-hex.key",MODE_NEWFILE);STORAGE_CHECK(file);
+            STORAGE_CHECK(Write(file,"invalid hex\n",12)==12);STORAGE_CHECK(Close(file));file=0;
+            STORAGE_CHECK(storage_request_flags(62,"public_mirror/check_hex","RAM:public-hex.key",NULL,OZ_CONFIRMED|OZ_DRYRUN)!=0);
+            STORAGE_CHECK(!cli_result("C:zfs get -H -o value keystatus public_mirror/check_hex >T:cli-package-output.txt","unavailable"));
+            STORAGE_CHECK(!cli_command("C:zfs destroy public_mirror/check_hex"));
+            STORAGE_CHECK(DeleteFile((CONST_STRPTR)"RAM:public-hex.key"));
+            note("Public hex key verification PASS newline=1 repeated=3 locked-preserved=1 loaded-preserved=1 malformed-refused=1 cleanup=1\n");
+        }
         /* Exercise external PBKDF2 through the actual upstream CLI/dispatcher. */
         file=Open((CONST_STRPTR)"RAM:public-passphrase",MODE_NEWFILE);STORAGE_CHECK(file);
         STORAGE_CHECK(Write(file,storage_passphrase,sizeof(storage_passphrase)-1)==sizeof(storage_passphrase)-1);
@@ -2264,6 +2311,10 @@ static int storage_test(int gui){
         STORAGE_CHECK(cli_command("C:zfs load-key -L file:///RAM/public-passphrase public_mirror/passphrase")!=0);
         STORAGE_CHECK(!cli_result("C:zfs get -H -o value keystatus public_mirror/passphrase >T:cli-package-output.txt","unavailable"));
         STORAGE_CHECK(oz_mount_control(OZ_ADMISSION_PORT,"public_mirror/passphrase","OZPASS",OZ_MOUNT_ATTACH,OZ_MOUNT_READONLY)!=0);
+        STORAGE_CHECK(!storage_request_flags(62,"public_mirror/passphrase","RAM:public-passphrase-new",NULL,OZ_CONFIRMED|OZ_DRYRUN));
+        STORAGE_CHECK(storage_request_flags(62,"public_mirror/passphrase","RAM:public-passphrase",NULL,OZ_CONFIRMED|OZ_DRYRUN)!=0);
+        STORAGE_CHECK(!cli_result("C:zfs get -H -o value keystatus public_mirror/passphrase >T:cli-package-output.txt","unavailable"));
+        note("Public passphrase key verification PASS pbkdf2=400000 current=1 old-refused=1 locked-preserved=1\n");
         STORAGE_CHECK(cli_command("C:zfs load-key public_mirror/passphrase")==0);
         STORAGE_CHECK(!oz_mount_control(OZ_ADMISSION_PORT,"public_mirror/passphrase","OZPASS",OZ_MOUNT_ATTACH,OZ_MOUNT_READONLY));
         file=Open((CONST_STRPTR)"OZPASS:payload",MODE_OLDFILE);STORAGE_CHECK(file);
