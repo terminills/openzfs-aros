@@ -6,14 +6,14 @@
 #include <aros/debug.h>
 
 /* Called only after the disposable public mirror has been exported. */
-int oz_upstream_import_files_test(void)
+int oz_upstream_import_files_test(const char *directory)
 {
     pthread_mutex_t lock=PTHREAD_MUTEX_INITIALIZER;
     libpc_handle_t hdl={0};
     uint64_t pool_guid=0,first_vdev=0;
     int error=0;
     for(unsigned i=0;i<2&&!error;i++) {
-        char path[64];snprintf(path,sizeof(path),"RAM:OZPublicPool/disk%u",i);
+        char path[512];snprintf(path,sizeof(path),"%s/disk%u",directory,i);
         rdsk_node_t node={.rn_name=path,.rn_hdl=&hdl,.rn_lock=&lock};
         zpool_open_func(&node);
         uint64_t guid=0,pool=0;const char *name=NULL;
@@ -36,7 +36,8 @@ int oz_upstream_import_files_test(void)
         if(node.rn_config||node.rn_num_labels)error=EIO;
         nvlist_free(node.rn_config);
     }
-    const char *rejected[]={"RAM:OZPublicPool","RAM:OZPublicPool/missing"};
+    char missing[512];snprintf(missing,sizeof(missing),"%s/missing",directory);
+    const char *rejected[]={directory,missing};
     for(unsigned i=0;i<2&&!error;i++) {
         rdsk_node_t node={.rn_name=(char *)rejected[i],.rn_hdl=&hdl,.rn_lock=&lock};
         zpool_open_func(&node);

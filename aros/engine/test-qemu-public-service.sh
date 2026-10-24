@@ -256,7 +256,10 @@ printf '%s\n' "$layout" >"$run/layout.txt"
 extra_maps+=(-map "$run/layout.txt" /openzfs-test-layout)
 if [[ $persistent == 1 ]];then
     # Only a newly created regular file, never a supplied or physical disk.
-    [[ $gui == 0 && $partitions == 0 && -z $label_source && $ahci_query == 0 ]]
+    [[ $gui == 0 && $partitions == 0 && -z $label_source && $ahci_query == 0 ]] || {
+        echo 'Persistent file-vdev tests require GUI=0, PARTITIONS=0, no label fixture and AHCI_QUERY=0' >&2
+        exit 2
+    }
     fat=${AROS_TEST_FAT_HANDLER:?explicit flush-capable FAT handler required}
     host_zdb=${AROS_TEST_HOST_ZDB:?explicit host zdb required for persistent verification}
     command -v fsck.fat >/dev/null
@@ -637,6 +640,8 @@ if [[ $persistent == 1 ]];then
     wait "$pid"
     trap - EXIT
     rg -q '^Public backing clean detach PASS' "$run/cold-results.log"
+    rg -q '^Public pool root payload PASS written=1 flushed=1 detached=1' "$run/serial-results.log"
+    [[ $(rg -c '^Public cold pool root PASS exact-read=1 readonly-write-denied=1 detached=1' "$run/cold-results.log") -ge 3 ]]
     if [[ $startup_archive == 1 ]];then
         rg -q '^Public persistent settings PASS write=0' "$run/cold-results.log"
         sha256sum -c "$run/archive-before.sha256" >"$run/archive-unchanged.log"

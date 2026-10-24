@@ -1,0 +1,20 @@
+fsck.fat 4.2 (2021-01-31)
+Checking we can access the last sector of the filesystem
+Boot sector contents:
+System ID "mkfs.fat"
+Media byte 0xf8 (hard disk)
+       512 bytes per logical sector
+      8192 bytes per cluster
+        16 reserved sectors
+First FAT starts at byte 8192 (sector 16)
+         2 FATs, 16 bit entries
+    131072 bytes per FAT (= 256 sectors)
+Root directory starts at byte 270336 (sector 528)
+       512 root directory entries
+Data area starts at byte 286720 (sector 560)
+     65500 data clusters (536576000 bytes)
+63 sectors/track, 32 heads
+         0 hidden sectors
+   1048572 sectors total
+Checking for unused clusters.
+/home/terminills/Documents/GitHub/openzfs-aros-public/build-aros/public-service-run.o9PVwdq4/backing.raw: 4 files, 32769/65500 clusters

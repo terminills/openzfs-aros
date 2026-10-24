@@ -91,8 +91,8 @@ int oz_inventory_worker_test(void);
 int oz_upstream_init_test(void);
 int oz_upstream_mount_test(void);
 int oz_upstream_promotion_readonly_test(int);
-int oz_upstream_import_files_test(void);
-int oz_upstream_file_vdev_test(int);
+int oz_upstream_import_files_test(const char *);
+int oz_upstream_file_vdev_test(int,const char *);
 int oz_upstream_mount_policy_test(void);
 int oz_upstream_device_test(int);
 int oz_upstream_device_wait_test(int);
@@ -1712,9 +1712,9 @@ done:
     return error;
 #undef GCHECK
 }
-static int native_discovery_payload(int create,int readonly)
+static int pool_root_payload(const char *dataset,int create,int readonly)
 {
-    const char *dataset="public_discovery",*volume="OZDISCOVERY";
+    const char *volume="OZDISCOVERY";
     int error=oz_mount_control(OZ_ADMISSION_PORT,dataset,volume,OZ_MOUNT_ATTACH,
         readonly?OZ_MOUNT_READONLY:0);
     if(error)return error;
@@ -1785,7 +1785,7 @@ static int storage_native_discovery(void)
             }
         }else error=cli_result(command,i==4?"on":"");
         diagnostic_log("T:cli-package-output.txt");
-        if(!error&&(i==0||i==3||i==6))error=native_discovery_payload(i==0,i==3);
+        if(!error&&(i==0||i==3||i==6))error=pool_root_payload("public_discovery",i==0,i==3);
         if(error){char line[100];snprintf(line,sizeof(line),"Public native discovery FAIL step=%u errno=%d\n",i,error);note(line);return error;}
     }
     error=cli_result("C:zpool list -H -o health public_neighbor >T:cli-package-output.txt", "ONLINE");
@@ -1943,12 +1943,14 @@ static int storage_test(int gui){
     STORAGE_CHECK(!oz_upstream_init_test());
 #endif
     STORAGE_CHECK(!storage_alias_request(5,0));
+    STORAGE_CHECK(!pool_root_payload("public_mirror",1,0));
+    note("Public pool root payload PASS written=1 flushed=1 detached=1\n");
 #ifdef OZ_NATIVE_DISPATCHER
     STORAGE_CHECK(!oz_public_ioctl_test("public_mirror"));
 #ifdef OZ_TEST_UPSTREAM_INIT
     STORAGE_CHECK(!oz_upstream_mount_test());
     STORAGE_CHECK(!oz_upstream_promotion_readonly_test(0));
-    STORAGE_CHECK(!oz_upstream_file_vdev_test(0));
+    STORAGE_CHECK(!oz_upstream_file_vdev_test(0,storage_directory));
 #endif
 #else
     STORAGE_CHECK(!storage_request(37,"public_mirror/files",NULL,NULL));
@@ -2606,12 +2608,12 @@ static int storage_test(int gui){
     }
     STORAGE_CHECK(!storage_request(8,"public_mirror",NULL,NULL));
 #ifdef OZ_TEST_UPSTREAM_INIT
-    STORAGE_CHECK(!oz_upstream_import_files_test());
-    STORAGE_CHECK(!oz_upstream_file_vdev_test(1));
+    STORAGE_CHECK(!oz_upstream_import_files_test(storage_directory));
+    STORAGE_CHECK(!oz_upstream_file_vdev_test(1,storage_directory));
 #endif
     STORAGE_CHECK(!storage_alias_request(7,2));
 #ifdef OZ_TEST_UPSTREAM_INIT
-    STORAGE_CHECK(!oz_upstream_file_vdev_test(2));
+    STORAGE_CHECK(!oz_upstream_file_vdev_test(2,storage_directory));
     STORAGE_CHECK(!oz_upstream_promotion_readonly_test(1));
 #endif
     STORAGE_CHECK(!oz_mount_control(OZ_ADMISSION_PORT,"public_mirror/files","OZPUBLICRO",OZ_MOUNT_ATTACH,OZ_MOUNT_READONLY));
@@ -2744,6 +2746,9 @@ static int storage_cold_once(void)
     int error=companion_import_test(0);
     if(error==ENOENT)error=storage_alias_request(7,1);
     if(error)return error;
+    error=pool_root_payload("public_mirror",0,1);
+    if(error)return error;
+    note("Public cold pool root PASS exact-read=1 readonly-write-denied=1 detached=1\n");
     BPTR cli_defer=Lock((CONST_STRPTR)"SYS:openzfs-cli-package-test",SHARED_LOCK);
     if(cli_defer){
         UnLock(cli_defer);

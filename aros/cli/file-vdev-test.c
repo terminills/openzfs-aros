@@ -85,8 +85,11 @@ static int upgrade_notice_test(zpool_handle_t *pool,int phase)
 }
 
 /* phase 0: active, 1: exported, 2: readonly import with exported labels. */
-int oz_upstream_file_vdev_test(int phase)
+int oz_upstream_file_vdev_test(int phase,const char *directory)
 {
+    char first[512],missing[512];
+    snprintf(first,sizeof(first),"%s/disk0",directory);
+    snprintf(missing,sizeof(missing),"%s/missing",directory);
     int error=phase==0?file_flush_test():0;
     g_zfs=libzfs_init();if(!g_zfs)return errno?errno:EIO;
     int expected=phase==1?ENOENT:phase==2?EROFS:0;
@@ -113,9 +116,9 @@ int oz_upstream_file_vdev_test(int phase)
                 if(phase==0?synced!=0:(synced!=-1||errno!=EROFS))error=EIO;
             }
             errno=0;
-            if(zpool_power_current_state(pool,"RAM:OZPublicPool/disk0")!=-1||errno!=ENOTSUP||
-               zpool_power(pool,"RAM:OZPublicPool/disk0",B_TRUE)!=ENOTSUP||
-               zpool_power(pool,"RAM:OZPublicPool/disk0",B_FALSE)!=ENOTSUP)error=EIO;
+            if(zpool_power_current_state(pool,first)!=-1||errno!=ENOTSUP||
+               zpool_power(pool,first,B_TRUE)!=ENOTSUP||
+               zpool_power(pool,first,B_FALSE)!=ENOTSUP)error=EIO;
             if(!error)bug("Public upstream enclosure unsupported PASS phase=%d query=1 on=1 off=1\n",phase);
             if(zpool_props_refresh(pool)||
                zpool_get_prop_int(pool,ZPOOL_PROP_READONLY,NULL)!=(phase==2)||
@@ -124,7 +127,7 @@ int oz_upstream_file_vdev_test(int phase)
         }
     }
     for(unsigned i=0;i<2&&!error;i++) {
-        char path[64];snprintf(path,sizeof(path),"RAM:OZPublicPool/disk%u",i);
+        char path[512];snprintf(path,sizeof(path),"%s/disk%u",directory,i);
         if(check_file(path,B_FALSE,B_FALSE)!=-1)error=EIO;
         int forced=check_file(path,B_TRUE,B_FALSE);
         if(forced!=(phase==1?0:-1))error=EIO;
@@ -135,8 +138,8 @@ int oz_upstream_file_vdev_test(int phase)
         g_zfs->libzfs_fd=saved;
         if(failed_query!=-1){bug("File vdev failed-query phase=%d member=%u result=%d errno=%d\n",phase,i,failed_query,errno);error=EIO;}
     }
-    if(!error&&(check_file("RAM:OZPublicPool/missing",B_TRUE,B_FALSE)!=-1||
-        check_file("RAM:OZPublicPool",B_TRUE,B_FALSE)!=-1))error=EIO;
+    if(!error&&(check_file(missing,B_TRUE,B_FALSE)!=-1||
+        check_file(directory,B_TRUE,B_FALSE)!=-1))error=EIO;
     libzfs_fini(g_zfs);g_zfs=NULL;
     if(!error)bug("Public upstream file vdev PASS phase=%d members=2 force-policy=1 missing=1 directory=1 query-failure=1\n",phase);
     return error;
