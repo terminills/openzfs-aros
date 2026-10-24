@@ -291,6 +291,7 @@ static void send_request(ULONG operation,int preview_only) {
         op->key,m.target[0]?m.target:"(none)",m.argument[0]?m.argument:"(none)",m.options[0]?m.options:"(defaults)",
         m.flags&OZ_RECURSIVE?"yes":"no",m.flags&OZ_FORCE?"yes":"no",m.flags&OZ_DRYRUN?"yes":"no",m.flags&OZ_RAW?"yes":"no",m.flags&OZ_RESUMABLE?"yes":"no",
         m.operation==38&&(m.flags&OZ_DRYRUN)?"Destruction plan only; no storage changes.":
+        m.operation==62&&(m.flags&OZ_DRYRUN)?"Verify key only; the dataset remains locked if locked now.":
         oz_request_mutates(m.operation,m.argument)?"This operation changes storage or configuration.":"Read/query or stream operation.");
     if(m.topology.group_count){unsigned g,d;size_t n=strlen(text);
         n+=snprintf(text+n,sizeof(text)-n,"\nTyped topology: ashift=%lu\n",(unsigned long)m.topology.ashift);

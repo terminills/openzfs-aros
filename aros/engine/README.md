@@ -801,6 +801,23 @@ those markers, a stopped guest, unused images, offline zdb No leaks and
 unchanged inspection hashes (`export-gui-offline.log`). This is independent
 of the two-boot client tests; GUI permission-refusal coverage is not claimed.
 
+## Authenticated encryption key verification
+
+Operation 62 accepts Confirmed + Dry-run to verify a key file without loading
+the key. It retains the same captured caller, load-key permission check,
+authorized file access, format decoding and key-buffer clearing as normal load.
+The upstream `spa_keystore_load_wkey` noop path authenticates the wrapping key;
+its temporary key is freed even on success because ownership is not transferred
+to the keystore. Change-key does not accept this flag.
+
+Native `public-service-run.IVlNqUbb`, built from fresh upstream sources,
+verifies a correct raw key succeeds while `keystatus` remains unavailable and
+mounting remains refused. A wrong key, missing confirmation, force, and a
+change-key dry-run are refused. Normal key load and exact payload readback
+subsequently succeed, along with the full storage suite. Retained evidence is
+under `aros/tests/evidence/key-check`. This is native API/QEMU evidence, not
+interactive Manager or physical-media qualification.
+
 ## Native dataset rename and destroy (2026-09-21)
 
 ### Snapshot holds and releases

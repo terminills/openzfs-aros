@@ -392,8 +392,10 @@ static int authenticated_key_file(struct oz_message *m,const struct oz_packet_se
     if(!ready)return ENXIO;
     if(!security)return EACCES;
     int change=m->operation==64;
+    int check_only=!change&&(m->flags&OZ_DRYRUN);
     int inherit=change&&!strcmp(m->options,"inherit=on");
-    if((m->operation!=62&&!change)||m->flags!=OZ_CONFIRMED||
+    if((m->operation!=62&&!change)||
+        (m->flags!=OZ_CONFIRMED&&m->flags!=(OZ_CONFIRMED|(!change?OZ_DRYRUN:0)))||
         (inherit?m->argument[0]!=0:(!m->argument[0]||m->options[0])))return ENOTSUP;
     if(dataset_namecheck(m->target,NULL,NULL)||strchr(m->target,'@')||strchr(m->target,'#'))return EINVAL;
     cred_t *caller=oz_packet_security_cred(security);
@@ -494,8 +496,10 @@ static int authenticated_key_file(struct oz_message *m,const struct oz_packet_se
         if(!nvlist_lookup_uint8_array(hidden,"wkeydata",&copy,&count))key_clear(copy,count);
         fnvlist_free(hidden);
         if(!error)error=change?spa_keystore_change_key(m->target,params):
-            spa_keystore_load_wkey(m->target,params,B_FALSE);
-        if(params)dsl_crypto_params_free(params,!!error);
+            spa_keystore_load_wkey(m->target,params,check_only?B_TRUE:B_FALSE);
+        /* A successful check never transfers its wrapping key to the
+         * keystore. Match zfs_ioc_load_key's noop ownership cleanup. */
+        if(params)dsl_crypto_params_free(params,!!error||check_only);
     }
     key_clear(key,sizeof(key));
     return error;

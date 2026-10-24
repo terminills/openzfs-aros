@@ -1,0 +1,96 @@
+diff --git a/aros/engine/admission.c b/aros/engine/admission.c
+index 43f77e6..574554d 100644
+--- a/aros/engine/admission.c
++++ b/aros/engine/admission.c
+@@ -204,7 +204,7 @@ int oz_admitted_capture(struct DosPacket *packet, struct MsgPort *service,
+     else if ((!(key_file&&key_load) && !(m->operation==63&&lifecycle) && !((m->operation==60||m->operation==61||m->operation==78)&&replication) && m->operation != 37 && m->operation != 50 && m->operation!=41 && m->operation!=42 && !((m->operation==19||m->operation==22||m->operation==23||m->operation==29||m->operation==32||m->operation==33)&&lifecycle) &&
+         !((m->operation==17||m->operation==21||m->operation==20||m->operation==14||m->operation==10||m->operation==9||m->operation==11||m->operation==13||m->operation==12||m->operation==5||m->operation==6||m->operation==7||m->operation==8||m->operation==15||m->operation==16||m->operation==18||m->operation==24||m->operation==26||m->operation==38||m->operation==39||m->operation==43||m->operation==44||m->operation==51||m->operation==52||m->operation==53||m->operation==54||m->operation==55||m->operation==56)&&lifecycle)) ||
+         (m->operation==33?(m->flags&~(OZ_CONFIRMED|OZ_DRYRUN|OZ_RAW)):
+-        (m->flags != OZ_CONFIRMED && !((m->operation==26||m->operation==29||m->operation==61) && m->flags==(OZ_CONFIRMED|OZ_FORCE)) &&
++        (m->flags != OZ_CONFIRMED && !(m->operation==62&&m->flags==(OZ_CONFIRMED|OZ_DRYRUN)) && !((m->operation==26||m->operation==29||m->operation==61) && m->flags==(OZ_CONFIRMED|OZ_FORCE)) &&
+         !((m->operation==39||m->operation==42||m->operation==50||m->operation==55||m->operation==56)&&
+             m->flags==(OZ_CONFIRMED|OZ_RECURSIVE)))) ||
+         ((key_file||m->operation==60||m->operation==61||m->operation==21||m->operation==20||m->operation==14||m->operation==10||m->operation==11||m->operation==13||m->operation==12||m->operation==22||m->operation==32||m->operation==15||m->operation==16||m->operation==18||m->operation==39||m->operation==41||m->operation==42||m->operation==43||m->operation==51||m->operation==52||m->operation==55||m->operation==56)?!m->argument[0]:(m->operation!=37&&m->operation!=23&&m->operation!=17&&m->argument[0]!=0)) ||
+@@ -284,7 +284,7 @@ int oz_admitted_execute(struct oz_admitted *job)
+     snprintf(job->request.detail, sizeof(job->request.detail),
+         "Authenticated %s returned errno=%d",
+         (job->request.operation>=67&&job->request.operation<=69)?"accounting query":job->request.operation==79?"permission list":job->request.operation==65?"permission grant":job->request.operation==66?"permission revoke":
+-        job->request.operation==64?"key replacement":job->request.operation==62?"key load":job->request.operation==63?"key unload":job->request.operation==60?"stream send":job->request.operation==61?"stream receive":job->request.operation==78?"interrupted receive abort":job->request.operation==19?"resilver restart (acceptance, not repair completion)":
++        job->request.operation==64?"key replacement":job->request.operation==62?((job->request.flags&OZ_DRYRUN)?"key verification (not loaded)":"key load"):job->request.operation==63?"key unload":job->request.operation==60?"stream send":job->request.operation==61?"stream receive":job->request.operation==78?"interrupted receive abort":job->request.operation==19?"resilver restart (acceptance, not repair completion)":
+         job->request.operation==21?"TRIM control (query status for completion)":job->request.operation==20?"initialization control (query status for completion)":job->request.operation==17?"pool/device clear (query health afterward)":job->request.operation==14?"mirror split (destination exported)":job->request.operation==10?"device removal accepted (query status for completion)":job->request.operation==9?"pool add (query status for new topology)":job->request.operation==11?"device attach (query status for resilver completion)":job->request.operation==13?"device replace (query status for resilver completion)":job->request.operation==12?"device detach (query status for remaining redundancy)":job->request.operation==22?"pool checkpoint control (query status for discard completion)":job->request.operation==23?"pool reguid":job->request.operation==29?"native label clear":job->request.operation==33?"pool history (live; raw mode preserves full records)":job->request.operation==32?"pool property set":job->request.operation==6?"pool destruction":job->request.operation==26?"pool sync":job->request.operation==24?"pool reopen (query status for health)":
+         job->request.operation==15?"device online (not resilver completion)":job->request.operation==16?"device offline":job->request.operation==5?"pool creation":job->request.operation==7?"pool import":job->request.operation==18?"scrub control (not completion)":job->request.operation==8?"pool export":job->request.operation==51?"bookmark creation":
+         job->request.operation==38&&strchr(job->request.target,'#')?"bookmark destruction":
+diff --git a/aros/engine/management.c b/aros/engine/management.c
+index 6a59bcf..ac8c0bf 100644
+--- a/aros/engine/management.c
++++ b/aros/engine/management.c
+@@ -392,8 +392,10 @@ static int authenticated_key_file(struct oz_message *m,const struct oz_packet_se
+     if(!ready)return ENXIO;
+     if(!security)return EACCES;
+     int change=m->operation==64;
++    int check_only=!change&&(m->flags&OZ_DRYRUN);
+     int inherit=change&&!strcmp(m->options,"inherit=on");
+-    if((m->operation!=62&&!change)||m->flags!=OZ_CONFIRMED||
++    if((m->operation!=62&&!change)||
++        (m->flags!=OZ_CONFIRMED&&m->flags!=(OZ_CONFIRMED|(!change?OZ_DRYRUN:0)))||
+         (inherit?m->argument[0]!=0:(!m->argument[0]||m->options[0])))return ENOTSUP;
+     if(dataset_namecheck(m->target,NULL,NULL)||strchr(m->target,'@')||strchr(m->target,'#'))return EINVAL;
+     cred_t *caller=oz_packet_security_cred(security);
+@@ -494,8 +496,10 @@ static int authenticated_key_file(struct oz_message *m,const struct oz_packet_se
+         if(!nvlist_lookup_uint8_array(hidden,"wkeydata",&copy,&count))key_clear(copy,count);
+         fnvlist_free(hidden);
+         if(!error)error=change?spa_keystore_change_key(m->target,params):
+-            spa_keystore_load_wkey(m->target,params,B_FALSE);
+-        if(params)dsl_crypto_params_free(params,!!error);
++            spa_keystore_load_wkey(m->target,params,check_only?B_TRUE:B_FALSE);
++        /* A successful check never transfers its wrapping key to the
++         * keystore. Match zfs_ioc_load_key's noop ownership cleanup. */
++        if(params)dsl_crypto_params_free(params,!!error||check_only);
+     }
+     key_clear(key,sizeof(key));
+     return error;
+diff --git a/aros/engine/public-service-test.c b/aros/engine/public-service-test.c
+index 257be06..b64b8a3 100644
+--- a/aros/engine/public-service-test.c
++++ b/aros/engine/public-service-test.c
+@@ -2179,6 +2179,15 @@ static int storage_test(int gui){
+         STORAGE_CHECK(Write(file,key,sizeof(key))==sizeof(key));STORAGE_CHECK(Close(file));file=0;
+         STORAGE_CHECK(cli_command("C:zfs load-key -L file:///RAM/public-wrong.key public_mirror/encrypted")!=0);
+         STORAGE_CHECK(!cli_result("C:zfs get -H -o value keystatus public_mirror/encrypted >T:cli-package-output.txt","unavailable"));
++        STORAGE_CHECK(!storage_request_flags(62,"public_mirror/encrypted","RAM:public-test.key",NULL,OZ_CONFIRMED|OZ_DRYRUN));
++        STORAGE_CHECK(!cli_result("C:zfs get -H -o value keystatus public_mirror/encrypted >T:cli-package-output.txt","unavailable"));
++        STORAGE_CHECK(oz_mount_control(OZ_ADMISSION_PORT,"public_mirror/encrypted","OZCHECKKEY",OZ_MOUNT_ATTACH,OZ_MOUNT_READONLY)!=0);
++        STORAGE_CHECK(storage_request_flags(62,"public_mirror/encrypted","RAM:public-wrong.key",NULL,OZ_CONFIRMED|OZ_DRYRUN)!=0);
++        STORAGE_CHECK(storage_request_flags(62,"public_mirror/encrypted","RAM:public-test.key",NULL,OZ_DRYRUN)!=0);
++        STORAGE_CHECK(storage_request_flags(62,"public_mirror/encrypted","RAM:public-test.key",NULL,OZ_CONFIRMED|OZ_DRYRUN|OZ_FORCE)!=0);
++        STORAGE_CHECK(storage_request_flags(64,"public_mirror/encrypted","RAM:public-test.key",NULL,OZ_CONFIRMED|OZ_DRYRUN)!=0);
++        STORAGE_CHECK(!cli_result("C:zfs get -H -o value keystatus public_mirror/encrypted >T:cli-package-output.txt","unavailable"));
++        note("Public authenticated key dry-run PASS correct=1 wrong-refused=1 locked=1 mount-refused=1 confirmation=1 force-refused=1 change-key-refused=1\n");
+         STORAGE_CHECK(cli_command("C:zfs load-key -L file:///RAM/public-test.key public_mirror/encrypted")==0);
+         STORAGE_CHECK(!cli_result("C:zfs get -H -o value keystatus public_mirror/encrypted >T:cli-package-output.txt","available"));
+         STORAGE_CHECK(!oz_mount_control(OZ_ADMISSION_PORT,"public_mirror/encrypted","OZCRYPT",OZ_MOUNT_ATTACH,OZ_MOUNT_READONLY));
+diff --git a/aros/ui/manager.c b/aros/ui/manager.c
+index 2d16681..79ff851 100644
+--- a/aros/ui/manager.c
++++ b/aros/ui/manager.c
+@@ -291,6 +291,7 @@ static void send_request(ULONG operation,int preview_only) {
+         op->key,m.target[0]?m.target:"(none)",m.argument[0]?m.argument:"(none)",m.options[0]?m.options:"(defaults)",
+         m.flags&OZ_RECURSIVE?"yes":"no",m.flags&OZ_FORCE?"yes":"no",m.flags&OZ_DRYRUN?"yes":"no",m.flags&OZ_RAW?"yes":"no",m.flags&OZ_RESUMABLE?"yes":"no",
+         m.operation==38&&(m.flags&OZ_DRYRUN)?"Destruction plan only; no storage changes.":
++        m.operation==62&&(m.flags&OZ_DRYRUN)?"Verify key only; the dataset remains locked if locked now.":
+         oz_request_mutates(m.operation,m.argument)?"This operation changes storage or configuration.":"Read/query or stream operation.");
+     if(m.topology.group_count){unsigned g,d;size_t n=strlen(text);
+         n+=snprintf(text+n,sizeof(text)-n,"\nTyped topology: ashift=%lu\n",(unsigned long)m.topology.ashift);
+diff --git a/aros/ui/operations.def b/aros/ui/operations.def
+index 866283f..2121ae8 100644
+--- a/aros/ui/operations.def
++++ b/aros/ui/operations.def
+@@ -61,7 +61,7 @@ OZ_OP(58, "Snapshots", "snapshot.diff", "diff", 0, "Dataset@snapshot", "To snaps
+ OZ_OP(59, "Snapshots", "snapshot.redact", "redact", 1, "Dataset@snapshot", "Bookmark name", "Create redaction bookmark, not erase source. Root and confirmation required. Options: snapshots=full@snap,full@snap (1-32, no commas in names). No force or dry-run. Send must explicitly select this bookmark.")
+ OZ_OP(60, "Replication", "replication.send", "send", 1, "Dataset@snapshot", "Native output file", "New or existing empty output only. Options: from=snapshot/bookmark; redact=short-bookmark-name; compressed=on/off; large-blocks=on/off; embedded=on/off; raw=on/off. Or resume=TOKEN with from= matching its incremental base; no format switches or redact override. Redacted resume resolves a completed matching bookmark. A redacted incremental base requires from=bookmark matching the token's GUID and redaction set. Redaction does not erase source data.")
+ OZ_OP(61, "Replication", "replication.receive", "receive", 1, "Dataset@snapshot", "Native stream file", "Full native service supports mounted filesystem receive. Force may discard local changes; explicit confirmation required. resumable=on preserves interrupted state; off is default. Get receive_resume_token in Datasets/get; use resume=TOKEN in Replication/send for continuation.")
+-OZ_OP(62, "Encryption", "encryption.load-key", "load-key", 1, "Encryption root", "Key file", "Load from an authorized AROS file: raw requires 32 bytes; hex requires 64 hex digits; passphrase uses the first line. Text strips LF only. Format comes from the dataset. Requires load-key permission. Enter a file path, never key bytes. Confirm; no options, force or dry-run.")
++OZ_OP(62, "Encryption", "encryption.load-key", "load-key", 1, "Encryption root", "Key file", "Load from an authorized AROS file: raw requires 32 bytes; hex requires 64 hex digits; passphrase uses the first line. Text strips LF only. Format comes from the dataset. Dry-run verifies the key without loading it or changing locked state. Requires load-key permission and confirmation. Enter a file path, never key bytes. No options, force or recursion.")
+ OZ_OP(63, "Encryption", "encryption.unload-key", "unload-key", 1, "Encryption root", "", "Unload the in-memory key. Requires load-key permission. Unmount dependent filesystems first. Also supported on read-only pools. Confirm; no options, force or dry-run.")
+ OZ_OP(64, "Encryption", "encryption.change-key", "change-key", 1, "Encryption root", "New key file", "Replace a loaded wrapping key from an authorized AROS file, retaining format and location. Passphrases require 8-512 bytes on the first line. Or set inherit=on with no key file to use the encrypted parent's key; both keys must be loaded. Requires change-key permission, writable pool and confirmation. No force or dry-run. Keep the replacement or parent key: the old key stops working.")
+ OZ_OP(65, "Permissions", "permission.allow", "allow", 1, "Dataset / zvol", "Principal / set:@name / creator", "Principal: user:ID, group:ID, everyone; options permissions=create,mount,@set;scope=local/descendants/both (default both). set:@name defines a permission set; creator grants rights on newly created datasets (omit scope for both). Confirm; no force/dry-run/recursive.")

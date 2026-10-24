@@ -2179,6 +2179,15 @@ static int storage_test(int gui){
         STORAGE_CHECK(Write(file,key,sizeof(key))==sizeof(key));STORAGE_CHECK(Close(file));file=0;
         STORAGE_CHECK(cli_command("C:zfs load-key -L file:///RAM/public-wrong.key public_mirror/encrypted")!=0);
         STORAGE_CHECK(!cli_result("C:zfs get -H -o value keystatus public_mirror/encrypted >T:cli-package-output.txt","unavailable"));
+        STORAGE_CHECK(!storage_request_flags(62,"public_mirror/encrypted","RAM:public-test.key",NULL,OZ_CONFIRMED|OZ_DRYRUN));
+        STORAGE_CHECK(!cli_result("C:zfs get -H -o value keystatus public_mirror/encrypted >T:cli-package-output.txt","unavailable"));
+        STORAGE_CHECK(oz_mount_control(OZ_ADMISSION_PORT,"public_mirror/encrypted","OZCHECKKEY",OZ_MOUNT_ATTACH,OZ_MOUNT_READONLY)!=0);
+        STORAGE_CHECK(storage_request_flags(62,"public_mirror/encrypted","RAM:public-wrong.key",NULL,OZ_CONFIRMED|OZ_DRYRUN)!=0);
+        STORAGE_CHECK(storage_request_flags(62,"public_mirror/encrypted","RAM:public-test.key",NULL,OZ_DRYRUN)!=0);
+        STORAGE_CHECK(storage_request_flags(62,"public_mirror/encrypted","RAM:public-test.key",NULL,OZ_CONFIRMED|OZ_DRYRUN|OZ_FORCE)!=0);
+        STORAGE_CHECK(storage_request_flags(64,"public_mirror/encrypted","RAM:public-test.key",NULL,OZ_CONFIRMED|OZ_DRYRUN)!=0);
+        STORAGE_CHECK(!cli_result("C:zfs get -H -o value keystatus public_mirror/encrypted >T:cli-package-output.txt","unavailable"));
+        note("Public authenticated key dry-run PASS correct=1 wrong-refused=1 locked=1 mount-refused=1 confirmation=1 force-refused=1 change-key-refused=1\n");
         STORAGE_CHECK(cli_command("C:zfs load-key -L file:///RAM/public-test.key public_mirror/encrypted")==0);
         STORAGE_CHECK(!cli_result("C:zfs get -H -o value keystatus public_mirror/encrypted >T:cli-package-output.txt","available"));
         STORAGE_CHECK(!oz_mount_control(OZ_ADMISSION_PORT,"public_mirror/encrypted","OZCRYPT",OZ_MOUNT_ATTACH,OZ_MOUNT_READONLY));
