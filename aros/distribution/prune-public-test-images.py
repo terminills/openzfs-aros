@@ -19,6 +19,16 @@ def eligible(run):
     if run.is_symlink() or run.parent != ROOT or not re.fullmatch(
             r"(?:public-service|native-gui|preferences)-run\.[A-Za-z0-9]+", run.name):
         return False
+    if (run / "cold-release.txt").exists():
+        for name, required in (("release-results.log", "RESULT public service storage PASS"),
+                               ("release-zdb-check.log", "No leaks"),
+                               ("release-zdb-unchanged.log", ": OK")):
+            path = run / name
+            if not path.is_file():
+                return False
+            text = path.read_text(errors="replace")
+            if required not in text or re.search(r"\bFAIL(?:ED)?\b", text):
+                return False
     if run.name.startswith("preferences-run."):
         path = run / "serial-results.log"
         if not path.is_file() or (run / "backing.raw").exists():
@@ -50,7 +60,7 @@ def eligible(run):
 
 
 def candidates(run):
-    result = [run / name for name in ("test.iso", "cold.iso", "backing.raw", "retired-disk0")]
+    result = [run / name for name in ("test.iso", "cold.iso", "release.iso", "backing.raw", "retired-disk0")]
     archive = run / "startup-archive.raw"
     unchanged = run / "archive-unchanged.log"
     if (unchanged.is_file() and f"{archive}: OK" in unchanged.read_text()
@@ -59,7 +69,7 @@ def candidates(run):
             and (run / "cold-results.log").is_file()
             and "Public persistent settings PASS write=0" in (run / "cold-results.log").read_text()):
         result.append(archive)
-    for name in ("members-before", "members-after"):
+    for name in ("members-before", "members-after", "members-release"):
         folder = run / name
         if folder.is_dir() and not folder.is_symlink():
             result.extend(p for p in folder.iterdir() if re.fullmatch(r"disk[0-9]+", p.name))

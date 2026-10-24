@@ -101,6 +101,14 @@ This is not proof that the automatic drawer title is fixed: see the
 
 ### Evidence retention policy
 
+`cold-release` retains the three-phase native run `public-service-run.fkCVCuGC`:
+writer, unchanged read-only cold imports, then a separate writable cold boot.
+Authenticated recursive hold release removes both deferred snapshots; export
+and read-only reimport confirm their absence, unrelated DOS data remains exact,
+and host `zdb` reports no leaks. This is not abrupt-power-loss testing. Two
+earlier ISO construction failures are retained as `initial-pack.log` and
+`repeat-pack.log`; neither reached the writable test phase.
+
 `pending-defer-cold` retains `public-service-run.no4FZbtl`: recursive deferred
 parent/child snapshots survive fresh healthy/degraded/restored imports with
 their holds intact. Read-only release fails without changing reference counts;

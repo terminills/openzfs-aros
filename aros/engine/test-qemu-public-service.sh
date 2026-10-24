@@ -48,6 +48,8 @@ pbkdf2=${AROS_TEST_PBKDF2_BINARY:-}
 nvpair_test=${AROS_TEST_NVPAIR_BINARY:-}
 persistent=${AROS_TEST_PERSISTENT:-0}
 [[ $persistent == 0 || $persistent == 1 ]]
+cold_release=${AROS_TEST_COLD_RELEASE:-0}
+[[ $cold_release == 0 || ( $cold_release == 1 && $persistent == 1 && -n $cli_dir ) ]]
 startup_import=${AROS_TEST_STARTUP_IMPORT:-0}
 [[ $startup_import == 0 || ( $startup_import == 1 && $persistent == 1 && $companions == 1 ) ]]
 startup_archive=${AROS_TEST_STARTUP_ARCHIVE:-0}
@@ -660,6 +662,63 @@ if [[ $persistent == 1 ]];then
     sha256sum -c "$run/members-after.sha256" >"$run/zdb-members-unchanged.log"
     echo "PASS: fresh-boot healthy/degraded import, exact DOS data, unchanged pool members. Evidence: $run"
     rg -q '^Public DOS links PASS write=0 hard=1 relative-soft=1 unlinked-source=1 dangling-refused=1' "$run/cold-results.log"
+    if [[ $cold_release == 1 ]];then
+        # A separate boot AFTER immutable read-only evidence is complete.
+        # Never replace the preceding member comparisons with writable ones.
+        printf '1\n' >"$run/cold-release.txt"
+        sed 's/STORAGE-COLD/STORAGE-COLD-RELEASE/' "$run/Startup-Cold" >"$run/Startup-Release"
+        # Start from the supplied base, not a generated ISO whose retained
+        # hybrid partition metadata can refer beyond its new image size.
+        xorriso -indev "$base" -outdev "$run/release.iso" \
+            -map aros/engine/grub-qemu-test.cfg /boot/grub/grub.cfg \
+            "${platform_maps[@]}" \
+            -map "$posix" /Libs/posixc.library \
+            -map "$run/security-fixture" /Security \
+            -map "$run/OpenZFSServiceNative" /C/OpenZFSServiceNative \
+            -map "$run/OpenZFSPublicServiceTest" /C/OpenZFSPublicServiceTest \
+            "${extra_maps[@]}" \
+            -map aros/engine/public-service-test-only /openzfs-service-test-only \
+            -map "$run/Startup-Release" /S/Startup-Sequence \
+            -boot_image any discard -boot_image grub bin_path=/boot/grub/i386-pc/eltorito.img \
+            -boot_image grub boot_info_table=on -boot_image grub grub2_boot_info=on >"$run/pack-release.log" 2>&1
+        "$qemu" -name "openzfs-public-release-$$" -machine pc,accel=kvm -cpu host \
+            -smp "$cpus" -m 2048 -drive "file=$run/release.iso,media=cdrom,if=ide,index=2,readonly=on" \
+            -drive "file=$run/backing.raw,format=raw,if=ide,index=0" -display none -nic none \
+            "${archive_cold_drives[@]}" \
+            -boot d -no-reboot -no-shutdown -serial "file:$run/release-serial.log" \
+            -monitor "unix:$run/release-monitor,server=on,wait=off" >"$run/release-qemu.log" 2>&1 &
+        pid=$!
+        trap cleanup EXIT
+        deadline=$((SECONDS+duration))
+        while :;do
+            if [[ -f "$run/release-serial.log" ]];then
+                sed -E 's/^[[:xdigit:]]{16} 0x[[:xdigit:]]{16} \| [0-9]+ \| //' "$run/release-serial.log" >"$run/release-results.log"
+                if rg -q '^RESULT .*FAIL|Public service test line=[1-9][0-9]*|\[PF-DBG\]|^ASSERT at' "$run/release-results.log";then exit 1;fi
+                if rg -q '^RESULT public service storage PASS' "$run/release-results.log";then break;fi
+            fi
+            if ! kill -0 "$pid" 2>/dev/null || ((SECONDS>=deadline));then echo "Release timeout/exit: $run" >&2;exit 1;fi
+            sleep 1
+        done
+        printf 'quit\n' | socat - "UNIX-CONNECT:$run/release-monitor" >/dev/null
+        wait "$pid"
+        trap - EXIT
+        rg -q '^Public cold writable release PASS pending-before=1 recursive-release=1 parent-absent=1 child-absent=1 reimport-absent=1 exact-data=1 exported=1' "$run/release-results.log"
+        rg -q '^Public backing clean detach PASS' "$run/release-results.log"
+        fsck.fat -n -v "$run/backing.raw" >"$run/fat-after-release.log" 2>&1
+        if [[ $startup_archive == 1 ]];then
+            sha256sum -c "$run/archive-before.sha256" >"$run/archive-after-release.log"
+        fi
+        mkdir "$run/members-release"
+        for ((member=0;member<members;member++));do
+            suffix=;if [[ $replace == 1 && $member == 0 ]];then suffix=-new;fi
+            mcopy -i "$run/backing.raw" "::OZPublicPool/disk$member$suffix" "$run/members-release/disk$member"
+        done
+        sha256sum "$run/members-release/"* >"$run/members-release.sha256"
+        "$host_zdb" -e -p "$run/members-release" -bcc public_mirror >"$run/release-zdb-check.log" 2>&1
+        rg -q 'No leaks' "$run/release-zdb-check.log"
+        sha256sum -c "$run/members-release.sha256" >"$run/release-zdb-unchanged.log"
+        echo "PASS: writable cold release, persisted deletion and independent zdb. Evidence: $run"
+    fi
 fi
 if [[ $partitions == 1 ]];then sha256sum -c "$run/disks-before.sha256" > "$run/disks-after-check.txt";fi
 if [[ $native_discovery == 1 ]];then

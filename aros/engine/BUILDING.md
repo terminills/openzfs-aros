@@ -229,6 +229,29 @@ reported no leaks. Evidence directories: `hosted-security-test.bRTIKnB7` and
 `hosted-security-test.tirxqAQ5`. This validates the selected hosted cases, not
 stock-nightly compatibility, physical media durability, or all OpenZFS features.
 
+## Optional writable cold-release qualification
+
+For `test-qemu-public-service.sh`, set `AROS_TEST_COLD_RELEASE=1` with
+`AROS_TEST_PERSISTENT=1` and the packaged CLI directory. This adds a third guest
+boot after the writer and all read-only cold-import checks. It imports the
+disposable pool writable, releases the parent/child pending-snapshot holds via
+the authenticated API, exports and reimports read-only, checks both snapshots
+are absent, and verifies unrelated DOS data. The host then independently runs
+`zdb -bcc` on the post-release members. Pre-release byte-for-byte read-only
+checks remain mandatory and are not replaced by this write phase.
+
+The additional ISO starts from the original input ISO, not a generated image:
+inherited hybrid partition metadata can point past the end of a repacked ISO.
+The phase retains separate `release-results.log`, `release-zdb-check.log` and
+hashes. Failed or incomplete release runs are excluded from automatic image
+pruning. This option is strictly a file-backed fixture, not physical-media or
+power-loss qualification.
+
+Native run `public-service-run.fkCVCuGC` passes all three phases, including
+post-release `zdb` with no leaks and unchanged ENVARC storage. The first two
+attempts (`gSSchHvW`, `FyRKvDFN`) failed ISO construction before writable guest
+execution; their build diagnostics are retained with the qualification logs.
+
 ## Build evidence, 2026-09-28
 
 `source-engine.72CYAuks` compiled all 248 inventory units, then linked the full

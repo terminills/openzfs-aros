@@ -3,4 +3,8 @@
 */serial-results.log -text -whitespace
 */source.patch -text -whitespace
 */cold-results.log -text -whitespace
+*/release-results.log -text -whitespace
+*/release-zdb-check.log -text -whitespace
+cold-release/initial-pack.log -text -whitespace
+cold-release/repeat-pack.log -text -whitespace
 */zdb-check.log -text -whitespace

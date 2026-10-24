@@ -884,6 +884,12 @@ Recursive hold release on the read-only pool fails and leaves both counts
 unchanged. The harness requires all three results, byte-identical pool members
 and host `zdb -bcc` with no leaks. This proves pending-state retention across
 cold imports; release after a writable cold import is not covered by this run.
+Follow-up `public-service-run.fkCVCuGC` adds a third, writable cold boot only
+after those read-only checks finish. Authenticated recursive hold release
+removes both deferred snapshots; an export/read-only reimport still reports
+both absent, while unrelated DOS file contents remain exact. Host `zdb -bcc`
+passes on the changed members. This is clean export/reimport evidence, not
+an abrupt power-loss guarantee.
 
 Authenticated recursive dataset destruction is deliberately non-atomic and
 narrower than recursive snapshot destruction. The Manager first refuses any

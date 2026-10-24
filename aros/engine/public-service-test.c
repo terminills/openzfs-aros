@@ -2565,6 +2565,46 @@ static int storage_cold_test(void)
     if(!error){char line[160];snprintf(line,sizeof(line),"Public cold beyond-parity PASS missing=%u refused=1 empty=1 responsive=1 restored-read=1\n",losses);note(line);}
     return error;
 }
+static int storage_cold_release(void)
+{
+    int error=storage_request(7,"public_mirror",NULL,"readonly=off");
+    const char *snapshots[]={"public_mirror/defer_pending@pending",
+        "public_mirror/defer_pending/child@pending"};
+    for(unsigned i=0;i<2&&!error;i++){
+        char command[384];
+        snprintf(command,sizeof(command),"C:zfs get -H -o value defer_destroy %s >T:cli-package-output.txt",snapshots[i]);
+        error=cli_result(command,"on");
+    }
+    if(!error)error=storage_request_flags(56,"public_mirror/defer_pending@pending","cold_keep",NULL,OZ_CONFIRMED|OZ_RECURSIVE);
+    for(unsigned phase=0;phase<2&&!error;phase++){
+        if(phase){
+            error=storage_request(8,"public_mirror",NULL,NULL);
+            if(!error)error=storage_request(7,"public_mirror",NULL,"readonly=on");
+        }
+        for(unsigned i=0;i<2&&!error;i++){
+            char command[384];
+            snprintf(command,sizeof(command),"C:zfs list -t snapshot %s",snapshots[i]);
+            if(!cli_command(command))error=EIO;
+        }
+        /* Successful queries distinguish disappearance from a broken CLI. */
+        if(!error)error=cli_result("C:zfs get -H -o value type public_mirror/defer_pending/child >T:cli-package-output.txt","filesystem");
+    }
+    if(!error)error=oz_mount_control(OZ_ADMISSION_PORT,"public_mirror/files","OZRELEASE",OZ_MOUNT_ATTACH,OZ_MOUNT_READONLY);
+    if(!error){
+        char bytes[sizeof(storage_payload)+1];
+        BPTR file=Open((CONST_STRPTR)"OZRELEASE:hello.txt",MODE_OLDFILE);
+        if(!file)error=EIO;
+        else {
+            LONG count=Read(file,bytes,sizeof(bytes));int closed=Close(file);
+            if(!closed||count!=sizeof(storage_payload)-1||memcmp(bytes,storage_payload,sizeof(storage_payload)-1))error=EIO;
+        }
+        int detached=oz_mount_control(OZ_ADMISSION_PORT,"public_mirror/files","",OZ_MOUNT_DETACH,0);
+        if(!error)error=detached;
+    }
+    if(!error)error=storage_request(8,"public_mirror",NULL,NULL);
+    if(!error)note("Public cold writable release PASS pending-before=1 recursive-release=1 parent-absent=1 child-absent=1 reimport-absent=1 exact-data=1 exported=1\n");
+    return error;
+}
 int main(int argc,char **argv){
     BPTR marker=Lock((CONST_STRPTR)"SYS:openzfs-service-test-only",SHARED_LOCK);
     if(!marker)return 20;
@@ -2612,7 +2652,8 @@ int main(int argc,char **argv){
     struct oz_client client;int error=0,opened=0;
     struct Library *secBase=NULL;int logged=0;
     int gui=argc==2&&!strcmp(argv[1],"GUI");
-    int cold=argc==2&&!strcmp(argv[1],"STORAGE-COLD");
+    int cold_release=argc==2&&!strcmp(argv[1],"STORAGE-COLD-RELEASE");
+    int cold=cold_release||(argc==2&&!strcmp(argv[1],"STORAGE-COLD"));
     marker=Lock((CONST_STRPTR)"SYS:openzfs-sequential-test",SHARED_LOCK);
     if(marker){UnLock(marker);storage_sequential=1;}
     marker=Lock((CONST_STRPTR)"SYS:openzfs-dspare-test",SHARED_LOCK);
@@ -2760,7 +2801,7 @@ int main(int argc,char **argv){
         oz_message_free(reply);CHECK(denied);
         note("Public mutation requires authenticated admission PASS\n");
     }
-    if(storage)CHECK(!(cold?storage_cold_test():storage_test(gui)));
+    if(storage)CHECK(!(cold_release?storage_cold_release():cold?storage_cold_test():storage_test(gui)));
     if(storage&&native_file_fixture){
         /* Close the disposable FAT backing volume after all pools export.
          * DOS file Flush does not drain deferred FAT directory renames.

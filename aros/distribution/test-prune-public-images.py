@@ -81,6 +81,23 @@ class Retention(unittest.TestCase):
         self.invoke(True)
         self.assertTrue((self.run / "test.iso").exists())
 
+    def test_release_phase_requires_its_own_evidence(self):
+        (self.run / "cold-release.txt").write_text("1\n")
+        release = self.run / "release.iso"
+        release.write_bytes(b"release image")
+        self.invoke(True)
+        self.assertTrue(release.exists())
+        self.assertTrue((self.run / "test.iso").exists())
+        (self.run / "release-results.log").write_text("RESULT public service storage PASS\n")
+        (self.run / "release-zdb-check.log").write_text("No leaks\n")
+        (self.run / "release-zdb-unchanged.log").write_text("disk0: FAILED\n")
+        self.assertFalse(prune.eligible(self.run))
+        (self.run / "release-zdb-unchanged.log").write_text("disk0: OK\n")
+        self.assertTrue(prune.eligible(self.run))
+        self.invoke(True)
+        self.assertFalse(release.exists())
+        self.assertTrue((self.run / "release-results.log").exists())
+
     def test_ram_requires_explicit_mode_and_no_backing(self):
         (self.run / "cold-results.log").unlink()
         self.assertFalse(prune.eligible(self.run))

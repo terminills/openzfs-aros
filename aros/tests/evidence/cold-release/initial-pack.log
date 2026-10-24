@@ -1,0 +1,40 @@
+xorriso 1.5.6 : RockRidge filesystem manipulator, libburnia project.
+
+xorriso : NOTE : Loading ISO image tree from LBA 0
+libburn : SORRY : Read start address 2396342s larger than number of readable blocks 2394080
+libisofs: NOTE : Found Protective MBR with size range larger than the medium capacity
+xorriso : UPDATE :   91305 nodes read in 1 seconds
+xorriso : NOTE : Detected El-Torito boot information which currently is set to be discarded
+Drive current: -indev '/home/terminills/Documents/GitHub/openzfs-aros-public/build-aros/public-service-run.gSSchHvW/cold.iso'
+Media current: stdio file, overwriteable
+Media status : is written , is appendable
+Boot record  : El Torito , MBR protective-msdos-label cyl-align-off GPT APM
+Media summary: 1 session, 2393888 data blocks, 4676m data,  248g free
+Volume id    : 'AROS Live CD'
+xorriso : NOTE : Tolerated problem event of severity 'SORRY'
+Drive current: -outdev '/home/terminills/Documents/GitHub/openzfs-aros-public/build-aros/public-service-run.gSSchHvW/release.iso'
+Media current: stdio file, overwriteable
+Media status : is blank
+Media summary: 0 sessions, 0 data blocks, 0 data,  248g free
+xorriso : UPDATE :       1 files added in 1 seconds
+Added to ISO image: file '/S/Startup-Sequence'='/home/terminills/Documents/GitHub/openzfs-aros-public/build-aros/public-service-run.gSSchHvW/Startup-Release'
+xorriso : SORRY : Cannot make proposal to mark data file as GPT partition : '/Applications/Internet/Chromium/Chromium'
+xorriso : SORRY : Cannot make proposal to mark data file as GPT partition : '/Applications/Internet/Chromium/Chromium'
+xorriso : SORRY : Cannot make proposal to produce APM of loaded image
+xorriso : WARNING : -volid text problematic as automatic mount point name
+xorriso : WARNING : -volid text does not comply to ISO 9660 / ECMA 119 rules
+xorriso : NOTE : Replayed 14 boot related commands
+xorriso : NOTE : Copying to System Area: 32768 bytes from file '--interval:imported_iso:0s-15s:zero_mbrpt,zero_gpt,zero_apm:/home/terminills/Documents/GitHub/openzfs-aros-public/build-aros/public-service-run.gSSchHvW/cold.iso'
+libisofs: NOTE : Automatically adjusted MBR geometry to 1000/152/63
+xorriso : UPDATE : Writing:      11012s    0.5%   fifo   0%  buf  50%
+xorriso : UPDATE : Writing:     247711s   10.3%   fifo 100%  buf  50%  499.5xD 
+xorriso : UPDATE : Writing:     627664s   26.2%   fifo  99%  buf  50%  561.2xD 
+xorriso : UPDATE : Writing:     964734s   40.3%   fifo 100%  buf  50%  497.9xD 
+xorriso : UPDATE : Writing:    1336850s   55.8%   fifo  99%  buf  50%  549.6xD 
+xorriso : UPDATE : Writing:    1711482s   71.5%   fifo  99%  buf  50%  553.2xD 
+xorriso : UPDATE : Writing:    2077504s   86.8%   fifo 100%  buf  50%  540.4xD 
+ISO image produced: 2393888 sectors
+Written to medium : 2394048 sectors at LBA 32
+Writing to '/home/terminills/Documents/GitHub/openzfs-aros-public/build-aros/public-service-run.gSSchHvW/release.iso' completed successfully.
+
+xorriso : NOTE : -return_with SORRY 32 triggered by problem severity SORRY
