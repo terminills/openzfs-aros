@@ -99,8 +99,12 @@ elif a.action in ['type', 'key']:
     if a.action == 'key':
         key(a.args[0])
     else:
-        mapping = {'/': 'slash', '_': 'shift-minus', '-': 'minus', ':': 'shift-semicolon',
+        mapping = {'/': 'slash', '_': 'shift-minus', '-': 'minus', ':': 'shift-semicolon', ';': 'semicolon',
                    '.': 'dot', ',': 'comma', '@': 'shift-2', '#': 'shift-3', '=': 'equal', ' ': 'spc', '\n': 'ret'}
+        # Reject unsupported text before sending a partial field to the guest.
+        for ch in a.args[0]:
+            if ch not in mapping and not (ch.isascii() and ch.isalnum()):
+                raise ValueError('Unsupported input character ' + repr(ch))
         for ch in a.args[0]:
             if ch in mapping:
                 key(mapping[ch])

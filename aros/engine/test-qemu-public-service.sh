@@ -86,6 +86,8 @@ gui_destroy_preview=${AROS_TEST_GUI_DESTROY_PREVIEW:-0}
 [[ $gui_destroy_preview == 0 || ( $gui_destroy_preview == 1 && $gui_defer == 1 ) ]]
 gui_key_check=${AROS_TEST_GUI_KEY_CHECK:-0}
 [[ $gui_key_check == 0 || ( $gui_key_check == 1 && $gui == 1 && -n $cli_dir ) ]]
+gui_key_change=${AROS_TEST_GUI_KEY_CHANGE:-0}
+[[ $gui_key_change == 0 || ( $gui_key_change == 1 && $gui_key_check == 1 ) ]]
 gui_desktop=${AROS_TEST_GUI_DESKTOP:-0}
 gui_clone=${AROS_TEST_GUI_CLONE:-0}
 [[ $gui_clone == 0 || ( $gui_clone == 1 && $gui == 1 && -n $cli_dir ) ]]
@@ -125,6 +127,9 @@ if [[ $gui_defer == 1 ]];then
 fi
 if [[ $gui_key_check == 1 ]];then
     extra_maps+=(-map aros/engine/public-service-test-only /openzfs-gui-key-check-test)
+fi
+if [[ $gui_key_change == 1 ]];then
+    extra_maps+=(-map aros/engine/public-service-test-only /openzfs-gui-key-change-test)
 fi
 if [[ $gui_destroy_preview == 1 ]];then
     extra_maps+=(-map aros/engine/public-service-test-only /openzfs-gui-destroy-preview-test)
@@ -749,7 +754,9 @@ rg -q '^Public DOS links PASS write=1 hard=1 relative-soft=1 unlinked-source=1 d
 if [[ $gui_volume == 1 ]];then
     rg -q '^Public GUI volume PASS actual-mapping=1 readonly=1 exact-data=1 saved-mountfile=1 eject=1' "$run/serial-results.log"
 fi
-if [[ $gui_key_check == 1 ]];then
+if [[ $gui_key_change == 1 ]];then
+    rg -q '^Public GUI key change PASS format=passphrase iterations=400000 location=1 old-key-denied=1 new-key-load=1 cleanup=1' "$run/serial-results.log"
+elif [[ $gui_key_check == 1 ]];then
     rg -q '^Public GUI key check PASS locked=1 mount-refused=1 normal-load=1 cleanup=1' "$run/serial-results.log"
 fi
 if [[ $gui_destroy_preview == 1 ]];then

@@ -1,0 +1,59 @@
+{"time": 1792825049.729033, "action": "capture", "args": ["01-initial.png"]}
+{"time": 1792825157.9870508, "action": "relative", "args": ["100", "50"]}
+{"time": 1792825158.0278206, "action": "relative", "args": ["100", "50"]}
+{"time": 1792825158.067705, "action": "relative", "args": ["100", "34"]}
+{"time": 1792825158.1069174, "action": "relative", "args": ["100", "0"]}
+{"time": 1792825158.144087, "action": "relative", "args": ["20", "0"]}
+{"time": 1792825158.3860254, "action": "press", "args": []}
+{"time": 1792825158.4296567, "action": "relative", "args": ["-100", "30"]}
+{"time": 1792825158.4740443, "action": "relative", "args": ["-56", "0"]}
+{"time": 1792825158.7181315, "action": "press", "args": []}
+{"time": 1792825158.9668138, "action": "press", "args": []}
+{"time": 1792825159.21408, "action": "press", "args": []}
+{"time": 1792825159.4615204, "action": "press", "args": []}
+{"time": 1792825159.7082949, "action": "press", "args": []}
+{"time": 1792825159.7517202, "action": "relative", "args": ["36", "32"]}
+{"time": 1792825159.9932384, "action": "press", "args": []}
+{"time": 1792825160.113204, "action": "capture", "args": ["02-change-key.png"]}
+{"time": 1792825253.7738676, "action": "relative", "args": ["100", "0"]}
+{"time": 1792825253.812144, "action": "relative", "args": ["100", "0"]}
+{"time": 1792825253.8497686, "action": "relative", "args": ["100", "0"]}
+{"time": 1792825253.8964875, "action": "relative", "args": ["100", "0"]}
+{"time": 1792825253.9406416, "action": "relative", "args": ["100", "0"]}
+{"time": 1792825253.9837692, "action": "relative", "args": ["0", "-9"]}
+{"time": 1792825254.2302926, "action": "press", "args": []}
+{"time": 1792825258.0409162, "action": "type", "args": ["public_mirror/gui_key"]}
+{"time": 1792825258.0921013, "action": "relative", "args": ["0", "17"]}
+{"time": 1792825258.34234, "action": "press", "args": []}
+{"time": 1792825261.9938192, "action": "type", "args": ["RAM:gui-change.key"]}
+{"time": 1792825262.0397182, "action": "relative", "args": ["0", "16"]}
+{"time": 1792825262.284586, "action": "press", "args": []}
+{"time": 1792825365.7546358, "action": "capture", "args": ["03-input-interrupted.png"]}
+{"time": 1792825824.5013256, "action": "type", "args": [";pbkdf2iters=400000;keylocation=file:///RAM/gui-change.key"]}
+{"time": 1792825824.5491204, "action": "relative", "args": ["-100", "62"]}
+{"time": 1792825824.5898619, "action": "relative", "args": ["-70", "0"]}
+{"time": 1792825824.8327215, "action": "press", "args": []}
+{"time": 1792825824.9861817, "action": "capture", "args": ["04-preview.png"]}
+{"time": 1792825906.7161548, "action": "relative", "args": ["100", "0"]}
+{"time": 1792825906.7549725, "action": "relative", "args": ["100", "0"]}
+{"time": 1792825906.7971203, "action": "relative", "args": ["70", "0"]}
+{"time": 1792825907.0400975, "action": "press", "args": []}
+{"time": 1792825907.2008557, "action": "capture", "args": ["05-confirm.png"]}
+{"time": 1792826013.6415558, "action": "relative", "args": ["-100", "50"]}
+{"time": 1792826013.68235, "action": "relative", "args": ["-100", "50"]}
+{"time": 1792826013.7220604, "action": "relative", "args": ["-100", "50"]}
+{"time": 1792826013.7610915, "action": "relative", "args": ["-100", "18"]}
+{"time": 1792826013.804004, "action": "relative", "args": ["-100", "0"]}
+{"time": 1792826013.8481395, "action": "relative", "args": ["-40", "0"]}
+{"time": 1792826014.090213, "action": "press", "args": []}
+{"time": 1792826014.2447271, "action": "capture", "args": ["06-submitted.png"]}
+{"time": 1792826109.498153, "action": "capture", "args": ["07-result.png"]}
+{"time": 1792826222.5385194, "action": "relative", "args": ["-100", "-100"]}
+{"time": 1792826222.585124, "action": "relative", "args": ["-100", "-100"]}
+{"time": 1792826222.6241574, "action": "relative", "args": ["-100", "-100"]}
+{"time": 1792826222.6616287, "action": "relative", "args": ["-5", "-93"]}
+{"time": 1792826222.900214, "action": "press", "args": []}
+{"time": 1792826222.9409869, "action": "relative", "args": ["100", "30"]}
+{"time": 1792826222.984422, "action": "relative", "args": ["99", "30"]}
+{"time": 1792826223.2311485, "action": "press", "args": []}
+{"time": 1792826223.3804965, "action": "capture", "args": ["08-closed.png"]}

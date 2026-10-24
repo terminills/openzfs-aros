@@ -888,6 +888,20 @@ written before rotation. All three unload cleanly; pool-member hashes remain
 unchanged during cold reads and independent `zdb` reports no leaks. The full
 suite passes. Evidence is in `aros/tests/evidence/key-format-cold`.
 
+Interactive Manager run `native-gui-run.l9Yuy70p` additionally changes a loaded
+raw key to a passphrase through the real confirmation and authenticated request
+path, setting 400000 PBKDF2 iterations and a new file key location. After the
+Manager exits, independent CLI queries verify all three properties; unloading
+and trying the old key fails, while loading from the new persisted location
+succeeds. Cleanup, post-UI exact DOS read, and the full storage suite pass.
+Set `AROS_TEST_GUI_KEY_CHANGE=1` with `AROS_TEST_GUI_KEY_CHECK=1` and the normal
+GUI fixture to repeat this case. Screenshots, action trace, hashes and serial
+results are retained in `aros/tests/evidence/gui-key-change`. The input helper
+initially stopped at an unsupported semicolon, before submitting any request;
+semicolon support and whole-text validation were added, then the same guest
+session continued successfully. This is native AROS/QEMU GUI evidence, not a
+physical-device or power-loss test. The successful run pruned its 4.57 GiB ISO.
+
 ## Native dataset rename and destroy (2026-09-21)
 
 ### Snapshot holds and releases
