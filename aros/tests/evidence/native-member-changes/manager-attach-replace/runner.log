@@ -1,0 +1,21 @@
+xorriso 1.5.6 : RockRidge filesystem manipulator, libburnia project.
+
+Copying of file objects from ISO image to disk filesystem is: Enabled
+xorriso : NOTE : Loading ISO image tree from LBA 0
+xorriso : UPDATE :   91275 nodes read in 1 seconds
+xorriso : NOTE : Detected El-Torito boot information which currently is set to be discarded
+Drive current: -indev '/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/distfiles/aros-smp-pc-x86_64-20261022-alpha18c5.iso'
+Media current: stdio file, overwriteable
+Media status : is written , is appendable
+Boot record  : El Torito , MBR protective-msdos-label grub2-mbr cyl-align-off GPT APM
+Media summary: 1 session, 2396343 data blocks, 4680m data,  101g free
+Volume id    : 'AROS Live CD'
+xorriso : UPDATE :       1 files restored ( 469.2k) in 1 seconds = 0.3xD
+Extracted from ISO image: file '/boot/aros-base.pkg.xz'='/tmp/openzfs-dos-package-a20hkc4y/aros-base.pkg.xz'
+PASS dos.library-only package replacement; all other boot module bytes/order preserved
+/mnt/short-term/openzfs-qualification-20261024.aGFlVF7T/shared-engine.rIPiaYWt/openzfs.library: OK
+/mnt/short-term/openzfs-qualification-20261024.aGFlVF7T/shared-engine.rIPiaYWt/OpenZFSServiceNative: OK
+/mnt/short-term/openzfs-qualification-20261024.aGFlVF7T/shared-engine.rIPiaYWt/OpenZFSLibraryTest: OK
+Evidence: /mnt/short-term/openzfs-qualification-20261024.aGFlVF7T/public-service-run.5bpVRnI7
+Formatting '/mnt/short-term/openzfs-qualification-20261024.aGFlVF7T/public-service-run.5bpVRnI7/blank.raw', fmt=raw size=268435456
+PASS: public service lifecycles and mirror DOS round trip (persistent=0). Evidence: /mnt/short-term/openzfs-qualification-20261024.aGFlVF7T/public-service-run.5bpVRnI7

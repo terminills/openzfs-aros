@@ -1099,6 +1099,14 @@ changed-pool cold recovery, full-member byte comparisons and independent zdb.
 See `aros/tests/evidence/fat-bpb-bound` and `changed-pool-cold`; the earlier local
 bundle does not include this FAT prerequisite.
 
+Native destroyed-member changes can be tested with `AROS_TEST_NATIVE_CHANGES`
+set to `1` (CLI attach/replace), `2` (Manager API attach/replace), `3` (CLI add),
+or `4` (Manager API add), alongside `AROS_TEST_REQUIRE_PARTITIONS=1` and
+`AROS_TEST_NATIVE_DISCOVERY=1`. Each invocation creates fresh private MBR
+fixtures and requires its exact result marker. Do not combine with native-cold
+mode. See `aros/tests/evidence/native-member-changes` for four passing runs and
+the distinction between mixed native/file pools and all-native qualification.
+
 `AROS_TEST_GUI_DESKTOP=1` enables an interactive Wanderer fixture in the public
 GUI runner. It leaves Wanderer running, asks the tester to inspect OZPUBLIC
 and hello.txt, and rereads the file after Manager closes. This read assertion

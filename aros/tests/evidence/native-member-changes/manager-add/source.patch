@@ -1,0 +1,162 @@
+diff --git a/aros/engine/public-service-test.c b/aros/engine/public-service-test.c
+index 950ac11..f9454bf 100644
+--- a/aros/engine/public-service-test.c
++++ b/aros/engine/public-service-test.c
+@@ -1808,6 +1808,11 @@ done:
+ }
+ static int reuse_change_guid(const char *suffix,char *guid,unsigned wanted_leaves)
+ {
++    /* File paths are canonicalized to DOS volume syntax by admission; each
++     * fixture basename is unique. Native paths retain their full identity. */
++    if(strncmp(suffix,"/AROS/",6)){
++        const char *base=strrchr(suffix,'/');if(base)suffix=base;
++    }
+     struct oz_client client;static struct oz_message request;
+     if(!oz_client_open(&client))return ENOMEM;
+     memset(&request,0,sizeof(request));request.operation=4;
+@@ -1819,7 +1824,7 @@ static int reuse_change_guid(const char *suffix,char *guid,unsigned wanted_leave
+         if(reply->status==OZ_OK&&!reply->next_cursor){
+             for(unsigned i=0;i<reply->row_count;i++){
+                 struct oz_row *row=&reply->rows[i];size_t n=strlen(row->name),s=strlen(suffix);
+-                if(strcmp(row->kind,"file"))continue;
++                if(strcmp(row->kind,"file")&&strcmp(row->kind,"disk"))continue;
+                 if(strcmp(row->state,"ONLINE"))break;
+                 leaves++;
+                 if(n<s||strcmp(row->name+n-s,suffix))continue;
+@@ -1856,18 +1861,28 @@ static int reuse_change_request(int manager,unsigned op,const char *guid,
+     if(ticket.number){int released=oz_admission_release(OZ_ADMISSION_PORT,&ticket);if(!error)error=released;}
+     return error;
+ }
+-static int storage_destroyed_changes(void)
++static int storage_destroyed_changes(unsigned native,unsigned lane)
+ {
+     const char *directory_name=native_file_fixture?"OZBACK:OZReuseChanges":"RAM:OZReuseChanges";
+     char paths[5][96],command[768];
+     for(unsigned i=0;i<5;i++)snprintf(paths[i],sizeof(paths[i]),"/%s/OZReuseChanges/disk%u",native_file_fixture?"OZBACK":"RAM",i);
++    /* The native discovery fixture has two private 64 MiB MBR extents.
++     * Exercise them as attach/replace candidates, then as an added mirror.
++     * Remaining members are disposable RAM files; never clear native labels. */
++    unsigned first=native==1?0:3;
++    if(native){
++        snprintf(paths[first],sizeof(paths[first]),"/AROS/ata.device/0/partition/0");
++        snprintf(paths[first+1],sizeof(paths[first+1]),"/AROS/ata.device/0/partition/2");
++    }
+     BPTR file=0;void *zeros=AllocVec(1024*1024,MEMF_PUBLIC|MEMF_CLEAR);int error=0;
+     char guid[32];
+ #define XCHECK(x) do{if(!(x)){char line[96];snprintf(line,sizeof(line),"Public destroyed changes FAIL line=%d\n",__LINE__);note(line);error=EIO;goto done;}}while(0)
+     XCHECK(zeros);
+     BPTR directory=CreateDir((CONST_STRPTR)directory_name);XCHECK(directory);UnLock(directory);
+     for(int manager=0;manager<2;manager++){
++        if(native&&manager!=lane)continue;
+         for(unsigned i=0;i<5;i++){
++            if(native&&(i==first||i==first+1))continue;
+             char path[80];snprintf(path,sizeof(path),"%s/disk%u",directory_name,i);
+             file=Open((CONST_STRPTR)path,MODE_NEWFILE);XCHECK(file);
+             for(unsigned n=0;n<64;n++)XCHECK(Write(file,zeros,1024*1024)==1024*1024);
+@@ -1877,28 +1892,36 @@ static int storage_destroyed_changes(void)
+         snprintf(command,sizeof(command),"C:zpool create -o cachefile=none -o ashift=12 -O mountpoint=none public_reuse_target %s",paths[2]);XCHECK(!cli_command(command));
+         snprintf(command,sizeof(command),"C:zpool create -o cachefile=none -o ashift=12 -O mountpoint=none public_reuse_donor mirror %s %s",paths[3],paths[4]);XCHECK(!cli_command(command));
+         XCHECK(!pool_root_payload("public_reuse_target",1,0));
+-        XCHECK(!reuse_change_guid("/disk2",guid,1));
++        XCHECK(!reuse_change_guid(paths[2],guid,1));
++        if(native==2){
++            XCHECK(reuse_change_request(manager,9,NULL,paths[3],paths[4],1)!=0);
++            XCHECK(!cli_command("C:zpool export public_reuse_donor"));
++            XCHECK(reuse_change_request(manager,9,NULL,paths[3],paths[4],1)!=0);
++            XCHECK(!reuse_change_guid(paths[2],guid,1));
++            XCHECK(!pool_root_payload("public_reuse_target",0,0));
++            snprintf(command,sizeof(command),"C:zpool import -N -o cachefile=none -d %s -d %s public_reuse_donor",paths[3],paths[4]);XCHECK(!cli_command(command));
++        }
+         for(unsigned exported=0;exported<2;exported++){
+             if(exported)XCHECK(!cli_command("C:zpool export public_reuse_source"));
+             XCHECK(reuse_change_request(manager,11,guid,paths[0],NULL,1)!=0);
+             XCHECK(reuse_change_request(manager,13,guid,paths[0],NULL,1)!=0);
+             XCHECK(reuse_change_request(manager,9,NULL,paths[0],paths[1],1)!=0);
+-            XCHECK(!reuse_change_guid("/disk2",guid,1));
++            XCHECK(!reuse_change_guid(paths[2],guid,1));
+             XCHECK(!pool_root_payload("public_reuse_target",0,0));
+         }
+         snprintf(command,sizeof(command),"C:zpool import -N -o cachefile=none -d %s -d %s public_reuse_source",paths[0],paths[1]);XCHECK(!cli_command(command));
+         XCHECK(!cli_command("C:zpool destroy public_reuse_source"));
+         XCHECK(!reuse_change_request(manager,11,guid,paths[0],NULL,0));
+         XCHECK(!cli_command("C:zpool wait -t resilver public_reuse_target"));
+-        XCHECK(!reuse_change_guid("/disk0",guid,2));
++        XCHECK(!reuse_change_guid(paths[0],guid,2));
+         XCHECK(!pool_root_payload("public_reuse_target",0,0));
+         XCHECK(!reuse_change_request(manager,13,guid,paths[1],NULL,0));
+         XCHECK(!cli_command("C:zpool wait -t resilver,replace public_reuse_target"));
+-        XCHECK(!reuse_change_guid("/disk1",guid,2));
++        XCHECK(!reuse_change_guid(paths[1],guid,2));
+         XCHECK(!pool_root_payload("public_reuse_target",0,0));
+         XCHECK(!cli_command("C:zpool destroy public_reuse_donor"));
+         XCHECK(!reuse_change_request(manager,9,NULL,paths[3],paths[4],0));
+-        XCHECK(!reuse_change_guid("/disk4",guid,4));
++        XCHECK(!reuse_change_guid(paths[4],guid,4));
+         XCHECK(!pool_root_payload("public_reuse_target",0,0));
+         if(manager&&native_file_fixture){
+             XCHECK(!cli_command("C:zpool export public_reuse_target"));
+@@ -1907,9 +1930,11 @@ static int storage_destroyed_changes(void)
+         }
+         XCHECK(!cli_command("C:zpool destroy public_reuse_target"));
+         for(unsigned i=0;i<5;i++){
++            if(native&&(i==first||i==first+1))continue;
+             char path[80];snprintf(path,sizeof(path),"%s/disk%u",directory_name,i);XCHECK(DeleteFile((CONST_STRPTR)path));
+         }
+-        note(manager?"Public destroyed changes Manager PASS attach=1 replace=1 add=1 active-refused=3 exported-refused=3 exact-read=5 cleanup=1\n":
++        if(native){char line[160];snprintf(line,sizeof(line),"Public native changes PASS lane=%s candidates=%s exact-read=5 cleanup=1\n",manager?"Manager":"CLI",native==1?"attach-replace":"add");note(line);}
++        else note(manager?"Public destroyed changes Manager PASS attach=1 replace=1 add=1 active-refused=3 exported-refused=3 exact-read=5 cleanup=1\n":
+             "Public destroyed changes CLI PASS attach=1 replace=1 add=1 active-force-refused=3 exported-force-refused=3 exact-read=5 cleanup=1\n");
+     }
+     XCHECK(DeleteFile((CONST_STRPTR)directory_name));
+@@ -1989,7 +2014,7 @@ static int storage_file_reuse(void)
+     RCHECK(DeleteFile((CONST_STRPTR)"RAM:OZFileReuse/disk0"));
+     RCHECK(DeleteFile((CONST_STRPTR)"RAM:OZFileReuse/disk1"));
+     RCHECK(DeleteFile((CONST_STRPTR)"RAM:OZFileReuse"));
+-    RCHECK(!storage_destroyed_changes());
++    RCHECK(!storage_destroyed_changes(0,0));
+ done:
+     if(file)Close(file);if(zeros)FreeVec(zeros);
+     storage_directory=saved_directory;storage_members=saved_members;storage_layout=saved_layout;storage_replaced=saved_replaced;
+@@ -2177,6 +2202,13 @@ static int storage_native_discovery(void)
+     note("Public native discovery data PASS handler-write=1 readonly-import-read=1 readonly-write-denied=1 writable-import-read=1 cleanup=1\n");
+     note("Public native encrypted root PASS properties=6 locked-import=2 mount-denied=2 key-reload=2 exact-data=1 cleanup=1\n");
+     note("Public native encrypted root wrong key PASS denied=2 remains-locked=2 mount-denied=2 correct-recovery=2\n");
++    /* A replaced member retains active historical labels. Each native lane
++     * therefore gets a fresh disposable VM fixture, not a harness label wipe. */
++    for(unsigned fixture=1;fixture<=4;fixture++){
++        char path[80];snprintf(path,sizeof(path),"SYS:openzfs-native-changes-%u",fixture);
++        marker=Lock((CONST_STRPTR)path,SHARED_LOCK);
++        if(marker){UnLock(marker);error=storage_destroyed_changes(fixture<=2?1:2,(fixture-1)%2);if(error)return error;}
++    }
+     return 0;
+ }
+ static int storage_native_cold(int create)
+diff --git a/aros/engine/test-qemu-public-service.sh b/aros/engine/test-qemu-public-service.sh
+index e0417ae..510c09a 100644
+--- a/aros/engine/test-qemu-public-service.sh
++++ b/aros/engine/test-qemu-public-service.sh
+@@ -179,6 +179,12 @@ archive_cold_drives=()
+ partitions=${AROS_TEST_REQUIRE_PARTITIONS:-0}
+ native_discovery=${AROS_TEST_NATIVE_DISCOVERY:-0}
+ native_cold=${AROS_TEST_NATIVE_COLD:-0}
++native_changes=${AROS_TEST_NATIVE_CHANGES:-0}
++[[ $native_changes =~ ^[0-4]$ ]]
++if [[ $native_changes != 0 ]];then
++    [[ $native_discovery == 1 && $native_cold == 0 ]]
++    extra_maps+=(-map aros/engine/public-service-test-only "/openzfs-native-changes-$native_changes")
++fi
+ [[ $native_cold == 0 || ( $native_cold == 1 && $native_discovery == 1 && $gui == 0 ) ]]
+ if [[ $native_cold == 1 ]];then
+     extra_maps+=(-map aros/engine/public-service-test-only /openzfs-native-cold-test)
+@@ -834,6 +840,11 @@ if [[ $native_cold == 1 ]];then
+     echo "PASS: fresh native encrypted-root import, locked mount denial, exact read, unchanged disk. Evidence: $run"
+ fi
+ if [[ $native_discovery == 1 ]];then
++  if [[ $native_changes != 0 ]];then
++    lane=CLI; [[ $native_changes == 2 || $native_changes == 4 ]] && lane=Manager
++    candidates=attach-replace; [[ $native_changes == 3 || $native_changes == 4 ]] && candidates=add
++    rg -q "^Public native changes PASS lane=$lane candidates=$candidates exact-read=5 cleanup=1" "$run/serial-results.log"
++  fi
+   if [[ $native_cold == 1 ]];then
+     rg -q '^Public native cold retained PASS properties=6 locked-import=2 wrong-key-denied=2 key-reload=2 exact-data=1 neighbor-cleanup=1' "$run/serial-results.log"
+   else

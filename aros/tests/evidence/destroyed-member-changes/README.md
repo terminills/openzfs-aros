@@ -52,5 +52,10 @@ Follow-up `../changed-pool-cold` now qualifies the retained changed fixture
 across a separate VM boot, including degraded reads and unchanged member bytes.
 It also records the additional FAT prerequisite uncovered by that workload.
 
+Follow-up `../native-member-changes` qualifies native partition candidates
+for all three operations through CLI and Manager API in mixed native/file
+pools, using four fresh isolated VMs. The historical limits above describe
+this original evidence set, not that later coverage.
+
 The existing `mmake-bundle.0uirh9w0.tar.xz` contains the checksum fix but predates
 this expanded add/attach/replace policy.

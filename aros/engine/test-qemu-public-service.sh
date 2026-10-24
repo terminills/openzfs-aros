@@ -179,6 +179,12 @@ archive_cold_drives=()
 partitions=${AROS_TEST_REQUIRE_PARTITIONS:-0}
 native_discovery=${AROS_TEST_NATIVE_DISCOVERY:-0}
 native_cold=${AROS_TEST_NATIVE_COLD:-0}
+native_changes=${AROS_TEST_NATIVE_CHANGES:-0}
+[[ $native_changes =~ ^[0-4]$ ]]
+if [[ $native_changes != 0 ]];then
+    [[ $native_discovery == 1 && $native_cold == 0 ]]
+    extra_maps+=(-map aros/engine/public-service-test-only "/openzfs-native-changes-$native_changes")
+fi
 [[ $native_cold == 0 || ( $native_cold == 1 && $native_discovery == 1 && $gui == 0 ) ]]
 if [[ $native_cold == 1 ]];then
     extra_maps+=(-map aros/engine/public-service-test-only /openzfs-native-cold-test)
@@ -222,6 +228,7 @@ qemu_path=$(command -v "$qemu")
 sha256sum "$(realpath -e "$qemu_path")" > "$run/qemu-binary.sha256"
 printf '%s\n' "$cpus" > "$run/cpus.txt"
 printf '%s\n' "$persistent" > "$run/persistent.txt"
+printf '%s\n' "$native_changes" > "$run/native-changes.txt"
 printf '%s\n' "$disk_aio" > "$run/disk-aio.txt"
 trace_args=()
 launcher=()
@@ -834,6 +841,11 @@ if [[ $native_cold == 1 ]];then
     echo "PASS: fresh native encrypted-root import, locked mount denial, exact read, unchanged disk. Evidence: $run"
 fi
 if [[ $native_discovery == 1 ]];then
+  if [[ $native_changes != 0 ]];then
+    lane=CLI; [[ $native_changes == 2 || $native_changes == 4 ]] && lane=Manager
+    candidates=attach-replace; [[ $native_changes == 3 || $native_changes == 4 ]] && candidates=add
+    rg -q "^Public native changes PASS lane=$lane candidates=$candidates exact-read=5 cleanup=1" "$run/serial-results.log"
+  fi
   if [[ $native_cold == 1 ]];then
     rg -q '^Public native cold retained PASS properties=6 locked-import=2 wrong-key-denied=2 key-reload=2 exact-data=1 neighbor-cleanup=1' "$run/serial-results.log"
   else

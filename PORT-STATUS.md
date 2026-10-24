@@ -190,8 +190,11 @@ results, not a fresh qualification of this public snapshot.
   Active and exported members remain refused even with CLI force. Arbitrary
   nonzero media and force-create over exported members remain incomplete.
   Add/attach/replace now use the same checked destroyed-member admission as
-  create. CLI and Manager API file-backed lifecycles pass; native-device reuse
-  for all three operations remains unqualified. The actual changed two-mirror
+  create. CLI and Manager API file-backed lifecycles pass. Four isolated QEMU
+  runs also qualify native partition candidates for all three operations in
+  mixed native/file pools; see `aros/tests/evidence/native-member-changes`.
+  All-native multi-controller and changed native-pool cold recovery remain
+  unqualified. The actual changed file-backed two-mirror
   fixture now passes separate-VM healthy/degraded/restored read-only recovery,
   unchanged full-member hashes and independent zdb checks, using the additional
   private FAT BPB-boundary fix. See `aros/tests/evidence/changed-pool-cold`,
