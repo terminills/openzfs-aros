@@ -68,8 +68,6 @@ mode; the packager rejected it for lacking post-UI filesystem verification.
 That rejected attempt was retained locally and was not used to qualify the
 package. See BUILDING.md for the immutable archive identity.
 
-### Evidence retention
-
 ### Clean engine GUI qualification
 
 `native-gui-run.KQyxomdW` uses the cleanly rebuilt shared engine, not the older
@@ -85,6 +83,21 @@ for the immutable archive hash and runtime prerequisites.
 
 The garbled drawer title is a known, separately tracked limitation, not a
 successful title-rendering test.
+
+### Mounted-root identity
+
+`public-service-run.YcFEA8Za` tests the clean engine with additional native
+DOS assertions: `Examine` returns the mounted volume's name and `NameFromLock`
+returns its colon-terminated root path. These assertions run before directory
+enumeration; the full storage suite passes. The retained
+[serial results](root-identity/serial-results.log), source patch and input hashes
+identify the tested binaries. Its disposable ISO was pruned (4.57 GiB).
+Persistent repeat `public-service-run.1LNWGDML` also passes fresh healthy,
+degraded and restored mirror imports, exact DOS readback and unchanged pool
+member checks. Its [cold results](root-identity/cold-results.log) retain the
+post-import directory assertions; these are virtual disks, not hardware proof.
+This is not proof that the automatic drawer title is fixed: see the
+[separate lifetime investigation](../../handler/drawer-title-investigation.md).
 
 ### Evidence retention policy
 

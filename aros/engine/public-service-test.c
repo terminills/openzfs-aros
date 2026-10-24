@@ -134,6 +134,19 @@ static int desktop_directory(const char *volume,const char *phase)
     if(!root||!fib||!ctl||!buffer){error=ENOMEM;goto done;}
     stage="examine";
     if(!Examine(root,fib)){doserr=IoErr();error=EIO;goto done;}
+    /* Verify the DOS identity independently of the desktop title's lifetime.
+     * Callers pass a mounted root (OZPUBLIC: or OZCOLD:), not a subdirectory. */
+    stage="root-name";
+    size_t volume_length=strlen(volume);
+    char root_path[256];
+    if(!volume_length||volume[volume_length-1]!=':'||
+       volume_length>=sizeof(root_path)||
+       !NameFromLock(root,(STRPTR)root_path,sizeof(root_path))||
+       strcmp(root_path,volume)||
+       strlen((char *)fib->fib_FileName)!=volume_length-1||
+       memcmp(fib->fib_FileName,volume,volume_length-1)){
+        doserr=IoErr();error=EIO;goto done;
+    }
     stage="exnext";
     while(ExNext(root,fib)){
         if(++next_count>64){error=EOVERFLOW;goto done;}
