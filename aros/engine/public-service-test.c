@@ -1739,6 +1739,62 @@ static int pool_root_payload(const char *dataset,int create,int readonly)
     int detached=oz_mount_control(OZ_ADMISSION_PORT,dataset,"",OZ_MOUNT_DETACH,0);
     return error?error:detached;
 }
+static int native_reuse_corrupt_labels(const char *create_command,int conflict)
+{
+    /* Only called after the private runner's exact 256MiB MBR geometry and
+     * partition extents have been verified. No physical device invocation. */
+    const ULONG extent=64UL*1024*1024,base=4097UL*512,chunk=128UL*1024,label_bytes=112UL*1024;
+    struct MsgPort *port=CreateMsgPort();
+    struct IOStdReq *io=port?(void *)CreateIORequest(port,sizeof(*io)):NULL;
+    unsigned char *before=AllocVec(extent,MEMF_PUBLIC),*check=AllocVec(chunk,MEMF_PUBLIC);
+    unsigned char *saved=AllocVec(label_bytes,MEMF_PUBLIC),*replacement=AllocVec(label_bytes,MEMF_PUBLIC|MEMF_CLEAR);
+    int error=0,opened=0,changed=0;ULONG damaged=0;
+#define LCHECK(x) do{if(!(x)){error=EIO;goto done;}}while(0)
+    LCHECK(io&&before&&check&&saved&&replacement);
+    LCHECK(!OpenDevice((CONST_STRPTR)"ata.device",0,(struct IORequest *)io,0));opened=1;
+    for(ULONG offset=0;offset<extent;offset+=chunk){
+        io->io_Command=CMD_READ;io->io_Data=before+offset;io->io_Length=chunk;io->io_Offset=base+offset;
+        LCHECK(!DoIO((struct IORequest *)io)&&io->io_Actual==chunk);
+    }
+    if(conflict){
+        /* Neighbor was explicitly destroyed by this test. Its valid nvlist
+         * names a different pool/member, not arbitrary manufactured fields. */
+        io->io_Command=CMD_READ;io->io_Data=replacement;io->io_Length=label_bytes;io->io_Offset=139265UL*512+16UL*1024;
+        LCHECK(!DoIO((struct IORequest *)io)&&io->io_Actual==label_bytes);
+    }
+    /* On-disk vdev labels are 256KiB; their nvlist follows 16KiB of pads.
+     * Break each copy separately: three valid destroyed labels must not be
+     * sufficient for destructive reuse when the fourth is undecodable. */
+    for(unsigned label=0;label<4;label++){
+        damaged=label*256UL*1024+(label<2?0:extent-4UL*256*1024)+16UL*1024;
+        memcpy(saved,before+damaged,label_bytes);memcpy(before+damaged,replacement,label_bytes);changed=1;
+        io->io_Command=CMD_WRITE;io->io_Data=before+damaged;io->io_Length=label_bytes;io->io_Offset=base+damaged;
+        LCHECK(!DoIO((struct IORequest *)io)&&io->io_Actual==label_bytes);
+        LCHECK(cli_command(create_command)!=0);
+        for(ULONG offset=0;offset<extent;offset+=chunk){
+            io->io_Command=CMD_READ;io->io_Data=check;io->io_Length=chunk;io->io_Offset=base+offset;
+            LCHECK(!DoIO((struct IORequest *)io)&&io->io_Actual==chunk&&!memcmp(check,before+offset,chunk));
+        }
+        memcpy(before+damaged,saved,label_bytes);
+        io->io_Command=CMD_WRITE;io->io_Data=saved;io->io_Length=label_bytes;io->io_Offset=base+damaged;
+        LCHECK(!DoIO((struct IORequest *)io)&&io->io_Actual==label_bytes);changed=0;
+    }
+done:
+    if(opened&&changed){
+        io->io_Command=CMD_WRITE;io->io_Data=saved;io->io_Length=label_bytes;io->io_Offset=base+damaged;
+        if(DoIO((struct IORequest *)io)||io->io_Actual!=label_bytes)error=EIO;
+    }
+    if(opened)CloseDevice((struct IORequest *)io);
+    if(io)DeleteIORequest((struct IORequest *)io);
+    if(port)DeleteMsgPort(port);
+    if(before)FreeVec(before);if(check)FreeVec(check);
+    if(saved)FreeVec(saved);if(replacement)FreeVec(replacement);
+    if(!error)note(conflict?
+        "Public native conflicting reuse PASS labels=4 create-denied=4 full-extent-unchanged=4 restored=4\n":
+        "Public native corrupt reuse PASS labels=4 create-denied=4 full-extent-unchanged=4 restored=4\n");
+    return error;
+#undef LCHECK
+}
 static int storage_native_discovery(void)
 {
     BPTR marker=Lock((CONST_STRPTR)"SYS:openzfs-native-discovery-test",SHARED_LOCK);
@@ -1828,9 +1884,11 @@ static int storage_native_discovery(void)
     if(!retain){
         /* Reuse the exact destroyed extent, never clear it in the harness.
          * A new root must not expose the previous pool's payload. */
-        error=cli_command(commands[0])?EIO:0;
+        error=native_reuse_corrupt_labels(commands[0],0);
+        if(!error)error=cli_command(commands[0])?EIO:0;
         if(!error&&pool_root_payload("public_discovery",0,0)!=EIO)error=EIO;
         if(!error)error=pool_root_payload("public_discovery",1,0);
+        if(!error)error=pool_root_payload("public_discovery",0,0);
         if(!error)error=cli_command("C:zpool destroy public_discovery")?EIO:0;
         if(error)return error;
         note("Public native destroyed reuse PASS same-extent=1 no-force=1 old-payload-absent=1 new-write=1 destroyed=1\n");
@@ -1839,6 +1897,15 @@ static int storage_native_discovery(void)
     if(!error)error=cli_result("C:zfs get -H -o value org.openzfs:discovery public_neighbor >T:cli-package-output.txt", "preserved");
     if(!error)error=cli_result("C:zpool destroy public_neighbor >T:cli-package-output.txt", "");
     if(error)return error;
+    if(!retain){
+        error=native_reuse_corrupt_labels(commands[0],1);
+        if(!error)error=cli_command(commands[0])?EIO:0;
+        if(!error)error=pool_root_payload("public_discovery",1,0);
+        if(!error)error=pool_root_payload("public_discovery",0,0);
+        if(!error)error=cli_command("C:zpool destroy public_discovery")?EIO:0;
+        if(error)return error;
+        note("Public native conflicting restore PASS recreate=1 exact-data=1 destroyed=1\n");
+    }
     if(!DeleteFile((CONST_STRPTR)"RAM:discovery-root.key"))return EIO;
     if(!DeleteFile((CONST_STRPTR)"RAM:discovery-wrong.key"))return EIO;
     note("Public native reuse guards PASS active-force-denied=1 exported-force-denied=1 original-data-preserved=1\n");

@@ -24,8 +24,25 @@ Run `public-service-run.zU8A7EgU` also passes the two-VM native encrypted-root
 recovery regression with the same engine, including locked mount denial,
 correct-key exact reads, read-only write refusal and unchanged disk hash.
 
+## Damaged and conflicting label rejection
+
+Eight-CPU run `public-service-run.ncFSi7hO` adds four undecodable-label cases
+and four conflicting-label cases against the same production engine. Only the
+private QEMU fixture is altered: each 112 KiB label metadata region is replaced
+in turn, first with zeros, then with metadata from the separately destroyed
+neighbor pool. The other three copies retain the original pool identity.
+Each create must fail, and every byte of the 64 MiB extent is compared with the
+pre-attempt image before the original metadata is restored. Restored labels
+permit creation; the new payload is reopened and read exactly before destroy.
+The complete upstream storage suite and unchanged base-image checks pass.
+
+Initial `UmRuD3WU` covered header corruption; `nFJIgaxz` added conflicts but
+only checked new writes after restoration. The final run above adds explicit
+reopen/read verification and is the retained qualification for that claim.
+These cases do not simulate controller read errors or torn physical writes.
+
 This does not claim arbitrary-media force overwrite, nonblank file-vdev reuse,
-corrupted/conflicting-label fault-injection coverage, or hardware durability.
+or hardware durability.
 The earlier local `mmake-bundle.ncbjd29s.tar.xz` predates this change. Both the
 failing baseline and passing runtime evidence are retained; successful test
 ISOs were pruned while logs and native fixture disks remain.
