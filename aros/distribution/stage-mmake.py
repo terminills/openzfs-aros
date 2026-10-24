@@ -107,6 +107,30 @@ def require_encrypted_root(run):
         raise ValueError("Missing or failed encrypted pool-root regression")
 
 
+def require_changed_pool(run):
+    writer = (run / "serial-results.log").read_text().splitlines()
+    for marker in (
+        "Public destroyed changes CLI PASS attach=1 replace=1 add=1 active-force-refused=3 exported-force-refused=3 exact-read=5 cleanup=1",
+        "Public destroyed changes Manager PASS attach=1 replace=1 add=1 active-refused=3 exported-refused=3 exact-read=5 retained=1",
+    ):
+        if marker not in writer:
+            raise ValueError("Missing changed-pool writer qualification")
+    cold = (run / "cold-results.log").read_text().splitlines()
+    for phase in range(3):
+        marker = f"Public changed pool cold PASS phase={phase} exact-read=1 readonly-write-denied=1 exported=1"
+        if cold.count(marker) != 1:
+            raise ValueError("Missing changed-pool cold qualification")
+    before = member_hashes(run / "reuse-before.sha256")
+    after = member_hashes(run / "reuse-after.sha256")
+    if set(before) != {f"disk{i}" for i in range(5)} or before != after:
+        raise ValueError("Changed-pool member hashes differ or are incomplete")
+    for name, marker in (("reuse-zdb-check.log", "No leaks"),
+                         ("reuse-zdb-unchanged.log", ": OK")):
+        text = (run / name).read_text()
+        if marker not in text or "FAIL" in text:
+            raise ValueError("Missing changed-pool independent integrity evidence")
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("build", type=pathlib.Path)
@@ -114,6 +138,8 @@ def main():
     parser.add_argument("cold_run", type=pathlib.Path)
     parser.add_argument("--output-parent", type=pathlib.Path, required=True)
     parser.add_argument("--encrypted-root-run", type=pathlib.Path, required=True)
+    parser.add_argument("--fat-handler", type=pathlib.Path, required=True)
+    parser.add_argument("--dos-package", type=pathlib.Path, required=True)
     args = parser.parse_args()
     repo = pathlib.Path(__file__).resolve().parents[2]
     build, gui, cold = (p.resolve(strict=True) for p in
@@ -170,6 +196,16 @@ def main():
             raise ValueError(f"Missing release provenance: {value}")
     require_companions(cold)
     require_optional_release(cold)
+    require_changed_pool(cold)
+    # These are explicit platform inputs, not application replacements. FAT
+    # is exercised only in the persistent run; DOS policy is used in all runs.
+    fat = args.fat_handler.resolve(strict=True)
+    require_match(fat, cold, "fat-handler")
+    dos = args.dos_package.resolve(strict=True)
+    for run in (gui, cold, encrypted):
+        require_match(dos, run, "aros-base.pkg.xz")
+    selected["Platform/L/fat-handler"] = fat
+    selected["Platform/Boot/aros-base.pkg.xz"] = dos
     companions = ("OpenZFSStartup", "OpenZFSStartupMount", "OpenZFSRuntimeCheck", "OpenZFSHostIdentity")
     for name in companions:
         source = stage / "C" / name

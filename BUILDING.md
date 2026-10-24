@@ -930,13 +930,17 @@ qualification and is not inferred from QEMU success.
 
 For a MetaMake development bundle, `aros/distribution/stage-mmake.py` accepts
 the private build directory, a completed GUI public-service run, a completed
-cold public-service run, `--output-parent`, and `--encrypted-root-run` pointing
-to a completed native encrypted-root regression. It binds selected application
+cold public-service run, `--output-parent`, `--encrypted-root-run` pointing
+to a completed native encrypted-root regression, and explicit `--fat-handler`
+and `--dos-package` prerequisite paths. It binds selected application
 and POSIX runtime bytes to both runs' input hashes (Manager to the GUI run),
 checks full shared-engine symbols and release options, and creates a new
 staging directory with SHA256SUMS and evidence metadata. Platform overrides
-are separated under Platform/, never silently installed. Four companion
-utilities remain explicitly build-only in the bundle's qualification record.
+are separated under Platform/, never silently installed. The FAT handler is
+bound to persistent-test input hashes; the DOS package must match all three
+runs. The changed-pool healthy/degraded/restored cold suite and all five member
+hashes are also required. Four companion utilities are bound to their native
+startup/host-identity/runtime acceptance evidence.
 
 The pool-root-fix development archive `mmake-bundle.knv27h5n.tar.xz` has SHA256
 `091b410750703c3bb60ef96d2534b1859191186975caf2bfda25a1a0f985fa39`.

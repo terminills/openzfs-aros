@@ -4,10 +4,13 @@ Experimental development snapshot; not production-qualified storage software.
 
 ## Current local package (2026-10-24)
 
-Source now also permits consistently destroyed members for add/attach/replace.
-CLI and Manager API file-backed lifecycle tests pass; see
-`aros/tests/evidence/destroyed-member-changes` for precise runtime limits.
-The current local archive predates that expanded reuse policy.
+The local `mmake-bundle.hntel_xu.tar.xz` includes checked destroyed-member
+admission for add/attach/replace and separate tested FAT/DOS prerequisites.
+CLI and Manager API file-backed and native-partition candidate tests pass;
+fresh archive extraction passes full two-boot cold qualification. See
+`aros/tests/evidence/native-reuse-package` for hashes, screenshots, exact limits
+and remaining public binary source/license packaging work. This is not a
+production or public binary release. Archive references below are historical.
 
 The source now additionally validates embedded label checksums before allowing
 destroyed-member reuse. Old-engine reproduction and three fresh eight-CPU

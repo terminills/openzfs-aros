@@ -11,6 +11,34 @@ spec.loader.exec_module(stage)
 
 
 class EvidenceTests(unittest.TestCase):
+    def test_changed_pool_requires_each_phase_and_all_member_bytes(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = pathlib.Path(directory)
+            writer = (
+                "Public destroyed changes CLI PASS attach=1 replace=1 add=1 active-force-refused=3 exported-force-refused=3 exact-read=5 cleanup=1\n"
+                "Public destroyed changes Manager PASS attach=1 replace=1 add=1 active-refused=3 exported-refused=3 exact-read=5 retained=1\n")
+            cold = "".join(f"Public changed pool cold PASS phase={i} exact-read=1 readonly-write-denied=1 exported=1\n" for i in range(3))
+            hashes = "".join(f"hash{i}  /test/disk{i}\n" for i in range(5))
+            files = {"serial-results.log": writer, "cold-results.log": cold,
+                     "reuse-before.sha256": hashes, "reuse-after.sha256": hashes,
+                     "reuse-zdb-check.log": "No leaks\n",
+                     "reuse-zdb-unchanged.log": "disk0: OK\n"}
+            for name, value in files.items():
+                (root / name).write_text(value)
+            stage.require_changed_pool(root)
+            for name, bad in (
+                ("serial-results.log", writer.replace("retained=1", "cleanup=1")),
+                ("cold-results.log", cold.replace("phase=2", "phase=1")),
+                ("reuse-after.sha256", hashes.replace("hash4", "changed")),
+                ("reuse-before.sha256", hashes.replace("hash4  /test/disk4\n", "")),
+                ("reuse-zdb-check.log", "incomplete\n"),
+                ("reuse-zdb-unchanged.log", "disk0: OK\ndisk1: FAILED\n"),
+            ):
+                (root / name).write_text(bad)
+                with self.assertRaises(ValueError):
+                    stage.require_changed_pool(root)
+                (root / name).write_text(files[name])
+
     def test_encrypted_root_requires_terminal_success_without_assertion(self):
         with tempfile.TemporaryDirectory() as directory:
             root = pathlib.Path(directory)

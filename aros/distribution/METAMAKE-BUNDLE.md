@@ -20,7 +20,9 @@ native test suite. It is an explicit platform integration dependency, not an
 application library. A different AROS runtime/SDK can have an incompatible Task
 or Process layout even when the CPU target is identical. See BUILDING.md for
 the ABI, pthread, pipe2, and file-backing flush requirements. The private FAT
-overlay used for persistent file-backed tests is not included or installed.
+overlay used for persistent file-backed tests is included separately at
+`Platform/L/fat-handler`. It contains the flush, read-only, clean-detach and BPB
+volume-boundary corrections used by those tests. It is not automatically installed.
 Those tests do not prove that arbitrary backing filesystems flush safely.
 
 Metadata/qualification.json identifies the exact selected inputs and evidence.
@@ -30,7 +32,9 @@ The four startup/runtime/host-identity utilities are hash-bound to native
 companion tests, including persistent trusted ENVARC restore, import and mount
 in healthy/degraded/restored mirror cases. This is file-backed QEMU evidence,
 not physical USB/NVMe qualification. The tested DOS execute-policy module is
-an additional platform prerequisite, not silently installed by this archive;
+included separately at `Platform/Boot/aros-base.pkg.xz`, not silently installed
+by this archive. That boot package is tied to the exact tested base ISO;
+do not replace a different installation's entire boot package with it;
 see Docs/EXEC-POLICY.md. Stock alpha18's loader failed the execute-veto test.
 
 Metadata retains test logs, source identities and checksums. SHA256SUMS covers
