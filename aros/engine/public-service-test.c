@@ -2239,6 +2239,15 @@ static int storage_test(int gui){
         note("Public passphrase encryption PASS create-pbkdf2=350000 locked-mount-denied=1 reload=1 exact-read=1 cleanup=1\n");
     }
     if(gui){
+        BPTR defer_gui=Lock((CONST_STRPTR)"SYS:openzfs-gui-defer-test",SHARED_LOCK);
+        if(defer_gui){
+            UnLock(defer_gui);
+            STORAGE_CHECK(!cli_command("C:zfs create -o mountpoint=none public_mirror/gui_defer"));
+            STORAGE_CHECK(!cli_command("C:zfs create -o mountpoint=none public_mirror/gui_defer/child"));
+            STORAGE_CHECK(!cli_command("C:zfs snapshot -r public_mirror/gui_defer@gui"));
+            STORAGE_CHECK(!cli_command("C:zfs hold gui_keep public_mirror/gui_defer/child@gui"));
+            note("Public GUI deferred READY target=public_mirror/gui_defer@gui options=defer=on recursive=1\n");
+        }
         BPTR clone_gui=Lock((CONST_STRPTR)"SYS:openzfs-gui-clone-test",SHARED_LOCK);
         if(clone_gui){
             UnLock(clone_gui);
@@ -2260,6 +2269,15 @@ static int storage_test(int gui){
         if(volume_gui){UnLock(volume_gui);note("Public GUI volume READY: Devices, unit 5, public_mirror/public_volume, read-only Remap; save whole-volume FFS mount file T:OZBLOCK, then close Manager\n");}
         note("Public storage GUI ready: mounted public_mirror/files with hello.txt\n");
         STORAGE_CHECK(SystemTags((CONST_STRPTR)"C:OpenZFSManagerNative",TAG_DONE)==0);
+        if(defer_gui){
+            STORAGE_CHECK(cli_command("C:zfs list -t snapshot public_mirror/gui_defer@gui")!=0);
+            STORAGE_CHECK(!cli_result("C:zfs get -H -o value defer_destroy public_mirror/gui_defer/child@gui >T:cli-package-output.txt","on"));
+            STORAGE_CHECK(!cli_result("C:zfs get -H -o value userrefs public_mirror/gui_defer/child@gui >T:cli-package-output.txt","1"));
+            STORAGE_CHECK(!cli_command("C:zfs release gui_keep public_mirror/gui_defer/child@gui"));
+            STORAGE_CHECK(cli_command("C:zfs list -t snapshot public_mirror/gui_defer/child@gui")!=0);
+            STORAGE_CHECK(!cli_command("C:zfs destroy -r public_mirror/gui_defer"));
+            note("Public GUI deferred PASS parent-removed=1 child-deferred=1 hold-retained=1 release-removes=1 cleanup=1\n");
+        }
         if(clone_gui){
             STORAGE_CHECK(!cli_result("C:zfs get -Hp -o value quota public_mirror/gui_clone >T:cli-package-output.txt","33554432"));
             STORAGE_CHECK(!cli_result("C:zfs get -H -o value compression public_mirror/gui_clone >T:cli-package-output.txt","off"));

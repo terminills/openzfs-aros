@@ -1,0 +1,69 @@
+diff --git a/aros/engine/public-service-test.c b/aros/engine/public-service-test.c
+index f0260f4..7e73a8f 100644
+--- a/aros/engine/public-service-test.c
++++ b/aros/engine/public-service-test.c
+@@ -2239,6 +2239,15 @@ static int storage_test(int gui){
+         note("Public passphrase encryption PASS create-pbkdf2=350000 locked-mount-denied=1 reload=1 exact-read=1 cleanup=1\n");
+     }
+     if(gui){
++        BPTR defer_gui=Lock((CONST_STRPTR)"SYS:openzfs-gui-defer-test",SHARED_LOCK);
++        if(defer_gui){
++            UnLock(defer_gui);
++            STORAGE_CHECK(!cli_command("C:zfs create -o mountpoint=none public_mirror/gui_defer"));
++            STORAGE_CHECK(!cli_command("C:zfs create -o mountpoint=none public_mirror/gui_defer/child"));
++            STORAGE_CHECK(!cli_command("C:zfs snapshot -r public_mirror/gui_defer@gui"));
++            STORAGE_CHECK(!cli_command("C:zfs hold gui_keep public_mirror/gui_defer/child@gui"));
++            note("Public GUI deferred READY target=public_mirror/gui_defer@gui options=defer=on recursive=1\n");
++        }
+         BPTR clone_gui=Lock((CONST_STRPTR)"SYS:openzfs-gui-clone-test",SHARED_LOCK);
+         if(clone_gui){
+             UnLock(clone_gui);
+@@ -2260,6 +2269,15 @@ static int storage_test(int gui){
+         if(volume_gui){UnLock(volume_gui);note("Public GUI volume READY: Devices, unit 5, public_mirror/public_volume, read-only Remap; save whole-volume FFS mount file T:OZBLOCK, then close Manager\n");}
+         note("Public storage GUI ready: mounted public_mirror/files with hello.txt\n");
+         STORAGE_CHECK(SystemTags((CONST_STRPTR)"C:OpenZFSManagerNative",TAG_DONE)==0);
++        if(defer_gui){
++            STORAGE_CHECK(cli_command("C:zfs list -t snapshot public_mirror/gui_defer@gui")!=0);
++            STORAGE_CHECK(!cli_result("C:zfs get -H -o value defer_destroy public_mirror/gui_defer/child@gui >T:cli-package-output.txt","on"));
++            STORAGE_CHECK(!cli_result("C:zfs get -H -o value userrefs public_mirror/gui_defer/child@gui >T:cli-package-output.txt","1"));
++            STORAGE_CHECK(!cli_command("C:zfs release gui_keep public_mirror/gui_defer/child@gui"));
++            STORAGE_CHECK(cli_command("C:zfs list -t snapshot public_mirror/gui_defer/child@gui")!=0);
++            STORAGE_CHECK(!cli_command("C:zfs destroy -r public_mirror/gui_defer"));
++            note("Public GUI deferred PASS parent-removed=1 child-deferred=1 hold-retained=1 release-removes=1 cleanup=1\n");
++        }
+         if(clone_gui){
+             STORAGE_CHECK(!cli_result("C:zfs get -Hp -o value quota public_mirror/gui_clone >T:cli-package-output.txt","33554432"));
+             STORAGE_CHECK(!cli_result("C:zfs get -H -o value compression public_mirror/gui_clone >T:cli-package-output.txt","off"));
+diff --git a/aros/engine/test-qemu-public-service.sh b/aros/engine/test-qemu-public-service.sh
+index ed1c1ea..34d0a16 100644
+--- a/aros/engine/test-qemu-public-service.sh
++++ b/aros/engine/test-qemu-public-service.sh
+@@ -80,6 +80,8 @@ sequential=${AROS_TEST_SEQUENTIAL:-0}
+ [[ $sequential == 0 || ( $sequential == 1 && $dspare == 1 ) ]]
+ [[ $startup_import == 0 || ( $layout == mirror && $replace == 0 && $dspare == 0 ) ]]
+ gui=${AROS_PUBLIC_GUI:-0}
++gui_defer=${AROS_TEST_GUI_DEFER:-0}
++[[ $gui_defer == 0 || ( $gui_defer == 1 && $gui == 1 && -n $cli_dir ) ]]
+ gui_desktop=${AROS_TEST_GUI_DESKTOP:-0}
+ gui_clone=${AROS_TEST_GUI_CLONE:-0}
+ [[ $gui_clone == 0 || ( $gui_clone == 1 && $gui == 1 && -n $cli_dir ) ]]
+@@ -114,6 +116,9 @@ fi
+ if [[ $gui_clone == 1 ]];then
+     extra_maps+=(-map aros/engine/public-service-test-only /openzfs-gui-clone-test)
+ fi
++if [[ $gui_defer == 1 ]];then
++    extra_maps+=(-map aros/engine/public-service-test-only /openzfs-gui-defer-test)
++fi
+ if [[ $gui_volume == 1 ]];then
+     extra_maps+=(-map aros/engine/public-service-test-only /openzfs-gui-volume-test)
+ fi
+@@ -734,6 +739,9 @@ rg -q '^Public DOS links PASS write=1 hard=1 relative-soft=1 unlinked-source=1 d
+ if [[ $gui_volume == 1 ]];then
+     rg -q '^Public GUI volume PASS actual-mapping=1 readonly=1 exact-data=1 saved-mountfile=1 eject=1' "$run/serial-results.log"
+ fi
++if [[ $gui_defer == 1 ]];then
++    rg -q '^Public GUI deferred PASS parent-removed=1 child-deferred=1 hold-retained=1 release-removes=1 cleanup=1' "$run/serial-results.log"
++fi
+ if [[ $gui_clone == 1 ]];then
+     rg -q '^Public GUI clone PASS quota=1 compression=1 no-mount=1 origin=1 cleanup=1' "$run/serial-results.log"
+ fi

@@ -80,6 +80,8 @@ sequential=${AROS_TEST_SEQUENTIAL:-0}
 [[ $sequential == 0 || ( $sequential == 1 && $dspare == 1 ) ]]
 [[ $startup_import == 0 || ( $layout == mirror && $replace == 0 && $dspare == 0 ) ]]
 gui=${AROS_PUBLIC_GUI:-0}
+gui_defer=${AROS_TEST_GUI_DEFER:-0}
+[[ $gui_defer == 0 || ( $gui_defer == 1 && $gui == 1 && -n $cli_dir ) ]]
 gui_desktop=${AROS_TEST_GUI_DESKTOP:-0}
 gui_clone=${AROS_TEST_GUI_CLONE:-0}
 [[ $gui_clone == 0 || ( $gui_clone == 1 && $gui == 1 && -n $cli_dir ) ]]
@@ -113,6 +115,9 @@ if [[ $gui_desktop == 1 ]];then
 fi
 if [[ $gui_clone == 1 ]];then
     extra_maps+=(-map aros/engine/public-service-test-only /openzfs-gui-clone-test)
+fi
+if [[ $gui_defer == 1 ]];then
+    extra_maps+=(-map aros/engine/public-service-test-only /openzfs-gui-defer-test)
 fi
 if [[ $gui_volume == 1 ]];then
     extra_maps+=(-map aros/engine/public-service-test-only /openzfs-gui-volume-test)
@@ -733,6 +738,9 @@ echo "PASS: public service lifecycles and $layout DOS round trip (persistent=$pe
 rg -q '^Public DOS links PASS write=1 hard=1 relative-soft=1 unlinked-source=1 dangling-refused=1' "$run/serial-results.log"
 if [[ $gui_volume == 1 ]];then
     rg -q '^Public GUI volume PASS actual-mapping=1 readonly=1 exact-data=1 saved-mountfile=1 eject=1' "$run/serial-results.log"
+fi
+if [[ $gui_defer == 1 ]];then
+    rg -q '^Public GUI deferred PASS parent-removed=1 child-deferred=1 hold-retained=1 release-removes=1 cleanup=1' "$run/serial-results.log"
 fi
 if [[ $gui_clone == 1 ]];then
     rg -q '^Public GUI clone PASS quota=1 compression=1 no-mount=1 origin=1 cleanup=1' "$run/serial-results.log"

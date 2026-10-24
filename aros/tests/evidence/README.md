@@ -101,6 +101,17 @@ This is not proof that the automatic drawer title is fixed: see the
 
 ### Evidence retention policy
 
+`gui-deferred` records `native-gui-run.RFfSUBE5`: actual Manager entry,
+preview, confirmation and submission of recursive deferred destruction.
+The [serial log](gui-deferred/serial.log) independently verifies parent removal,
+held-child retention, removal on release, cleanup and post-UI exact file reads.
+
+![Deferred destruction preview](gui-deferred/03-preview.png)
+
+![Explicit confirmation](gui-deferred/04-confirmation.png)
+
+![Authenticated result](gui-deferred/05-submitted.png)
+
 `defer-manager` records `native-gui-run.jDpBYxhs` using shared engine
 `scTORDPP` and the rebuilt Manager. The live query reports the pool ONLINE;
 post-UI exact DOS readback and the full storage suite pass. The known automatic

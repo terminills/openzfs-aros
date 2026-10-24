@@ -66,6 +66,10 @@ upstream snapshot-destruction ioctl. Native QEMU run `public-service-run.rlEPj1H
 checks unheld removal, held-snapshot retention and removal on release, plus
 confirmation and snapshot-only restrictions. This is not a physical-device
 qualification or an exhaustive delegation-policy test.
+Native Manager run `native-gui-run.RFfSUBE5` additionally qualifies actual
+request entry, preview, confirmation and authenticated submission. Independent
+post-UI queries verify parent removal, held-child deferral and removal after
+release; unrelated DOS readback and the full storage suite pass.
 
 Manager clone requests with properties now execute through the asynchronous
 worker and upstream `zfs clone -u`, without implicitly mounting the result.

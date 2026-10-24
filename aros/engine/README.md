@@ -891,6 +891,16 @@ both absent, while unrelated DOS file contents remain exact. Host `zdb -bcc`
 passes on the changed members. This is clean export/reimport evidence, not
 an abrupt power-loss guarantee.
 
+Manager submission is now qualified by `native-gui-run.RFfSUBE5`. The
+`AROS_TEST_GUI_DEFER=1` fixture creates an unheld parent snapshot and a held
+child snapshot. Advanced/Datasets/destroy receives the target, `defer=on` and
+Recursive through actual keyboard/mouse entry; preview, confirmation and the
+successful authenticated response are captured. After Manager closes,
+independent CLI queries require parent absence, child `defer_destroy=on` and
+one hold, then release the hold and verify child removal. Fixture cleanup,
+post-UI exact DOS readback and the full storage suite pass. These screenshots
+are in `aros/tests/evidence/gui-deferred`; no physical device was used.
+
 Authenticated recursive dataset destruction is deliberately non-atomic and
 narrower than recursive snapshot destruction. The Manager first refuses any
 service-mounted descendant, then enumerates the tree without mutation,
