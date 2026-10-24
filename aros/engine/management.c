@@ -387,6 +387,41 @@ static int authenticated_create(struct oz_message *m,const struct oz_packet_secu
     struct create_key_context context={m,security};
     return oz_zpl_dataset_create_prepared(m->target,m->options,caller,prepare_create_key,&context);
 }
+static int key_change_options(const char *text,uint64_t *format,uint64_t *iters,
+    char *location,size_t capacity)
+{
+    char options[sizeof(((struct oz_message *)0)->options)];
+    unsigned seen=0;
+    *format=*iters=0;location[0]=0;
+    if(strlen(text)>=sizeof(options))return EINVAL;
+    strcpy(options,text);
+    for(char *item=options;*item;){
+        char *end=strchr(item,';');if(end)*end=0;
+        char *value=strchr(item,'=');if(!value||value==item||!value[1])return EINVAL;
+        *value++=0;unsigned bit;
+        if(!strcmp(item,"keyformat")){
+            bit=1;
+            if(!strcmp(value,"raw"))*format=ZFS_KEYFORMAT_RAW;
+            else if(!strcmp(value,"hex"))*format=ZFS_KEYFORMAT_HEX;
+            else if(!strcmp(value,"passphrase"))*format=ZFS_KEYFORMAT_PASSPHRASE;
+            else return EINVAL;
+        }else if(!strcmp(item,"pbkdf2iters")){
+            bit=2;
+            if(strspn(value,"0123456789")!=strlen(value))return EINVAL;
+            errno=0;*iters=strtoull(value,NULL,10);
+            if(errno||*iters<MIN_PBKDF2_ITERATIONS||*iters>UINT32_MAX)return EINVAL;
+        }else if(!strcmp(item,"keylocation")){
+            bit=4;
+            if(strlen(value)>=capacity||!zfs_prop_valid_keylocation(value,B_TRUE))return EINVAL;
+            strcpy(location,value);
+        }else return EINVAL;
+        if(seen&bit)return EINVAL;
+        seen|=bit;
+        if(!end)break;
+        item=end+1;if(!*item)return EINVAL;
+    }
+    return 0;
+}
 static int authenticated_key_file(struct oz_message *m,const struct oz_packet_security *security)
 {
     if(!ready)return ENXIO;
@@ -396,7 +431,7 @@ static int authenticated_key_file(struct oz_message *m,const struct oz_packet_se
     int inherit=change&&!strcmp(m->options,"inherit=on");
     if((m->operation!=62&&!change)||
         (m->flags!=OZ_CONFIRMED&&m->flags!=(OZ_CONFIRMED|(!change?OZ_DRYRUN:0)))||
-        (inherit?m->argument[0]!=0:(!m->argument[0]||m->options[0])))return ENOTSUP;
+        (inherit?m->argument[0]!=0:(!m->argument[0]||(!change&&m->options[0]))))return ENOTSUP;
     if(dataset_namecheck(m->target,NULL,NULL)||strchr(m->target,'@')||strchr(m->target,'#'))return EINVAL;
     cred_t *caller=oz_packet_security_cred(security);
     int error=oz_dataset_property_perms(m->target,change?"change-key":"load-key",caller);
@@ -417,6 +452,12 @@ static int authenticated_key_file(struct oz_message *m,const struct oz_packet_se
         if(params)dsl_crypto_params_free(params,!!error);
         return error;
     }
+    uint64_t requested_format=0,requested_iters=0;
+    char keylocation[sizeof(m->options)]={0};
+    if(change){
+        error=key_change_options(m->options,&requested_format,&requested_iters,keylocation,sizeof(keylocation));
+        if(error)return error;
+    }
     /* keyformat is computed from the upstream crypto object, not an ordinary
      * inherited DSL property. Do not guess a format from key-file contents. */
     objset_t *os=NULL;nvlist_t *props=NULL,*entry=NULL;uint64_t format=0,salt=0,iterations=0;
@@ -434,12 +475,17 @@ static int authenticated_key_file(struct oz_message *m,const struct oz_packet_se
         dmu_objset_rele(os,FTAG);fnvlist_free(props);
     }
     if(error)return error;
+    if(change&&requested_format)format=requested_format;
     if(format!=ZFS_KEYFORMAT_RAW&&format!=ZFS_KEYFORMAT_HEX&&format!=ZFS_KEYFORMAT_PASSPHRASE)return ENOTSUP;
+    if(change){
+        salt=iterations=0;
+        if(requested_iters&&format!=ZFS_KEYFORMAT_PASSPHRASE)return EINVAL;
+    }
     if(change&&format==ZFS_KEYFORMAT_PASSPHRASE){
         error=random_get_bytes((uint8_t *)&salt,sizeof(salt));
         if(error)return error;
         if(!salt)return EIO; /* upstream rejects a zero replacement salt */
-        iterations=DEFAULT_PBKDF2_ITERATIONS;
+        iterations=requested_iters?requested_iters:DEFAULT_PBKDF2_ITERATIONS;
     }
     BPTR lock=0;struct receive_input stream={0};
     error=ENODEV;
@@ -485,6 +531,7 @@ static int authenticated_key_file(struct oz_message *m,const struct oz_packet_se
         nvlist_t *hidden=fnvlist_alloc();dsl_crypto_params_t *params=NULL;
         nvlist_t *newprops=change?fnvlist_alloc():NULL;
         if(newprops)fnvlist_add_uint64(newprops,"keyformat",format);
+        if(newprops&&keylocation[0])fnvlist_add_string(newprops,"keylocation",keylocation);
         if(newprops&&format==ZFS_KEYFORMAT_PASSPHRASE){
             fnvlist_add_uint64(newprops,"pbkdf2salt",salt);
             fnvlist_add_uint64(newprops,"pbkdf2iters",iterations);

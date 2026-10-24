@@ -861,6 +861,27 @@ passes. `aros/tests/evidence/key-file-policy` retains the logs and provenance.
 This qualifies direct native paths, not every alias/link or foreign-filesystem
 permission implementation.
 
+### Key replacement properties
+
+Authenticated operation 64 accepts semicolon-separated `keyformat=raw|hex|passphrase`,
+`pbkdf2iters=100000..4294967295` and `keylocation=URI`. Format/location default
+to the existing values. Iterations are accepted only for passphrases; when
+omitted a new passphrase key uses the upstream default. Duplicate/unknown
+options, invalid URI syntax, invalid format and invalid iteration counts fail
+before key-file access. `inherit=on` remains a separate, exclusive mode.
+The supplied native key-file argument is always read under the captured caller;
+keylocation is persisted metadata, not an instruction to fetch a URL here.
+Changing to raw/hex clears PBKDF2 parameters. Upstream validates and commits
+the wrapping-key change; callers still need change-key permission, a loaded
+key, writable pool and confirmation. No force or dry-run is added.
+
+Fresh native run `public-service-run.aUgiSlp8` verifies eight invalid option
+combinations, hex-to-passphrase with 400000 iterations and a new location,
+old-key rejection, passphrase-to-raw and raw-to-hex, reloads and exact readback
+of data written before rotation. The full storage suite passes. Evidence is
+in `aros/tests/evidence/key-format-rotation`; this is native API evidence,
+not yet an interactive Manager or cold-import qualification of these options.
+
 ## Native dataset rename and destroy (2026-09-21)
 
 ### Snapshot holds and releases

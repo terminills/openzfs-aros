@@ -1,0 +1,171 @@
+diff --git a/aros/engine/admission.c b/aros/engine/admission.c
+index 574554d..f864b2f 100644
+--- a/aros/engine/admission.c
++++ b/aros/engine/admission.c
+@@ -193,6 +193,11 @@ int oz_admitted_capture(struct DosPacket *packet, struct MsgPort *service,
+     else if(m->operation==64&&!strcmp(m->options,"inherit=on")) {
+         if(!key_load||m->flags!=OZ_CONFIRMED||m->argument[0]||m->cursor||m->job_id)error=ENOTSUP;
+     }
++    else if(m->operation==64) {
++        /* The credential-aware key adapter validates the bounded property
++         * grammar before accessing the replacement key file. */
++        if(!key_load||m->flags!=OZ_CONFIRMED||!m->argument[0]||m->cursor||m->job_id)error=ENOTSUP;
++    }
+     else if(m->operation==38) {
+         int deferred=!strcmp(m->options,"defer=on");
+         int recursive=m->flags==(OZ_CONFIRMED|OZ_RECURSIVE);
+diff --git a/aros/engine/management.c b/aros/engine/management.c
+index ac8c0bf..31d0cc9 100644
+--- a/aros/engine/management.c
++++ b/aros/engine/management.c
+@@ -387,6 +387,41 @@ static int authenticated_create(struct oz_message *m,const struct oz_packet_secu
+     struct create_key_context context={m,security};
+     return oz_zpl_dataset_create_prepared(m->target,m->options,caller,prepare_create_key,&context);
+ }
++static int key_change_options(const char *text,uint64_t *format,uint64_t *iters,
++    char *location,size_t capacity)
++{
++    char options[sizeof(((struct oz_message *)0)->options)];
++    unsigned seen=0;
++    *format=*iters=0;location[0]=0;
++    if(strlen(text)>=sizeof(options))return EINVAL;
++    strcpy(options,text);
++    for(char *item=options;*item;){
++        char *end=strchr(item,';');if(end)*end=0;
++        char *value=strchr(item,'=');if(!value||value==item||!value[1])return EINVAL;
++        *value++=0;unsigned bit;
++        if(!strcmp(item,"keyformat")){
++            bit=1;
++            if(!strcmp(value,"raw"))*format=ZFS_KEYFORMAT_RAW;
++            else if(!strcmp(value,"hex"))*format=ZFS_KEYFORMAT_HEX;
++            else if(!strcmp(value,"passphrase"))*format=ZFS_KEYFORMAT_PASSPHRASE;
++            else return EINVAL;
++        }else if(!strcmp(item,"pbkdf2iters")){
++            bit=2;
++            if(strspn(value,"0123456789")!=strlen(value))return EINVAL;
++            errno=0;*iters=strtoull(value,NULL,10);
++            if(errno||*iters<MIN_PBKDF2_ITERATIONS||*iters>UINT32_MAX)return EINVAL;
++        }else if(!strcmp(item,"keylocation")){
++            bit=4;
++            if(strlen(value)>=capacity||!zfs_prop_valid_keylocation(value,B_TRUE))return EINVAL;
++            strcpy(location,value);
++        }else return EINVAL;
++        if(seen&bit)return EINVAL;
++        seen|=bit;
++        if(!end)break;
++        item=end+1;if(!*item)return EINVAL;
++    }
++    return 0;
++}
+ static int authenticated_key_file(struct oz_message *m,const struct oz_packet_security *security)
+ {
+     if(!ready)return ENXIO;
+@@ -396,7 +431,7 @@ static int authenticated_key_file(struct oz_message *m,const struct oz_packet_se
+     int inherit=change&&!strcmp(m->options,"inherit=on");
+     if((m->operation!=62&&!change)||
+         (m->flags!=OZ_CONFIRMED&&m->flags!=(OZ_CONFIRMED|(!change?OZ_DRYRUN:0)))||
+-        (inherit?m->argument[0]!=0:(!m->argument[0]||m->options[0])))return ENOTSUP;
++        (inherit?m->argument[0]!=0:(!m->argument[0]||(!change&&m->options[0]))))return ENOTSUP;
+     if(dataset_namecheck(m->target,NULL,NULL)||strchr(m->target,'@')||strchr(m->target,'#'))return EINVAL;
+     cred_t *caller=oz_packet_security_cred(security);
+     int error=oz_dataset_property_perms(m->target,change?"change-key":"load-key",caller);
+@@ -417,6 +452,12 @@ static int authenticated_key_file(struct oz_message *m,const struct oz_packet_se
+         if(params)dsl_crypto_params_free(params,!!error);
+         return error;
+     }
++    uint64_t requested_format=0,requested_iters=0;
++    char keylocation[sizeof(m->options)]={0};
++    if(change){
++        error=key_change_options(m->options,&requested_format,&requested_iters,keylocation,sizeof(keylocation));
++        if(error)return error;
++    }
+     /* keyformat is computed from the upstream crypto object, not an ordinary
+      * inherited DSL property. Do not guess a format from key-file contents. */
+     objset_t *os=NULL;nvlist_t *props=NULL,*entry=NULL;uint64_t format=0,salt=0,iterations=0;
+@@ -434,12 +475,17 @@ static int authenticated_key_file(struct oz_message *m,const struct oz_packet_se
+         dmu_objset_rele(os,FTAG);fnvlist_free(props);
+     }
+     if(error)return error;
++    if(change&&requested_format)format=requested_format;
+     if(format!=ZFS_KEYFORMAT_RAW&&format!=ZFS_KEYFORMAT_HEX&&format!=ZFS_KEYFORMAT_PASSPHRASE)return ENOTSUP;
++    if(change){
++        salt=iterations=0;
++        if(requested_iters&&format!=ZFS_KEYFORMAT_PASSPHRASE)return EINVAL;
++    }
+     if(change&&format==ZFS_KEYFORMAT_PASSPHRASE){
+         error=random_get_bytes((uint8_t *)&salt,sizeof(salt));
+         if(error)return error;
+         if(!salt)return EIO; /* upstream rejects a zero replacement salt */
+-        iterations=DEFAULT_PBKDF2_ITERATIONS;
++        iterations=requested_iters?requested_iters:DEFAULT_PBKDF2_ITERATIONS;
+     }
+     BPTR lock=0;struct receive_input stream={0};
+     error=ENODEV;
+@@ -485,6 +531,7 @@ static int authenticated_key_file(struct oz_message *m,const struct oz_packet_se
+         nvlist_t *hidden=fnvlist_alloc();dsl_crypto_params_t *params=NULL;
+         nvlist_t *newprops=change?fnvlist_alloc():NULL;
+         if(newprops)fnvlist_add_uint64(newprops,"keyformat",format);
++        if(newprops&&keylocation[0])fnvlist_add_string(newprops,"keylocation",keylocation);
+         if(newprops&&format==ZFS_KEYFORMAT_PASSPHRASE){
+             fnvlist_add_uint64(newprops,"pbkdf2salt",salt);
+             fnvlist_add_uint64(newprops,"pbkdf2iters",iterations);
+diff --git a/aros/engine/public-service-test.c b/aros/engine/public-service-test.c
+index b53f4e7..405af8f 100644
+--- a/aros/engine/public-service-test.c
++++ b/aros/engine/public-service-test.c
+@@ -2313,6 +2313,42 @@ static int storage_test(int gui){
+             STORAGE_CHECK(!storage_request(62,"public_mirror/check_hex","RAM:public-hex.key",NULL));
+             STORAGE_CHECK(!storage_request_flags(62,"public_mirror/check_hex","RAM:public-hex.key",NULL,OZ_CONFIRMED|OZ_DRYRUN));
+             STORAGE_CHECK(!cli_result("C:zfs get -H -o value keystatus public_mirror/check_hex >T:cli-package-output.txt","available"));
++            const char *bad_change[]={"keyformat=invalid","keyformat=hex;pbkdf2iters=400000",
++                "keyformat=passphrase;pbkdf2iters=99999","pbkdf2iters=4294967296",
++                "keyformat=hex;keyformat=raw","compression=off","keylocation=invalid","keyformat=hex;"};
++            for(unsigned i=0;i<sizeof(bad_change)/sizeof(bad_change[0]);i++)
++                STORAGE_CHECK(storage_request(64,"public_mirror/check_hex","RAM:public-hex.key",bad_change[i])!=0);
++            STORAGE_CHECK(!cli_result("C:zfs get -H -o value keyformat public_mirror/check_hex >T:cli-package-output.txt","hex"));
++            STORAGE_CHECK(!oz_mount_control(OZ_ADMISSION_PORT,"public_mirror/check_hex","OZREKEY",OZ_MOUNT_ATTACH,0));
++            file=Open((CONST_STRPTR)"OZREKEY:payload",MODE_NEWFILE);STORAGE_CHECK(file);
++            STORAGE_CHECK(Write(file,payload,sizeof(storage_payload)-1)==sizeof(storage_payload)-1);
++            STORAGE_CHECK(Flush(file));STORAGE_CHECK(Close(file));file=0;
++            STORAGE_CHECK(!oz_mount_control(OZ_ADMISSION_PORT,"public_mirror/check_hex","",OZ_MOUNT_DETACH,0));
++            file=Open((CONST_STRPTR)"RAM:rekey-pass",MODE_NEWFILE);STORAGE_CHECK(file);
++            STORAGE_CHECK(Write(file,storage_passphrase,sizeof(storage_passphrase)-1)==sizeof(storage_passphrase)-1);STORAGE_CHECK(Close(file));file=0;
++            STORAGE_CHECK(!storage_request(64,"public_mirror/check_hex","RAM:rekey-pass","keyformat=passphrase;pbkdf2iters=400000;keylocation=file:///RAM/rekey-pass"));
++            STORAGE_CHECK(!cli_result("C:zfs get -H -o value keyformat public_mirror/check_hex >T:cli-package-output.txt","passphrase"));
++            STORAGE_CHECK(!cli_result("C:zfs get -H -o value pbkdf2iters public_mirror/check_hex >T:cli-package-output.txt","400000"));
++            STORAGE_CHECK(!cli_result("C:zfs get -H -o value keylocation public_mirror/check_hex >T:cli-package-output.txt","file:///RAM/rekey-pass"));
++            STORAGE_CHECK(!cli_command("C:zfs unload-key public_mirror/check_hex"));
++            STORAGE_CHECK(cli_command("C:zfs load-key -L file:///RAM/public-hex.key public_mirror/check_hex")!=0);
++            STORAGE_CHECK(!cli_command("C:zfs load-key public_mirror/check_hex"));
++            unsigned char rekey_raw[32];memset(rekey_raw,0x5c,sizeof(rekey_raw));
++            file=Open((CONST_STRPTR)"RAM:rekey-raw",MODE_NEWFILE);STORAGE_CHECK(file);
++            STORAGE_CHECK(Write(file,rekey_raw,sizeof(rekey_raw))==sizeof(rekey_raw));STORAGE_CHECK(Close(file));file=0;
++            STORAGE_CHECK(!storage_request(64,"public_mirror/check_hex","RAM:rekey-raw","keyformat=raw;keylocation=prompt"));
++            STORAGE_CHECK(!cli_result("C:zfs get -H -o value keyformat public_mirror/check_hex >T:cli-package-output.txt","raw"));
++            STORAGE_CHECK(!cli_command("C:zfs unload-key public_mirror/check_hex"));
++            STORAGE_CHECK(!storage_request(62,"public_mirror/check_hex","RAM:rekey-raw",NULL));
++            STORAGE_CHECK(!storage_request(64,"public_mirror/check_hex","RAM:public-hex.key","keyformat=hex;keylocation=file:///RAM/public-hex.key"));
++            STORAGE_CHECK(!cli_command("C:zfs unload-key public_mirror/check_hex"));
++            STORAGE_CHECK(!cli_command("C:zfs load-key public_mirror/check_hex"));
++            STORAGE_CHECK(!oz_mount_control(OZ_ADMISSION_PORT,"public_mirror/check_hex","OZREKEY",OZ_MOUNT_ATTACH,OZ_MOUNT_READONLY));
++            file=Open((CONST_STRPTR)"OZREKEY:payload",MODE_OLDFILE);STORAGE_CHECK(file);
++            STORAGE_CHECK(Read(file,actual,sizeof(actual))==sizeof(storage_payload)-1&&!memcmp(actual,payload,sizeof(storage_payload)-1));STORAGE_CHECK(Close(file));file=0;
++            STORAGE_CHECK(!oz_mount_control(OZ_ADMISSION_PORT,"public_mirror/check_hex","",OZ_MOUNT_DETACH,0));
++            STORAGE_CHECK(DeleteFile((CONST_STRPTR)"RAM:rekey-pass"));STORAGE_CHECK(DeleteFile((CONST_STRPTR)"RAM:rekey-raw"));
++            note("Public key format rotation PASS invalid-options=8 hex-to-passphrase=1 iterations=400000 location=1 old-key-denied=1 passphrase-to-raw=1 raw-to-hex=1 exact-data=1\n");
+             STORAGE_CHECK(!cli_command("C:zfs unload-key public_mirror/check_hex"));
+             file=Open((CONST_STRPTR)"RAM:public-hex.key",MODE_NEWFILE);STORAGE_CHECK(file);
+             STORAGE_CHECK(Write(file,"invalid hex\n",12)==12);STORAGE_CHECK(Close(file));file=0;
+diff --git a/aros/ui/operations.def b/aros/ui/operations.def
+index 2121ae8..743c799 100644
+--- a/aros/ui/operations.def
++++ b/aros/ui/operations.def
+@@ -63,7 +63,7 @@ OZ_OP(60, "Replication", "replication.send", "send", 1, "Dataset@snapshot", "Nat
+ OZ_OP(61, "Replication", "replication.receive", "receive", 1, "Dataset@snapshot", "Native stream file", "Full native service supports mounted filesystem receive. Force may discard local changes; explicit confirmation required. resumable=on preserves interrupted state; off is default. Get receive_resume_token in Datasets/get; use resume=TOKEN in Replication/send for continuation.")
+ OZ_OP(62, "Encryption", "encryption.load-key", "load-key", 1, "Encryption root", "Key file", "Load from an authorized AROS file: raw requires 32 bytes; hex requires 64 hex digits; passphrase uses the first line. Text strips LF only. Format comes from the dataset. Dry-run verifies the key without loading it or changing locked state. Requires load-key permission and confirmation. Enter a file path, never key bytes. No options, force or recursion.")
+ OZ_OP(63, "Encryption", "encryption.unload-key", "unload-key", 1, "Encryption root", "", "Unload the in-memory key. Requires load-key permission. Unmount dependent filesystems first. Also supported on read-only pools. Confirm; no options, force or dry-run.")
+-OZ_OP(64, "Encryption", "encryption.change-key", "change-key", 1, "Encryption root", "New key file", "Replace a loaded wrapping key from an authorized AROS file, retaining format and location. Passphrases require 8-512 bytes on the first line. Or set inherit=on with no key file to use the encrypted parent's key; both keys must be loaded. Requires change-key permission, writable pool and confirmation. No force or dry-run. Keep the replacement or parent key: the old key stops working.")
++OZ_OP(64, "Encryption", "encryption.change-key", "change-key", 1, "Encryption root", "New key file", "Replace a loaded wrapping key from an authorized AROS file. Optional keyformat=raw/hex/passphrase;pbkdf2iters=N;keylocation=URI. Omitted format/location are retained; iterations apply only to passphrases (100000..4294967295). Passphrases require 8-512 bytes on the first line. Or inherit=on alone, no key file, uses the loaded parent's key. Requires change-key permission, writable pool and confirmation. No force/dry-run. Keep the new key: the old key stops working.")
+ OZ_OP(65, "Permissions", "permission.allow", "allow", 1, "Dataset / zvol", "Principal / set:@name / creator", "Principal: user:ID, group:ID, everyone; options permissions=create,mount,@set;scope=local/descendants/both (default both). set:@name defines a permission set; creator grants rights on newly created datasets (omit scope for both). Confirm; no force/dry-run/recursive.")
+ OZ_OP(66, "Permissions", "permission.unallow", "unallow", 1, "Dataset / zvol", "Principal / set:@name / creator", "Revoke permissions=LIST or all=on, never both. Scope defaults both. Recursive visits children then target and checks authority on each; failure may leave partial changes, reported with completed count. Creator changes affect future creations. Confirm; no force/dry-run.")
+ OZ_OP(79, "Permissions", "permission.list", "list grants", 0, "Dataset / zvol", "", "List stored upstream grants, including ancestor records. Rows show principal, scope, permission and source dataset, not computed effective rights. Next page reads live state; restart if grants change. No flags or options.")

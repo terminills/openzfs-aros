@@ -193,6 +193,11 @@ int oz_admitted_capture(struct DosPacket *packet, struct MsgPort *service,
     else if(m->operation==64&&!strcmp(m->options,"inherit=on")) {
         if(!key_load||m->flags!=OZ_CONFIRMED||m->argument[0]||m->cursor||m->job_id)error=ENOTSUP;
     }
+    else if(m->operation==64) {
+        /* The credential-aware key adapter validates the bounded property
+         * grammar before accessing the replacement key file. */
+        if(!key_load||m->flags!=OZ_CONFIRMED||!m->argument[0]||m->cursor||m->job_id)error=ENOTSUP;
+    }
     else if(m->operation==38) {
         int deferred=!strcmp(m->options,"defer=on");
         int recursive=m->flags==(OZ_CONFIRMED|OZ_RECURSIVE);

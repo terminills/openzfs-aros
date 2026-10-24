@@ -2313,6 +2313,42 @@ static int storage_test(int gui){
             STORAGE_CHECK(!storage_request(62,"public_mirror/check_hex","RAM:public-hex.key",NULL));
             STORAGE_CHECK(!storage_request_flags(62,"public_mirror/check_hex","RAM:public-hex.key",NULL,OZ_CONFIRMED|OZ_DRYRUN));
             STORAGE_CHECK(!cli_result("C:zfs get -H -o value keystatus public_mirror/check_hex >T:cli-package-output.txt","available"));
+            const char *bad_change[]={"keyformat=invalid","keyformat=hex;pbkdf2iters=400000",
+                "keyformat=passphrase;pbkdf2iters=99999","pbkdf2iters=4294967296",
+                "keyformat=hex;keyformat=raw","compression=off","keylocation=invalid","keyformat=hex;"};
+            for(unsigned i=0;i<sizeof(bad_change)/sizeof(bad_change[0]);i++)
+                STORAGE_CHECK(storage_request(64,"public_mirror/check_hex","RAM:public-hex.key",bad_change[i])!=0);
+            STORAGE_CHECK(!cli_result("C:zfs get -H -o value keyformat public_mirror/check_hex >T:cli-package-output.txt","hex"));
+            STORAGE_CHECK(!oz_mount_control(OZ_ADMISSION_PORT,"public_mirror/check_hex","OZREKEY",OZ_MOUNT_ATTACH,0));
+            file=Open((CONST_STRPTR)"OZREKEY:payload",MODE_NEWFILE);STORAGE_CHECK(file);
+            STORAGE_CHECK(Write(file,payload,sizeof(storage_payload)-1)==sizeof(storage_payload)-1);
+            STORAGE_CHECK(Flush(file));STORAGE_CHECK(Close(file));file=0;
+            STORAGE_CHECK(!oz_mount_control(OZ_ADMISSION_PORT,"public_mirror/check_hex","",OZ_MOUNT_DETACH,0));
+            file=Open((CONST_STRPTR)"RAM:rekey-pass",MODE_NEWFILE);STORAGE_CHECK(file);
+            STORAGE_CHECK(Write(file,storage_passphrase,sizeof(storage_passphrase)-1)==sizeof(storage_passphrase)-1);STORAGE_CHECK(Close(file));file=0;
+            STORAGE_CHECK(!storage_request(64,"public_mirror/check_hex","RAM:rekey-pass","keyformat=passphrase;pbkdf2iters=400000;keylocation=file:///RAM/rekey-pass"));
+            STORAGE_CHECK(!cli_result("C:zfs get -H -o value keyformat public_mirror/check_hex >T:cli-package-output.txt","passphrase"));
+            STORAGE_CHECK(!cli_result("C:zfs get -H -o value pbkdf2iters public_mirror/check_hex >T:cli-package-output.txt","400000"));
+            STORAGE_CHECK(!cli_result("C:zfs get -H -o value keylocation public_mirror/check_hex >T:cli-package-output.txt","file:///RAM/rekey-pass"));
+            STORAGE_CHECK(!cli_command("C:zfs unload-key public_mirror/check_hex"));
+            STORAGE_CHECK(cli_command("C:zfs load-key -L file:///RAM/public-hex.key public_mirror/check_hex")!=0);
+            STORAGE_CHECK(!cli_command("C:zfs load-key public_mirror/check_hex"));
+            unsigned char rekey_raw[32];memset(rekey_raw,0x5c,sizeof(rekey_raw));
+            file=Open((CONST_STRPTR)"RAM:rekey-raw",MODE_NEWFILE);STORAGE_CHECK(file);
+            STORAGE_CHECK(Write(file,rekey_raw,sizeof(rekey_raw))==sizeof(rekey_raw));STORAGE_CHECK(Close(file));file=0;
+            STORAGE_CHECK(!storage_request(64,"public_mirror/check_hex","RAM:rekey-raw","keyformat=raw;keylocation=prompt"));
+            STORAGE_CHECK(!cli_result("C:zfs get -H -o value keyformat public_mirror/check_hex >T:cli-package-output.txt","raw"));
+            STORAGE_CHECK(!cli_command("C:zfs unload-key public_mirror/check_hex"));
+            STORAGE_CHECK(!storage_request(62,"public_mirror/check_hex","RAM:rekey-raw",NULL));
+            STORAGE_CHECK(!storage_request(64,"public_mirror/check_hex","RAM:public-hex.key","keyformat=hex;keylocation=file:///RAM/public-hex.key"));
+            STORAGE_CHECK(!cli_command("C:zfs unload-key public_mirror/check_hex"));
+            STORAGE_CHECK(!cli_command("C:zfs load-key public_mirror/check_hex"));
+            STORAGE_CHECK(!oz_mount_control(OZ_ADMISSION_PORT,"public_mirror/check_hex","OZREKEY",OZ_MOUNT_ATTACH,OZ_MOUNT_READONLY));
+            file=Open((CONST_STRPTR)"OZREKEY:payload",MODE_OLDFILE);STORAGE_CHECK(file);
+            STORAGE_CHECK(Read(file,actual,sizeof(actual))==sizeof(storage_payload)-1&&!memcmp(actual,payload,sizeof(storage_payload)-1));STORAGE_CHECK(Close(file));file=0;
+            STORAGE_CHECK(!oz_mount_control(OZ_ADMISSION_PORT,"public_mirror/check_hex","",OZ_MOUNT_DETACH,0));
+            STORAGE_CHECK(DeleteFile((CONST_STRPTR)"RAM:rekey-pass"));STORAGE_CHECK(DeleteFile((CONST_STRPTR)"RAM:rekey-raw"));
+            note("Public key format rotation PASS invalid-options=8 hex-to-passphrase=1 iterations=400000 location=1 old-key-denied=1 passphrase-to-raw=1 raw-to-hex=1 exact-data=1\n");
             STORAGE_CHECK(!cli_command("C:zfs unload-key public_mirror/check_hex"));
             file=Open((CONST_STRPTR)"RAM:public-hex.key",MODE_NEWFILE);STORAGE_CHECK(file);
             STORAGE_CHECK(Write(file,"invalid hex\n",12)==12);STORAGE_CHECK(Close(file));file=0;
