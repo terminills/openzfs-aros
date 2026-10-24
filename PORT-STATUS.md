@@ -7,7 +7,10 @@ Experimental development snapshot; not production-qualified storage software.
 The source now additionally validates embedded label checksums before allowing
 destroyed-member reuse. Old-engine reproduction and three fresh eight-CPU
 QEMU runs qualify the repair; see `aros/tests/evidence/destroyed-label-checksum`.
-The archive below predates that repair and needs another package refresh.
+The refreshed `mmake-bundle.0uirh9w0.tar.xz` includes that repair and passes
+exact-binary Manager, persistent cold-start, native encrypted-root and fresh
+archive-extraction tests. See `aros/tests/evidence/checksum-package` for its
+hash, screenshots and logs. The archive references below are historical.
 
 `mmake-bundle.exm_ebrp.tar.xz` includes the ARC repair, native/file destroyed
 member reuse, and updated Manager guidance. Exact-binary GUI, persistent cold
