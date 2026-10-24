@@ -818,6 +818,13 @@ subsequently succeed, along with the full storage suite. Retained evidence is
 under `aros/tests/evidence/key-check`. This is native API/QEMU evidence, not
 interactive Manager or physical-media qualification.
 
+The same new engine passes persistent run `public-service-run.qK2sThaw`:
+writer acceptance, fresh healthy/degraded/restored reads, encryption and
+passphrase lifecycle, unchanged cold-read member hashes and independent
+`zdb` with no leaks. Evidence is under `aros/tests/evidence/key-check-cold`.
+The cold checks qualify the updated engine's existing lifecycle behavior;
+the new check-only request itself is exercised in the writer boot.
+
 ## Native dataset rename and destroy (2026-09-21)
 
 ### Snapshot holds and releases
