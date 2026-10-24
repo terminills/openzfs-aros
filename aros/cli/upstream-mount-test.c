@@ -339,12 +339,17 @@ int oz_upstream_promotion_readonly_test(int readonly)
     if(!hdl)return errno?errno:EIO;
     int error=0;
     if(!readonly) {
-        error=lzc_create(source,LZC_DATSET_TYPE_ZFS,NULL,NULL,0);
+        /* Retain these objects across export for the read-only promotion
+         * check, but do not enroll them in the unrelated startup mount test. */
+        nvlist_t *props=fnvlist_alloc();
+        fnvlist_add_string(props,zfs_prop_to_name(ZFS_PROP_MOUNTPOINT),"none");
+        error=lzc_create(source,LZC_DATSET_TYPE_ZFS,props,NULL,0);
         nvlist_t *snaps=fnvlist_alloc(),*errors=NULL;
         fnvlist_add_boolean(snaps,snapshot);
         if(!error)error=lzc_snapshot(snaps,NULL,&errors);
         nvlist_free(errors);nvlist_free(snaps);
-        if(!error)error=lzc_clone(clone,snapshot,NULL);
+        if(!error)error=lzc_clone(clone,snapshot,props);
+        nvlist_free(props);
     } else {
         char conflict[ZFS_MAX_DATASET_NAME_LEN]={0};
         int denied=lzc_promote(clone,conflict,sizeof(conflict));

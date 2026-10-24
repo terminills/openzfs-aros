@@ -111,4 +111,22 @@ $(addprefix $(OPENZFS_PUBLIC_TEST_OBJ)/,$(addsuffix .d,$(OPENZFS_PUBLIC_TEST_FIL
     ldflags="$(OZ_CLI_LINK)" objdir="$(OPENZFS_PUBLIC_TEST_OBJ)" \
     targetdir="$(AROS_C)"
 
+# Optional deeper upstream client tests, built without cached probe objects.
+#MM contrib-openzfs-upstream-test : includes linklibs contrib-openzfs-nvpair contrib-openzfs-cli-vdev
+OPENZFS_UPSTREAM_TEST_FILES := $(sort $(OPENZFS_PUBLIC_TEST_FILES) $(OZ_CLI_COMMON) \
+    aros/cli/upstream-init-test aros/cli/upstream-mount-test \
+    aros/cli/property-ioctl-test aros/cli/import-files-test \
+    aros/cli/file-vdev-test aros/cli/native-device-test \
+    aros/cli/device-wait-test aros/cli/native-label-test)
+OPENZFS_UPSTREAM_TEST_OBJ := $(GENDIR)/$(CURDIR)/upstream-test
+$(addprefix $(OPENZFS_UPSTREAM_TEST_OBJ)/,$(addsuffix .o,$(OPENZFS_UPSTREAM_TEST_FILES))) \
+$(addprefix $(OPENZFS_UPSTREAM_TEST_OBJ)/,$(addsuffix .d,$(OPENZFS_UPSTREAM_TEST_FILES))): \
+    $(OZ_CLI_OBJ)/metadata.h $(OZ_CLI_OBJ)/zfs_gitrev.h
+%build_prog mmake=contrib-openzfs-upstream-test progname=OpenZFSUpstreamServiceTest \
+    files="$(OPENZFS_UPSTREAM_TEST_FILES)" usetree=yes \
+    objs="$(OZ_CLI_OBJ)/check-file-generic.o $(OPENZFS_PIPE2_OBJECT)" \
+    cflags="$(OZ_CLI_FLAGS) -DOZ_NATIVE_DISPATCHER -DOZ_NATIVE_ONEXIT -DOZ_TEST_UPSTREAM_INIT" \
+    ldflags="$(OZ_CLI_LINK)" objdir="$(OPENZFS_UPSTREAM_TEST_OBJ)" \
+    targetdir="$(AROS_C)"
+
 %common

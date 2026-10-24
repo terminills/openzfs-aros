@@ -1,0 +1,259 @@
+[bootstrap:multiboot2] smartfb: using VBE mode 0x417a (1280x800x32, fb=0xFD000000)
+[bootstrap:multiboot2] smartfb: KRN_FBAddr=0x00000000FD000000
+AROS64 - The AROS Research OS
+64-bit SMP build. Compiled Oct 21 2026
+[Kernel] Local APIC: x2APIC
+ACPI: RSDP 0x00000000000F52E0 000014 (v00 BOCHS )
+ACPI: RSDT 0x000000007FFE25C5 000034 (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+ACPI: FACP 0x000000007FFE2441 000074 (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+ACPI: DSDT 0x000000007FFE0040 002401 (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+ACPI: FACS 0x000000007FFE0000 000040
+ACPI: APIC 0x000000007FFE24B5 0000B0 (v03 BOCHS  BXPC     00000001 BXPC 00000001)
+ACPI: HPET 0x000000007FFE2565 000038 (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+ACPI: WAET 0x000000007FFE259D 000028 (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+[HPET] 2 units total
+ACPI: 1 ACPI AML tables successfully acquired and loaded
+[Kernel:ACPI-IOAPIC] Registering IO-APIC #1 [ID=000] @ 00000000fec00000 [GSI = 0]
+[Kernel:ACPI] System Total APICs: 8, 8 usable
+[Kernel:APIC-IA32] MSI Interrupts Allocatable
+[Kernel:APIC-IA32]     start = 16
+[Kernel:APIC-IA32]     total = 198
+[Kernel:APIC-IA32] Heartbeat timer: TSC deadline
+[Kernel:APIC-IA32.001] core_APIC_Calibrate: TSC freq inherited from BSP (2496043 kHz) [hypervisor]
+[Kernel:APIC-IA32.001] core_APIC_Calibrate: LAPIC timer freq inherited from BSP (1000451640 Hz) [hypervisor]
+[Kernel:APIC-IA32.002] core_APIC_Calibrate: TSC freq inherited from BSP (2496043 kHz) [hypervisor]
+[Kernel:APIC-IA32.002] core_APIC_Calibrate: LAPIC timer freq inherited from BSP (1000451640 Hz) [hypervisor]
+[Kernel:APIC-IA32.003] core_APIC_Calibrate: TSC freq inherited from BSP (2496043 kHz) [hypervisor]
+[Kernel:APIC-IA32.003] core_APIC_Calibrate: LAPIC timer freq inherited from BSP (1000451640 Hz) [hypervisor]
+[Kernel:APIC-IA32.004] core_APIC_Calibrate: TSC freq inherited from BSP (2496043 kHz) [hypervisor]
+[Kernel:APIC-IA32.004] core_APIC_Calibrate: LAPIC timer freq inherited from BSP (1000451640 Hz) [hypervisor]
+[Kernel:APIC-IA32.005] core_APIC_Calibrate: TSC freq inherited from BSP (2496043 kHz) [hypervisor]
+[Kernel:APIC-IA32.005] core_APIC_Calibrate: LAPIC timer freq inherited from BSP (1000451640 Hz) [hypervisor]
+[Kernel:APIC-IA32.006] core_APIC_Calibrate: TSC freq inherited from BSP (2496043 kHz) [hypervisor]
+[Kernel:APIC-IA32.006] core_APIC_Calibrate: LAPIC timer freq inherited from BSP (1000451640 Hz) [hypervisor]
+[Kernel:APIC-IA32.007] core_APIC_Calibrate: TSC freq inherited from BSP (2496043 kHz) [hypervisor]
+[Kernel:APIC-IA32.007] core_APIC_Calibrate: LAPIC timer freq inherited from BSP (1000451640 Hz) [hypervisor]
+[PCIPC:Driver] PCIPC_InitClass: No ACPI MCFG table
+[Timer] clock: PIT (no invariant TSC)
+[ATI] Init
+[ATI] No supported cards found
+[HW] HW__HW__AddDriver: Failed to instantiate Driver Object
+Native authenticated admission ready
+OpenZFS management API 3 ready; engine initialized
+Public service op=1 status=0 engine=1 rows=0
+Public service op=2 status=0 engine=1 rows=0
+Public service op=3 status=0 engine=1 rows=0
+Public mutation requires authenticated admission PASS
+OpenZFS service engine shutdown complete
+Public service test line=0
+RESULT public service lifecycle PASS
+Native authenticated admission ready
+OpenZFS management API 3 ready; engine initialized
+Public service op=1 status=0 engine=1 rows=0
+Public service op=2 status=0 engine=1 rows=0
+Public service op=3 status=0 engine=1 rows=0
+Public mutation requires authenticated admission PASS
+OpenZFS service engine shutdown complete
+Public service test line=0
+RESULT public service lifecycle PASS
+Writable startup denied: configured security.library and system task identity required.
+Public configuration created-directory owner=65535:65535 protection=8800 type=2
+Public CLI command result=0 ioerr=0: C:OpenZFSHostIdentity 5a465301 SAVE >T:companion-identity.log
+Public diagnostic begin T:companion-identity.log
+Host identity 5A465301 saved to ENVARC and ENV. Start OpenZFS to use it.
+
+Public diagnostic end
+Public CLI command result=0 ioerr=0: C:OpenZFSStartup 5a46530000000001 CHECK
+Public CLI command result=0 ioerr=0: C:OpenZFSStartup 5a46530000000001
+Public diagnostic begin T:public-cli-errors.log
+Startup check: errno=2; no import attempted
+
+Public diagnostic end
+Public CLI command result=1 ioerr=209: C:OpenZFSStartup 5a46530000000001 CHECK
+Public CLI command result=0 ioerr=0: C:OpenZFSStartup 5a46530000000001 PREPARE
+Public CLI command result=0 ioerr=0: C:OpenZFSStartup 5a46530000000001 RESTORE
+Public companion configuration PASS hostid-save=1 iff-readback=2 trusted-check=1 prepare=1 disabled-restore=1 assigns-restored=1
+Public startup invalid-mode and non-root denial PASS
+Native authenticated admission ready
+OpenZFS management API 3 ready; engine initialized
+Public service op=1 status=0 engine=1 rows=0
+Public service op=2 status=0 engine=1 rows=0
+Public service op=3 status=0 engine=1 rows=0
+Service remains resident: active client sessions or admitted operations.
+Public native control descriptors PASS capacity=64 ownership=1 stale=1 session-cleanup=1
+Public task-exit session reclamation PASS cycles=4 sessions=32
+Public authenticated sessions ownership, capacity, stale handles and shutdown guard PASS
+Public mutation requires authenticated admission PASS
+OpenZFS service engine shutdown complete
+Public service test line=0
+RESULT public service lifecycle PASS
+Writable startup denied: configured security.library and system task identity required.
+Public configuration created-directory owner=65535:65535 protection=8800 type=2
+Public CLI command result=0 ioerr=0: C:OpenZFSHostIdentity 5a465301 SAVE >T:companion-identity.log
+Public diagnostic begin T:companion-identity.log
+Host identity 5A465301 saved to ENVARC and ENV. Start OpenZFS to use it.
+
+Public diagnostic end
+Public CLI command result=0 ioerr=0: C:OpenZFSStartup 5a46530000000001 CHECK
+Public CLI command result=0 ioerr=0: C:OpenZFSStartup 5a46530000000001
+Public diagnostic begin T:public-cli-errors.log
+Startup check: errno=2; no import attempted
+
+Public diagnostic end
+Public CLI command result=1 ioerr=209: C:OpenZFSStartup 5a46530000000001 CHECK
+Public CLI command result=0 ioerr=0: C:OpenZFSStartup 5a46530000000001 PREPARE
+Public CLI command result=0 ioerr=0: C:OpenZFSStartup 5a46530000000001 RESTORE
+Public companion configuration PASS hostid-save=1 iff-readback=2 trusted-check=1 prepare=1 disabled-restore=1 assigns-restored=1
+Public startup invalid-mode and non-root denial PASS
+Native authenticated admission ready
+OpenZFS management API 3 ready; engine initialized
+Public service op=1 status=0 engine=1 rows=0
+Public service op=2 status=0 engine=1 rows=0
+Public service op=3 status=0 engine=1 rows=0
+Service remains resident: active client sessions or admitted operations.
+Public native control descriptors PASS capacity=64 ownership=1 stale=1 session-cleanup=1
+Public task-exit session reclamation PASS cycles=4 sessions=32
+Public authenticated sessions ownership, capacity, stale handles and shutdown guard PASS
+Public mutation requires authenticated admission PASS
+Public fixture directory: AROS Live CD:
+Public pool alias identity PASS duplicate-refused=1
+Public CLI command result=0 ioerr=0: C:OpenZFSRuntimeCheck >T:companion-runtime.log
+Public diagnostic begin T:companion-runtime.log
+OpenZFS runtime check (no pools or devices opened)
+INFO posixc.library 0.43 available
+INFO stdcio.library 0.11 available
+INFO z1.library 1.10 available
+INFO iffparse.library 50.2 available
+INFO muimaster.library 19.81 available
+PASS security.library configured=1
+PASS redirected stdio: transport=0 c00000005d21cd004 0x0000000001885580 | 000 | hild=0 stdout=1 stderr=1
+PASS ExecHelper subprocess: status=23 lines=1
+PASS LoadSeg execute=on loaded=1 DOS=0
+PASS NewLoadSeg execute=on loaded=1 DOS=0
+PASS LoadSeg execute=off loaded=0 DOS=224
+PASS NewLoadSeg execute=off loaded=0 DOS=224
+PASS LoadSeg execute=on loaded=1 DOS=0
+PASS NewLoadSeg execu00000005d3d18ea8 0x0000000001885580 | 000 | te=on loaded=1 DOS=0
+Not tested: pipe disconnects, storage I/O, durability, GUI or pool operations.
+PASS checked runtime prerequisites only
+
+Public diagnostic end
+Public diagnostic begin T:public-cli-errors.log
+Usage: OpenZFSStartup GUID-16-HEX [RESTORE|PREPARE|CHECK]
+
+Public diagnostic end
+Public CLI command result=1 ioerr=209: C:OpenZFSStartup INVALID
+Public diagnostic begin T:public-cli-errors.log
+
+Public diagnostic end
+Public CLI command result=1 ioerr=209: C:OpenZFSStartup 0000000000000000 CHECK
+Public diagnostic begin T:public-cli-errors.log
+Usage: OpenZFSStartupMount POOL GUID-16-HEX
+
+Public diagnostic end
+Public CLI command result=1 ioerr=209: C:OpenZFSStartupMount public_mirror INVALID
+Public diagnostic begin T:public-cli-errors.log
+
+Public diagnostic end
+Public CLI command result=20 ioerr=0: C:OpenZFSHostIdentity 00000000 SAVE
+Public diagnostic begin T:public-cli-errors.log
+
+Public diagnostic end
+Public CLI command result=20 ioerr=0: C:OpenZFSHostIdentity 12345678
+Public companion tools PASS runtime-prerequisites=1 invalid-arguments=1 no-identity-write=1
+Public native engine version value=zfs-2.4.4-1
+Public native engine version PASS query=1 upstream=1 bounds=1 missing=1
+Public native supported tables PASS feature=1 properties=3 unknown=1 missing=1
+Public native CPU topology PASS cpus=8 queries=128
+Public native init diagnostics PASS missing=1 denied=1 protocol=1 settings=1 memory=1
+Public upstream libzfs init PASS cycles=80 simultaneous=2
+Public upstream init failure cleanup PASS cycles=80 survivor=1 errno=EINVAL
+Public storage op=5 status=0 Authenticated pool creation returned errno=0
+Public pool assign PASS op=5 kind=0 removed=1
+RESULT native event cursor PASS tiny-retry=1 seek-start-eid=1 seek-end-empty=1 bad-handle=1
+Public upstream snapshot ioctls PASS create=1 hold=1 onexit=1 release=1 destroy=1 schema=1
+Public upstream snapshot authorization PASS changed-user=1 own-session-denied=1 no-mutation=1
+Public upstream libzfs_core PASS snapshot=1 temporary-hold=1 destroy=1 reopen=1
+Public upstream enumeration PASS dataset=1 snapshot=1 properties=1 end=1 snapshot-growth=1
+Public upstream dataset ioctls PASS create=1 clone=1 rollback=1 volume=1 handler-ready=1
+Public upstream ioctl transport PASS stats=1 configs=1 resize=1 bounds=1 stale=1
+Public upstream hostid PASS service-identity=1 client-environment-ignored=1
+Public upstream pool property authorization PASS own-session-denied=1 fresh-read=1 no-mutation=1
+Public upstream property ioctls PASS set=4 inherit=4 fresh-read=8 denied-set=1 denied-inherit=1 no-mutation=1
+Public upstream property sources PASS received=1 local-precedence=1 revert-received=1 invalid-value=1 invalid-source=1
+Public upstream shares object PASS native-metadata=1 absent=1
+Public upstream bookmark authorization PASS own-session=1 create-denied=1 destroy-denied=1 unchanged=1
+Public upstream bookmark delegation PASS grant=1 fresh-acl=1 delegated-create=1 delegated-destroy=1 revoke=1 denied-again=1
+Public upstream bookmark lifecycle PASS create=1 duplicate=1 guid=1 list=1 survives-snapshot=1 destroy=1 absent=1
+Public upstream snapshot lifecycle PASS busy-preserved=1 detach=1 destroy=1 absent=1
+Public upstream promotion mount guard PASS busy=1 endpoint-retained=1 origin-unchanged=1
+Public upstream promotion PASS denied=1 unchanged=1 conflict=1 promote=1 origins=1 repeat-invalid=1 cleanup=1
+Public upstream mount adapter PASS real-handle=1 mount=1 unmount=1 unsupported=1 duplicate=1
+Public upstream file flush PASS write=1 reopen=1 invalid=1 closed=1 readonly=1
+Public upstream pool sync PASS phase=0 ordinary=1 forced=1 errno=0
+Public upstream upgrade notice PASS phase=0 unset=1 configured=1 no-boot-write=1 readonly-denied=0
+Public upstream enclosure unsupported PASS phase=0 query=1 on=1 off=1
+Public upstream file vdev PASS phase=0 members=2 force-policy=1 missing=1 directory=1 query-failure=1
+Public exec helper PASS real-zpool=1 captured-output=1 missing-executable=1
+Public CLI command result=0 ioerr=0: C:zpool get -H -p -o value guid public_mirror >T:companion-guid.txt
+Public CLI command result=0 ioerr=0: C:zfs set canmount=off public_mirror
+Public CLI command result=0 ioerr=0: C:zfs set mountpoint=OZSTARTUP: public_mirror/files
+Public CLI command result=0 ioerr=0: C:zfs unmount public_mirror/files
+Public diagnostic begin T:public-cli-errors.log
+Startup mount pool identity unavailable or mismatched
+
+Public diagnostic end
+Public CLI command result=1 ioerr=209: C:OpenZFSStartupMount public_mirror d603a38b2c820d6c
+Public diagnostic begin T:public-cli-errors.log
+Not mounted: public_mirror/promote-ro-source
+Not mounted: public_mirror/promote-ro-clone
+
+Public diagnostic end
+Public CLI command result=1 ioerr=209: C:OpenZFSStartupMount public_mirror d603a38b2c820d6d >T:companion-mount.log
+Public diagnostic begin T:companion-mount.log
+Startup mounts: mounted=1 already=0 skipped=1 failed=2
+
+Public diagnostic end
+Public CLI command result=0 ioerr=0: C:zfs set canmount=on public_mirror
+Public CLI command result=0 ioerr=0: C:zfs inherit mountpoint public_mirror/files
+Public companion mount FAIL line=946
+Public storage failure=1920
+Public diagnostic begin T:service-first.log
+Native authenticated admission ready
+OpenZFS management API 3 ready; engine initialized
+request=1 operation=1 status=0
+request=2 operation=2 status=0
+request=3 operation=3 status=0
+request=4 operation=43 status=5
+OpenZFS service engine shutdown complete
+
+Public diagnostic end
+Public diagnostic begin T:service-second.log
+Native authenticated admission ready
+OpenZFS management API 3 ready; engine initialized
+request=1 operation=1 status=0
+request=2 operation=2 status=0
+request=3 operation=3 status=0
+request=4 operation=43 status=5
+OpenZFS service engine shutdown complete
+
+Public diagnostic end
+Public diagnostic begin T:service-writable.log
+Native authenticated admission ready
+OpenZFS management API 3 ready; engine initialized
+request=1 operation=1 status=0
+request=2 operation=2 status=0
+request=3 operation=3 status=0
+Service remains resident: active client sessions or admitted operations.
+request=4 operation=43 status=5
+request=1 ope000000087e5fbc12 0x0000000001885580 | 000 | ration=40 status=0
+request=1 operation=40 status=0
+request=1 operation=40 status=0
+request=1 operation=40 status=0
+request=1 operation=40 status=0
+request=1 operation=40 status=0
+request=1 operation=40 status=0
+
+Public diagnostic end
+Public service test line=3106
+RESULT public service storage FAIL

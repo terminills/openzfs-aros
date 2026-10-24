@@ -125,6 +125,12 @@ AROS Contrib build and regenerate its metamake files. Available targets:
   engine and commands, querying it 128 times for consistency. Set
   `AROS_TEST_REQUIRE_CPU=1` with `AROS_TEST_CPUS=1..8` in the public QEMU runner
   to require the reported count to match the requested virtual topology.
+- `contrib-openzfs-upstream-test`: optional `C/OpenZFSUpstreamServiceTest`,
+  combining the public acceptance suite with current upstream libzfs client
+  sources and deeper initialization/mount/property/import tests. It builds in
+  a separate object directory without cached probe objects and is not installed
+  by the production aggregate. Select it with `AROS_TEST_CLIENT_BINARY` and
+  set `AROS_TEST_REQUIRE_INIT=1` in the public QEMU runner.
 
 The same MetaMake acceptance binary passes the complete native RAM-backed
 suite with one CPU (`public-service-run.4myrPlwM`) and eight CPUs
@@ -134,6 +140,18 @@ and explicit patched platform inputs. This verifies topology detection and
 these bounded regression runs, not long-duration stress or physical SMP.
 Logs and hashes are retained in `aros/tests/evidence/native-cpu`; both test
 ISOs were pruned after success.
+
+The deeper MetaMake target passes the native eight-CPU suite in
+`public-service-run.6FSUKowt`, including 80 double-handle initialization cycles,
+80 failure-cleanup cycles, property source/authorization checks, bookmark
+delegation, mounted snapshot guards, read-only promotion, file discovery and
+the normal storage suite. These are current-source native tests, not merely a
+link check. Initial run `SWVKg0qz` failed because two retained promotion test
+datasets had default mountpoints and were inadvertently included in companion
+startup mounting. Both fixtures now explicitly use `mountpoint=none`; no
+production mount behavior was changed. Failed and passing logs are retained
+under `aros/tests/evidence/mmake-upstream`. The successful ISO was pruned;
+the failed-run artifacts remain available for diagnosis.
 
 Tools inherit the configured target compiler, SDK, flags and output directories.
 `OPENZFS_PTHREAD_INCLUDE` and `OPENZFS_PTHREAD_LIBDIR` can select matching private
