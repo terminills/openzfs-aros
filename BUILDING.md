@@ -906,7 +906,21 @@ staging directory with SHA256SUMS and evidence metadata. Platform overrides
 are separated under Platform/, never silently installed. Four companion
 utilities remain explicitly build-only in the bundle's qualification record.
 
-Updated development archive `mmake-bundle.mdsk7pku.tar.xz` includes the
+The key-verification development archive `mmake-bundle.av7y0i95.tar.xz` has
+SHA256 `e31fb588285507270effd58ea2dc4b1726df426351759c7caff6f8f0d9591801`.
+It binds the updated engine to cold run `public-service-run.NJTixzKq` and
+Manager to interactive run `native-gui-run.Q2LH3GdX`. After fresh extraction,
+its manifest passes and `public-service-run.F2mgXwRH` runs the packaged engine,
+service, CLI, handler and companion binaries through the full native RAM-backed
+suite, including key verification/delegation/formats. The acceptance client is
+external to the package. Manager's interactive proof is the matching earlier
+GUI run, not this headless package run. Initial attempt `GRk4JYkt` stopped
+before boot because the command named `L/OpenZFS-handler` instead of the
+archive's case-sensitive `L/OpenZFS-Handler`; correcting the command required
+no archive change. Evidence is in `aros/tests/evidence/key-check-package`.
+The explicit patched-runtime and physical-media limitations still apply.
+
+Earlier development archive `mmake-bundle.mdsk7pku.tar.xz` includes the
 destruction dry-run worker and corrected Manager confirmation. Its SHA256 is
 `963038867f9b2f2474ccbde1c13d8dc46f5b3692e986d85572142754b694e821`.
 Staging binds Manager to GUI run `native-gui-run.DCRePTo0`, including the
