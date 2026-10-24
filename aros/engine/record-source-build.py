@@ -53,6 +53,7 @@ def main():
         shutil.copy2(helper, root / helper.name)
         shutil.copy2(__file__, root / Path(__file__).name)
         retained = sorted(p for p in root.rglob('*') if p.is_file()
+                          and p != root / 'retained.sha256'
                           and p.suffix not in ('.o', '.map', '.log')
                           and not p.is_relative_to(root / 'package'))
         (root / 'retained.sha256').write_text(''.join(

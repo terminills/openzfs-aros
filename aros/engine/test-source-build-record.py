@@ -55,6 +55,16 @@ class Recording(unittest.TestCase):
         self.assertNotIn(str(source), recipe['external_inputs'])
         self.assertIn('  sample.c\n', (self.root / 'retained.sha256').read_text())
 
+        # Re-sealing must not hash the previous manifest into its replacement.
+        original_manifest = (self.root / 'retained.sha256').read_text()
+        self.invoke('seal', str(self.root), 'sample.library', 'sample.map')
+        manifest = (self.root / 'retained.sha256').read_text()
+        self.assertEqual(manifest, original_manifest)
+        self.assertNotIn('  retained.sha256\n', manifest)
+        for line in manifest.splitlines():
+            expected, name = line.split('  ', 1)
+            self.assertEqual(record.digest(self.root / name), expected)
+
     def test_seal_rejects_nonlocal_output(self):
         with self.assertRaises(ValueError):
             self.invoke('seal', str(self.root), '../out', 'sample.map')
