@@ -61,6 +61,17 @@ a separate qualification gap.
 
 ## Implemented integration
 
+Authenticated key changes support raw/hex/passphrase conversion, PBKDF2
+iterations and key-location metadata. Manager run `native-gui-run.l9Yuy70p`
+confirms actual GUI submission followed by independent property and old/new
+key checks. Run `public-service-run.CJJ999MO` verifies distinct load-key versus
+change-key permissions, private key-file denial and revocation without changing
+the stored properties. The full suite also passes with QEMU configured for
+eight CPUs in `public-service-run.Pvylzwwr`; this is not a stress-duration,
+guest CPU-detection or physical-SMP qualification. Evidence and input hashes
+are retained under `aros/tests/evidence/key-change-auth` and
+`aros/tests/evidence/key-change-smp8`.
+
 Authenticated recursive snapshot destruction supports `defer=on` through the
 upstream snapshot-destruction ioctl. Native QEMU run `public-service-run.rlEPj1HF`
 checks unheld removal, held-snapshot retention and removal on release, plus
