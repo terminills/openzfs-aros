@@ -28,8 +28,18 @@ def eligible(run):
             text = path.read_text(errors="replace")
             if required not in text or re.search(r"\bFAIL(?:ED)?\b|ASSERT at", text):
                 return False
-        if "Public native cold reader PASS locked=1 mount-denied=1 key-loaded=1 exact-read=1 readonly-write-denied=1 exported=1" not in (run / "native-cold-results.log").read_text():
+        changed = run / "native-changes.txt"
+        all_native = changed.is_file() and changed.read_text().strip() in ("5", "6")
+        marker = ("Public all-native changed reader PASS online=1 exact-read=1 readonly-write-denied=1 exported=1" if all_native else
+                  "Public native cold reader PASS locked=1 mount-denied=1 key-loaded=1 exact-read=1 readonly-write-denied=1 exported=1")
+        if marker not in (run / "native-cold-results.log").read_text():
             return False
+        if all_native:
+            verified = {Path(line[:-4]).name for line in
+                        (run / "native-cold-unchanged.log").read_text().splitlines()
+                        if line.endswith(": OK")}
+            if verified != {"partition.raw", "changes.raw"}:
+                return False
     if (run / "cold-release.txt").exists():
         for name, required in (("release-results.log", "RESULT public service storage PASS"),
                                ("release-zdb-check.log", "No leaks"),

@@ -1,0 +1,2 @@
+{"path": "/mnt/short-term/openzfs-qualification-20261024.aGFlVF7T/public-service-run.YYdSs7XP/test.iso", "bytes": 4905172992, "allocated_bytes": 4905177088, "sha256": "bb0c21dcf4849c80c33825bbd4bd7ead6db192fc4fa2d570648fd3d293a1332d", "action": "remove disposable verified test image"}
+{"path": "/mnt/short-term/openzfs-qualification-20261024.aGFlVF7T/public-service-run.YYdSs7XP/native-cold.iso", "bytes": 4905172992, "allocated_bytes": 4905177088, "sha256": "28f242e51707ef12b2d4fbec3fc2cdc5c067d20f0cf77dd5a3da869ac8f76e4d", "action": "remove disposable verified test image"}

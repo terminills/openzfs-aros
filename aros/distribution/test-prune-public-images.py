@@ -86,6 +86,20 @@ class Retention(unittest.TestCase):
         self.invoke(True)
         self.assertFalse(archive.exists())
 
+    def test_all_native_changed_requires_both_disks(self):
+        (self.run / "Startup-Native-Cold").write_text("NATIVE-COLD\n")
+        (self.run / "native-changes.txt").write_text("5\n")
+        (self.run / "native-cold-results.log").write_text(
+            "RESULT public service storage PASS\n"
+            "Public all-native changed reader PASS online=1 exact-read=1 readonly-write-denied=1 exported=1\n")
+        log = self.run / "native-cold-unchanged.log"
+        log.write_text("/test/partition.raw: OK\n")
+        self.assertFalse(prune.eligible(self.run))
+        log.write_text("/test/partition.raw: OK\n/test/changes.raw: OK\n")
+        self.assertTrue(prune.eligible(self.run))
+        log.write_text("/test/partition.raw: OK\n/test/changes.raw: FAILED\n")
+        self.assertFalse(prune.eligible(self.run))
+
     def test_gui_requires_pass_and_no_backing(self):
         gui = self.run.with_name("native-gui-run.test")
         self.run.rename(gui)

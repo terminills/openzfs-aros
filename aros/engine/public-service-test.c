@@ -442,8 +442,13 @@ static int inventory_rpc_test(int denied)
     if(result){bug("Native inventory failed error=%d\n",result);error=result;goto done;}
     BPTR label=Lock((CONST_STRPTR)"SYS:openzfs-label-test-only",SHARED_LOCK);
     unsigned expected=label?4:3;if(label)UnLock(label);
+    BPTR changed=Lock((CONST_STRPTR)"SYS:openzfs-native-changes-5",SHARED_LOCK);
+    if(changed){expected=4;UnLock(changed);}
     BPTR ahci_marker=Lock((CONST_STRPTR)"SYS:openzfs-ahci-query-test",SHARED_LOCK);
     int ahci=ahci_marker!=0;if(ahci_marker)UnLock(ahci_marker);
+    changed=Lock((CONST_STRPTR)"SYS:openzfs-native-changes-6",SHARED_LOCK);
+    int changed_ahci=changed!=0;
+    if(changed){ahci=1;UnLock(changed);}
     if(ahci) {
         bug("Public AHCI inventory count=%u expected=%u\n",value->count,expected+1);
         for(uint32_t i=0;i<value->count;i++)bug("Public AHCI inventory device=%s unit=%d type=%u model=%s serial=%s\n",
@@ -456,8 +461,12 @@ static int inventory_rpc_test(int denied)
         for(uint32_t i=0;i<value->count;i++) {
             const struct oz_storage_unit *u=&value->units[i];
             if(ahci&&!strcmp(u->device,"ahci.device")) {
+                /* Compare stock and corrected AHCI packages: stock reports a
+                 * fixed disk, the inquiry-capable overlay reports its SSD type. */
+                int type_ok=u->type==vHidd_StorageUnit_Type_SolidStateDisk||
+                    (changed_ahci&&u->type==vHidd_StorageUnit_Type_FixedDisk);
                 if(u->unit||!u->model[0]||!u->serial[0]||
-                   u->type!=vHidd_StorageUnit_Type_SolidStateDisk||seen_ahci++)error=EIO;
+                   !type_ok||seen_ahci++)error=EIO;
                 continue;
             }
             if(strcmp(u->device,"ata.device")||u->unit>=expected||
@@ -1869,10 +1878,29 @@ static int storage_destroyed_changes(unsigned native,unsigned lane)
     /* The native discovery fixture has two private 64 MiB MBR extents.
      * Exercise them as attach/replace candidates, then as an added mirror.
      * Remaining members are disposable RAM files; never clear native labels. */
-    unsigned first=native==1?0:3;
+    unsigned first=native==1||native>=3?0:3;
     if(native){
         snprintf(paths[first],sizeof(paths[first]),"/AROS/ata.device/0/partition/0");
         snprintf(paths[first+1],sizeof(paths[first+1]),"/AROS/ata.device/0/partition/2");
+    }
+    if(native>=3){
+        const char *device=native==4?"ahci.device":"ata.device";
+        unsigned unit=native==4?0:3;
+        for(unsigned i=2;i<5;i++)snprintf(paths[i],sizeof(paths[i]),"/AROS/%s/%u/partition/%u",device,unit,i-2);
+        struct oz_device_geometry geometry={0};
+        int queried=oz_device_geometry_read(OZ_ADMISSION_PORT,device,unit,&geometry);
+        if(queried||geometry.bytes!=UINT64_C(268435456)||geometry.sector_size!=512){
+            char line[180];snprintf(line,sizeof(line),"Public all-native geometry FAIL device=%s unit=%u error=%d bytes=%llu sector=%u\n",device,unit,queried,(unsigned long long)geometry.bytes,geometry.sector_size);note(line);return EINVAL;
+        }
+        struct oz_partition_catalog *catalog=malloc(sizeof(*catalog));
+        if(!catalog)return ENOMEM;
+        int result=oz_partitions_read(OZ_ADMISSION_PORT,device,unit,catalog);
+        int valid=!result&&catalog->count==3;
+        const uint64_t starts[]={4097,139265,274433};
+        for(unsigned i=0;valid&&i<3;i++)valid=catalog->entries[i].position==i&&
+            catalog->entries[i].first_sector==starts[i]&&catalog->entries[i].last_sector==starts[i]+131071;
+        if(!valid){char line[180];snprintf(line,sizeof(line),"Public all-native partitions FAIL device=%s error=%d count=%u\n",device,result,catalog->count);note(line);}
+        free(catalog);if(!valid)return EINVAL;
     }
     BPTR file=0;void *zeros=AllocVec(1024*1024,MEMF_PUBLIC|MEMF_CLEAR);int error=0;
     char guid[32];
@@ -1882,7 +1910,7 @@ static int storage_destroyed_changes(unsigned native,unsigned lane)
     for(int manager=0;manager<2;manager++){
         if(native&&manager!=lane)continue;
         for(unsigned i=0;i<5;i++){
-            if(native&&(i==first||i==first+1))continue;
+            if(native>=3||(native&&(i==first||i==first+1)))continue;
             char path[80];snprintf(path,sizeof(path),"%s/disk%u",directory_name,i);
             file=Open((CONST_STRPTR)path,MODE_NEWFILE);XCHECK(file);
             for(unsigned n=0;n<64;n++)XCHECK(Write(file,zeros,1024*1024)==1024*1024);
@@ -1893,7 +1921,7 @@ static int storage_destroyed_changes(unsigned native,unsigned lane)
         snprintf(command,sizeof(command),"C:zpool create -o cachefile=none -o ashift=12 -O mountpoint=none public_reuse_donor mirror %s %s",paths[3],paths[4]);XCHECK(!cli_command(command));
         XCHECK(!pool_root_payload("public_reuse_target",1,0));
         XCHECK(!reuse_change_guid(paths[2],guid,1));
-        if(native==2){
+        if(native>=2){
             XCHECK(reuse_change_request(manager,9,NULL,paths[3],paths[4],1)!=0);
             XCHECK(!cli_command("C:zpool export public_reuse_donor"));
             XCHECK(reuse_change_request(manager,9,NULL,paths[3],paths[4],1)!=0);
@@ -1923,6 +1951,16 @@ static int storage_destroyed_changes(unsigned native,unsigned lane)
         XCHECK(!reuse_change_request(manager,9,NULL,paths[3],paths[4],0));
         XCHECK(!reuse_change_guid(paths[4],guid,4));
         XCHECK(!pool_root_payload("public_reuse_target",0,0));
+        if(native>=3){
+            XCHECK(!cli_command("C:zpool export public_reuse_target"));
+            snprintf(command,sizeof(command),"C:zpool import -N -o cachefile=none -d %s -d %s -d %s -d %s public_reuse_target public_native_target",paths[1],paths[2],paths[3],paths[4]);
+            XCHECK(!cli_command(command));
+            XCHECK(!pool_root_payload("public_native_target",0,0));
+            XCHECK(!cli_command("C:zpool export public_native_target"));
+            XCHECK(DeleteFile((CONST_STRPTR)directory_name));
+            note("Public all-native changed writer PASS attach=1 replace=1 add=1 native-leaves=4 exact-read=1 exported=1\n");
+            goto done;
+        }
         if(manager&&native_file_fixture){
             XCHECK(!cli_command("C:zpool export public_reuse_target"));
             note("Public destroyed changes Manager PASS attach=1 replace=1 add=1 active-refused=3 exported-refused=3 exact-read=5 retained=1\n");
@@ -2204,15 +2242,29 @@ static int storage_native_discovery(void)
     note("Public native encrypted root wrong key PASS denied=2 remains-locked=2 mount-denied=2 correct-recovery=2\n");
     /* A replaced member retains active historical labels. Each native lane
      * therefore gets a fresh disposable VM fixture, not a harness label wipe. */
-    for(unsigned fixture=1;fixture<=4;fixture++){
+    for(unsigned fixture=1;fixture<=6;fixture++){
         char path[80];snprintf(path,sizeof(path),"SYS:openzfs-native-changes-%u",fixture);
         marker=Lock((CONST_STRPTR)path,SHARED_LOCK);
-        if(marker){UnLock(marker);error=storage_destroyed_changes(fixture<=2?1:2,(fixture-1)%2);if(error)return error;}
+        if(marker){UnLock(marker);error=storage_destroyed_changes(fixture>=5?fixture-2:fixture<=2?1:2,fixture>=5?1:(fixture-1)%2);if(error)return error;}
     }
     return 0;
 }
 static int storage_native_cold(int create)
 {
+    BPTR changed=Lock((CONST_STRPTR)"SYS:openzfs-native-changes-5",SHARED_LOCK);
+    int ahci=0;
+    if(!changed){changed=Lock((CONST_STRPTR)"SYS:openzfs-native-changes-6",SHARED_LOCK);ahci=changed!=0;}
+    if(changed){
+        UnLock(changed);if(create)return 0;
+        char command[768];const char *device=ahci?"ahci.device":"ata.device";unsigned unit=ahci?0:3;
+        snprintf(command,sizeof(command),"C:zpool import -N -o cachefile=none -o readonly=on -d /AROS/ata.device/0/partition/2 -d /AROS/%s/%u/partition/0 -d /AROS/%s/%u/partition/1 -d /AROS/%s/%u/partition/2 public_native_target",device,unit,device,unit,device,unit);
+        int error=cli_command(command)?EIO:0;
+        if(!error)error=cli_result("C:zpool list -H -o health public_native_target >T:cli-package-output.txt","ONLINE");
+        if(!error)error=pool_root_payload("public_native_target",0,1);
+        if(!error)error=cli_command("C:zpool export public_native_target")?EIO:0;
+        if(!error)note("Public all-native changed reader PASS online=1 exact-read=1 readonly-write-denied=1 exported=1\n");
+        return error;
+    }
     /* This fixture is only enabled by the isolated runner. The writer exports
      * cleanly; the reader runs in a different VM with no retained ARC or keys. */
     BPTR marker=Lock((CONST_STRPTR)"SYS:openzfs-native-cold-test",SHARED_LOCK);

@@ -1111,6 +1111,14 @@ fixtures and requires its exact result marker. Do not combine with native-cold
 mode. See `aros/tests/evidence/native-member-changes` for four passing runs and
 the distinction between mixed native/file pools and all-native qualification.
 
+Values `5` (two-channel ATA) and `6` (ATA+AHCI) create five all-native partition
+members and retain the changed pool for a separate read-only guest boot.
+Value `6` passes with the explicit AHCI capacity package selected through
+`AROS_TEST_BASE_AHCI_PACKAGE`; stock alpha18c5 reports the image short by 1024
+bytes and is rejected. Value `5` currently reproduces ATA I/O timeouts, including
+with one CPU, and is not a qualified configuration. See
+`aros/tests/evidence/all-native-changed-cold` for controls and exact bounds.
+
 `AROS_TEST_GUI_DESKTOP=1` enables an interactive Wanderer fixture in the public
 GUI runner. It leaves Wanderer running, asks the tester to inspect OZPUBLIC
 and hello.txt, and rereads the file after Manager closes. This read assertion

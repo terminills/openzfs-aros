@@ -180,9 +180,11 @@ partitions=${AROS_TEST_REQUIRE_PARTITIONS:-0}
 native_discovery=${AROS_TEST_NATIVE_DISCOVERY:-0}
 native_cold=${AROS_TEST_NATIVE_COLD:-0}
 native_changes=${AROS_TEST_NATIVE_CHANGES:-0}
-[[ $native_changes =~ ^[0-4]$ ]]
+[[ $native_changes =~ ^[0-6]$ ]]
+all_native=0
+if [[ $native_changes == 5 || $native_changes == 6 ]];then all_native=1;fi
 if [[ $native_changes != 0 ]];then
-    [[ $native_discovery == 1 && $native_cold == 0 ]]
+    [[ $native_discovery == 1 && $native_cold == 0 && $gui == 0 ]]
     extra_maps+=(-map aros/engine/public-service-test-only "/openzfs-native-changes-$native_changes")
 fi
 [[ $native_cold == 0 || ( $native_cold == 1 && $native_discovery == 1 && $gui == 0 ) ]]
@@ -199,6 +201,7 @@ sector_quirk=${AROS_TEST_SECTOR_QUIRK:-0}
 [[ $sector_quirk == 0 || $sector_quirk == 1 ]] || exit 2
 [[ $sector_quirk == 0 || $partitions == 1 ]] || exit 2
 label_source=${AROS_TEST_LABEL_FIXTURE:-}
+[[ $all_native == 0 || ( -z $label_source && $ahci_query == 0 ) ]]
 if [[ -n $label_source ]];then
     [[ $partitions == 1 && ${AROS_TEST_REQUIRE_INIT:-0} == 1 ]] || {
         echo 'Label fixture requires PARTITIONS and INIT tests' >&2; exit 2; }
@@ -361,9 +364,20 @@ if [[ $partitions == 1 ]];then
         -map aros/engine/public-service-test-only /openzfs-partition-test-only)
     extra_drives=(-drive "file=$run/partition.raw,format=raw,if=ide,index=0,snapshot=on$disk_aio_option"
         -drive "file=$run/blank.raw,format=raw,if=ide,index=1,snapshot=on$disk_aio_option")
-    if [[ $native_cold == 1 ]];then
+    if [[ $native_cold == 1 || $all_native == 1 ]];then
         # Only this newly generated private fixture persists between guests.
         extra_drives[1]="file=$run/partition.raw,format=raw,if=ide,index=0$disk_aio_option"
+    fi
+    if [[ $all_native == 1 ]];then
+        python3 aros/platform/make-partition-fixture.py mbr-three "$run/changes.raw"
+        sha256sum "$run/changes.raw" >> "$run/disks-before.sha256"
+        if [[ $native_changes == 6 ]];then
+            extra_drives+=(-device ich9-ahci,id=ozchanges
+                -drive "file=$run/changes.raw,format=raw,if=none,id=changes$disk_aio_option"
+                -device ide-hd,drive=changes,bus=ozchanges.0)
+        else
+            extra_drives+=(-drive "file=$run/changes.raw,format=raw,if=ide,index=3$disk_aio_option")
+        fi
     fi
     if [[ $sector_quirk == 1 ]];then
         extra_drives+=(-global 'ide-hd.model=ATA     ADATA SSD S396 3')
@@ -789,17 +803,35 @@ if [[ $persistent == 1 ]];then
     fi
 fi
 if [[ $partitions == 1 ]];then
-    if [[ $native_cold == 1 ]];then
+    if [[ $native_cold == 1 || $all_native == 1 ]];then
         # The writer intentionally changes partition.raw; other disks must not.
-        grep -v '/partition.raw$' "$run/disks-before.sha256" > "$run/disks-protected.sha256"
+        if [[ $all_native == 1 ]];then
+            grep -vE '/(partition|changes).raw$' "$run/disks-before.sha256" > "$run/disks-protected.sha256"
+        else
+            grep -v '/partition.raw$' "$run/disks-before.sha256" > "$run/disks-protected.sha256"
+        fi
         sha256sum -c "$run/disks-protected.sha256" > "$run/disks-after-check.txt"
     else
         sha256sum -c "$run/disks-before.sha256" > "$run/disks-after-check.txt"
     fi
 fi
-if [[ $native_cold == 1 ]];then
-    rg -q '^Public native cold writer PASS encrypted-root=1 exact-write=1 detached=1 exported=1' "$run/serial-results.log"
+if [[ $native_cold == 1 || $all_native == 1 ]];then
+    native_reader='Public native cold reader PASS locked=1 mount-denied=1 key-loaded=1 exact-read=1 readonly-write-denied=1 exported=1'
+    native_writer='Public native cold writer PASS encrypted-root=1 exact-write=1 detached=1 exported=1'
+    native_cold_drives=()
+    if [[ $all_native == 1 ]];then
+        native_reader='Public all-native changed reader PASS online=1 exact-read=1 readonly-write-denied=1 exported=1'
+        native_writer='Public all-native changed writer PASS attach=1 replace=1 add=1 native-leaves=4 exact-read=1 exported=1'
+        native_cold_drives=(-drive "file=$run/changes.raw,format=raw,if=ide,index=3")
+        if [[ $native_changes == 6 ]];then
+            native_cold_drives=(-device ich9-ahci,id=ozchanges
+                -drive "file=$run/changes.raw,format=raw,if=none,id=changes"
+                -device ide-hd,drive=changes,bus=ozchanges.0)
+        fi
+    fi
+    rg -q "^$native_writer" "$run/serial-results.log"
     sha256sum "$run/partition.raw" > "$run/native-before-cold.sha256"
+    if [[ $all_native == 1 ]];then sha256sum "$run/changes.raw" >> "$run/native-before-cold.sha256";fi
     printf '%s\n' 'FailAt 20' 'MakeDir RAM:T RAM:ENV' 'Assign T: RAM:T' \
         'Assign ENV: RAM:ENV' 'Stack 1048576' \
         'C:OpenZFSPublicServiceTest NATIVE-COLD' 'EndCLI' > "$run/Startup-Native-Cold"
@@ -818,6 +850,7 @@ if [[ $native_cold == 1 ]];then
     "$qemu" -name "openzfs-native-cold-$$" -machine pc,accel=kvm -cpu host \
         -smp "$cpus" -m 2048 -drive "file=$run/native-cold.iso,media=cdrom,if=ide,index=2,readonly=on" \
         -drive "file=$run/partition.raw,format=raw,if=ide,index=0" \
+        "${native_cold_drives[@]}" \
         -display none -nic none -boot d -no-reboot -no-shutdown \
         -serial "file:$run/native-cold-serial.log" \
         -monitor "unix:$run/native-cold-monitor,server=on,wait=off" > "$run/native-cold-qemu.log" 2>&1 &
@@ -829,7 +862,7 @@ if [[ $native_cold == 1 ]];then
             sed -E 's/^[[:xdigit:]]{16} 0x[[:xdigit:]]{16} \| [0-9]+ \| //' "$run/native-cold-serial.log" > "$run/native-cold-results.log"
             if rg -q '^RESULT .*FAIL|Public service test line=[1-9][0-9]*|\[PF-DBG\]|^ASSERT at' "$run/native-cold-results.log";then exit 1;fi
             if rg -q '^RESULT public service storage PASS' "$run/native-cold-results.log" &&
-               rg -q '^Public native cold reader PASS locked=1 mount-denied=1 key-loaded=1 exact-read=1 readonly-write-denied=1 exported=1' "$run/native-cold-results.log";then break;fi
+               rg -q "^$native_reader" "$run/native-cold-results.log";then break;fi
         fi
         if ! kill -0 "$pid" 2>/dev/null || ((SECONDS>=deadline));then echo "Native cold timeout/exit: $run" >&2;exit 1;fi
         sleep 1
@@ -838,10 +871,10 @@ if [[ $native_cold == 1 ]];then
     wait "$pid"
     trap - EXIT
     sha256sum -c "$run/native-before-cold.sha256" > "$run/native-cold-unchanged.log"
-    echo "PASS: fresh native encrypted-root import, locked mount denial, exact read, unchanged disk. Evidence: $run"
+    echo "PASS: fresh native import, exact read, readonly write denial, unchanged disks. Evidence: $run"
 fi
 if [[ $native_discovery == 1 ]];then
-  if [[ $native_changes != 0 ]];then
+  if [[ $native_changes != 0 && $all_native == 0 ]];then
     lane=CLI; [[ $native_changes == 2 || $native_changes == 4 ]] && lane=Manager
     candidates=attach-replace; [[ $native_changes == 3 || $native_changes == 4 ]] && candidates=add
     rg -q "^Public native changes PASS lane=$lane candidates=$candidates exact-read=5 cleanup=1" "$run/serial-results.log"

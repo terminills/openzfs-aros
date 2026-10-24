@@ -196,8 +196,12 @@ results, not a fresh qualification of this public snapshot.
   create. CLI and Manager API file-backed lifecycles pass. Four isolated QEMU
   runs also qualify native partition candidates for all three operations in
   mixed native/file pools; see `aros/tests/evidence/native-member-changes`.
-  All-native multi-controller and changed native-pool cold recovery remain
-  unqualified. The actual changed file-backed two-mirror
+  All-native ATA+AHCI changed-pool healthy cold recovery now passes with the
+  separately selected AHCI capacity overlay, unchanged whole-disk hashes and
+  independent zdb checks. Degraded/restored all-native recovery remains open.
+  The two-channel ATA variant produces I/O timeouts with both one and eight
+  CPUs and is not qualified; see `aros/tests/evidence/all-native-changed-cold`.
+  The actual changed file-backed two-mirror
   fixture now passes separate-VM healthy/degraded/restored read-only recovery,
   unchanged full-member hashes and independent zdb checks, using the additional
   private FAT BPB-boundary fix. See `aros/tests/evidence/changed-pool-cold`,
