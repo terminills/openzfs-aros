@@ -906,6 +906,16 @@ staging directory with SHA256SUMS and evidence metadata. Platform overrides
 are separated under Platform/, never silently installed. Four companion
 utilities remain explicitly build-only in the bundle's qualification record.
 
+Updated development archive `mmake-bundle.mdsk7pku.tar.xz` includes the
+destruction dry-run worker and corrected Manager confirmation. Its SHA256 is
+`963038867f9b2f2474ccbde1c13d8dc46f5b3692e986d85572142754b694e821`.
+Staging binds Manager to GUI run `native-gui-run.DCRePTo0`, including the
+independent unchanged-snapshot/hold checks, and the matching engine/CLI bytes
+to cold/writable-release run `public-service-run.fkCVCuGC`. The staging and
+freshly extracted manifests pass. This is archive-integrity verification
+against those runtime tests, not an additional runtime test of the extracted
+archive or a stock-nightly qualification. The earlier archives remain unchanged.
+
 Bundle `mmake-bundle.hktsxy4r.tar.xz` was unpacked and checksum-verified in a
 fresh directory; native `public-service-run.l41Mia4v` passes the full RAM-backed
 suite using those extracted binaries. Its SHA256 is
