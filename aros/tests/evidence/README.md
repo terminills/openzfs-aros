@@ -112,6 +112,13 @@ unchanged pool members and independent host `zdb`. The deferred snapshots are
 released and cleaned up during the writer fixture; this is not a test of a
 pending hold surviving reboot. Cold results and input hashes are retained here.
 
+`recursive-defer-auth` retains the corrected native delegation run
+`public-service-run.JqZeMvsx` (full storage PASS), while
+`recursive-defer-auth-initial` retains the failed local-only-grant assumption
+from `public-service-run.3LRx0YnK`. The initial denial was correct upstream
+behavior, not a driver crash or permission bypass. See the engine README for
+the exact grant/revocation assertions.
+
 The `fresh-engine` directory retains the writer/cold-import logs and hashes for
 `public-service-run.KKc6pmMp`, using the clean source engine build described in
 [engine build notes](../../engine/BUILDING.md). This is a non-GUI test; the

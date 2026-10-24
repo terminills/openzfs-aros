@@ -1760,6 +1760,25 @@ static int storage_native_discovery(void)
     note("Public native discovery coexistence PASS separate-partitions=1 neighbor-online=1 neighbor-property=1 cleanup=1\n");
     return 0;
 }
+static int destroy_identity(const char *snapshot,unsigned flags,int permitted)
+{
+    struct Library *secBase=OpenLibrary((CONST_STRPTR)SECURITYNAME,SECURITYVERSION);
+    if(!secBase)return ENOENT;
+    struct TagItem reader[]={{secT_UserID,(IPTR)"ozreader"},{secT_Password,(IPTR)""},{TAG_DONE,0}};
+    struct TagItem root[]={{secT_UserID,(IPTR)"oztestroot"},{secT_Password,(IPTR)""},{TAG_DONE,0}};
+    struct TagItem quiet[]={{secT_Quiet,TRUE},{TAG_DONE,0}};
+    int error=0;
+    secLogoutA(quiet);
+    if(secLoginA(reader)!=((77UL<<16)|88))error=EACCES;
+    if(!error){
+        int result=storage_request_flags(38,snapshot,NULL,"defer=on",flags);
+        if(!storage_reply_received||(permitted?result!=0:result!=EIO))error=EACCES;
+    }
+    /* Restore root even if the request or assertion failed. */
+    secLogoutA(quiet);if(secLoginA(root)!=secOWNER_SYSTEM)error=EACCES;
+    CloseLibrary(secBase);
+    return error;
+}
 static int clone_worker_identity(const char *destination,int permitted)
 {
     struct Library *secBase=OpenLibrary((CONST_STRPTR)SECURITYNAME,SECURITYVERSION);
@@ -1970,6 +1989,19 @@ static int storage_test(int gui){
             STORAGE_CHECK(!cli_command("C:zfs create -o mountpoint=none public_mirror/defer_tree/child"));
             STORAGE_CHECK(!cli_command("C:zfs snapshot -r public_mirror/defer_tree@held"));
             STORAGE_CHECK(!cli_command("C:zfs hold keep public_mirror/defer_tree/child@held"));
+            STORAGE_CHECK(!cli_command("C:zfs snapshot public_mirror/defer_tree@permission_probe"));
+            STORAGE_CHECK(!cli_command("C:zfs allow -l -u 77 mount,destroy public_mirror/defer_tree"));
+            STORAGE_CHECK(!destroy_identity("public_mirror/defer_tree@permission_probe",OZ_CONFIRMED,0));
+            STORAGE_CHECK(!cli_result("C:zfs get -H -o value defer_destroy public_mirror/defer_tree@permission_probe >T:cli-package-output.txt","off"));
+            STORAGE_CHECK(!cli_command("C:zfs allow -d -u 77 mount,destroy public_mirror/defer_tree"));
+            STORAGE_CHECK(!destroy_identity("public_mirror/defer_tree@permission_probe",OZ_CONFIRMED,1));
+            STORAGE_CHECK(cli_command("C:zfs list -t snapshot public_mirror/defer_tree@permission_probe")!=0);
+            STORAGE_CHECK(!cli_command("C:zfs unallow -d -u 77 mount,destroy public_mirror/defer_tree"));
+            STORAGE_CHECK(!destroy_identity("public_mirror/defer_tree@held",OZ_CONFIRMED|OZ_RECURSIVE,0));
+            STORAGE_CHECK(!cli_result("C:zfs get -H -o value defer_destroy public_mirror/defer_tree@held >T:cli-package-output.txt","off"));
+            STORAGE_CHECK(!cli_result("C:zfs get -H -o value defer_destroy public_mirror/defer_tree/child@held >T:cli-package-output.txt","off"));
+            STORAGE_CHECK(!cli_command("C:zfs unallow -l -u 77 mount,destroy public_mirror/defer_tree"));
+            note("Public recursive deferred authorization PASS local-only-denied=1 descendant-granted=1 revoked-denied=1 no-partial-mutation=1 identity-restored=1\n");
             STORAGE_CHECK(storage_request_flags(38,"public_mirror/defer_tree@held",NULL,"defer=on",OZ_RECURSIVE)!=0);
             STORAGE_CHECK(!cli_result("C:zfs get -H -o value defer_destroy public_mirror/defer_tree@held >T:cli-package-output.txt","off"));
             STORAGE_CHECK(storage_request_flags(38,"public_mirror/defer_tree",NULL,"defer=on",OZ_CONFIRMED|OZ_RECURSIVE)!=0);

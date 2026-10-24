@@ -867,6 +867,15 @@ dataset destruction are refused. The fresh shared engine and complete mirror
 storage suite pass; this is API/runtime evidence, not a GUI interaction or
 physical-media test. Force and dry-run remain unsupported.
 
+Delegation follow-up `public-service-run.JqZeMvsx` verifies UID 77's local-only
+mount/destroy grant is insufficient for snapshots, a descendant grant permits
+snapshot destruction, and revoking that grant rejects recursive deferred
+destruction without marking either parent or child snapshot for removal.
+The fixture restores its root identity on every return. Earlier run
+`public-service-run.3LRx0YnK` failed an incorrect test expectation that a local
+grant permitted a snapshot: upstream `dsl_deleg_access_impl` deliberately treats
+snapshots as descendants. That failure is retained, not counted as a pass.
+
 Authenticated recursive dataset destruction is deliberately non-atomic and
 narrower than recursive snapshot destruction. The Manager first refuses any
 service-mounted descendant, then enumerates the tree without mutation,
