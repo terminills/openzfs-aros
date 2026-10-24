@@ -11,6 +11,29 @@ spec.loader.exec_module(stage)
 
 
 class EvidenceTests(unittest.TestCase):
+    def test_optional_release_requires_completion_and_integrity(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = pathlib.Path(directory)
+            stage.require_optional_release(root)
+            (root / "cold-release.txt").write_text("1\n")
+            with self.assertRaises(ValueError):
+                stage.require_optional_release(root)
+            (root / "release-results.log").write_text(
+                "RESULT public service storage PASS\n"
+                "Public cold writable release PASS pending-before=1 recursive-release=1 parent-absent=1 child-absent=1 reimport-absent=1 exact-data=1 exported=1\n"
+                "Public backing clean detach PASS\n")
+            (root / "release-zdb-check.log").write_text("No leaks\n")
+            (root / "release-zdb-unchanged.log").write_text("disk0: OK\n")
+            stage.require_optional_release(root)
+            (root / "archive-before.sha256").write_text("hash archive\n")
+            with self.assertRaises(ValueError):
+                stage.require_optional_release(root)
+            (root / "archive-after-release.log").write_text("archive: OK\n")
+            stage.require_optional_release(root)
+            (root / "release-zdb-unchanged.log").write_text("disk0: OK\ndisk1: FAILED\n")
+            with self.assertRaises(ValueError):
+                stage.require_optional_release(root)
+
     def test_companions_require_all_cold_cases(self):
         with tempfile.TemporaryDirectory() as directory:
             root = pathlib.Path(directory)

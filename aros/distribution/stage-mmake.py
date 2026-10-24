@@ -70,6 +70,28 @@ def require_companions(run):
         raise ValueError("Missing archive unchanged evidence")
 
 
+def require_optional_release(run):
+    if not (run / "cold-release.txt").exists():
+        return
+    required = {
+        "release-results.log": (
+            "RESULT public service storage PASS",
+            "Public cold writable release PASS pending-before=1 recursive-release=1 parent-absent=1 child-absent=1 reimport-absent=1 exact-data=1 exported=1",
+            "Public backing clean detach PASS"),
+        "release-zdb-check.log": ("No leaks",),
+        "release-zdb-unchanged.log": (": OK",),
+    }
+    if (run / "archive-before.sha256").exists():
+        required["archive-after-release.log"] = (": OK",)
+    for name, markers in required.items():
+        path = run / name
+        if not path.is_file():
+            raise ValueError(f"Missing writable cold-release evidence: {name}")
+        text = path.read_text()
+        if "FAIL" in text or any(marker not in text for marker in markers):
+            raise ValueError(f"Failed writable cold-release evidence: {name}")
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("build", type=pathlib.Path)
@@ -128,6 +150,7 @@ def main():
         if value not in options:
             raise ValueError(f"Missing release provenance: {value}")
     require_companions(cold)
+    require_optional_release(cold)
     companions = ("OpenZFSStartup", "OpenZFSStartupMount", "OpenZFSRuntimeCheck", "OpenZFSHostIdentity")
     for name in companions:
         source = stage / "C" / name
