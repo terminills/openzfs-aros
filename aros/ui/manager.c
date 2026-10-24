@@ -290,6 +290,7 @@ static void send_request(ULONG operation,int preview_only) {
     snprintf(text,sizeof(text),"API 3 / %s\nTarget: %s\nArgument: %s\nProperties/options: %s\nRecursive=%s Force=%s Dry-run=%s Raw=%s Resumable=%s\n%s",
         op->key,m.target[0]?m.target:"(none)",m.argument[0]?m.argument:"(none)",m.options[0]?m.options:"(defaults)",
         m.flags&OZ_RECURSIVE?"yes":"no",m.flags&OZ_FORCE?"yes":"no",m.flags&OZ_DRYRUN?"yes":"no",m.flags&OZ_RAW?"yes":"no",m.flags&OZ_RESUMABLE?"yes":"no",
+        m.operation==38&&(m.flags&OZ_DRYRUN)?"Destruction plan only; no storage changes.":
         oz_request_mutates(m.operation,m.argument)?"This operation changes storage or configuration.":"Read/query or stream operation.");
     if(m.topology.group_count){unsigned g,d;size_t n=strlen(text);
         n+=snprintf(text+n,sizeof(text)-n,"\nTyped topology: ashift=%lu\n",(unsigned long)m.topology.ashift);

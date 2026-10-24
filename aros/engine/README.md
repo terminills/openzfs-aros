@@ -884,8 +884,11 @@ remain off, the child's hold remains present, and releasing that hold does not
 destroy the child. Fixture cleanup and the full storage suite pass. Screenshots,
 action trace, binary hashes and serial results are retained under
 `aros/tests/evidence/gui-destroy-preview`. This is isolated QEMU proof, not
-physical-media qualification. The captured confirmation has a known generic
-mutation warning even in dry-run mode; that wording is not backend behavior.
+physical-media qualification. The initial capture has a generic mutation
+warning even in dry-run mode. Follow-up `native-gui-run.DCRePTo0` verifies the
+rebuilt Manager instead displays "Destruction plan only; no storage changes."
+and repeats the unchanged-snapshot/hold and full storage checks successfully.
+Its evidence is retained under `aros/tests/evidence/gui-destroy-preview-wording`.
 
 Delegation follow-up `public-service-run.JqZeMvsx` verifies UID 77's local-only
 mount/destroy grant is insufficient for snapshots, a descendant grant permits
