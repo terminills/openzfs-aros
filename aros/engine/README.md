@@ -850,6 +850,17 @@ stays unavailable and mounting is still refused before normal key loading.
 Cold-read member hashes remain unchanged and independent `zdb` reports no
 leaks. Evidence is in `aros/tests/evidence/key-check-readonly`.
 
+Native `public-service-run.BjHi0TGI` separately checks key-file authorization on
+the real OpenZFS DOS handler. UID 77 retains load-key delegation throughout:
+a root-owned private key file is denied, adding other-read permits verification,
+and removing it denies verification again. A readable key below a private
+directory is likewise denied until other-execute permits traversal; revoking
+that directory permission denies it again. Root identity is restored between
+requests, fixtures are removed, the dataset stays locked, and the full suite
+passes. `aros/tests/evidence/key-file-policy` retains the logs and provenance.
+This qualifies direct native paths, not every alias/link or foreign-filesystem
+permission implementation.
+
 ## Native dataset rename and destroy (2026-09-21)
 
 ### Snapshot holds and releases

@@ -1779,7 +1779,7 @@ static int destroy_identity(const char *snapshot,unsigned flags,int permitted)
     CloseLibrary(secBase);
     return error;
 }
-static int key_check_identity(int permitted)
+static int key_check_file_identity(const char *path,int permitted)
 {
     struct Library *secBase=OpenLibrary((CONST_STRPTR)SECURITYNAME,SECURITYVERSION);
     if(!secBase)return ENOENT;
@@ -1790,13 +1790,15 @@ static int key_check_identity(int permitted)
     secLogoutA(quiet);
     if(secLoginA(reader)!=((77UL<<16)|88))error=EACCES;
     if(!error){
-        int result=storage_request_flags(62,"public_mirror/encrypted","RAM:public-test.key",NULL,OZ_CONFIRMED|OZ_DRYRUN);
+        int result=storage_request_flags(62,"public_mirror/encrypted",path,NULL,OZ_CONFIRMED|OZ_DRYRUN);
         if(!storage_reply_received||(permitted?result!=0:result!=EIO))error=EACCES;
     }
     secLogoutA(quiet);if(secLoginA(root)!=secOWNER_SYSTEM)error=EACCES;
     CloseLibrary(secBase);
     return error;
 }
+static int key_check_identity(int permitted)
+{return key_check_file_identity("RAM:public-test.key",permitted);}
 static int clone_worker_identity(const char *destination,int permitted)
 {
     struct Library *secBase=OpenLibrary((CONST_STRPTR)SECURITYNAME,SECURITYVERSION);
@@ -2210,6 +2212,35 @@ static int storage_test(int gui){
         STORAGE_CHECK(!cli_command("C:zfs allow -l -u 77 load-key public_mirror/encrypted"));
         STORAGE_CHECK(!key_check_identity(1));
         STORAGE_CHECK(!cli_result("C:zfs get -H -o value keystatus public_mirror/encrypted >T:cli-package-output.txt","unavailable"));
+        /* Dataset delegation must not bypass separate key-file access.
+         * This key lives on our real DOS handler, not RAM's permissive policy. */
+        unsigned char private_key[32];for(unsigned i=0;i<sizeof(private_key);i++)private_key[i]=(unsigned char)(i+1);
+        file=Open((CONST_STRPTR)"OZPUBLIC:permission-check.key",MODE_NEWFILE);STORAGE_CHECK(file);
+        STORAGE_CHECK(Write(file,private_key,sizeof(private_key))==sizeof(private_key));STORAGE_CHECK(Close(file));file=0;
+        STORAGE_CHECK(SetOwner((STRPTR)"OZPUBLIC:permission-check.key",secOWNER_SYSTEM));
+        STORAGE_CHECK(SetProtection((CONST_STRPTR)"OZPUBLIC:permission-check.key",0));
+        STORAGE_CHECK(!key_check_file_identity("OZPUBLIC:permission-check.key",0));
+        STORAGE_CHECK(SetProtection((CONST_STRPTR)"OZPUBLIC:permission-check.key",FIBF_OTR_READ));
+        STORAGE_CHECK(!key_check_file_identity("OZPUBLIC:permission-check.key",1));
+        STORAGE_CHECK(SetProtection((CONST_STRPTR)"OZPUBLIC:permission-check.key",0));
+        STORAGE_CHECK(!key_check_file_identity("OZPUBLIC:permission-check.key",0));
+        STORAGE_CHECK(DeleteFile((CONST_STRPTR)"OZPUBLIC:permission-check.key"));
+        note("Public key file authorization PASS delegated=1 private-denied=1 readable-allowed=1 revoked-denied=1 cleanup=1\n");
+        BPTR keydir=CreateDir((CONST_STRPTR)"OZPUBLIC:private-key-dir");STORAGE_CHECK(keydir);UnLock(keydir);
+        file=Open((CONST_STRPTR)"OZPUBLIC:private-key-dir/check.key",MODE_NEWFILE);STORAGE_CHECK(file);
+        STORAGE_CHECK(Write(file,private_key,sizeof(private_key))==sizeof(private_key));STORAGE_CHECK(Close(file));file=0;
+        STORAGE_CHECK(SetOwner((STRPTR)"OZPUBLIC:private-key-dir",secOWNER_SYSTEM));
+        STORAGE_CHECK(SetOwner((STRPTR)"OZPUBLIC:private-key-dir/check.key",secOWNER_SYSTEM));
+        STORAGE_CHECK(SetProtection((CONST_STRPTR)"OZPUBLIC:private-key-dir/check.key",FIBF_OTR_READ));
+        STORAGE_CHECK(SetProtection((CONST_STRPTR)"OZPUBLIC:private-key-dir",0));
+        STORAGE_CHECK(!key_check_file_identity("OZPUBLIC:private-key-dir/check.key",0));
+        STORAGE_CHECK(SetProtection((CONST_STRPTR)"OZPUBLIC:private-key-dir",FIBF_OTR_EXECUTE));
+        STORAGE_CHECK(!key_check_file_identity("OZPUBLIC:private-key-dir/check.key",1));
+        STORAGE_CHECK(SetProtection((CONST_STRPTR)"OZPUBLIC:private-key-dir",0));
+        STORAGE_CHECK(!key_check_file_identity("OZPUBLIC:private-key-dir/check.key",0));
+        STORAGE_CHECK(DeleteFile((CONST_STRPTR)"OZPUBLIC:private-key-dir/check.key"));
+        STORAGE_CHECK(DeleteFile((CONST_STRPTR)"OZPUBLIC:private-key-dir"));
+        note("Public key traversal authorization PASS readable-file=1 private-parent-denied=1 search-allowed=1 revoked-denied=1 cleanup=1\n");
         STORAGE_CHECK(!cli_command("C:zfs unallow -l -u 77 load-key public_mirror/encrypted"));
         STORAGE_CHECK(!key_check_identity(0));
         STORAGE_CHECK(!cli_result("C:zfs get -H -o value keystatus public_mirror/encrypted >T:cli-package-output.txt","unavailable"));
