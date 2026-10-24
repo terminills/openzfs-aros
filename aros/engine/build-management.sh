@@ -45,8 +45,19 @@ if [[ ${AROS_FULL_DISPATCHER:-0} == 1 ]];then
         "${AROS_NVPAIR_ARCHIVE:-build-aros/libnvpair-adt-consistent.a}"
         "${AROS_PRIVATE_PTHREAD:-build-aros/pthread-consistent.s3r1CHla/libpthread.a}")
 fi
-"$cc" "${sdk_flags[@]}" "${test_flags[@]}" -Wall -Wextra -O2 aros/ui/api.c aros/ui/admission-client.c aros/cli/version.c aros/engine/public-service-test.c \
-    "${test_objects[@]}" -o "$output_dir/OpenZFSPublicServiceTest"
+# Keep the standalone acceptance client aligned with
+# OPENZFS_PUBLIC_TEST_FILES in mmakefile.src: its current fixtures exercise
+# the real asynchronous command worker and persistent startup records.
+"$cc" "${sdk_flags[@]}" "${test_flags[@]}" \
+    -I"${AROS_PTHREAD_INCLUDE:?matching private pthread headers required}" \
+    -DOZ_NATIVE_ONEXIT -Wall -Wextra -O2 \
+    aros/ui/api.c aros/ui/admission-client.c aros/ui/project-worker.c \
+    aros/cli/process.c aros/cli/arguments.c aros/cli/output.c \
+    aros/ui/startup-settings.c aros/ui/startup-settings-file.c \
+    aros/ui/preferences.c aros/ui/preferences-file.c aros/engine/hostid-record.c \
+    aros/cli/version.c aros/engine/public-service-test.c \
+    "${test_objects[@]}" "${AROS_PRIVATE_PTHREAD:?private pthread archive required}" \
+    -liffparse -o "$output_dir/OpenZFSPublicServiceTest"
 printf 'service_test_modes=%s\nfull_dispatcher=%s\nstatus_trace=%s\n' \
     "${AROS_SERVICE_TEST_MODES:-0}" "${AROS_FULL_DISPATCHER:-0}" "${AROS_STATUS_TRACE:-0}" >"$output_dir/service-build-options.txt"
 sha256sum "$output_dir/OpenZFSServiceNative" >"$output_dir/service-build.sha256"
