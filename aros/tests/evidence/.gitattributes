@@ -1,3 +1,5 @@
 # Preserve original serial bytes and captured working-tree patches.
 */serial.log -text -whitespace
 */source.patch -text -whitespace
+*/cold-results.log -text -whitespace
+*/zdb-check.log -text -whitespace

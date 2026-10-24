@@ -70,6 +70,11 @@ package. See BUILDING.md for the immutable archive identity.
 
 ### Evidence retention
 
+The `fresh-engine` directory retains the writer/cold-import logs and hashes for
+`public-service-run.KKc6pmMp`, using the clean source engine build described in
+[engine build notes](../../engine/BUILDING.md). This is a non-GUI test; the
+screenshots above must not be treated as captures of that new engine candidate.
+
 Commit selected PNG captures with the matching run identity, relevant logs,
 source changes and input hashes when qualifying a new visible behavior. Explain
 what is visible and what was verified independently. Do not commit test ISOs,

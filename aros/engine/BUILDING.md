@@ -1,5 +1,28 @@
 # Fresh source engine build
 
+## Clean rebuild qualification, 2026-10-23
+
+`source-engine.vhKxMXuk` rebuilt all 248 inventory source units and nvpair/XDR
+from source, then linked the full service and current standalone acceptance
+client. Source and output hashes were rechecked successfully. Shared candidate
+`shared-engine.eUg6BS3T` was built from that new engine object and nvpair archive,
+with explicit private pthread and crypto dependencies (not freshly rebuilt in
+this run). No prior engine objects seeded this build.
+
+Native run `public-service-run.KKc6pmMp` passed the persistent public storage
+suite, including trusted ENVARC startup restoration and healthy, degraded and
+restored cold imports. Independent `zdb` verification and unchanged pool-member
+hashes pass. Selected logs and manifests are committed under
+`aros/tests/evidence/fresh-engine`. This does not replace the prior package's
+binary identity or qualify physical storage; the new candidate still needs its
+own GUI/package qualification.
+
+The first attempt, `source-engine.E3DnS3hs`, compiled all engine units but failed
+to link the acceptance client: the standalone management builder omitted the
+command-worker, process and startup-record dependencies already present in
+MetaMake. Commit `266a8fc` fixes that source/dependency list. The failed log is
+retained locally; the second build above started with a fresh output directory.
+
 `build-source.sh` creates a new private `build-aros/source-engine.*` directory.
 It compiles the complete libzpool and x86-compatible crypto/AVL/Unicode/zstd
 source inventories before invoking the full native dispatcher/service build.
