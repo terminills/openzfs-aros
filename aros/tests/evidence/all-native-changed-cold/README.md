@@ -78,6 +78,41 @@ Failed run artifacts remain external. Passing-run disposable ISOs were pruned
 only after all three reader phases and both hashes per phase passed; their
 hashes are retained in the pruning manifest. Fourteen host retention tests pass.
 
+## Degraded writes and healed-member cold reads
+
+`public-service-run.9CLTmLeH` passes seven separate eight-CPU VMs: the writer,
+the three read-only recovery cases above, then degraded write, restored-device
+healing, and final read-only verification. Enable this extension with
+`AROS_TEST_NATIVE_HEALING=1` alongside native changes mode 6.
+
+The missing-ATA writer imports writable, checks DEGRADED health, writes and
+flushes a new deterministic 1 MiB file through the DOS handler, syncs and
+exports. The absent ATA disk retains its prior whole-image hash. The next VM
+restores that disk, waits for resilver, checks ONLINE health and reports
+270336 bytes issued with zero scan errors. It verifies both payloads, offlines
+the AHCI peer in the repaired mirror and exports. The final fresh VM imports
+read-only with that peer still OFFLINE, checks DEGRADED health, verifies both
+payloads exactly and rejects writes. Both entire disks remain unchanged in
+that last phase. The peer isolation is intentional: a same-VM read could be
+satisfied by ARC rather than the repaired disk. The retained test pool ends
+degraded, not fully online; this is not a production startup configuration.
+
+Independent host `zdb -e -p healed-zdb-members -bcc public_native_target`
+reports No leaks using exact native-partition slices extracted after all VMs
+exit. Both the slices and original images retain their hashes. Evidence is
+under `healing/`; terminal runner and zdb exit zero. Fifteen host retention
+tests pass. Successful disposable ISOs (27.41 GiB) were removed with hash
+manifests; disks, binaries and logs remain. Failed/aborted test artifacts are
+not pruned.
+
+Setup history: the first healing launch was reserve-blocked before QEMU.
+The private build workspace was relocated with full file-hash and symlink
+verification to external `build-workspace.98Zx7n6B`, preserving its old path.
+The build required explicit original source/build paths and an external `aros`
+symlink for a generated relative dependency. Attempt `cLcPjiED` was stopped
+after an unsuccessful rebuild left the previous client in place; it is not
+acceptance evidence. The passing run uses the successfully rebuilt client.
+
 Remaining gates include the two-channel ATA failure, abrupt power loss, and
 physical-media durability. The previous file-backed recovery proof is separate.
 Large artifacts remain under the external qualification directory; successful

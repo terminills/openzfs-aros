@@ -19,6 +19,30 @@ def eligible(run):
     if run.is_symlink() or run.parent != ROOT or not re.fullmatch(
             r"(?:public-service|native-gui|preferences)-run\.[A-Za-z0-9]+", run.name):
         return False
+    if (run / "native-healing.txt").exists():
+        for phase, marker in (
+            ("native-write", "Public native degraded write PASS bytes=1048576 synced=1 exported=1"),
+            ("native-heal", "Public native restored healing PASS issued-nonzero=1 errors=0 exact-data=1 exported=1"),
+            ("native-verify", "Public native healed cold PASS exact-data=1 readonly-write-denied=1 exported=1"),
+        ):
+            path = run / f"{phase}-results.log"
+            if not path.is_file():
+                return False
+            text = path.read_text()
+            if (marker not in text or "RESULT public service storage PASS" not in text
+                    or re.search(r"\bFAIL(?:ED)?\b|ASSERT at", text)):
+                return False
+            if phase == "native-heal" and "Public native restored member isolation PASS peer-offline=1" not in text:
+                return False
+        for name, expected in (("native-write-absent-unchanged.log", {"partition.raw"}),
+                               ("native-verify-unchanged.log", {"partition.raw", "changes.raw"})):
+            path = run / name
+            if not path.is_file():
+                return False
+            text = path.read_text()
+            verified = {Path(line[:-4]).name for line in text.splitlines() if line.endswith(": OK")}
+            if "FAILED" in text or verified != expected:
+                return False
     if (run / "Startup-Native-Cold").exists():
         for name, required in (("native-cold-results.log", "RESULT public service storage PASS"),
                                ("native-cold-unchanged.log", ": OK")):
@@ -98,7 +122,7 @@ def eligible(run):
 
 
 def candidates(run):
-    result = [run / name for name in ("test.iso", "cold.iso", "native-cold.iso", "native-degraded.iso", "release.iso", "backing.raw", "retired-disk0")]
+    result = [run / name for name in ("test.iso", "cold.iso", "native-cold.iso", "native-degraded.iso", "native-write.iso", "native-heal.iso", "native-verify.iso", "release.iso", "backing.raw", "retired-disk0")]
     archive = run / "startup-archive.raw"
     unchanged = run / "archive-unchanged.log"
     if (unchanged.is_file() and f"{archive}: OK" in unchanged.read_text()
@@ -124,7 +148,9 @@ def main():
     args = parser.parse_args()
     if args.artifact_root:
         external = args.artifact_root.resolve(strict=True)
-        if not args.run or not external.is_dir() or external.stat().st_dev == ROOT.stat().st_dev:
+        # The private build directory itself may be archived behind a symlink.
+        # Compare against the repository filesystem, not its relocated target.
+        if not args.run or not external.is_dir() or external.stat().st_dev == ROOT.parent.stat().st_dev:
             parser.error("external artifact root requires one run and a separate mounted filesystem")
         ROOT = external
     if args.run and not re.fullmatch(r"(?:public-service|native-gui|preferences)-run\.[A-Za-z0-9]+", args.run):

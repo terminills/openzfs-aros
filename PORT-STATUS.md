@@ -51,6 +51,15 @@ does not establish abrupt-power-loss or physical-media durability.
 
 ## Current public-source qualification
 
+The current engine also passes native ATA+AHCI changed-pool recovery in
+eight-CPU QEMU: read-only healthy/missing-device/restored imports, writes while
+one disk is absent, restored-member resilver, then a fresh read-only exact-data
+check with its surviving peer deliberately offline. Whole-disk hash checks and
+independent zdb verification pass. This requires the documented private AHCI
+capacity overlay, does not fix the separate two-channel ATA timeout, and is
+not power-loss or physical-media qualification. See
+`aros/tests/evidence/all-native-changed-cold` for the retained evidence.
+
 The native MetaMake package now passes isolated two-CPU QEMU tests of the
 shared engine, upstream `zfs`/`zpool` commands and standalone DOS handler.
 This includes clone/rename, LZ4 configuration, rollback checked through mounted

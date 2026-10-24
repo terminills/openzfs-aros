@@ -183,6 +183,8 @@ native_changes=${AROS_TEST_NATIVE_CHANGES:-0}
 [[ $native_changes =~ ^[0-6]$ ]]
 all_native=0
 if [[ $native_changes == 5 || $native_changes == 6 ]];then all_native=1;fi
+native_healing=${AROS_TEST_NATIVE_HEALING:-0}
+[[ $native_healing == 0 || ( $native_healing == 1 && $native_changes == 6 ) ]]
 if [[ $native_changes != 0 ]];then
     [[ $native_discovery == 1 && $native_cold == 0 && $gui == 0 ]]
     extra_maps+=(-map aros/engine/public-service-test-only "/openzfs-native-changes-$native_changes")
@@ -866,6 +868,27 @@ if [[ $native_cold == 1 || $all_native == 1 ]];then
             -boot_image any discard -boot_image grub bin_path=/boot/grub/i386-pc/eltorito.img \
             -boot_image grub boot_info_table=on -boot_image grub grub2_boot_info=on > "$run/pack-native-degraded.log" 2>&1
     fi
+    if [[ $native_healing == 1 ]];then
+        printf '1\n' > "$run/native-healing.txt"
+        native_phases+=(native-write native-heal native-verify)
+        for mode in native-write native-heal native-verify;do
+            mode_maps=(-map aros/engine/public-service-test-only "/openzfs-$mode")
+            if [[ $mode == native-write ]];then
+                mode_maps+=(-map aros/engine/public-service-test-only /openzfs-native-missing-ata)
+            fi
+            xorriso -indev "$base" -outdev "$run/$mode.iso" \
+                -map aros/engine/grub-qemu-test.cfg /boot/grub/grub.cfg \
+                "${platform_maps[@]}" -map "$posix" /Libs/posixc.library \
+                -map "$run/security-fixture" /Security \
+                -map "$run/OpenZFSServiceNative" /C/OpenZFSServiceNative \
+                -map "$run/OpenZFSPublicServiceTest" /C/OpenZFSPublicServiceTest \
+                "${extra_maps[@]}" "${mode_maps[@]}" \
+                -map aros/engine/public-service-test-only /openzfs-service-test-only \
+                -map "$run/Startup-Native-Cold" /S/Startup-Sequence \
+                -boot_image any discard -boot_image grub bin_path=/boot/grub/i386-pc/eltorito.img \
+                -boot_image grub boot_info_table=on -boot_image grub grub2_boot_info=on > "$run/pack-$mode.log" 2>&1
+        done
+    fi
     for native_phase in "${native_phases[@]}";do
       native_iso="$run/native-cold.iso"
       native_first=(-drive "file=$run/partition.raw,format=raw,if=ide,index=0")
@@ -874,6 +897,17 @@ if [[ $native_cold == 1 || $all_native == 1 ]];then
           native_iso="$run/native-degraded.iso";native_first=()
           expected_reader=${native_reader/online=1/degraded=1}
       fi
+      case "$native_phase" in
+        native-write)
+          native_iso="$run/$native_phase.iso";native_first=()
+          expected_reader='Public native degraded write PASS bytes=1048576 synced=1 exported=1' ;;
+        native-heal)
+          native_iso="$run/$native_phase.iso"
+          expected_reader='Public native restored healing PASS issued-nonzero=1 errors=0 exact-data=1 exported=1' ;;
+        native-verify)
+          native_iso="$run/$native_phase.iso"
+          expected_reader='Public native healed cold PASS exact-data=1 readonly-write-denied=1 exported=1' ;;
+      esac
       "$qemu" -name "openzfs-$native_phase-$$" -machine pc,accel=kvm -cpu host \
         -smp "$cpus" -m 2048 -drive "file=$native_iso,media=cdrom,if=ide,index=2,readonly=on" \
         "${native_first[@]}" \
@@ -897,9 +931,19 @@ if [[ $native_cold == 1 || $all_native == 1 ]];then
     printf 'quit\n' | socat - "UNIX-CONNECT:$run/$native_phase-monitor" >/dev/null
     wait "$pid"
     trap - EXIT
-    sha256sum -c "$run/native-before-cold.sha256" > "$run/$native_phase-unchanged.log"
+    case "$native_phase" in
+      native-write)
+        # Only the absent ATA disk must retain its old bytes after writes.
+        grep '/partition.raw$' "$run/native-before-cold.sha256" > "$run/native-absent-before.sha256"
+        sha256sum -c "$run/native-absent-before.sha256" > "$run/native-write-absent-unchanged.log" ;;
+      native-heal)
+        sha256sum "$run/partition.raw" "$run/changes.raw" > "$run/native-healed.sha256" ;;
+      native-verify)
+        sha256sum -c "$run/native-healed.sha256" > "$run/native-verify-unchanged.log" ;;
+      *) sha256sum -c "$run/native-before-cold.sha256" > "$run/$native_phase-unchanged.log" ;;
+    esac
     done
-    echo "PASS: fresh native import, exact read, readonly write denial, unchanged disks. Evidence: $run"
+    echo "PASS: native cold suite (healing=$native_healing), exact reads and unchanged read-only phases. Evidence: $run"
 fi
 if [[ $native_discovery == 1 ]];then
   if [[ $native_changes != 0 && $all_native == 0 ]];then

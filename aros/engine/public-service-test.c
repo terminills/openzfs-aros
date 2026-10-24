@@ -2258,15 +2258,66 @@ static int storage_native_cold(int create)
         UnLock(changed);if(create)return 0;
         BPTR missing=Lock((CONST_STRPTR)"SYS:openzfs-native-missing-ata",SHARED_LOCK);
         int degraded=missing!=0;if(missing)UnLock(missing);
+        BPTR mode=Lock((CONST_STRPTR)"SYS:openzfs-native-write",SHARED_LOCK);
+        int write=mode!=0;if(mode)UnLock(mode);
+        mode=Lock((CONST_STRPTR)"SYS:openzfs-native-heal",SHARED_LOCK);
+        int heal=mode!=0;if(mode)UnLock(mode);
+        mode=Lock((CONST_STRPTR)"SYS:openzfs-native-verify",SHARED_LOCK);
+        int verify=mode!=0;if(mode)UnLock(mode);
+        int readonly=!write&&!heal;
         char command[768];const char *device=ahci?"ahci.device":"ata.device";unsigned unit=ahci?0:3;
         /* Authorize every known member path, including the absent unit.
          * Absence is pinned explicitly; labels cannot authorize extra paths. */
-        snprintf(command,sizeof(command),"C:zpool import -N -o cachefile=none -o readonly=on -d /AROS/ata.device/0/partition/2 -d /AROS/%s/%u/partition/0 -d /AROS/%s/%u/partition/1 -d /AROS/%s/%u/partition/2 public_native_target",device,unit,device,unit,device,unit);
+        snprintf(command,sizeof(command),"C:zpool import -N -o cachefile=none -o readonly=%s -d /AROS/ata.device/0/partition/2 -d /AROS/%s/%u/partition/0 -d /AROS/%s/%u/partition/1 -d /AROS/%s/%u/partition/2 public_native_target",readonly?"on":"off",device,unit,device,unit,device,unit);
         int error=cli_command(command)?EIO:0;
-        if(!error)error=cli_result("C:zpool list -H -o health public_native_target >T:cli-package-output.txt",degraded?"DEGRADED":"ONLINE");
-        if(!error)error=pool_root_payload("public_native_target",0,1);
+        if(!error&&heal)error=cli_command("C:zpool wait -t resilver public_native_target")?EIO:0;
+        if(!error&&heal){
+            struct oz_client client;static struct oz_message request;
+            if(!oz_client_open(&client))error=ENOMEM;
+            else{
+                memset(&request,0,sizeof(request));request.operation=4;
+                strcpy(request.target,"public_native_target");
+                if(oz_submit(&client,&request)!=OZ_OK)error=EIO;
+                else{
+                    struct oz_message *reply=NULL;
+                    while(!(reply=oz_poll(&client)))Delay(1);
+                    const char *scan=strstr(reply->detail,"scan=resilver state=finished ");
+                    unsigned long long examined=0,total=0,issued=0,errors=1;
+                    if(reply->status!=OZ_OK||!scan||sscanf(scan,
+                        "scan=resilver state=finished examined=%llu to-examine=%llu issued=%llu errors=%llu",
+                        &examined,&total,&issued,&errors)!=4||!issued||errors)error=EIO;
+                    if(!error){note("Public native healing scan PASS ");note(scan);note("\n");}
+                    oz_message_free(reply);
+                }
+                oz_client_close(&client);
+            }
+        }
+        if(!error)error=cli_result("C:zpool list -H -o health public_native_target >T:cli-package-output.txt",(degraded||verify)?"DEGRADED":"ONLINE");
+        if(!error)error=pool_root_payload("public_native_target",0,readonly);
+        if(!error&&(write||heal||verify)){
+            error=oz_mount_control(OZ_ADMISSION_PORT,"public_native_target","OZNATIVEREPAIR",OZ_MOUNT_ATTACH,
+                readonly?OZ_MOUNT_READONLY:0);
+            if(!error){
+                error=storage_repair_data("OZNATIVEREPAIR:",write);
+                int detached=oz_mount_control(OZ_ADMISSION_PORT,"public_native_target","",OZ_MOUNT_DETACH,0);
+                if(!error)error=detached;
+            }
+        }
+        if(!error&&write)error=cli_command("C:zpool sync public_native_target")?EIO:0;
+        if(!error&&heal){
+            /* Persist peer isolation for the next fresh read-only VM. A
+             * same-VM read could be satisfied from ARC instead of the disk. */
+            snprintf(command,sizeof(command),"C:zpool offline public_native_target /AROS/%s/%u/partition/0",device,unit);
+            error=cli_command(command)?EIO:0;
+            if(!error)error=cli_result("C:zpool list -H -o health public_native_target >T:cli-package-output.txt","DEGRADED");
+            if(!error)note("Public native restored member isolation PASS peer-offline=1\n");
+        }
         if(!error)error=cli_command("C:zpool export public_native_target")?EIO:0;
-        if(!error)note(degraded?
+        if(!error&&(write||heal||verify)){
+            note(write?"Public native degraded write PASS bytes=1048576 synced=1 exported=1\n":
+                heal?"Public native restored healing PASS issued-nonzero=1 errors=0 exact-data=1 exported=1\n":
+                "Public native healed cold PASS exact-data=1 readonly-write-denied=1 exported=1\n");
+        }else if(!error)note(degraded?
             "Public all-native changed reader PASS degraded=1 exact-read=1 readonly-write-denied=1 exported=1\n":
             "Public all-native changed reader PASS online=1 exact-read=1 readonly-write-denied=1 exported=1\n");
         return error;

@@ -44,6 +44,28 @@ class Retention(unittest.TestCase):
         self.invoke()
         self.assertTrue((self.run / "test.iso").exists())
 
+    def test_native_healing_requires_all_phases_and_hashes(self):
+        (self.run / "native-healing.txt").write_text("1\n")
+        self.assertFalse(prune.eligible(self.run))
+        for phase, marker in (
+            ("native-write", "Public native degraded write PASS bytes=1048576 synced=1 exported=1"),
+            ("native-heal", "Public native restored healing PASS issued-nonzero=1 errors=0 exact-data=1 exported=1"),
+            ("native-verify", "Public native healed cold PASS exact-data=1 readonly-write-denied=1 exported=1"),
+        ):
+            (self.run / f"{phase}-results.log").write_text(marker + "\nRESULT public service storage PASS\n")
+            self.assertFalse(prune.eligible(self.run))
+        with (self.run / "native-heal-results.log").open("a") as log:
+            log.write("Public native restored member isolation PASS peer-offline=1\n")
+        (self.run / "native-write-absent-unchanged.log").write_text("partition.raw: OK\n")
+        hashes = self.run / "native-verify-unchanged.log"
+        hashes.write_text("partition.raw: OK\nchanges.raw: FAILED\n")
+        self.assertFalse(prune.eligible(self.run))
+        hashes.write_text("partition.raw: OK\nchanges.raw: OK\n")
+        self.assertTrue(prune.eligible(self.run))
+        with (self.run / "native-heal-results.log").open("a") as log:
+            log.write("ASSERT at test\n")
+        self.assertFalse(prune.eligible(self.run))
+
     def test_external_root_rejects_same_filesystem(self):
         with patch("sys.argv", ["prune", "--run", self.run.name,
                                  "--artifact-root", str(self.run.parent)]), contextlib.redirect_stderr(io.StringIO()):
