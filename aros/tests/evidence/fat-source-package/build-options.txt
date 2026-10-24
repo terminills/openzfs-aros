@@ -1,0 +1,5 @@
+fat_only=1
+readonly_fix=1
+full_fat=1
+clean_flush=1
+bpb_bound=1

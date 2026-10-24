@@ -1,0 +1,10 @@
+{
+  "source": "/home/terminills/Documents/GitHub/aros-adt-upstream-merge",
+  "baseline": "/home/terminills/Documents/GitHub/aros-adt-upstream-merge",
+  "sdk": "/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer",
+  "compiler": "/home/terminills/Documents/GitHub/aros-adt-crosstools/x86_64-aros-gcc",
+  "full_fat": true,
+  "scope": "FAT sources and local headers; SDK and linked archives remain explicit external dependencies",
+  "source_commit": "9ab6a58e7985e21b846e27aea046d73e77d7f874",
+  "baseline_commit": "9ab6a58e7985e21b846e27aea046d73e77d7f874"
+}

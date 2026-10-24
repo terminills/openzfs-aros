@@ -1103,6 +1103,17 @@ changed-pool cold recovery, full-member byte comparisons and independent zdb.
 See `aros/tests/evidence/fat-bpb-bound` and `changed-pool-cold`; the earlier local
 bundle does not include this FAT prerequisite.
 
+The full FAT prerequisite builder now retains private local/generated headers,
+upstream license files and a hash-bound replay recipe. Set `AROS_ARTIFACT_ROOT`
+to the designated external filesystem to keep large build outputs off root.
+Replay with `python3 aros/engine/rebuild-fat-snapshot.py SNAPSHOT
+--output-parent EXTERNAL_DIRECTORY`; the matching recorded SDK/toolchain is
+required, but the original source checkout and cached FAT objects are not.
+Package staging now requires `--fat-source-snapshot SNAPSHOT` and places the
+verified snapshot at `Sources/FAT`. See `aros/tests/evidence/fat-source-package`
+for direct/extracted byte-identical rebuilds and fresh QEMU qualification.
+This does not supply corresponding sources for every other platform module.
+
 Native destroyed-member changes can be tested with `AROS_TEST_NATIVE_CHANGES`
 set to `1` (CLI attach/replace), `2` (Manager API attach/replace), `3` (CLI add),
 or `4` (Manager API add), alongside `AROS_TEST_REQUIRE_PARTITIONS=1` and

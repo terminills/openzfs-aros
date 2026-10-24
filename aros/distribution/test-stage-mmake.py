@@ -2,6 +2,7 @@
 """Evidence binding tests; these do not replace native package acceptance."""
 import importlib.util
 import pathlib
+import json
 import tempfile
 import unittest
 
@@ -11,6 +12,35 @@ spec.loader.exec_module(stage)
 
 
 class EvidenceTests(unittest.TestCase):
+    def test_fat_snapshot_binds_sources_license_and_binary(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = pathlib.Path(directory)
+            (root / 'Licenses').mkdir()
+            files = {'fat.handler': 'binary', 'Licenses/LICENSE': 'license',
+                     'build-options.txt': 'full_fat=1\n', 'rebuild-fat-snapshot.py': '# helper',
+                     'source-provenance.json': '{}', 'fat.c': 'source'}
+            for name, text in files.items():
+                (root / name).write_text(text)
+            recipe = {'format': 1, 'expected_binary': stage.digest(root / 'fat.handler')}
+            (root / 'rebuild.json').write_text(json.dumps(recipe))
+            names = [*files, 'rebuild.json']
+            def manifest():
+                (root / 'retained.sha256').write_text(''.join(
+                    stage.digest(root / n) + '  ' + n + '\n' for n in names))
+            manifest()
+            stage.require_fat_snapshot(root, root / 'fat.handler')
+            (root / 'fat.c').write_text('changed')
+            with self.assertRaises(ValueError):
+                stage.require_fat_snapshot(root, root / 'fat.handler')
+            manifest()
+            (root / 'other.handler').write_text('different')
+            with self.assertRaises(ValueError):
+                stage.require_fat_snapshot(root, root / 'other.handler')
+            names.remove('Licenses/LICENSE')
+            manifest()
+            with self.assertRaises(ValueError):
+                stage.require_fat_snapshot(root, root / 'fat.handler')
+
     def test_changed_pool_requires_each_phase_and_all_member_bytes(self):
         with tempfile.TemporaryDirectory() as directory:
             root = pathlib.Path(directory)

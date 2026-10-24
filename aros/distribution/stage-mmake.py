@@ -6,6 +6,7 @@ integration inputs, not silently copied into the application's Libs directory.
 """
 import argparse
 import hashlib
+import importlib.util
 import json
 import pathlib
 import shutil
@@ -16,6 +17,27 @@ import tempfile
 def digest(path):
     with path.open("rb") as stream:
         return hashlib.file_digest(stream, "sha256").hexdigest()
+
+
+def require_fat_snapshot(snapshot, binary):
+    helper = pathlib.Path(__file__).resolve().parents[1] / "engine/rebuild-fat-snapshot.py"
+    spec = importlib.util.spec_from_file_location("fat_snapshot", helper)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    paths = module.verify_snapshot(snapshot)
+    required = {pathlib.Path(name) for name in (
+        "rebuild.json", "rebuild-fat-snapshot.py", "source-provenance.json",
+        "Licenses/LICENSE", "build-options.txt", "fat.handler")}
+    if not required.issubset(paths):
+        raise ValueError("Incomplete FAT source snapshot")
+    recipe = json.loads((snapshot / "rebuild.json").read_text())
+    if recipe.get("format") != 1 or recipe.get("expected_binary") != digest(binary):
+        raise ValueError("FAT source recipe does not bind the selected binary")
+    if digest(snapshot / "fat.handler") != digest(binary):
+        raise ValueError("FAT snapshot binary differs from selection")
+    if "full_fat=1" not in (snapshot / "build-options.txt").read_text().splitlines():
+        raise ValueError("FAT snapshot is not a full source rebuild")
+    return paths
 
 
 def recorded_hash(run, name):
@@ -139,6 +161,7 @@ def main():
     parser.add_argument("--output-parent", type=pathlib.Path, required=True)
     parser.add_argument("--encrypted-root-run", type=pathlib.Path, required=True)
     parser.add_argument("--fat-handler", type=pathlib.Path, required=True)
+    parser.add_argument("--fat-source-snapshot", type=pathlib.Path, required=True)
     parser.add_argument("--dos-package", type=pathlib.Path, required=True)
     args = parser.parse_args()
     repo = pathlib.Path(__file__).resolve().parents[2]
@@ -201,6 +224,8 @@ def main():
     # is exercised only in the persistent run; DOS policy is used in all runs.
     fat = args.fat_handler.resolve(strict=True)
     require_match(fat, cold, "fat-handler")
+    fat_snapshot = args.fat_source_snapshot.resolve(strict=True)
+    fat_sources = require_fat_snapshot(fat_snapshot, fat)
     dos = args.dos_package.resolve(strict=True)
     for run in (gui, cold, encrypted):
         require_match(dos, run, "aros-base.pkg.xz")
@@ -224,6 +249,13 @@ def main():
             raise ValueError(f"Copy verification failed: {destination}")
     metadata = output / "Metadata"
     metadata.mkdir()
+    sources = output / "Sources/FAT"
+    sources.mkdir(parents=True)
+    for relative in [*fat_sources, pathlib.Path("retained.sha256")]:
+        target = sources / relative
+        target.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(fat_snapshot / relative, target)
+    require_fat_snapshot(sources, output / "Platform/L/fat-handler")
     record = {"packaging_commit": subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=repo, text=True).strip(),
               "gui_run": str(gui), "cold_run": str(cold), "encrypted_root_run": str(encrypted), "build": str(build),
               "build_only_utilities": [], "native_companion_utilities": list(companions),

@@ -1,0 +1,14 @@
+Evidence: /mnt/short-term/openzfs-qualification-20261024.aGFlVF7T/flush-overlay.tufmbxjd
+patching file bpb.c
+patching file volume.c
+Hunk #1 succeeded at 140 (offset 8 lines).
+patching file packet.c
+Hunk #1 succeeded at 19 (offset 1 line).
+Hunk #2 succeeded at 35 (offset 2 lines).
+Hunk #3 succeeded at 66 (offset 2 lines).
+Hunk #4 succeeded at 543 (offset 61 lines).
+Hunk #5 succeeded at 977 (offset 94 lines).
+patching file packet.c
+Hunk #1 succeeded at 565 (offset 51 lines).
+Hunk #2 succeeded at 594 (offset 48 lines).
+Overlay: /mnt/short-term/openzfs-qualification-20261024.aGFlVF7T/flush-overlay.tufmbxjd

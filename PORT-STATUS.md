@@ -4,7 +4,15 @@ Experimental development snapshot; not production-qualified storage software.
 
 ## Current local package (2026-10-24)
 
-The local `mmake-bundle.hntel_xu.tar.xz` includes checked destroyed-member
+The local `mmake-bundle.o6mq86dd.tar.xz` adds a hash-bound FAT source snapshot,
+upstream license files and checkout-independent rebuild recipe. Both direct
+and archive-extracted source replay produce the exact previously qualified FAT
+binary; a fresh persistent QEMU suite passes using the replayed output. See
+`aros/tests/evidence/fat-source-package`. DOS/posixc and complete SDK/toolchain
+source packaging remain public-binary-release gates. This is still a local
+development archive, not a public binary release.
+
+Its predecessor `mmake-bundle.hntel_xu.tar.xz` includes checked destroyed-member
 admission for add/attach/replace and separate tested FAT/DOS prerequisites.
 CLI and Manager API file-backed and native-partition candidate tests pass;
 fresh archive extraction passes full two-boot cold qualification. See
@@ -207,7 +215,10 @@ results, not a fresh qualification of this public snapshot.
   mixed native/file pools; see `aros/tests/evidence/native-member-changes`.
   All-native ATA+AHCI changed-pool healthy cold recovery now passes with the
   separately selected AHCI capacity overlay, unchanged whole-disk hashes and
-  independent zdb checks. Degraded/restored all-native recovery remains open.
+  independent zdb checks. Degraded/restored all-native cold recovery and
+  degraded writes followed by healed-member cold reads also pass with that
+  overlay; the retained healing fixture intentionally offlines the peer for
+  the final read verification.
   The two-channel ATA variant produces I/O timeouts with both one and eight
   CPUs and is not qualified; see `aros/tests/evidence/all-native-changed-cold`.
   The actual changed file-backed two-mirror

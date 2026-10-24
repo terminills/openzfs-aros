@@ -25,6 +25,22 @@ overlay used for persistent file-backed tests is included separately at
 volume-boundary corrections used by those tests. It is not automatically installed.
 Those tests do not prove that arbitrary backing filesystems flush safely.
 
+`Sources/FAT/` retains the full private FAT compilation sources, local and
+generated headers, applied patches, source provenance, upstream license files,
+and a hash-bound replay recipe. To rebuild in a new directory, use:
+
+```
+python3 Sources/FAT/rebuild-fat-snapshot.py Sources/FAT --output-parent /path/on/external/build-drive
+```
+
+The recorded matching SDK/toolchain must be available. The helper verifies
+retained inputs and recorded external headers/archives, creates a fresh output,
+and requires byte-identical output. It does not fetch dependencies or install
+anything. Review recipes from untrusted sources before running them: hashes
+detect drift, not malicious provenance. This FAT snapshot is not a complete
+corresponding-source package for DOS, posixc, the SDK or the toolchain; those
+remain public-binary-release gates.
+
 Metadata/qualification.json identifies the exact selected inputs and evidence.
 The GUI and cold runs qualify the selected shared library, launcher, zfs/zpool,
 handler, device and runtime dependency; Manager is covered by the GUI run.
