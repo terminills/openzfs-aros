@@ -1739,6 +1739,53 @@ static int pool_root_payload(const char *dataset,int create,int readonly)
     int detached=oz_mount_control(OZ_ADMISSION_PORT,dataset,"",OZ_MOUNT_DETACH,0);
     return error?error:detached;
 }
+static int storage_file_reuse(void)
+{
+    BPTR marker=Lock((CONST_STRPTR)"SYS:openzfs-cli-package-test",SHARED_LOCK);
+    if(!marker)return 0;
+    UnLock(marker);
+    const char *saved_directory=storage_directory;
+    unsigned saved_members=storage_members,saved_layout=storage_layout;
+    int saved_replaced=storage_replaced,error=0;BPTR file=0;
+    void *zeros=AllocVec(1024*1024,MEMF_PUBLIC|MEMF_CLEAR);
+    storage_directory="RAM:OZFileReuse";storage_members=2;storage_layout=OZ_MIRROR;storage_replaced=0;
+#define RCHECK(x) do{if(!(x)){error=EIO;goto done;}}while(0)
+    RCHECK(zeros);
+    BPTR directory=CreateDir((CONST_STRPTR)storage_directory);RCHECK(directory);UnLock(directory);
+    for(unsigned i=0;i<2;i++){
+        char path[80];storage_member(path,sizeof(path),i);
+        file=Open((CONST_STRPTR)path,MODE_NEWFILE);RCHECK(file);
+        for(unsigned n=0;n<64;n++)RCHECK(Write(file,zeros,1024*1024)==1024*1024);
+        RCHECK(Flush(file));int closed=Close(file);file=0;RCHECK(closed);
+    }
+    RCHECK(!storage_request(5,"public_file_reuse",NULL,NULL));
+    RCHECK(!pool_root_payload("public_file_reuse",1,0));
+    RCHECK(!cli_command("C:zpool destroy public_file_reuse"));
+    RCHECK(!cli_command("C:zpool create -o cachefile=none -O mountpoint=none public_file_reuse mirror /RAM/OZFileReuse/disk0 /RAM/OZFileReuse/disk1"));
+    RCHECK(pool_root_payload("public_file_reuse",0,0)==EIO);
+    RCHECK(!pool_root_payload("public_file_reuse",1,0));
+    RCHECK(!pool_root_payload("public_file_reuse",0,0));
+    RCHECK(!cli_command("C:zpool export public_file_reuse"));
+    RCHECK(storage_request(5,"public_file_refused",NULL,NULL)!=0);
+    RCHECK(cli_command("C:zpool create -f -o cachefile=none -O mountpoint=none public_file_refused mirror /RAM/OZFileReuse/disk0 /RAM/OZFileReuse/disk1")!=0);
+    RCHECK(!storage_request(7,"public_file_reuse",NULL,"readonly=off"));
+    RCHECK(!pool_root_payload("public_file_reuse",0,0));
+    RCHECK(!cli_command("C:zpool destroy public_file_reuse"));
+    RCHECK(!storage_request(5,"public_file_reuse",NULL,NULL));
+    RCHECK(pool_root_payload("public_file_reuse",0,0)==EIO);
+    RCHECK(!pool_root_payload("public_file_reuse",1,0));
+    RCHECK(!pool_root_payload("public_file_reuse",0,0));
+    RCHECK(!cli_command("C:zpool destroy public_file_reuse"));
+    RCHECK(DeleteFile((CONST_STRPTR)"RAM:OZFileReuse/disk0"));
+    RCHECK(DeleteFile((CONST_STRPTR)"RAM:OZFileReuse/disk1"));
+    RCHECK(DeleteFile((CONST_STRPTR)"RAM:OZFileReuse"));
+done:
+    if(file)Close(file);if(zeros)FreeVec(zeros);
+    storage_directory=saved_directory;storage_members=saved_members;storage_layout=saved_layout;storage_replaced=saved_replaced;
+    if(!error)note("Public file destroyed reuse PASS cli=1 manager-api=1 old-payload-absent=2 exact-read=3 exported-refused=2 cleanup=1\n");
+    return error;
+#undef RCHECK
+}
 static int native_reuse_corrupt_labels(const char *create_command,int conflict)
 {
     /* Only called after the private runner's exact 256MiB MBR geometry and
@@ -2065,6 +2112,7 @@ static int storage_test(int gui){
     /* Blank-label assertions must precede deliberate pool creation. Destroy
      * retains destroyed-pool labels, so discovery is not a blanking step. */
     STORAGE_CHECK(!storage_native_discovery());
+    STORAGE_CHECK(!storage_file_reuse());
     char engine_version[128],small_version[1]={'x'};
     STORAGE_CHECK(!oz_engine_version_query(OZ_ADMISSION_PORT,engine_version,sizeof(engine_version)));
     STORAGE_CHECK(!strncmp(engine_version,"zfs-",4));

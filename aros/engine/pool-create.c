@@ -149,7 +149,8 @@ static int pool_files_change(struct oz_message *m,cred_t *caller,
         if(fstat64(fd,&st))error=errno?errno:EIO;
         else if(!S_ISREG(st.st_mode))error=ENOTSUP;
         else if(st.st_size<SPA_MINDEVSIZE||(st.st_size&511))error=EINVAL;
-        /* Entire-file blank check, not merely ZFS labels: refuse other data.
+        /* Scan blank candidates; create alone may reuse consistently labeled
+         * destroyed members through the shared CLI admission validator.
          * Retained locks are not an exclusive-write transaction;
          * callers must provide exclusively provisioned backing files. */
         for(uint64_t left=error?0:st.st_size;left&&!error;) {
@@ -159,6 +160,7 @@ static int pool_files_change(struct oz_message *m,cred_t *caller,
             for(size_t j=0;j<n;j++)if(buf[j]){error=EEXIST;break;}
             left-=n;
         }
+        if(error==EEXIST&&!operation)error=oz_destroyed_file_backing(fd,st.st_size);
         close(fd);
         if(error)break;
         leaves[i]=fnvlist_alloc();

@@ -497,19 +497,21 @@ static int create_paths(nvlist_t *tree,char **paths,unsigned *count,unsigned dep
     }
     return 0;
 }
-/* Create may reuse an explicitly destroyed native member. Require every label
- * to agree, under the retained writable reservation, rather than trusting a
- * client-side preflight or accepting arbitrary nonzero media. Add/replace keep
- * their existing blank-member policy. This does not implement force-create. */
-static int destroyed_native_backing(struct oz_device *device)
+/* Create may reuse an explicitly destroyed member. Require every label to
+ * agree under the retained native reservation or checked file identity lock,
+ * rather than trusting client preflight or accepting arbitrary nonzero media.
+ * Add/replace keep their blank-member policy. This is not force-create. */
+static int destroyed_backing(struct oz_device *device,int fd,uint64_t bytes)
 {
-    uint64_t size=P2ALIGN_TYPED(oz_device_size(device),sizeof(vdev_label_t),uint64_t);
+    uint64_t size=P2ALIGN_TYPED(bytes,sizeof(vdev_label_t),uint64_t);
     if(size<VDEV_LABELS*sizeof(vdev_label_t))return EINVAL;
     vdev_phys_t *label=malloc(sizeof(*label));if(!label)return ENOMEM;
     uint64_t pool=0,member=0;int error=0;
     for(unsigned l=0;l<VDEV_LABELS&&!error;l++){
         uint64_t offset=l*sizeof(vdev_label_t)+(l<VDEV_LABELS/2?0:size-VDEV_LABELS*sizeof(vdev_label_t))+VDEV_SKIP_SIZE;
-        error=oz_device_transfer(device,label,sizeof(*label),offset,0);
+        if(device)error=oz_device_transfer(device,label,sizeof(*label),offset,0);
+        else if(lseek64(fd,offset,SEEK_SET)!=(off64_t)offset||
+            read(fd,label,sizeof(*label))!=(ssize_t)sizeof(*label))error=EIO;
         nvlist_t *config=NULL;
         if(!error)error=nvlist_unpack(label->vp_nvlist,sizeof(label->vp_nvlist),&config,0);
         uint64_t state=0,current_pool=0,current_member=0;
@@ -522,6 +524,11 @@ static int destroyed_native_backing(struct oz_device *device)
         nvlist_free(config);
     }
     free(label);return error;
+}
+int oz_destroyed_file_backing(int fd,uint64_t size)
+{
+    if(fd<0)return EBADF;
+    return destroyed_backing(NULL,fd,size);
 }
 static int blank_backing(struct imported_files *p,unsigned i,unsigned char *buffer,int reuse_destroyed)
 {
@@ -546,7 +553,7 @@ static int blank_backing(struct imported_files *p,unsigned i,unsigned char *buff
         for(size_t b=0;!error&&b<n;b++)if(buffer[b])error=EEXIST;
         offset+=n;
     }
-    if(error==EEXIST&&device&&reuse_destroyed)error=destroyed_native_backing(device);
+    if(error==EEXIST&&reuse_destroyed)error=destroyed_backing(device,fd,size);
     if(fd>=0)close(fd);
     oz_device_close(device);return error;
 }

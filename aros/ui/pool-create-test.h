@@ -508,8 +508,8 @@ static int file_pool_create_test(void)
         CREATE_CHECK(!worker_test(44,"aros_created/files",OZ_OK,0));
     }
     CREATE_CHECK(!worker_test(8,"aros_created",OZ_OK,0));
-    /* Destroy is not a blank/secure erase: existing contents still prevent
-     * our blank-only create operation from silently reusing these files. */
+    /* Recovery above made this pool live again; export is not destruction.
+     * Reuse must still refuse these exported files without altering them. */
     CREATE_CHECK(!file_pool_request("aros_replacement",EEXIST));
     for(unsigned i=0;i<file_pool_disks;i++) {
         char name[64];snprintf(name,sizeof(name),"RAM:OZCreateTest/disk%u",i);
