@@ -101,6 +101,16 @@ This is not proof that the automatic drawer title is fixed: see the
 
 ### Evidence retention policy
 
+`defer-manager` records `native-gui-run.jDpBYxhs` using shared engine
+`scTORDPP` and the rebuilt Manager. The live query reports the pool ONLINE;
+post-UI exact DOS readback and the full storage suite pass. The known automatic
+drawer-title issue remains separate. This captures query/display integration,
+not GUI submission of the new recursive deferred-destruction operation.
+
+![Current Manager and mounted files](defer-manager/01-desktop.png)
+
+![Live pool query with the deferred-destruction engine](defer-manager/02-live-pool.png)
+
 `cold-release` retains the three-phase native run `public-service-run.fkCVCuGC`:
 writer, unchanged read-only cold imports, then a separate writable cold boot.
 Authenticated recursive hold release removes both deferred snapshots; export

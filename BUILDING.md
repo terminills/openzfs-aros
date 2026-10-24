@@ -2,6 +2,23 @@
 
 ## AROS build-system integration (in progress)
 
+### Current deferred-destruction development package
+
+Local archive `build-aros/mmake-bundle.7uo8g04u-verified.tar.xz` has SHA-256
+`f185bc6e401e77fcb565b8948d66d5884a3c60c6d249b4d09ee142e6904cdb0f`.
+It binds shared engine `shared-engine.scTORDPP` and the rebuilt MetaMake Manager
+to GUI run `native-gui-run.jDpBYxhs` and three-phase storage run
+`public-service-run.fkCVCuGC`. The Manager queries the live ONLINE pool;
+mounted files are visible and exact post-UI DOS readback passes. Separate native
+API tests qualify recursive deferred destruction, retained holds over cold
+imports, and writable cold release. GUI entry of that mutation is not claimed.
+
+The stricter packager also requires the optional writable cold-release phase's
+completion, zdb and unchanged verification hashes. All package SHA256SUMS pass
+both before archiving and after extraction to a fresh directory. Platform
+overrides remain explicit. This local development artifact is not an uploaded
+release, stock-nightly compatibility claim or hardware qualification.
+
 ### Refreshed development package, 2026-10-23
 
 The MetaMake tools, CLI and acceptance client were rebuilt and qualified with
