@@ -97,6 +97,17 @@ class Retention(unittest.TestCase):
         self.assertFalse(prune.eligible(self.run))
         log.write_text("/test/partition.raw: OK\n/test/changes.raw: OK\n")
         self.assertTrue(prune.eligible(self.run))
+        (self.run / "native-recovery.txt").write_text("1\n")
+        self.assertFalse(prune.eligible(self.run))
+        for phase, health in (("native-degraded", "degraded"), ("native-restored", "online")):
+            (self.run / f"{phase}-results.log").write_text(
+                "RESULT public service storage PASS\n"
+                f"Public all-native changed reader PASS {health}=1 exact-read=1 readonly-write-denied=1 exported=1\n")
+            (self.run / f"{phase}-unchanged.log").write_text(log.read_text())
+        self.assertTrue(prune.eligible(self.run))
+        (self.run / "native-restored-results.log").write_text("RESULT public service storage FAIL\n")
+        self.assertFalse(prune.eligible(self.run))
+        (self.run / "native-recovery.txt").unlink()
         log.write_text("/test/partition.raw: OK\n/test/changes.raw: FAILED\n")
         self.assertFalse(prune.eligible(self.run))
 

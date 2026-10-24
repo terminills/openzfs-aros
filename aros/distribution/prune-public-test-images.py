@@ -40,6 +40,23 @@ def eligible(run):
                         if line.endswith(": OK")}
             if verified != {"partition.raw", "changes.raw"}:
                 return False
+            if (run / "native-recovery.txt").exists():
+                for phase, health in (("native-degraded", "degraded"),
+                                      ("native-restored", "online")):
+                    result = run / f"{phase}-results.log"
+                    hashes = run / f"{phase}-unchanged.log"
+                    if not result.is_file() or not hashes.is_file():
+                        return False
+                    text = result.read_text()
+                    marker = f"Public all-native changed reader PASS {health}=1 exact-read=1 readonly-write-denied=1 exported=1"
+                    if (marker not in text or "RESULT public service storage PASS" not in text
+                            or re.search(r"\bFAIL(?:ED)?\b|ASSERT at", text)):
+                        return False
+                    checks = hashes.read_text()
+                    verified = {Path(line[:-4]).name for line in checks.splitlines()
+                                if line.endswith(": OK")}
+                    if "FAILED" in checks or verified != {"partition.raw", "changes.raw"}:
+                        return False
     if (run / "cold-release.txt").exists():
         for name, required in (("release-results.log", "RESULT public service storage PASS"),
                                ("release-zdb-check.log", "No leaks"),
@@ -81,7 +98,7 @@ def eligible(run):
 
 
 def candidates(run):
-    result = [run / name for name in ("test.iso", "cold.iso", "native-cold.iso", "release.iso", "backing.raw", "retired-disk0")]
+    result = [run / name for name in ("test.iso", "cold.iso", "native-cold.iso", "native-degraded.iso", "release.iso", "backing.raw", "retired-disk0")]
     archive = run / "startup-archive.raw"
     unchanged = run / "archive-unchanged.log"
     if (unchanged.is_file() and f"{archive}: OK" in unchanged.read_text()

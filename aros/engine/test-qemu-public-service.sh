@@ -847,30 +847,58 @@ if [[ $native_cold == 1 || $all_native == 1 ]];then
         -map "$run/Startup-Native-Cold" /S/Startup-Sequence \
         -boot_image any discard -boot_image grub bin_path=/boot/grub/i386-pc/eltorito.img \
         -boot_image grub boot_info_table=on -boot_image grub grub2_boot_info=on > "$run/pack-native-cold.log" 2>&1
-    "$qemu" -name "openzfs-native-cold-$$" -machine pc,accel=kvm -cpu host \
-        -smp "$cpus" -m 2048 -drive "file=$run/native-cold.iso,media=cdrom,if=ide,index=2,readonly=on" \
-        -drive "file=$run/partition.raw,format=raw,if=ide,index=0" \
+    native_phases=(native-cold)
+    if [[ $all_native == 1 ]];then
+        native_phases+=(native-degraded native-restored)
+        printf '1\n' > "$run/native-recovery.txt"
+        # Start from the original image, not a remaster with stale hybrid GPT.
+        xorriso -indev "$base" -outdev "$run/native-degraded.iso" \
+            -map aros/engine/grub-qemu-test.cfg /boot/grub/grub.cfg \
+            "${platform_maps[@]}" \
+            -map "$posix" /Libs/posixc.library \
+            -map "$run/security-fixture" /Security \
+            -map "$run/OpenZFSServiceNative" /C/OpenZFSServiceNative \
+            -map "$run/OpenZFSPublicServiceTest" /C/OpenZFSPublicServiceTest \
+            "${extra_maps[@]}" \
+            -map aros/engine/public-service-test-only /openzfs-service-test-only \
+            -map "$run/Startup-Native-Cold" /S/Startup-Sequence \
+            -map aros/engine/public-service-test-only /openzfs-native-missing-ata \
+            -boot_image any discard -boot_image grub bin_path=/boot/grub/i386-pc/eltorito.img \
+            -boot_image grub boot_info_table=on -boot_image grub grub2_boot_info=on > "$run/pack-native-degraded.log" 2>&1
+    fi
+    for native_phase in "${native_phases[@]}";do
+      native_iso="$run/native-cold.iso"
+      native_first=(-drive "file=$run/partition.raw,format=raw,if=ide,index=0")
+      expected_reader=$native_reader
+      if [[ $native_phase == native-degraded ]];then
+          native_iso="$run/native-degraded.iso";native_first=()
+          expected_reader=${native_reader/online=1/degraded=1}
+      fi
+      "$qemu" -name "openzfs-$native_phase-$$" -machine pc,accel=kvm -cpu host \
+        -smp "$cpus" -m 2048 -drive "file=$native_iso,media=cdrom,if=ide,index=2,readonly=on" \
+        "${native_first[@]}" \
         "${native_cold_drives[@]}" \
         -display none -nic none -boot d -no-reboot -no-shutdown \
-        -serial "file:$run/native-cold-serial.log" \
-        -monitor "unix:$run/native-cold-monitor,server=on,wait=off" > "$run/native-cold-qemu.log" 2>&1 &
+        -serial "file:$run/$native_phase-serial.log" \
+        -monitor "unix:$run/$native_phase-monitor,server=on,wait=off" > "$run/$native_phase-qemu.log" 2>&1 &
     pid=$!
     trap cleanup EXIT
     deadline=$((SECONDS+duration))
     while :;do
-        if [[ -f "$run/native-cold-serial.log" ]];then
-            sed -E 's/^[[:xdigit:]]{16} 0x[[:xdigit:]]{16} \| [0-9]+ \| //' "$run/native-cold-serial.log" > "$run/native-cold-results.log"
-            if rg -q '^RESULT .*FAIL|Public service test line=[1-9][0-9]*|\[PF-DBG\]|^ASSERT at' "$run/native-cold-results.log";then exit 1;fi
-            if rg -q '^RESULT public service storage PASS' "$run/native-cold-results.log" &&
-               rg -q "^$native_reader" "$run/native-cold-results.log";then break;fi
+        if [[ -f "$run/$native_phase-serial.log" ]];then
+            sed -E 's/^[[:xdigit:]]{16} 0x[[:xdigit:]]{16} \| [0-9]+ \| //' "$run/$native_phase-serial.log" > "$run/$native_phase-results.log"
+            if rg -q '^RESULT .*FAIL|Public service test line=[1-9][0-9]*|\[PF-DBG\]|^ASSERT at' "$run/$native_phase-results.log";then exit 1;fi
+            if rg -q '^RESULT public service storage PASS' "$run/$native_phase-results.log" &&
+               rg -q "^$expected_reader" "$run/$native_phase-results.log";then break;fi
         fi
         if ! kill -0 "$pid" 2>/dev/null || ((SECONDS>=deadline));then echo "Native cold timeout/exit: $run" >&2;exit 1;fi
         sleep 1
     done
-    printf 'quit\n' | socat - "UNIX-CONNECT:$run/native-cold-monitor" >/dev/null
+    printf 'quit\n' | socat - "UNIX-CONNECT:$run/$native_phase-monitor" >/dev/null
     wait "$pid"
     trap - EXIT
-    sha256sum -c "$run/native-before-cold.sha256" > "$run/native-cold-unchanged.log"
+    sha256sum -c "$run/native-before-cold.sha256" > "$run/$native_phase-unchanged.log"
+    done
     echo "PASS: fresh native import, exact read, readonly write denial, unchanged disks. Evidence: $run"
 fi
 if [[ $native_discovery == 1 ]];then

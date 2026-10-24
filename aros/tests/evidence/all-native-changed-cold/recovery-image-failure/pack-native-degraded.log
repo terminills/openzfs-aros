@@ -1,0 +1,60 @@
+xorriso 1.5.6 : RockRidge filesystem manipulator, libburnia project.
+
+xorriso : NOTE : Loading ISO image tree from LBA 0
+libburn : SORRY : Read start address 2396342s larger than number of readable blocks 2395104
+libisofs: NOTE : Found Protective MBR with size range larger than the medium capacity
+xorriso : UPDATE :   91303 nodes read in 1 seconds
+xorriso : NOTE : Detected El-Torito boot information which currently is set to be discarded
+Drive current: -indev '/mnt/short-term/openzfs-qualification-20261024.aGFlVF7T/public-service-run.y5Sf5QaR/native-cold.iso'
+Media current: stdio file, overwriteable
+Media status : is written , is appendable
+Boot record  : El Torito , MBR protective-msdos-label cyl-align-off GPT APM
+Media summary: 1 session, 2394915 data blocks, 4678m data,  645g free
+Volume id    : 'AROS Live CD'
+xorriso : NOTE : Tolerated problem event of severity 'SORRY'
+Drive current: -outdev '/mnt/short-term/openzfs-qualification-20261024.aGFlVF7T/public-service-run.y5Sf5QaR/native-degraded.iso'
+Media current: stdio file, overwriteable
+Media status : is blank
+Media summary: 0 sessions, 0 data blocks, 0 data,  645g free
+xorriso : UPDATE :       1 files added in 1 seconds
+Added to ISO image: file '/openzfs-native-missing-ata'='/home/terminills/Documents/GitHub/openzfs-aros-public/aros/engine/public-service-test-only'
+xorriso : SORRY : Cannot make proposal to mark data file as GPT partition : '/Applications/Internet/Chromium/Chromium'
+xorriso : SORRY : Cannot make proposal to mark data file as GPT partition : '/Applications/Internet/Chromium/Chromium'
+xorriso : SORRY : Cannot make proposal to produce APM of loaded image
+xorriso : WARNING : -volid text problematic as automatic mount point name
+xorriso : WARNING : -volid text does not comply to ISO 9660 / ECMA 119 rules
+xorriso : NOTE : Replayed 14 boot related commands
+xorriso : NOTE : Copying to System Area: 32768 bytes from file '--interval:imported_iso:0s-15s:zero_mbrpt,zero_gpt,zero_apm:/mnt/short-term/openzfs-qualification-20261024.aGFlVF7T/public-service-run.y5Sf5QaR/native-cold.iso'
+libisofs: NOTE : Automatically adjusted MBR geometry to 1001/152/63
+xorriso : UPDATE : Writing:       8192s    0.3%   fifo 100%  buf  50%
+xorriso : UPDATE : Writing:      81920s    3.4%   fifo 100%  buf  50%  181.5xD 
+xorriso : UPDATE : Writing:     208542s    8.7%   fifo 100%  buf  50%  187.0xD 
+xorriso : UPDATE : Writing:     324224s   13.5%   fifo  99%  buf  50%  170.9xD 
+xorriso : UPDATE : Writing:     458752s   19.2%   fifo 100%  buf  50%  198.7xD 
+xorriso : UPDATE : Writing:     581632s   24.3%   fifo 100%  buf  50%  181.5xD 
+xorriso : UPDATE : Writing:     679936s   28.4%   fifo 100%  buf  50%  145.2xD 
+xorriso : UPDATE : Writing:     770048s   32.2%   fifo 100%  buf  50%  133.1xD 
+xorriso : UPDATE : Writing:     868352s   36.3%   fifo 100%  buf  50%  145.2xD 
+xorriso : UPDATE : Writing:     958464s   40.0%   fifo 100%  buf  50%  133.1xD 
+xorriso : UPDATE : Writing:    1056768s   44.1%   fifo 100%  buf  50%  145.2xD 
+xorriso : UPDATE : Writing:    1146880s   47.9%   fifo 100%  buf  50%  133.1xD 
+xorriso : UPDATE : Writing:    1236992s   51.6%   fifo 100%  buf  50%  133.1xD 
+xorriso : UPDATE : Writing:    1327104s   55.4%   fifo 100%  buf  50%  133.1xD 
+xorriso : UPDATE : Writing:    1384448s   57.8%   fifo 100%  buf  50%   84.7xD 
+xorriso : UPDATE : Writing:    1441792s   60.2%   fifo 100%  buf  50%   84.7xD 
+xorriso : UPDATE : Writing:    1503921s   62.8%   fifo 100%  buf  50%   91.8xD 
+xorriso : UPDATE : Writing:    1564672s   65.3%   fifo 100%  buf  50%   89.7xD 
+xorriso : UPDATE : Writing:    1623273s   67.8%   fifo  99%  buf  50%   86.5xD 
+xorriso : UPDATE : Writing:    1679360s   70.1%   fifo 100%  buf  50%   92.1xD 
+xorriso : UPDATE : Writing:    1736704s   72.5%   fifo 100%  buf  50%   84.7xD 
+xorriso : UPDATE : Writing:    1835008s   76.6%   fifo 100%  buf  50%  145.2xD 
+xorriso : UPDATE : Writing:    1925120s   80.4%   fifo 100%  buf  50%  133.1xD 
+xorriso : UPDATE : Writing:    2023424s   84.5%   fifo 100%  buf  50%  145.2xD 
+xorriso : UPDATE : Writing:    2121728s   88.6%   fifo 100%  buf  50%  145.2xD 
+xorriso : UPDATE : Writing:    2220032s   92.7%   fifo 100%  buf  50%  145.2xD 
+xorriso : UPDATE : Writing:    2318336s   96.8%   fifo 100%  buf  50%  145.2xD 
+ISO image produced: 2394916 sectors
+Written to medium : 2395072 sectors at LBA 32
+Writing to '/mnt/short-term/openzfs-qualification-20261024.aGFlVF7T/public-service-run.y5Sf5QaR/native-degraded.iso' completed successfully.
+
+xorriso : NOTE : -return_with SORRY 32 triggered by problem severity SORRY

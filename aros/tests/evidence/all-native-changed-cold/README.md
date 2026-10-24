@@ -53,8 +53,32 @@ cold mode. The runner requires the matching writer/reader markers and hashes
 both changed disks. Fourteen host retention tests pass, including refusal to
 prune when either disk's verification is missing or failed.
 
-Remaining gates include degraded/missing-device and restored all-native cold
-recovery, the two-channel ATA failure, abrupt power loss, and physical-media
-durability. The previous file-backed degraded/recovery proof is separate.
+## Missing-device and restored cold recovery
+
+`public-service-run.mvOL0QeI` additionally passes a writer and three separate
+eight-CPU reader VMs: healthy ONLINE, physically omitted ATA disk DEGRADED,
+then restored ATA disk ONLINE. Each reader verifies exact handler payload,
+read-only write denial and export. Both whole native disk images match their
+pre-reader SHA256 hashes after every phase. The terminal runner exits zero.
+Logs and input hashes are retained in `recovery/`. This is clean-export,
+read-only recovery, not degraded writable operation or power-loss recovery.
+
+The missing member's path remains explicitly authorized in the import request.
+The device itself is absent from QEMU. This preserves the import admission
+policy: labels cannot grant access to additional paths. Initial attempt
+`lwEjYVZh` omitted that authorization and was rejected as no pool available;
+its healthy reader passed. Evidence is in `recovery-omitted-admission/`.
+No production policy was relaxed to make the test pass.
+
+Earlier attempt `y5Sf5QaR` passed the writer but failed image construction:
+replaying hybrid boot metadata from a remastered ISO produced xorriso SORRY
+errors. Both reader ISOs are now constructed from the original base using
+explicit boot settings. The failure log is in `recovery-image-failure/`.
+Failed run artifacts remain external. Passing-run disposable ISOs were pruned
+only after all three reader phases and both hashes per phase passed; their
+hashes are retained in the pruning manifest. Fourteen host retention tests pass.
+
+Remaining gates include the two-channel ATA failure, abrupt power loss, and
+physical-media durability. The previous file-backed recovery proof is separate.
 Large artifacts remain under the external qualification directory; successful
 ISO images are pruned, while logs, screenshots, disks and manifests remain.

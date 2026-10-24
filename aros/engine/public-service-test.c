@@ -2256,13 +2256,19 @@ static int storage_native_cold(int create)
     if(!changed){changed=Lock((CONST_STRPTR)"SYS:openzfs-native-changes-6",SHARED_LOCK);ahci=changed!=0;}
     if(changed){
         UnLock(changed);if(create)return 0;
+        BPTR missing=Lock((CONST_STRPTR)"SYS:openzfs-native-missing-ata",SHARED_LOCK);
+        int degraded=missing!=0;if(missing)UnLock(missing);
         char command[768];const char *device=ahci?"ahci.device":"ata.device";unsigned unit=ahci?0:3;
+        /* Authorize every known member path, including the absent unit.
+         * Absence is pinned explicitly; labels cannot authorize extra paths. */
         snprintf(command,sizeof(command),"C:zpool import -N -o cachefile=none -o readonly=on -d /AROS/ata.device/0/partition/2 -d /AROS/%s/%u/partition/0 -d /AROS/%s/%u/partition/1 -d /AROS/%s/%u/partition/2 public_native_target",device,unit,device,unit,device,unit);
         int error=cli_command(command)?EIO:0;
-        if(!error)error=cli_result("C:zpool list -H -o health public_native_target >T:cli-package-output.txt","ONLINE");
+        if(!error)error=cli_result("C:zpool list -H -o health public_native_target >T:cli-package-output.txt",degraded?"DEGRADED":"ONLINE");
         if(!error)error=pool_root_payload("public_native_target",0,1);
         if(!error)error=cli_command("C:zpool export public_native_target")?EIO:0;
-        if(!error)note("Public all-native changed reader PASS online=1 exact-read=1 readonly-write-denied=1 exported=1\n");
+        if(!error)note(degraded?
+            "Public all-native changed reader PASS degraded=1 exact-read=1 readonly-write-denied=1 exported=1\n":
+            "Public all-native changed reader PASS online=1 exact-read=1 readonly-write-denied=1 exported=1\n");
         return error;
     }
     /* This fixture is only enabled by the isolated runner. The writer exports
