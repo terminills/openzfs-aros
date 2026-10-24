@@ -25,4 +25,21 @@ The same engine passes two-VM encrypted native-partition recovery in
 `public-service-run.IY73Nzji`, including locked mount denial, exact reads and
 unchanged whole-disk hash. Both runs reach full upstream storage PASS.
 This is service/API evidence, not a new visual Manager interaction test.
-The local `ncbjd29s` archive predates this change and needs refreshed packaging.
+The local `ncbjd29s` archive predates this change; `reuse-package` records its
+tested replacement, `mmake-bundle.exm_ebrp.tar.xz`.
+
+## File-label refusal coverage
+
+Eight-CPU QEMU run `public-service-run.xkaRTuJd` tests each of the four labels
+in turn, first with its nvlist region cleared and then with the other destroyed
+mirror member's metadata substituted (different member GUID). For every case,
+both the authenticated Manager create API and forced upstream CLI create must
+refuse. Complete 64 MiB snapshots of both members are compared after refusal;
+no byte may change beyond the deliberate test substitution. Each original
+label is restored before the next case. Successful recreation and exact DOS
+readback then pass, followed by the full service/storage suite and terminal
+runner PASS. Logs and binary hashes are retained in `label-negatives/`.
+
+This tests malformed/conflicting metadata admission on private RAM files.
+It does not test physical torn writes, device read errors, label checksum
+validation, external concurrent writers, or general force-create support.

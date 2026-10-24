@@ -1739,6 +1739,72 @@ static int pool_root_payload(const char *dataset,int create,int readonly)
     int detached=oz_mount_control(OZ_ADMISSION_PORT,dataset,"",OZ_MOUNT_DETACH,0);
     return error?error:detached;
 }
+static int file_reuse_label_denials(void)
+{
+    /* These two RAM files belong exclusively to storage_file_reuse and their
+     * pool has been destroyed. Preserve every byte, including on failure. */
+    const ULONG extent=64UL*1024*1024,chunk=128UL*1024,label_bytes=112UL*1024;
+    unsigned char *before[2]={AllocVec(extent,MEMF_PUBLIC),AllocVec(extent,MEMF_PUBLIC)};
+    unsigned char *check=AllocVec(chunk,MEMF_PUBLIC),*saved=AllocVec(label_bytes,MEMF_PUBLIC);
+    unsigned char *replacement=AllocVec(label_bytes,MEMF_PUBLIC|MEMF_CLEAR);
+    BPTR file=0;int error=0,changed=0;ULONG damaged=0;
+#define FCHECK(x) do{if(!(x)){char line[96];snprintf(line,sizeof(line),"Public file label denial FAIL line=%d\n",__LINE__);note(line);error=EIO;goto done;}}while(0)
+    FCHECK(before[0]&&before[1]&&check&&saved&&replacement);
+    for(unsigned i=0;i<2;i++){
+        char path[80];storage_member(path,sizeof(path),i);
+        file=Open((CONST_STRPTR)path,MODE_OLDFILE);FCHECK(file);
+        for(ULONG offset=0;offset<extent;offset+=chunk)
+            FCHECK(Read(file,before[i]+offset,chunk)==chunk);
+        FCHECK(Read(file,check,1)==0);
+        int closed=Close(file);file=0;FCHECK(closed);
+    }
+    for(unsigned conflict=0;conflict<2;conflict++){
+        /* The other destroyed mirror member has a different member GUID. */
+        if(conflict)memcpy(replacement,before[1]+16UL*1024,label_bytes);
+        for(unsigned label=0;label<4;label++){
+            damaged=label*256UL*1024+(label<2?0:extent-4UL*256*1024)+16UL*1024;
+            memcpy(saved,before[0]+damaged,label_bytes);
+            memcpy(before[0]+damaged,replacement,label_bytes);
+            file=Open((CONST_STRPTR)"RAM:OZFileReuse/disk0",MODE_READWRITE);FCHECK(file);
+            FCHECK(Seek(file,damaged,OFFSET_BEGINNING)!=-1);changed=1;
+            FCHECK(Write(file,replacement,label_bytes)==label_bytes&&Flush(file));
+            int closed=Close(file);file=0;FCHECK(closed);
+            FCHECK(storage_request(5,"public_file_refused",NULL,NULL)!=0);
+            FCHECK(cli_command("C:zpool create -f -o cachefile=none -O mountpoint=none public_file_refused mirror /RAM/OZFileReuse/disk0 /RAM/OZFileReuse/disk1")!=0);
+            for(unsigned i=0;i<2;i++){
+                char path[80];storage_member(path,sizeof(path),i);
+                file=Open((CONST_STRPTR)path,MODE_OLDFILE);FCHECK(file);
+                for(ULONG offset=0;offset<extent;offset+=chunk){
+                    FCHECK(Read(file,check,chunk)==chunk);
+                    FCHECK(!memcmp(check,before[i]+offset,chunk));
+                }
+                FCHECK(Read(file,check,1)==0);
+                closed=Close(file);file=0;FCHECK(closed);
+            }
+            file=Open((CONST_STRPTR)"RAM:OZFileReuse/disk0",MODE_READWRITE);FCHECK(file);
+            FCHECK(Seek(file,damaged,OFFSET_BEGINNING)!=-1);
+            FCHECK(Write(file,saved,label_bytes)==label_bytes&&Flush(file));
+            closed=Close(file);file=0;FCHECK(closed);changed=0;
+            memcpy(before[0]+damaged,saved,label_bytes);
+        }
+    }
+done:
+    if(file)Close(file);
+    if(changed){
+        file=Open((CONST_STRPTR)"RAM:OZFileReuse/disk0",MODE_READWRITE);
+        if(file){
+            if(Seek(file,damaged,OFFSET_BEGINNING)==-1||
+                Write(file,saved,label_bytes)!=label_bytes||!Flush(file))
+                note("Public file label restore FAIL\n");
+            if(!Close(file))note("Public file label restore close FAIL\n");
+        }else note("Public file label restore open FAIL\n");
+    }
+    for(unsigned i=0;i<2;i++)if(before[i])FreeVec(before[i]);
+    if(check)FreeVec(check);if(saved)FreeVec(saved);if(replacement)FreeVec(replacement);
+    if(!error)note("Public file label denial PASS corrupt=4 conflicting-member=4 manager-denied=8 forced-cli-denied=8 whole-members-unchanged=8 restored=8\n");
+    return error;
+#undef FCHECK
+}
 static int storage_file_reuse(void)
 {
     BPTR marker=Lock((CONST_STRPTR)"SYS:openzfs-cli-package-test",SHARED_LOCK);
@@ -1761,6 +1827,7 @@ static int storage_file_reuse(void)
     RCHECK(!storage_request(5,"public_file_reuse",NULL,NULL));
     RCHECK(!pool_root_payload("public_file_reuse",1,0));
     RCHECK(!cli_command("C:zpool destroy public_file_reuse"));
+    RCHECK(!file_reuse_label_denials());
     RCHECK(!cli_command("C:zpool create -o cachefile=none -O mountpoint=none public_file_reuse mirror /RAM/OZFileReuse/disk0 /RAM/OZFileReuse/disk1"));
     RCHECK(pool_root_payload("public_file_reuse",0,0)==EIO);
     RCHECK(!pool_root_payload("public_file_reuse",1,0));

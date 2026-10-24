@@ -180,6 +180,9 @@ results, not a fresh qualification of this public snapshot.
   use the same destroyed-label validator for file create. See
   `aros/tests/evidence/native-destroyed-reuse` and
   `aros/tests/evidence/file-destroyed-reuse` for runtime coverage.
+  File-backed QEMU tests also verify refusal by both entry points for each
+  corrupt or conflicting member label, unchanged complete members after
+  refusal, and successful recreation after restoring the original labels.
 - TRIM/discard is not implemented for AROS file or native-device backings;
   requests report unsupported rather than claiming successful discard.
 - This does not provide an NFS/SMB client or server for browsing a remote ZFS
