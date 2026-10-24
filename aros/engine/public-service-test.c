@@ -1762,6 +1762,11 @@ static int storage_native_discovery(void)
     if(!keyfile)return EIO;
     LONG written=Write(keyfile,key,sizeof(key));int closed=Close(keyfile);
     if(written!=sizeof(key)||!closed)return EIO;
+    memset(key,0x7a,sizeof(key));
+    keyfile=Open((CONST_STRPTR)"RAM:discovery-wrong.key",MODE_NEWFILE);
+    if(!keyfile)return EIO;
+    written=Write(keyfile,key,sizeof(key));closed=Close(keyfile);
+    if(written!=sizeof(key)||!closed)return EIO;
     /* Keep a different writable pool active on the other extent throughout
      * discovery/import. An unrelated scan candidate must not be reserved or
      * accidentally exported/adopted as part of the selected pool. */
@@ -1792,6 +1797,8 @@ static int storage_native_discovery(void)
         diagnostic_log("T:cli-package-output.txt");
         if(!error&&(i==3||i==6)){
             error=cli_result("C:zfs get -H -o value keystatus public_discovery >T:cli-package-output.txt","unavailable");
+            if(!error&&!cli_command("C:zfs load-key -L file:///RAM/discovery-wrong.key public_discovery"))error=EIO;
+            if(!error)error=cli_result("C:zfs get -H -o value keystatus public_discovery >T:cli-package-output.txt","unavailable");
             if(!error){
                 int mounted=oz_mount_control(OZ_ADMISSION_PORT,"public_discovery","OZDISCOVERY",OZ_MOUNT_ATTACH,OZ_MOUNT_READONLY);
                 if(!mounted){oz_mount_control(OZ_ADMISSION_PORT,"public_discovery","",OZ_MOUNT_DETACH,0);error=EIO;}
@@ -1815,10 +1822,12 @@ static int storage_native_discovery(void)
     if(!error)error=cli_result("C:zpool destroy public_neighbor >T:cli-package-output.txt", "");
     if(error)return error;
     if(!DeleteFile((CONST_STRPTR)"RAM:discovery-root.key"))return EIO;
+    if(!DeleteFile((CONST_STRPTR)"RAM:discovery-wrong.key"))return EIO;
     note("Public native discovery PASS create=1 default-scan=1 readonly-import=1 rw-import=1 destroy=1\n");
     note("Public native discovery coexistence PASS separate-partitions=1 neighbor-online=1 neighbor-property=1 cleanup=1\n");
     note("Public native discovery data PASS handler-write=1 readonly-import-read=1 readonly-write-denied=1 writable-import-read=1 cleanup=1\n");
     note("Public native encrypted root PASS properties=6 locked-import=2 mount-denied=2 key-reload=2 exact-data=1 cleanup=1\n");
+    note("Public native encrypted root wrong key PASS denied=2 remains-locked=2 mount-denied=2 correct-recovery=2\n");
     return 0;
 }
 static int destroy_identity(const char *snapshot,unsigned flags,int permitted)
