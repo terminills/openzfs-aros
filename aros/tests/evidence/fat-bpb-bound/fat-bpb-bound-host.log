@@ -1,0 +1,4 @@
+patching file bpb.c
+patching file volume.c
+Hunk #1 succeeded at 140 (offset 8 lines).
+PASS BPB boundary: baseline extra cluster reproduced; padding=0..64; short/oversized/overhead refused

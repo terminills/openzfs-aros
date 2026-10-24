@@ -1,0 +1,19 @@
+--- bpb.c
++++ bpb.c
+@@ -131,7 +131,9 @@
+-    if (overhead >= media_sectors)
++    if (overhead >= parsed.total_sectors)
+         return FALSE;
+ 
+-    data_sectors = media_sectors - overhead;
++    /* Geometry padding is not part of the filesystem. Counting it can
++     * expose an extra cluster which has no valid on-disk allocation. */
++    data_sectors = parsed.total_sectors - overhead;
+     if (data_sectors > 0xffffffffULL)
+         return FALSE;
+ 
+--- volume.c
++++ volume.c
+@@ -132,1 +132,2 @@
++    sb->total_sectors = bpb.total_sectors;
+     sb->sectorsize = bpb.sector_size;

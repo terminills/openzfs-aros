@@ -18,6 +18,9 @@ fat_only = os.environ.get('AROS_FAT_ONLY', '0') == '1'
 readonly = os.environ.get('AROS_FAT_READONLY_FIX', '0') == '1'
 full_fat = os.environ.get('AROS_FAT_FULL_REBUILD', '0') == '1'
 clean_flush = os.environ.get('AROS_FAT_CLEAN_FLUSH', '0') == '1'
+bpb_bound = os.environ.get('AROS_FAT_BPB_BOUND', '0') == '1'
+if bpb_bound and not full_fat:
+    raise RuntimeError('BPB volume boundary requires full FAT rebuild')
 if clean_flush and not full_fat:
     raise RuntimeError('clean-bit integration requires full FAT rebuild')
 if full_fat and not fat_only:
@@ -29,6 +32,17 @@ print('Evidence:', out, flush=True)
 common = [cc, '--sysroot', str(sdk), '-B' + str(sdk / 'lib') + '/',
           '-m64', '-mcmodel=large', '-mno-red-zone', '-mno-ms-bitfields']
 inputs = [gen / '.map']
+if bpb_bound:
+    patch = repo / 'aros/platform/fat-bpb-volume-bound.patch'
+    bpb = source / 'compiler/fatbpb/bpb.c'
+    volume = source / 'rom/filesys/fat/volume.c'
+    inputs.extend([patch, bpb, volume])
+    for path in (patch, bpb, volume):
+        shutil.copy2(path, out / path.name)
+    subprocess.run(['patch', '--batch', '--fuzz=0', '-d', str(out), '-p0',
+                    '-i', str(out / patch.name)], check=True)
+    subprocess.run(common + ['-O2', '-c', str(out / 'bpb.c'),
+                    '-o', str(out / 'bpb.o')], check=True)
 for name in ['cache', 'packet']:
     src = source / 'rom/filesys/fat' / (name + '.c')
     shutil.copy2(src, out / src.name)
@@ -63,7 +77,7 @@ if full_fat:
     objects = []
     for name in ['fat_start', *names, 'fat_end']:
         src = gen / (name + '.c') if name in ('fat_start', 'fat_end') else source / 'rom/filesys/fat' / (name + '.c')
-        if name not in ('cache', 'packet'):
+        if name not in ('cache', 'packet') and not (bpb_bound and name == 'volume'):
             shutil.copy2(src, out / src.name)
             inputs.append(src)
         obj = out / (name + '.o')
@@ -71,6 +85,8 @@ if full_fat:
             '-I' + str(source / 'rom/filesys/fat'), '-I' + str(gen / 'include'),
             '-c', str(out / src.name), '-o', str(obj)], check=True)
         objects.append(obj)
+if bpb_bound:
+    objects.insert(1, out / 'bpb.o')
 subprocess.run(common + ['-nostartfiles', '-static', '-Wl,-Map,' + str(out / 'fat.map'),
     *map(str, objects), '-Wl,--start-group', '-lfatbpb', '-Wl,--end-group',
     '-o', str(out / 'fat.handler')], check=True)
@@ -80,7 +96,7 @@ if fat_only:
     inputs.extend([sdk / 'lib/libfatbpb.a', out / 'fat.handler'])
     (out / 'inputs.sha256').write_text(''.join(
         hashlib.sha256(p.read_bytes()).hexdigest() + '  ' + str(p) + '\n' for p in inputs))
-    (out / 'build-options.txt').write_text(f'fat_only=1\nreadonly_fix={int(readonly)}\nfull_fat={int(full_fat)}\nclean_flush={int(clean_flush)}\n')
+    (out / 'build-options.txt').write_text(f'fat_only=1\nreadonly_fix={int(readonly)}\nfull_fat={int(full_fat)}\nclean_flush={int(clean_flush)}\nbpb_bound={int(bpb_bound)}\n')
     print('Overlay:', out, flush=True)
     raise SystemExit(0)
 src = source / 'compiler/crt/posixc/fsync.c'
