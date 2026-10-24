@@ -2,6 +2,17 @@
 
 Experimental development snapshot; not production-qualified storage software.
 
+## Encrypted root cache repair (2026-10-24)
+
+Native encrypted pool-root import exposed an ARC assertion when cached
+plaintext metadata was revisited for authentication. The source now preserves
+that plaintext buffer while performing the existing MAC checks, avoiding a
+second decompression/byteswap. Assertions remain enabled. Eight-CPU QEMU
+native-partition and cold file-mirror regressions pass; see
+`aros/tests/evidence/encrypted-root`. The local development archive
+`mmake-bundle.knv27h5n.tar.xz` predates this repair and can reproduce the abort;
+do not treat its earlier qualification as coverage of this encrypted-root case.
+
 ## Current public-source qualification
 
 The native MetaMake package now passes isolated two-CPU QEMU tests of the

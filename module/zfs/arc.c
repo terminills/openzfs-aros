@@ -883,7 +883,8 @@ typedef enum arc_fill_flags {
 	ARC_FILL_COMPRESSED	= 1 << 1, /* fill with compressed data */
 	ARC_FILL_ENCRYPTED	= 1 << 2, /* fill with encrypted data */
 	ARC_FILL_NOAUTH		= 1 << 3, /* don't attempt to authenticate */
-	ARC_FILL_IN_PLACE	= 1 << 4  /* fill in place (special case) */
+	ARC_FILL_IN_PLACE	= 1 << 4, /* fill in place (special case) */
+	ARC_FILL_AUTH_ONLY	= 1 << 5  /* existing plaintext: verify MAC only */
 } arc_fill_flags_t;
 
 typedef enum arc_ovf_level {
@@ -2082,6 +2083,19 @@ arc_buf_fill(arc_buf_t *buf, spa_t *spa, const zbookmark_phys_t *zb,
 	}
 
 	/*
+	 * A cached plaintext buffer can still need authentication after a key
+	 * becomes available. Its bytes have already been decompressed and
+	 * byteswapped, and may have a freeze checksum. Do not refill it from
+	 * the compressed header or byteswap it a second time.
+	 */
+	if ((flags & ARC_FILL_AUTH_ONLY) != 0) {
+		ASSERT(!ARC_BUF_ENCRYPTED(buf));
+		ASSERT(!ARC_BUF_COMPRESSED(buf));
+		arc_cksum_verify(buf);
+		return (0);
+	}
+
+	/*
 	 * There is a special case here for dnode blocks which are
 	 * decrypting their bonus buffers. These blocks may request to
 	 * be decrypted in-place. This is necessary because there may
@@ -2226,6 +2240,8 @@ arc_untransform(arc_buf_t *buf, spa_t *spa, const zbookmark_phys_t *zb,
 
 	if (in_place)
 		flags |= ARC_FILL_IN_PLACE;
+	if (!ARC_BUF_ENCRYPTED(buf) && !ARC_BUF_COMPRESSED(buf))
+		flags |= ARC_FILL_AUTH_ONLY;
 
 	ret = arc_buf_fill(buf, spa, zb, flags);
 	if (ret == ECKSUM) {

@@ -1,0 +1,2 @@
+/home/terminills/Documents/GitHub/openzfs-aros-public/build-aros/public-service-run.R3HVgA65/partition.raw: OK
+/home/terminills/Documents/GitHub/openzfs-aros-public/build-aros/public-service-run.R3HVgA65/blank.raw: OK

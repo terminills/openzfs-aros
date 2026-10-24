@@ -24,3 +24,34 @@ VERIFY3B(!copied, ==, hdr->b_l1hdr.b_freeze_cksum == NULL) failed (1 == 0)
 The existing checksum assertion is retained. These are failure records, not
 qualification of encrypted native pool roots. The last verified local package
 predates any ARC repair. The test uses QEMU snapshot-backed disk files only.
+
+## Authentication-only repair and passing evidence
+
+`arc_untransform` is also called for cached, already-decompressed metadata
+whose MAC has not yet been authenticated. Previously it refilled that buffer,
+reentering decompression even when the buffer already carried a freeze
+checksum. `ARC_FILL_AUTH_ONLY` now distinguishes that initialized plaintext
+case. The existing protected-header authentication and error path still run;
+the caller's bytes are not recopied, decompressed or byteswapped again. The
+freeze checksum is verified, not removed, and the failing invariant remains.
+
+Fresh engine `source-engine.dStCp732` / `shared-engine.TEtOTOsm` passes run
+`public-service-run.R3HVgA65`: all six root properties survive both imports,
+locked mounts are refused, keys reload, exact root data survives and read-only
+writes are denied. The neighboring pool and full eight-CPU storage suite also
+pass. Original snapshot-backed images stay byte-identical. This focused run
+does not include the optional AHCI inquiry fixture.
+
+Cold regression `public-service-run.u8VlIKS6` passes clean export/shutdown,
+fresh-guest healthy/degraded/restored mirror imports, root and child data,
+encrypted child/key-rotation checks, unchanged member hashes and independent
+zdb traversal with no leaks. This is software qualification, not power-loss
+or physical-storage qualification.
+
+The original combined AHCI run `M7HY60RD` was still preboot at evidence capture:
+host `sgdisk` waited on writeback to the external archive drive. It was not
+restarted or represented as a passing test. Failed directories `mQbQfkv8`,
+`aBGfk3HJ` and GUI timeout `Wj9aMb4L` moved to
+`/run/media/terminills/Dev_Stuff/OpenZFS-archive/public-regressions-20261024.sL1Wxp5O`,
+with ISO hashes checked and original paths retained as symlinks. No artifacts
+were discarded by that move; hash checks alone do not prove durable USB flush.
