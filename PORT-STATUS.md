@@ -2,6 +2,14 @@
 
 Experimental development snapshot; not production-qualified storage software.
 
+## Current local package (2026-10-24)
+
+`mmake-bundle.exm_ebrp.tar.xz` includes the ARC repair, native/file destroyed
+member reuse, and updated Manager guidance. Exact-binary GUI, persistent cold
+start, native encrypted-root and freshly extracted runtime tests pass in
+eight-CPU QEMU. See `aros/tests/evidence/reuse-package` for the archive hash,
+screenshots and logs. Earlier archive references below are historical.
+
 ## Encrypted root cache repair (2026-10-24)
 
 Native encrypted pool-root import exposed an ARC assertion when cached

@@ -39,7 +39,7 @@ static Object *make_wizard_window(void) {
                 Child,TextObject,MUIA_Text_Contents,"A mirror needs at least two members. RAIDZ needs parity + 1.\nRedundancy is not a backup. One group is created by this wizard.\nAdvanced offers multiple groups, dRAID and extra pool properties.",End,
             End,
             Child,wizardpages[1]=VGroup,
-                Child,TextObject,MUIA_Text_Contents,"Add each exact member path separately.\nUse blank, pre-provisioned files or explicit native partitions.\nThis wizard does not partition disks or discover free space.",End,
+                Child,TextObject,MUIA_Text_Contents,"Add each exact member path separately.\nUse exclusive files or explicit native partitions.\nMembers must be blank or consistently labeled as destroyed.\nExported pools are not reusable. No automatic partitioning.",End,
                 Child,members,
                 Child,wizardpath=StringObject,StringFrame,MUIA_String_MaxLen,256,MUIA_CycleChain,TRUE,End,
                 Child,HGroup,Child,wizardadd=SimpleButton("Add member"),Child,wizardremove=SimpleButton("Remove selected"),End,
