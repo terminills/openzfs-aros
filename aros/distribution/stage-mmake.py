@@ -92,17 +92,34 @@ def require_optional_release(run):
             raise ValueError(f"Failed writable cold-release evidence: {name}")
 
 
+def require_encrypted_root(run):
+    lines = (run / "serial-results.log").read_text().splitlines()
+    required = (
+        "RESULT public service storage PASS",
+        "Public native encrypted root PASS properties=6 locked-import=2 mount-denied=2 key-reload=2 exact-data=1 cleanup=1",
+        "Public native discovery data PASS handler-write=1 readonly-import-read=1 readonly-write-denied=1 writable-import-read=1 cleanup=1",
+    )
+    if any(marker not in lines for marker in required) or any(
+            line.startswith("ASSERT at ") or
+            (line.startswith("RESULT ") and line.endswith(" FAIL"))
+            for line in lines):
+        raise ValueError("Missing or failed encrypted pool-root regression")
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("build", type=pathlib.Path)
     parser.add_argument("gui_run", type=pathlib.Path)
     parser.add_argument("cold_run", type=pathlib.Path)
     parser.add_argument("--output-parent", type=pathlib.Path, required=True)
+    parser.add_argument("--encrypted-root-run", type=pathlib.Path, required=True)
     args = parser.parse_args()
     repo = pathlib.Path(__file__).resolve().parents[2]
     build, gui, cold = (p.resolve(strict=True) for p in
                         (args.build, args.gui_run, args.cold_run))
     stage = build / "stage"
+    encrypted = args.encrypted_root_run.resolve(strict=True)
+    require_encrypted_root(encrypted)
     # Require terminal guest acceptance, not merely an opened window or link.
     for run in (gui, cold):
         serial = (run / "serial.log").read_text()
@@ -136,6 +153,7 @@ def main():
         require_match(source, gui, name)
         if name != "OpenZFSManagerNative":
             require_match(source, cold, name)
+            require_match(source, encrypted, name)
         description = subprocess.check_output(["file", "-b", str(source)], text=True)
         if "ELF 64-bit LSB relocatable, x86-64" not in description or "AROS" not in description:
             raise ValueError(f"Not a native AROS x86-64 module: {source}")
@@ -170,13 +188,13 @@ def main():
     metadata = output / "Metadata"
     metadata.mkdir()
     record = {"packaging_commit": subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=repo, text=True).strip(),
-              "gui_run": str(gui), "cold_run": str(cold), "build": str(build),
+              "gui_run": str(gui), "cold_run": str(cold), "encrypted_root_run": str(encrypted), "build": str(build),
               "build_only_utilities": [], "native_companion_utilities": list(companions),
               "inputs": {name: {"path": str(path), "sha256": selected_hashes[name]} for name, path in selected.items()}}
     (metadata / "qualification.json").write_text(json.dumps(record, indent=2) + "\n")
     (metadata / "packaging.patch").write_bytes(subprocess.check_output(["git", "diff", "--binary"], cwd=repo))
     shutil.copy2(__file__, metadata / "stage-mmake.py")
-    for label, run in (("gui", gui), ("cold", cold)):
+    for label, run in (("gui", gui), ("cold", cold), ("encrypted-root", encrypted)):
         target = metadata / label
         target.mkdir()
         for path in run.iterdir():

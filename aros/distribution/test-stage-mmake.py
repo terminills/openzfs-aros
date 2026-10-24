@@ -11,6 +11,24 @@ spec.loader.exec_module(stage)
 
 
 class EvidenceTests(unittest.TestCase):
+    def test_encrypted_root_requires_terminal_success_without_assertion(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = pathlib.Path(directory)
+            result = root / "serial-results.log"
+            valid = (
+                "RESULT public service storage PASS\n"
+                "Public native encrypted root PASS properties=6 locked-import=2 mount-denied=2 key-reload=2 exact-data=1 cleanup=1\n"
+                "Public native discovery data PASS handler-write=1 readonly-import-read=1 readonly-write-denied=1 writable-import-read=1 cleanup=1\n")
+            result.write_text(valid)
+            stage.require_encrypted_root(root)
+            for invalid in (valid.replace("RESULT public service storage PASS\n", ""),
+                            valid.replace("key-reload=2", "key-reload=1"),
+                            valid + "ASSERT at arc.c:1750:failure()\n",
+                            valid + "RESULT public service storage FAIL\n"):
+                result.write_text(invalid)
+                with self.assertRaises(ValueError):
+                    stage.require_encrypted_root(root)
+
     def test_optional_release_requires_completion_and_integrity(self):
         with tempfile.TemporaryDirectory() as directory:
             root = pathlib.Path(directory)

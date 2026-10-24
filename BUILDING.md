@@ -930,7 +930,8 @@ qualification and is not inferred from QEMU success.
 
 For a MetaMake development bundle, `aros/distribution/stage-mmake.py` accepts
 the private build directory, a completed GUI public-service run, a completed
-cold public-service run, and `--output-parent`. It binds selected application
+cold public-service run, `--output-parent`, and `--encrypted-root-run` pointing
+to a completed native encrypted-root regression. It binds selected application
 and POSIX runtime bytes to both runs' input hashes (Manager to the GUI run),
 checks full shared-engine symbols and release options, and creates a new
 staging directory with SHA256SUMS and evidence metadata. Platform overrides
