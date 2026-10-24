@@ -937,7 +937,22 @@ staging directory with SHA256SUMS and evidence metadata. Platform overrides
 are separated under Platform/, never silently installed. Four companion
 utilities remain explicitly build-only in the bundle's qualification record.
 
-The key-format development archive `mmake-bundle.w5_grp_3.tar.xz` has SHA256
+The pool-root-fix development archive `mmake-bundle.knv27h5n.tar.xz` has SHA256
+`091b410750703c3bb60ef96d2534b1859191186975caf2bfda25a1a0f985fa39`.
+It contains the native root ZPL initialization fix from `e6a8971`. The package
+gate binds its engine, CLI, handler and companion utilities to cold-startup run
+`public-service-run.JGCaHIi6` and its Manager to desktop run
+`native-gui-run.dHKuj0ax`. Wanderer displayed the mounted volume and files;
+post-UI exact reads and export/import passed. The cold run also passed three
+persistent enabled startup restores, healthy/degraded/restored pool-root reads,
+read-only write denial, unchanged member hashes and independent zdb checks.
+Stage and freshly extracted manifests pass. Run `public-service-run.lXNUEfyn`
+then passed the full eight-CPU RAM-backed upstream acceptance suite using the
+extracted production binaries and an external acceptance client. Evidence and
+screenshots are in `aros/tests/evidence/root-zpl-package`. This is a local
+development archive, not an uploaded release or physical-storage qualification.
+
+The earlier key-format development archive `mmake-bundle.w5_grp_3.tar.xz` has SHA256
 `59c47b607213fa6144188c22bef933026cdeefcd7ed9f6a2631aedc8080a88b7`.
 It binds the engine/CLI/handler to persistent run `public-service-run.8Cq8R435`
 and Manager to interactive run `native-gui-run.l9Yuy70p`. The latter confirms
