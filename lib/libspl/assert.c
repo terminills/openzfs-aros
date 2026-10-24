@@ -45,6 +45,7 @@
 	prctl(PR_GET_NAME, (unsigned long)(buf), 0, 0, 0)
 #elif defined(__AROS__)
 #include <proto/exec.h>
+#include <aros/debug.h>
 #define libspl_gettid() ((uint64_t)(uintptr_t)FindTask(NULL))
 #define libspl_getprogname() "OpenZFS/AROS"
 #define libspl_getthreadname(buf, len) \
@@ -97,6 +98,17 @@ libspl_assertf(const char *file, const char *func, int line,
 	fprintf(stderr, "ASSERT at %s:%d:%s()\n", file, line, func);
 
 	va_start(args, format);
+#ifdef __AROS__
+	/* A resident service can abort while its caller waits for a reply.
+	 * Preserve the fatal diagnostic on the debug channel as well as stderr,
+	 * which may be redirected into an otherwise inaccessible RAM file. */
+	va_list debug_args;
+	char diagnostic[512];
+	va_copy(debug_args, args);
+	vsnprintf(diagnostic, sizeof (diagnostic), format, debug_args);
+	va_end(debug_args);
+	bug("ASSERT at %s:%d:%s()\n%s\n", file, line, func, diagnostic);
+#endif
 	vfprintf(stderr, format, args);
 	va_end(args);
 

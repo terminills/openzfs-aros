@@ -1757,6 +1757,11 @@ static int storage_native_discovery(void)
         catalog->entries[1].position==2&&catalog->entries[1].first_sector==139265&&
         catalog->entries[1].last_sector==270336;
     free(catalog);if(!valid)return EINVAL;
+    unsigned char key[32];for(unsigned i=0;i<sizeof(key);i++)key[i]=(unsigned char)(i+1);
+    BPTR keyfile=Open((CONST_STRPTR)"RAM:discovery-root.key",MODE_NEWFILE);
+    if(!keyfile)return EIO;
+    LONG written=Write(keyfile,key,sizeof(key));int closed=Close(keyfile);
+    if(written!=sizeof(key)||!closed)return EIO;
     /* Keep a different writable pool active on the other extent throughout
      * discovery/import. An unrelated scan candidate must not be reserved or
      * accidentally exported/adopted as part of the selected pool. */
@@ -1764,7 +1769,7 @@ static int storage_native_discovery(void)
     if(!error)error=cli_result("C:zfs set org.openzfs:discovery=preserved public_neighbor >T:cli-package-output.txt", "");
     if(error)return error;
     const char *commands[]={
-        "C:zpool create -o cachefile=none -O mountpoint=none public_discovery /AROS/ata.device/0/partition/0",
+        "C:zpool create -o cachefile=none -O mountpoint=none -O encryption=aes-256-gcm -O keyformat=raw -O keylocation=file:///RAM/discovery-root.key -O compression=lz4 -O casesensitivity=mixed -O normalization=formD public_discovery /AROS/ata.device/0/partition/0",
         "C:zpool export public_discovery",
         "C:zpool import",
         "C:zpool import -N -o cachefile=none -o readonly=on public_discovery",
@@ -1774,7 +1779,7 @@ static int storage_native_discovery(void)
         "C:zpool destroy public_discovery"
     };
     for(unsigned i=0;i<sizeof(commands)/sizeof(commands[0]);i++){
-        char command[256];snprintf(command,sizeof(command),"%s >T:cli-package-output.txt",commands[i]);
+        char command[1024];snprintf(command,sizeof(command),"%s >T:cli-package-output.txt",commands[i]);
         if(i==2){
             error=cli_command(command)?EIO:0;
             BPTR output=Open((CONST_STRPTR)"T:cli-package-output.txt",MODE_OLDFILE);
@@ -1785,6 +1790,23 @@ static int storage_native_discovery(void)
             }
         }else error=cli_result(command,i==4?"on":"");
         diagnostic_log("T:cli-package-output.txt");
+        if(!error&&(i==3||i==6)){
+            error=cli_result("C:zfs get -H -o value keystatus public_discovery >T:cli-package-output.txt","unavailable");
+            if(!error){
+                int mounted=oz_mount_control(OZ_ADMISSION_PORT,"public_discovery","OZDISCOVERY",OZ_MOUNT_ATTACH,OZ_MOUNT_READONLY);
+                if(!mounted){oz_mount_control(OZ_ADMISSION_PORT,"public_discovery","",OZ_MOUNT_DETACH,0);error=EIO;}
+                else if(mounted!=EACCES)error=mounted;
+            }
+            if(!error)error=cli_command("C:zfs load-key public_discovery")?EIO:0;
+        }
+        if(!error&&(i==0||i==3||i==6)){
+            const char *props[]={"encryption","keyformat","encryptionroot","compression","casesensitivity","normalization"};
+            const char *values[]={"aes-256-gcm","raw","public_discovery","lz4","mixed","formD"};
+            for(unsigned p=0;p<sizeof(props)/sizeof(props[0])&&!error;p++){
+                snprintf(command,sizeof(command),"C:zfs get -H -o value %s public_discovery >T:cli-package-output.txt",props[p]);
+                error=cli_result(command,values[p]);
+            }
+        }
         if(!error&&(i==0||i==3||i==6))error=pool_root_payload("public_discovery",i==0,i==3);
         if(error){char line[100];snprintf(line,sizeof(line),"Public native discovery FAIL step=%u errno=%d\n",i,error);note(line);return error;}
     }
@@ -1792,9 +1814,11 @@ static int storage_native_discovery(void)
     if(!error)error=cli_result("C:zfs get -H -o value org.openzfs:discovery public_neighbor >T:cli-package-output.txt", "preserved");
     if(!error)error=cli_result("C:zpool destroy public_neighbor >T:cli-package-output.txt", "");
     if(error)return error;
+    if(!DeleteFile((CONST_STRPTR)"RAM:discovery-root.key"))return EIO;
     note("Public native discovery PASS create=1 default-scan=1 readonly-import=1 rw-import=1 destroy=1\n");
     note("Public native discovery coexistence PASS separate-partitions=1 neighbor-online=1 neighbor-property=1 cleanup=1\n");
     note("Public native discovery data PASS handler-write=1 readonly-import-read=1 readonly-write-denied=1 writable-import-read=1 cleanup=1\n");
+    note("Public native encrypted root PASS properties=6 locked-import=2 mount-denied=2 key-reload=2 exact-data=1 cleanup=1\n");
     return 0;
 }
 static int destroy_identity(const char *snapshot,unsigned flags,int permitted)
