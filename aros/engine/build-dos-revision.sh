@@ -20,12 +20,13 @@ exec > >(tee "$out/build.log") 2>&1
 revision=$(git -C "$source_repo" rev-parse --verify "$revision^{commit}")
 printf '%s\n' "$revision" >"$out/source-revision.txt"
 mkdir "$out/source" "$out/gen" "$out/objects"
-git -C "$source_repo" archive "$revision" rom/dos rom/dosboot rom/expansion compiler/include compiler/libinit/libentry.c |
+git -C "$source_repo" archive "$revision" LICENSE LICENSE.Author LICENSE.GPL LICENSE.LGPL ACKNOWLEDGEMENTS rom/dos rom/dosboot rom/expansion compiler/include compiler/libinit/libentry.c |
     tar -x -C "$out/source"
 src="$out/source/rom/dos"
 printf 'loader_policy=%s\n' "$loader_policy" >"$out/build-options.txt"
 if [[ $loader_policy == 1 ]];then
-    patch --batch --fuzz=0 -d "$src" -p1 <"$repo/aros/patches/dos-loader-execute.patch"
+    cp "$repo/aros/patches/dos-loader-execute.patch" "$out/"
+    patch --batch --fuzz=0 -d "$src" -p1 <"$out/dos-loader-execute.patch"
 fi
 catalog_revision=$(git -C "$source_repo" rev-parse "$revision:rom/dos/catalogs")
 git -C "$source_repo/rom/dos/catalogs" archive "$catalog_revision" dos.cd |
@@ -64,7 +65,8 @@ while read -r tag path rest;do
             test -f "$source_file"
             test ! -e "$out/objects/$unit.o"
             sha256sum "$source_file" >>"$out/inputs.sha256"
-            "$cc" "${flags[@]}" -c "$source_file" -o "$out/objects/$unit.o"
+            python3 "$repo/aros/engine/record-source-build.py" run "$out" \
+                "$cc" "${flags[@]}" -c "$source_file" -o "$out/objects/$unit.o"
             objects+=("$out/objects/$unit.o") ;;
         *.a)
             test -f "$path"
@@ -73,11 +75,13 @@ while read -r tag path rest;do
     esac
 done <"$input_map"
 [[ ${#objects[@]} -gt 100 ]]
-"$cc" "${flags[@]}" -nostartfiles -nostdlib -Wl,-Map,"$out/dos.map" \
+python3 "$repo/aros/engine/record-source-build.py" run "$out" \
+    "$cc" "${flags[@]}" -nostartfiles -nostdlib -Wl,-Map,"$out/dos.map" \
     "${objects[@]}" -Wl,--start-group "${archives[@]}" -Wl,--end-group -o "$out/dos.library"
 sha256sum --quiet -c "$out/inputs.sha256"
 sha256sum "$out/dos.library" >"$out/output.sha256"
 if [[ -n ${AROS_DOS_BASE_PACKAGE:-} ]];then
     python3 "$repo/aros/cli/package-environment-overlay.py" "$AROS_DOS_BASE_PACKAGE" "$out"
 fi
+python3 "$repo/aros/engine/record-source-build.py" seal "$out" dos.library dos.map
 echo "PASS private DOS revision build (runtime unverified): $out/dos.library"

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Replay a trusted full FAT source snapshot; matching SDK/toolchain required.
+"""Replay a trusted native source snapshot; matching SDK/toolchain required.
 
 Checksums detect drift, not malicious provenance. Review downloaded recipes
 before executing them. No shared source tree or cached FAT objects are used.
@@ -44,6 +44,9 @@ def main():
     recipe = json.loads((root / 'rebuild.json').read_text())
     if recipe['format'] != 1:
         raise ValueError('Unsupported recipe')
+    artifact = recipe.get('artifact', 'fat.handler')
+    if Path(artifact).name != artifact or artifact in ('', '.', '..'):
+        raise ValueError('Invalid output artifact')
     for name, expected in recipe['external_inputs'].items():
         if digest(Path(name)) != expected:
             raise ValueError(f'External dependency changed: {name}')
@@ -51,6 +54,7 @@ def main():
     if shutil.disk_usage(parent).free < 100 * 2**30:
         raise ValueError('100 GiB artifact filesystem reserve required')
     output = Path(tempfile.mkdtemp(prefix='fat-replay.', dir=parent))
+    (output / 'objects').mkdir()
     for relative in paths:
         # Explicitly omit the binary and prior dependency/provenance outputs.
         if relative.suffix not in ('.c', '.h'):
@@ -63,14 +67,18 @@ def main():
             if command[0] != recipe['compiler']:
                 raise ValueError('Unexpected executable in recipe')
             command = [arg.replace(recipe['snapshot'], str(output)) for arg in command]
+            if '-c' in command:
+                # Preserve recorded __FILE__ strings when the original build
+                # used absolute paths, without requiring that directory.
+                command.append('-ffile-prefix-map=' + str(output) + '=' + recipe['snapshot'])
             log.write(json.dumps(command) + '\n')
             log.flush()
             subprocess.run(command, cwd=output, stdout=log, stderr=subprocess.STDOUT, check=True)
-    actual = digest(output / 'fat.handler')
-    (output / 'binary.sha256').write_text(actual + '  fat.handler\n')
+    actual = digest(output / artifact)
+    (output / 'binary.sha256').write_text(actual + '  ' + artifact + '\n')
     if actual != recipe['expected_binary']:
         raise ValueError(f'Rebuilt bytes differ; retain evidence at {output}')
-    print(f'PASS byte-identical FAT rebuild without source checkout: {output}')
+    print(f'PASS byte-identical {artifact} rebuild without source checkout: {output}')
 
 
 if __name__ == '__main__':

@@ -37,9 +37,23 @@ The recorded matching SDK/toolchain must be available. The helper verifies
 retained inputs and recorded external headers/archives, creates a fresh output,
 and requires byte-identical output. It does not fetch dependencies or install
 anything. Review recipes from untrusted sources before running them: hashes
-detect drift, not malicious provenance. This FAT snapshot is not a complete
-corresponding-source package for DOS, posixc, the SDK or the toolchain; those
-remain public-binary-release gates.
+detect drift, not malicious provenance.
+
+`Sources/DOS/` similarly retains the pinned DOS source/catalog revisions,
+generated sources and headers, execute-policy patch and upstream license
+texts. Its replay command uses the same helper (whose historical filename
+mentions FAT):
+
+```
+python3 Sources/DOS/rebuild-fat-snapshot.py Sources/DOS --output-parent /path/on/external/build-drive
+```
+
+It rebuilds `dos.library`, not every other member of the boot package. The
+snapshot's selected boot package is hash-bound to native qualification;
+repacking changes only the DOS member and preserves the other module bytes
+and order. These FAT/DOS snapshots are not a complete corresponding-source
+package for posixc, other boot modules, the SDK or toolchain. Those remain
+public-binary-release gates.
 
 Metadata/qualification.json identifies the exact selected inputs and evidence.
 The GUI and cold runs qualify the selected shared library, launcher, zfs/zpool,

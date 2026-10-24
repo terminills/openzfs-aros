@@ -12,6 +12,32 @@ spec.loader.exec_module(stage)
 
 
 class EvidenceTests(unittest.TestCase):
+    def test_dos_snapshot_binds_module_package_and_policy(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = pathlib.Path(directory)
+            (root / 'source').mkdir()
+            files = {'dos.library': 'module', 'aros-base.pkg.xz': 'package',
+                     'source/LICENSE': 'license', 'source-revision.txt': 'revision',
+                     'catalog-revision.txt': 'catalog', 'build-options.txt': 'loader_policy=1\n',
+                     'rebuild-fat-snapshot.py': '# helper', 'dos-loader-execute.patch': 'patch'}
+            for name, text in files.items():
+                (root / name).write_text(text)
+            (root / 'rebuild.json').write_text(json.dumps({'format': 1, 'artifact': 'dos.library',
+                'expected_binary': stage.digest(root / 'dos.library')}))
+            names = [*files, 'rebuild.json']
+            def manifest():
+                (root / 'retained.sha256').write_text(''.join(
+                    stage.digest(root / n) + '  ' + n + '\n' for n in names))
+            manifest()
+            stage.require_dos_snapshot(root, root / 'aros-base.pkg.xz')
+            (root / 'other.pkg.xz').write_text('different')
+            with self.assertRaises(ValueError):
+                stage.require_dos_snapshot(root, root / 'other.pkg.xz')
+            (root / 'build-options.txt').write_text('loader_policy=0\n')
+            manifest()
+            with self.assertRaises(ValueError):
+                stage.require_dos_snapshot(root, root / 'aros-base.pkg.xz')
+
     def test_fat_snapshot_binds_sources_license_and_binary(self):
         with tempfile.TemporaryDirectory() as directory:
             root = pathlib.Path(directory)

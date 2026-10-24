@@ -19,12 +19,16 @@ def digest(path):
         return hashlib.file_digest(stream, "sha256").hexdigest()
 
 
-def require_fat_snapshot(snapshot, binary):
+def snapshot_paths(snapshot):
     helper = pathlib.Path(__file__).resolve().parents[1] / "engine/rebuild-fat-snapshot.py"
     spec = importlib.util.spec_from_file_location("fat_snapshot", helper)
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
-    paths = module.verify_snapshot(snapshot)
+    return module.verify_snapshot(snapshot)
+
+
+def require_fat_snapshot(snapshot, binary):
+    paths = snapshot_paths(snapshot)
     required = {pathlib.Path(name) for name in (
         "rebuild.json", "rebuild-fat-snapshot.py", "source-provenance.json",
         "Licenses/LICENSE", "build-options.txt", "fat.handler")}
@@ -37,6 +41,25 @@ def require_fat_snapshot(snapshot, binary):
         raise ValueError("FAT snapshot binary differs from selection")
     if "full_fat=1" not in (snapshot / "build-options.txt").read_text().splitlines():
         raise ValueError("FAT snapshot is not a full source rebuild")
+    return paths
+
+
+def require_dos_snapshot(snapshot, package):
+    paths = snapshot_paths(snapshot)
+    required = {pathlib.Path(name) for name in (
+        "rebuild.json", "rebuild-fat-snapshot.py", "source/LICENSE",
+        "source-revision.txt", "catalog-revision.txt", "build-options.txt",
+        "dos-loader-execute.patch", "dos.library", "aros-base.pkg.xz")}
+    if not required.issubset(paths):
+        raise ValueError("Incomplete DOS source snapshot")
+    recipe = json.loads((snapshot / "rebuild.json").read_text())
+    if (recipe.get("format") != 1 or recipe.get("artifact") != "dos.library"
+            or recipe.get("expected_binary") != digest(snapshot / "dos.library")):
+        raise ValueError("DOS source recipe does not bind its module")
+    if digest(snapshot / "aros-base.pkg.xz") != digest(package):
+        raise ValueError("DOS snapshot boot package differs from selection")
+    if "loader_policy=1" not in (snapshot / "build-options.txt").read_text().splitlines():
+        raise ValueError("DOS snapshot lacks execute policy")
     return paths
 
 
@@ -163,6 +186,7 @@ def main():
     parser.add_argument("--fat-handler", type=pathlib.Path, required=True)
     parser.add_argument("--fat-source-snapshot", type=pathlib.Path, required=True)
     parser.add_argument("--dos-package", type=pathlib.Path, required=True)
+    parser.add_argument("--dos-source-snapshot", type=pathlib.Path, required=True)
     args = parser.parse_args()
     repo = pathlib.Path(__file__).resolve().parents[2]
     build, gui, cold = (p.resolve(strict=True) for p in
@@ -229,6 +253,8 @@ def main():
     dos = args.dos_package.resolve(strict=True)
     for run in (gui, cold, encrypted):
         require_match(dos, run, "aros-base.pkg.xz")
+    dos_snapshot = args.dos_source_snapshot.resolve(strict=True)
+    dos_sources = require_dos_snapshot(dos_snapshot, dos)
     selected["Platform/L/fat-handler"] = fat
     selected["Platform/Boot/aros-base.pkg.xz"] = dos
     companions = ("OpenZFSStartup", "OpenZFSStartupMount", "OpenZFSRuntimeCheck", "OpenZFSHostIdentity")
@@ -256,6 +282,13 @@ def main():
         target.parent.mkdir(parents=True, exist_ok=True)
         shutil.copy2(fat_snapshot / relative, target)
     require_fat_snapshot(sources, output / "Platform/L/fat-handler")
+    sources = output / "Sources/DOS"
+    sources.mkdir(parents=True)
+    for relative in [*dos_sources, pathlib.Path("retained.sha256")]:
+        target = sources / relative
+        target.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(dos_snapshot / relative, target)
+    require_dos_snapshot(sources, output / "Platform/Boot/aros-base.pkg.xz")
     record = {"packaging_commit": subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=repo, text=True).strip(),
               "gui_run": str(gui), "cold_run": str(cold), "encrypted_root_run": str(encrypted), "build": str(build),
               "build_only_utilities": [], "native_companion_utilities": list(companions),

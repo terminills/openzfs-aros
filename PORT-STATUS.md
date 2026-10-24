@@ -4,7 +4,15 @@ Experimental development snapshot; not production-qualified storage software.
 
 ## Current local package (2026-10-24)
 
-The local `mmake-bundle.o6mq86dd.tar.xz` adds a hash-bound FAT source snapshot,
+The local `mmake-bundle.jvc1mxmr.tar.xz` adds a pinned DOS source/catalog snapshot,
+upstream licenses, recorded compiler commands and exact-byte replay. Direct
+and archive-extracted replay pass; fresh Manager/Wanderer, persistent cold and
+native encrypted-root QEMU suites qualify the new DOS package. See
+`aros/tests/evidence/dos-source-package`. Posixc, the other boot modules and
+complete SDK/toolchain source packaging remain public-binary-release gates.
+This is a local development archive, not a public binary release.
+
+Its predecessor `mmake-bundle.o6mq86dd.tar.xz` adds a hash-bound FAT source snapshot,
 upstream license files and checkout-independent rebuild recipe. Both direct
 and archive-extracted source replay produce the exact previously qualified FAT
 binary; a fresh persistent QEMU suite passes using the replayed output. See

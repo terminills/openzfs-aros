@@ -1114,6 +1114,17 @@ verified snapshot at `Sources/FAT`. See `aros/tests/evidence/fat-source-package`
 for direct/extracted byte-identical rebuilds and fresh QEMU qualification.
 This does not supply corresponding sources for every other platform module.
 
+`build-dos-revision.sh` similarly retains the selected source and catalog
+revisions, generated headers, execute-policy patch, upstream license files,
+compiler commands and used external SDK/archive hashes. Its snapshot replays
+through the same `rebuild-fat-snapshot.py` helper; the recipe selects
+`dos.library`. Replay preserves recorded `__FILE__` paths with a compiler
+prefix map rather than requiring the original build directory. The matching
+SDK/toolchain remains external. Staging requires `--dos-source-snapshot`,
+binding both the rebuilt DOS module and selected boot package. This does not
+rebuild the other modules carried in that package. Fresh QEMU and extracted
+source replay evidence is in `aros/tests/evidence/dos-source-package`.
+
 Native destroyed-member changes can be tested with `AROS_TEST_NATIVE_CHANGES`
 set to `1` (CLI attach/replace), `2` (Manager API attach/replace), `3` (CLI add),
 or `4` (Manager API add), alongside `AROS_TEST_REQUIRE_PARTITIONS=1` and
