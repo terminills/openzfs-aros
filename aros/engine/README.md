@@ -843,6 +843,13 @@ rotation with 400000 PBKDF2 iterations. The full suite passes; evidence is in
 `aros/tests/evidence/key-check-formats`. This does not exhaust file-permission
 or delegation-policy combinations, nor prove absence of all allocation leaks.
 
+`public-service-run.NJTixzKq` repeats the full suite and adds the actual
+authenticated check-only request after fresh healthy, degraded and restored
+read-only imports. All three verify the key without loading it; `keystatus`
+stays unavailable and mounting is still refused before normal key loading.
+Cold-read member hashes remain unchanged and independent `zdb` reports no
+leaks. Evidence is in `aros/tests/evidence/key-check-readonly`.
+
 ## Native dataset rename and destroy (2026-09-21)
 
 ### Snapshot holds and releases

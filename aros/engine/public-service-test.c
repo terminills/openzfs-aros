@@ -2494,6 +2494,10 @@ static int storage_encrypted_cold(void)
     if(!file)return EIO;
     if(Write(file,key,sizeof(key))!=sizeof(key))error=EIO;
     if(!Close(file))error=EIO;
+    if(!error)error=storage_request_flags(62,"public_mirror/encrypted","RAM:public-test.key",NULL,OZ_CONFIRMED|OZ_DRYRUN);
+    if(!error)error=cli_result("C:zfs get -H -o value keystatus public_mirror/encrypted >T:cli-package-output.txt","unavailable");
+    if(!error&&!oz_mount_control(OZ_ADMISSION_PORT,"public_mirror/encrypted","OZCHECKCOLD",OZ_MOUNT_ATTACH,OZ_MOUNT_READONLY))error=EIO;
+    if(!error)note("Public cold key verification PASS readonly-import=1 correct=1 remains-locked=1 mount-refused=1\n");
     if(!error&&cli_command("C:zfs load-key -L file:///RAM/public-test.key public_mirror/encrypted"))error=EIO;
     if(!DeleteFile((CONST_STRPTR)"RAM:public-test.key"))error=EIO;
     if(error)return error;
