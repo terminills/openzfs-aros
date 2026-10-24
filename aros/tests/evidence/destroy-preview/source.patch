@@ -1,0 +1,120 @@
+diff --git a/aros/engine/public-service-test.c b/aros/engine/public-service-test.c
+index 7e73a8f..4f756ee 100644
+--- a/aros/engine/public-service-test.c
++++ b/aros/engine/public-service-test.c
+@@ -1989,6 +1989,36 @@ static int storage_test(int gui){
+             STORAGE_CHECK(!cli_command("C:zfs create -o mountpoint=none public_mirror/defer_tree/child"));
+             STORAGE_CHECK(!cli_command("C:zfs snapshot -r public_mirror/defer_tree@held"));
+             STORAGE_CHECK(!cli_command("C:zfs hold keep public_mirror/defer_tree/child@held"));
++            {
++                struct oz_message preview={0};
++                preview.magic=OZ_MAGIC;preview.version=OZ_VERSION;preview.msg.mn_Length=sizeof(preview);
++                preview.operation=38;preview.flags=OZ_CONFIRMED|OZ_DRYRUN|OZ_RECURSIVE;
++                strcpy(preview.target,"public_mirror/defer_tree@held");
++                strcpy(preview.options,"defer=on");
++                STORAGE_CHECK(oz_request_route(&preview)==OZ_ROUTE_PROJECT);
++                struct oz_project_worker *worker=NULL;
++                STORAGE_CHECK(!oz_project_worker_start(&preview,&worker));
++                int result=EAGAIN;
++                for(unsigned tick=0;tick<1500&&result==EAGAIN;tick++){
++                    result=oz_project_worker_poll(worker,&preview);
++                    if(result==EAGAIN)Delay(1);
++                }
++                STORAGE_CHECK(!result);
++                STORAGE_CHECK(!oz_project_worker_free(worker));
++                STORAGE_CHECK(preview.status==OZ_OK&&strstr(preview.detail,"public_mirror/defer_tree@held")&&
++                    strstr(preview.detail,"public_mirror/defer_tree/child@held"));
++                STORAGE_CHECK(!cli_result("C:zfs get -H -o value defer_destroy public_mirror/defer_tree@held >T:cli-package-output.txt","off"));
++                STORAGE_CHECK(!cli_result("C:zfs get -H -o value defer_destroy public_mirror/defer_tree/child@held >T:cli-package-output.txt","off"));
++                STORAGE_CHECK(!cli_result("C:zfs get -H -o value userrefs public_mirror/defer_tree/child@held >T:cli-package-output.txt","1"));
++                preview.flags&=~OZ_DRYRUN;
++                STORAGE_CHECK(oz_request_route(&preview)==OZ_ROUTE_AUTHENTICATED);
++                STORAGE_CHECK(oz_destroy_preview_execute(&preview)==EINVAL);
++                preview.flags|=OZ_DRYRUN|OZ_FORCE;
++                STORAGE_CHECK(oz_destroy_preview_execute(&preview)==EINVAL);
++                preview.flags=OZ_DRYRUN|OZ_RECURSIVE;
++                STORAGE_CHECK(oz_destroy_preview_execute(&preview)==EINVAL);
++                note("Public destruction dry-run PASS async=1 recursive-plan=1 deferred-unchanged=1 hold-unchanged=1 dryrun-required=1 force-refused=1 confirmation=1\n");
++            }
+             STORAGE_CHECK(!cli_command("C:zfs snapshot public_mirror/defer_tree@permission_probe"));
+             STORAGE_CHECK(!cli_command("C:zfs allow -l -u 77 mount,destroy public_mirror/defer_tree"));
+             STORAGE_CHECK(!destroy_identity("public_mirror/defer_tree@permission_probe",OZ_CONFIRMED,0));
+diff --git a/aros/ui/api.c b/aros/ui/api.c
+index 5e3bb1c..2b9cc0e 100644
+--- a/aros/ui/api.c
++++ b/aros/ui/api.c
+@@ -81,9 +81,11 @@ enum oz_route oz_request_route(const struct oz_message *m) {
+         return !strncmp(m->target,"/AROS/",6)?OZ_ROUTE_AUTHENTICATED:OZ_ROUTE_PROJECT;
+     case 52:
+         return m->options[0]?OZ_ROUTE_PROJECT:OZ_ROUTE_AUTHENTICATED;
++    case 38:
++        return (m->flags&OZ_DRYRUN)?OZ_ROUTE_PROJECT:OZ_ROUTE_AUTHENTICATED;
+     case 5: case 6: case 8: case 9: case 10: case 11: case 12: case 13:
+     case 14: case 15: case 16: case 17: case 18: case 19: case 20: case 21:
+-    case 22: case 23: case 24: case 26: case 32: case 33: case 37: case 38:
++    case 22: case 23: case 24: case 26: case 32: case 33: case 37:
+     case 39: case 41: case 42: case 43: case 44: case 50: case 51:
+     case 53: case 54: case 55: case 56: case 60: case 61: case 62: case 63:
+     case 64: case 65: case 66: case 67: case 68: case 69: case 78: case 79:
+diff --git a/aros/ui/operations.def b/aros/ui/operations.def
+index 493d1a6..866283f 100644
+--- a/aros/ui/operations.def
++++ b/aros/ui/operations.def
+@@ -37,7 +37,7 @@ OZ_OP(34, "Pools", "pool.events", "events", 0, "Optional pool filter", "", "Read
+ OZ_OP(35, "Pools", "pool.iostat", "iostat", 0, "Pool name", "", "Live upstream byte/operation totals. Options: histogram=latency (nanoseconds) or histogram=size (bytes). Histograms are cumulative, not rates. Next page continues metrics/topology; pages are live, not a frozen snapshot. Inactive devices report unavailable.")
+ OZ_OP(36, "Datasets", "dataset.list", "list", 0, "Root dataset", "", "List a dataset; Recursive includes descendants. Options: snapshots=on. Alternatively bookmarks=on lists one filesystem's bookmarks, without recursion.")
+ OZ_OP(37, "Datasets", "dataset.create", "create", 1, "New dataset / volume", "", "Comma-separated options: filesystem defaults, or type=volume,volsize=2G,volblocksize=8K. Both accept reservation/refreservation; filesystems also quota/refquota/recordsize, normalization, utf8only, casesensitivity. Sizes accept K/M/G; quota/reservations accept none. Encryption: encryption=on,keyformat=raw (or hex/passphrase), native key-file path in Argument; optional pbkdf2iters (minimum 100000). No secret text. Confirm; no dry-run.")
+-OZ_OP(38, "Datasets", "dataset.destroy", "destroy", 1, "Dataset/snapshot/bookmark", "", "Destroy one unmounted dataset or snapshot, or one dataset#bookmark; dependencies checked upstream. Recursive snapshot destruction is atomic and accepts defer=on: held snapshots remain until their last hold or clone is removed. Recursive dataset destruction requires a snapshot-free unmounted tree, preflights delegated rights, then destroys deepest-first; a runtime failure may leave partial progress reported in detail. Authenticated bookmarks require destroy, not mount. Confirm; no force/dry-run. Deferred destruction is snapshot-only.")
++OZ_OP(38, "Datasets", "dataset.destroy", "destroy", 1, "Dataset/snapshot/bookmark", "", "Dry-run uses upstream C:zfs destroy -n to report a plan without changing datasets; execution remains subject to AROS mount and permission checks. Recursive snapshot destruction is atomic and accepts defer=on: held snapshots remain until their last hold or clone is removed. Recursive dataset destruction requires a snapshot-free unmounted tree, preflights delegated rights, then destroys deepest-first; failure may leave reported partial progress. Confirm; no force. Deferred destruction is snapshot-only. Authenticated bookmarks require destroy, not mount.")
+ OZ_OP(39, "Datasets", "dataset.rename", "rename", 1, "Dataset or snapshot", "Destination name", "Rename an unmounted dataset within its pool, or snapshots within their filesystem. Recursive applies to snapshots only. Idle snapshot volumes detach; busy references refuse the request. Confirm; no force, options or dry-run.")
+ OZ_OP(40, "Datasets", "dataset.get", "get", 0, "Dataset / zvol", "Property name", "Read one exact upstream dataset property, or all with live pagination. Recursive exact-property and all-property views use one global live cursor across descendants. property-long rows require an exact query. No options.")
+ OZ_OP(41, "Datasets", "dataset.set", "set", 1, "Dataset or snapshot", "property=value", "Set properties, numeric user/group/project quota@ID or objquota@ID, and six default quotas. Upstream delegation/features required. Sync=disabled sacrifices durability. Use none to clear a limit; per-ID quotas cannot inherit. Zvol shrinking discards data: unmount first. Confirm; no options/dry-run.")
+diff --git a/aros/ui/project-worker.c b/aros/ui/project-worker.c
+index 1cbfd7e..c73510f 100644
+--- a/aros/ui/project-worker.c
++++ b/aros/ui/project-worker.c
+@@ -13,6 +13,24 @@
+ 
+ static int command_capture(struct oz_message *,char **);
+ 
++int oz_destroy_preview_execute(struct oz_message *m)
++{
++    char why[256];
++    unsigned allowed=OZ_CONFIRMED|OZ_DRYRUN|OZ_RECURSIVE;
++    if(!m||oz_validate(m,why,sizeof(why))!=OZ_OK||m->operation!=38||
++       (m->flags&~allowed)||!(m->flags&OZ_DRYRUN)||m->argument[0]||
++       m->cursor||m->job_id)return EINVAL;
++    int deferred=!strcmp(m->options,"defer=on");
++    if((m->options[0]&&!deferred)||(deferred&&!strchr(m->target,'@')))return EINVAL;
++    /* -n is unconditional: this route never performs destruction. Keep
++     * native mount/dependency checks on the separate execution route. */
++    char *args[10]={"C:zfs","destroy","-n","-v","-p"};unsigned count=5;
++    if(m->flags&OZ_RECURSIVE)args[count++]="-r";
++    if(deferred)args[count++]="-d";
++    args[count++]="--";args[count++]=m->target;args[count]=NULL;
++    return command_capture(m,args);
++}
++
+ int oz_clone_execute(struct oz_message *m)
+ {
+     char why[256],options[sizeof(m->options)];
+@@ -479,6 +497,7 @@ static void *project_run(void *arg)
+         w->response.operation==82?pool_errors_execute(&w->response):
+         w->response.operation==81?vdev_set_execute(&w->response):
+         w->response.operation==52?oz_clone_execute(&w->response):
++        w->response.operation==38?oz_destroy_preview_execute(&w->response):
+         w->response.operation==25?upgrade_execute(&w->response):
+         w->response.operation==47?dataset_upgrade_execute(&w->response):
+         w->response.operation==48?dataset_rewrite_execute(&w->response):
+diff --git a/aros/ui/project-worker.h b/aros/ui/project-worker.h
+index e0185a0..ca7b334 100644
+--- a/aros/ui/project-worker.h
++++ b/aros/ui/project-worker.h
+@@ -8,6 +8,7 @@ struct oz_project_worker;
+ int oz_project_execute(struct oz_message *);
+ int oz_diff_execute(struct oz_message *);
+ int oz_clone_execute(struct oz_message *);
++int oz_destroy_preview_execute(struct oz_message *);
+ int oz_project_worker_start(const struct oz_message *,struct oz_project_worker **);
+ /* Local read-only prerequisite report; no service wire operation or shell. */
+ int oz_runtime_worker_start(struct oz_project_worker **);

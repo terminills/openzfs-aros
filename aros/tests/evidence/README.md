@@ -101,6 +101,12 @@ This is not proof that the automatic drawer title is fixed: see the
 
 ### Evidence retention policy
 
+`destroy-preview` retains `public-service-run.IliFjbsQ`: the actual asynchronous
+worker executes upstream destruction dry-run and returns both recursive
+snapshot names, while independent queries show unchanged deferred state and
+hold count. Invalid flags are refused and the full storage suite passes. This
+is API/worker evidence, not a screenshot or GUI interaction test.
+
 `gui-deferred` records `native-gui-run.RFfSUBE5`: actual Manager entry,
 preview, confirmation and submission of recursive deferred destruction.
 The [serial log](gui-deferred/serial.log) independently verifies parent removal,

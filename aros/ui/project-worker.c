@@ -13,6 +13,24 @@
 
 static int command_capture(struct oz_message *,char **);
 
+int oz_destroy_preview_execute(struct oz_message *m)
+{
+    char why[256];
+    unsigned allowed=OZ_CONFIRMED|OZ_DRYRUN|OZ_RECURSIVE;
+    if(!m||oz_validate(m,why,sizeof(why))!=OZ_OK||m->operation!=38||
+       (m->flags&~allowed)||!(m->flags&OZ_DRYRUN)||m->argument[0]||
+       m->cursor||m->job_id)return EINVAL;
+    int deferred=!strcmp(m->options,"defer=on");
+    if((m->options[0]&&!deferred)||(deferred&&!strchr(m->target,'@')))return EINVAL;
+    /* -n is unconditional: this route never performs destruction. Keep
+     * native mount/dependency checks on the separate execution route. */
+    char *args[10]={"C:zfs","destroy","-n","-v","-p"};unsigned count=5;
+    if(m->flags&OZ_RECURSIVE)args[count++]="-r";
+    if(deferred)args[count++]="-d";
+    args[count++]="--";args[count++]=m->target;args[count]=NULL;
+    return command_capture(m,args);
+}
+
 int oz_clone_execute(struct oz_message *m)
 {
     char why[256],options[sizeof(m->options)];
@@ -479,6 +497,7 @@ static void *project_run(void *arg)
         w->response.operation==82?pool_errors_execute(&w->response):
         w->response.operation==81?vdev_set_execute(&w->response):
         w->response.operation==52?oz_clone_execute(&w->response):
+        w->response.operation==38?oz_destroy_preview_execute(&w->response):
         w->response.operation==25?upgrade_execute(&w->response):
         w->response.operation==47?dataset_upgrade_execute(&w->response):
         w->response.operation==48?dataset_rewrite_execute(&w->response):

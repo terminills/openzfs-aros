@@ -1989,6 +1989,36 @@ static int storage_test(int gui){
             STORAGE_CHECK(!cli_command("C:zfs create -o mountpoint=none public_mirror/defer_tree/child"));
             STORAGE_CHECK(!cli_command("C:zfs snapshot -r public_mirror/defer_tree@held"));
             STORAGE_CHECK(!cli_command("C:zfs hold keep public_mirror/defer_tree/child@held"));
+            {
+                struct oz_message preview={0};
+                preview.magic=OZ_MAGIC;preview.version=OZ_VERSION;preview.msg.mn_Length=sizeof(preview);
+                preview.operation=38;preview.flags=OZ_CONFIRMED|OZ_DRYRUN|OZ_RECURSIVE;
+                strcpy(preview.target,"public_mirror/defer_tree@held");
+                strcpy(preview.options,"defer=on");
+                STORAGE_CHECK(oz_request_route(&preview)==OZ_ROUTE_PROJECT);
+                struct oz_project_worker *worker=NULL;
+                STORAGE_CHECK(!oz_project_worker_start(&preview,&worker));
+                int result=EAGAIN;
+                for(unsigned tick=0;tick<1500&&result==EAGAIN;tick++){
+                    result=oz_project_worker_poll(worker,&preview);
+                    if(result==EAGAIN)Delay(1);
+                }
+                STORAGE_CHECK(!result);
+                STORAGE_CHECK(!oz_project_worker_free(worker));
+                STORAGE_CHECK(preview.status==OZ_OK&&strstr(preview.detail,"public_mirror/defer_tree@held")&&
+                    strstr(preview.detail,"public_mirror/defer_tree/child@held"));
+                STORAGE_CHECK(!cli_result("C:zfs get -H -o value defer_destroy public_mirror/defer_tree@held >T:cli-package-output.txt","off"));
+                STORAGE_CHECK(!cli_result("C:zfs get -H -o value defer_destroy public_mirror/defer_tree/child@held >T:cli-package-output.txt","off"));
+                STORAGE_CHECK(!cli_result("C:zfs get -H -o value userrefs public_mirror/defer_tree/child@held >T:cli-package-output.txt","1"));
+                preview.flags&=~OZ_DRYRUN;
+                STORAGE_CHECK(oz_request_route(&preview)==OZ_ROUTE_AUTHENTICATED);
+                STORAGE_CHECK(oz_destroy_preview_execute(&preview)==EINVAL);
+                preview.flags|=OZ_DRYRUN|OZ_FORCE;
+                STORAGE_CHECK(oz_destroy_preview_execute(&preview)==EINVAL);
+                preview.flags=OZ_DRYRUN|OZ_RECURSIVE;
+                STORAGE_CHECK(oz_destroy_preview_execute(&preview)==EINVAL);
+                note("Public destruction dry-run PASS async=1 recursive-plan=1 deferred-unchanged=1 hold-unchanged=1 dryrun-required=1 force-refused=1 confirmation=1\n");
+            }
             STORAGE_CHECK(!cli_command("C:zfs snapshot public_mirror/defer_tree@permission_probe"));
             STORAGE_CHECK(!cli_command("C:zfs allow -l -u 77 mount,destroy public_mirror/defer_tree"));
             STORAGE_CHECK(!destroy_identity("public_mirror/defer_tree@permission_probe",OZ_CONFIRMED,0));

@@ -865,7 +865,19 @@ an unheld parent snapshot, retention of a held child with `defer_destroy=on`,
 and removal after its last hold is released. Missing confirmation and deferred
 dataset destruction are refused. The fresh shared engine and complete mirror
 storage suite pass; this is API/runtime evidence, not a GUI interaction or
-physical-media test. Force and dry-run remain unsupported.
+physical-media test. Force remains unsupported. Destruction dry-run uses the
+separate upstream command-worker route described below, not this mutation path.
+
+Operation 38 with Dry-run now invokes installed `C:zfs destroy -n -v -p` via
+the asynchronous command worker, with optional Recursive and snapshot-only
+`defer=on`. Exact argv is used without a shell, and `-n` is unconditional.
+The worker refuses force, missing dry-run, missing confirmation and unrelated
+fields/options. Removing Dry-run selects the existing authenticated mutation
+route; a successful upstream plan does not override AROS mount or permission
+restrictions on execution. Native `public-service-run.IliFjbsQ` verifies a
+recursive deferred plan naming both fixture snapshots, unchanged defer flags
+and hold count, rejected flags, and the full storage suite. This is native
+worker/API evidence; GUI entry of this dry-run is not yet qualified.
 
 Delegation follow-up `public-service-run.JqZeMvsx` verifies UID 77's local-only
 mount/destroy grant is insufficient for snapshots, a descendant grant permits
