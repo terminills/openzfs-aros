@@ -17,8 +17,13 @@ gate matches binary hashes against all three qualification runs:
   two locked imports, denied mounts before key loading, successful key reloads
   and exact payload reads. Full evidence is in `../encrypted-root`.
 
-Fresh extraction passed every SHA256SUMS entry. A separate extracted-binary
-runtime test is in progress; this file does not yet claim its result.
+Fresh extraction passed every SHA256SUMS entry. The separate eight-CPU
+extracted-binary run `public-service-run.w6Jkrjkw` passed all service lifecycle,
+event cursor, loader policy and upstream storage acceptance checks. The test
+client was supplied externally, not included as a production executable.
+Two preboot attempts are retained: a relative checksum manifest was corrected,
+then the 100 GiB root-space guard refused allocation until inactive artifacts
+were relocated. Neither attempt reached the guest or counts as runtime proof.
 The seven packaging-gate tests pass, including missing terminal result,
 incorrect key-reload count, assertion and explicit failure rejection.
 

@@ -13,6 +13,12 @@ native-partition and cold file-mirror regressions pass; see
 `mmake-bundle.knv27h5n.tar.xz` predates this repair and can reproduce the abort;
 do not treat its earlier qualification as coverage of this encrypted-root case.
 
+The refreshed local archive `mmake-bundle.ncbjd29s.tar.xz` includes the repair.
+Its exact binaries passed the encrypted-root, Manager/Wanderer, persistent
+cold-start and freshly extracted eight-CPU QEMU acceptance runs. Packaging now
+requires the encrypted-root results as well as the GUI and cold evidence.
+See `aros/tests/evidence/arc-package` for hashes, screenshots and retained logs.
+
 ## Current public-source qualification
 
 The native MetaMake package now passes isolated two-CPU QEMU tests of the
