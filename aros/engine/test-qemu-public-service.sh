@@ -749,7 +749,9 @@ if [[ $companions == 1 ]];then
     rg -q '^Public exec helper PASS real-zpool=1 captured-output=1 missing-executable=1' "$run/serial-results.log"
 fi
 if [[ -n $label_source ]];then sha256sum -c "$run/label-original.sha256" >"$run/label-original-after-check.txt";fi
-echo "PASS: public service lifecycles and $layout DOS round trip (persistent=$persistent). Evidence: $run"
+if [[ -n $cli_dir ]];then
+    rg -q '^Public key change authorization PASS no-grant-denied=1 load-only-denied=1 private-file-denied=1 explicit-grant=1 revoke-denied=1 properties-preserved=1 root-restored=1' "$run/serial-results.log"
+fi
 rg -q '^Public DOS links PASS write=1 hard=1 relative-soft=1 unlinked-source=1 dangling-refused=1' "$run/serial-results.log"
 if [[ $gui_volume == 1 ]];then
     rg -q '^Public GUI volume PASS actual-mapping=1 readonly=1 exact-data=1 saved-mountfile=1 eject=1' "$run/serial-results.log"
@@ -774,3 +776,4 @@ if [[ $keep_images == 0 ]];then
     python3 aros/distribution/prune-public-test-images.py --apply --run "$(basename "$run")" \
         >"$run/image-pruning.log" 2>&1
 fi
+echo "PASS: public service lifecycles and $layout DOS round trip (persistent=$persistent). Evidence: $run"

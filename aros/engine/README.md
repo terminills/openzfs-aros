@@ -902,6 +902,17 @@ semicolon support and whole-text validation were added, then the same guest
 session continued successfully. This is native AROS/QEMU GUI evidence, not a
 physical-device or power-loss test. The successful run pruned its 4.57 GiB ISO.
 
+Native run `public-service-run.CJJ999MO` adds key-change authorization coverage
+under UID 77: absent grants and load-key-only delegation cannot change the
+format; an explicit change-key grant still cannot read a root-private key file.
+Making that file readable permits the format/KDF/location change. Revoking
+change-key prevents another conversion even while load-key remains granted;
+format, iterations, location and loaded status remain unchanged. The test always
+restores root identity before independent queries and cleanup. Subsequent
+root rotations, exact payload readback and the full storage suite pass.
+Evidence is in `aros/tests/evidence/key-change-auth`. This qualifies these
+specific grant and file-policy combinations, not all delegation policies.
+
 ## Native dataset rename and destroy (2026-09-21)
 
 ### Snapshot holds and releases

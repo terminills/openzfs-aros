@@ -1779,7 +1779,8 @@ static int destroy_identity(const char *snapshot,unsigned flags,int permitted)
     CloseLibrary(secBase);
     return error;
 }
-static int key_check_file_identity(const char *path,int permitted)
+static int key_request_identity(unsigned op,const char *target,const char *path,
+    const char *options,unsigned flags,int permitted)
 {
     struct Library *secBase=OpenLibrary((CONST_STRPTR)SECURITYNAME,SECURITYVERSION);
     if(!secBase)return ENOENT;
@@ -1790,13 +1791,17 @@ static int key_check_file_identity(const char *path,int permitted)
     secLogoutA(quiet);
     if(secLoginA(reader)!=((77UL<<16)|88))error=EACCES;
     if(!error){
-        int result=storage_request_flags(62,"public_mirror/encrypted",path,NULL,OZ_CONFIRMED|OZ_DRYRUN);
+        int result=storage_request_flags(op,target,path,options,flags);
         if(!storage_reply_received||(permitted?result!=0:result!=EIO))error=EACCES;
     }
     secLogoutA(quiet);if(secLoginA(root)!=secOWNER_SYSTEM)error=EACCES;
     CloseLibrary(secBase);
     return error;
 }
+static int key_check_file_identity(const char *path,int permitted)
+{return key_request_identity(62,"public_mirror/encrypted",path,NULL,OZ_CONFIRMED|OZ_DRYRUN,permitted);}
+static int key_change_identity(const char *path,const char *options,int permitted)
+{return key_request_identity(64,"public_mirror/check_hex",path,options,OZ_CONFIRMED,permitted);}
 static int key_check_identity(int permitted)
 {return key_check_file_identity("RAM:public-test.key",permitted);}
 static int clone_worker_identity(const char *destination,int permitted)
@@ -2326,7 +2331,22 @@ static int storage_test(int gui){
             STORAGE_CHECK(!oz_mount_control(OZ_ADMISSION_PORT,"public_mirror/check_hex","",OZ_MOUNT_DETACH,0));
             file=Open((CONST_STRPTR)"RAM:rekey-pass",MODE_NEWFILE);STORAGE_CHECK(file);
             STORAGE_CHECK(Write(file,storage_passphrase,sizeof(storage_passphrase)-1)==sizeof(storage_passphrase)-1);STORAGE_CHECK(Close(file));file=0;
-            STORAGE_CHECK(!storage_request(64,"public_mirror/check_hex","RAM:rekey-pass","keyformat=passphrase;pbkdf2iters=400000;keylocation=file:///RAM/rekey-pass"));
+            const char *pass_options="keyformat=passphrase;pbkdf2iters=400000;keylocation=file:///RAM/rekey-pass";
+            STORAGE_CHECK(!key_change_identity("RAM:rekey-pass",pass_options,0));
+            STORAGE_CHECK(!cli_command("C:zfs allow -l -u 77 load-key public_mirror/check_hex"));
+            STORAGE_CHECK(!key_change_identity("RAM:rekey-pass",pass_options,0));
+            STORAGE_CHECK(!cli_result("C:zfs get -H -o value keyformat public_mirror/check_hex >T:cli-package-output.txt","hex"));
+            STORAGE_CHECK(!cli_result("C:zfs get -H -o value keylocation public_mirror/check_hex >T:cli-package-output.txt","file:///RAM/public-hex.key"));
+            STORAGE_CHECK(!cli_command("C:zfs allow -l -u 77 change-key public_mirror/check_hex"));
+            file=Open((CONST_STRPTR)"OZPUBLIC:change-private.key",MODE_NEWFILE);STORAGE_CHECK(file);
+            STORAGE_CHECK(Write(file,storage_passphrase,sizeof(storage_passphrase)-1)==sizeof(storage_passphrase)-1);STORAGE_CHECK(Close(file));file=0;
+            STORAGE_CHECK(SetOwner((STRPTR)"OZPUBLIC:change-private.key",secOWNER_SYSTEM));
+            STORAGE_CHECK(SetProtection((CONST_STRPTR)"OZPUBLIC:change-private.key",0));
+            STORAGE_CHECK(!key_change_identity("OZPUBLIC:change-private.key",pass_options,0));
+            STORAGE_CHECK(!cli_result("C:zfs get -H -o value keyformat public_mirror/check_hex >T:cli-package-output.txt","hex"));
+            STORAGE_CHECK(SetProtection((CONST_STRPTR)"OZPUBLIC:change-private.key",FIBF_OTR_READ));
+            STORAGE_CHECK(!key_change_identity("OZPUBLIC:change-private.key",pass_options,1));
+            STORAGE_CHECK(DeleteFile((CONST_STRPTR)"OZPUBLIC:change-private.key"));
             STORAGE_CHECK(!cli_result("C:zfs get -H -o value keyformat public_mirror/check_hex >T:cli-package-output.txt","passphrase"));
             STORAGE_CHECK(!cli_result("C:zfs get -H -o value pbkdf2iters public_mirror/check_hex >T:cli-package-output.txt","400000"));
             STORAGE_CHECK(!cli_result("C:zfs get -H -o value keylocation public_mirror/check_hex >T:cli-package-output.txt","file:///RAM/rekey-pass"));
@@ -2336,6 +2356,14 @@ static int storage_test(int gui){
             unsigned char rekey_raw[32];memset(rekey_raw,0x5c,sizeof(rekey_raw));
             file=Open((CONST_STRPTR)"RAM:rekey-raw",MODE_NEWFILE);STORAGE_CHECK(file);
             STORAGE_CHECK(Write(file,rekey_raw,sizeof(rekey_raw))==sizeof(rekey_raw));STORAGE_CHECK(Close(file));file=0;
+            STORAGE_CHECK(!cli_command("C:zfs unallow -l -u 77 change-key public_mirror/check_hex"));
+            STORAGE_CHECK(!key_change_identity("RAM:rekey-raw","keyformat=raw;keylocation=prompt",0));
+            STORAGE_CHECK(!cli_result("C:zfs get -H -o value keyformat public_mirror/check_hex >T:cli-package-output.txt","passphrase"));
+            STORAGE_CHECK(!cli_result("C:zfs get -H -o value pbkdf2iters public_mirror/check_hex >T:cli-package-output.txt","400000"));
+            STORAGE_CHECK(!cli_result("C:zfs get -H -o value keylocation public_mirror/check_hex >T:cli-package-output.txt","file:///RAM/rekey-pass"));
+            STORAGE_CHECK(!cli_result("C:zfs get -H -o value keystatus public_mirror/check_hex >T:cli-package-output.txt","available"));
+            STORAGE_CHECK(!cli_command("C:zfs unallow -l -u 77 load-key public_mirror/check_hex"));
+            note("Public key change authorization PASS no-grant-denied=1 load-only-denied=1 private-file-denied=1 explicit-grant=1 revoke-denied=1 properties-preserved=1 root-restored=1\n");
             STORAGE_CHECK(!storage_request(64,"public_mirror/check_hex","RAM:rekey-raw","keyformat=raw;keylocation=prompt"));
             STORAGE_CHECK(!cli_result("C:zfs get -H -o value keyformat public_mirror/check_hex >T:cli-package-output.txt","raw"));
             STORAGE_CHECK(!cli_command("C:zfs unload-key public_mirror/check_hex"));
