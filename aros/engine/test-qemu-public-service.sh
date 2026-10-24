@@ -82,6 +82,8 @@ sequential=${AROS_TEST_SEQUENTIAL:-0}
 gui=${AROS_PUBLIC_GUI:-0}
 gui_defer=${AROS_TEST_GUI_DEFER:-0}
 [[ $gui_defer == 0 || ( $gui_defer == 1 && $gui == 1 && -n $cli_dir ) ]]
+gui_destroy_preview=${AROS_TEST_GUI_DESTROY_PREVIEW:-0}
+[[ $gui_destroy_preview == 0 || ( $gui_destroy_preview == 1 && $gui_defer == 1 ) ]]
 gui_desktop=${AROS_TEST_GUI_DESKTOP:-0}
 gui_clone=${AROS_TEST_GUI_CLONE:-0}
 [[ $gui_clone == 0 || ( $gui_clone == 1 && $gui == 1 && -n $cli_dir ) ]]
@@ -118,6 +120,9 @@ if [[ $gui_clone == 1 ]];then
 fi
 if [[ $gui_defer == 1 ]];then
     extra_maps+=(-map aros/engine/public-service-test-only /openzfs-gui-defer-test)
+fi
+if [[ $gui_destroy_preview == 1 ]];then
+    extra_maps+=(-map aros/engine/public-service-test-only /openzfs-gui-destroy-preview-test)
 fi
 if [[ $gui_volume == 1 ]];then
     extra_maps+=(-map aros/engine/public-service-test-only /openzfs-gui-volume-test)
@@ -739,7 +744,9 @@ rg -q '^Public DOS links PASS write=1 hard=1 relative-soft=1 unlinked-source=1 d
 if [[ $gui_volume == 1 ]];then
     rg -q '^Public GUI volume PASS actual-mapping=1 readonly=1 exact-data=1 saved-mountfile=1 eject=1' "$run/serial-results.log"
 fi
-if [[ $gui_defer == 1 ]];then
+if [[ $gui_destroy_preview == 1 ]];then
+    rg -q '^Public GUI destruction preview PASS parent-unchanged=1 child-unchanged=1 hold-retained=1 release-does-not-destroy=1 cleanup=1' "$run/serial-results.log"
+elif [[ $gui_defer == 1 ]];then
     rg -q '^Public GUI deferred PASS parent-removed=1 child-deferred=1 hold-retained=1 release-removes=1 cleanup=1' "$run/serial-results.log"
 fi
 if [[ $gui_clone == 1 ]];then

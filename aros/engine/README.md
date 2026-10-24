@@ -876,8 +876,16 @@ fields/options. Removing Dry-run selects the existing authenticated mutation
 route; a successful upstream plan does not override AROS mount or permission
 restrictions on execution. Native `public-service-run.IliFjbsQ` verifies a
 recursive deferred plan naming both fixture snapshots, unchanged defer flags
-and hold count, rejected flags, and the full storage suite. This is native
-worker/API evidence; GUI entry of this dry-run is not yet qualified.
+and hold count, rejected flags, and the full storage suite.
+Native GUI run `native-gui-run.ajXTDe6n` additionally submits this operation
+through Manager with Recursive, Dry-run and `defer=on`, displaying the upstream
+plan for both snapshots. Independent post-UI checks verify both defer flags
+remain off, the child's hold remains present, and releasing that hold does not
+destroy the child. Fixture cleanup and the full storage suite pass. Screenshots,
+action trace, binary hashes and serial results are retained under
+`aros/tests/evidence/gui-destroy-preview`. This is isolated QEMU proof, not
+physical-media qualification. The captured confirmation has a known generic
+mutation warning even in dry-run mode; that wording is not backend behavior.
 
 Delegation follow-up `public-service-run.JqZeMvsx` verifies UID 77's local-only
 mount/destroy grant is insufficient for snapshots, a descendant grant permits
