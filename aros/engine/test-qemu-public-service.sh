@@ -23,6 +23,12 @@ if [[ $base_platform == 1 ]];then
         platform_maps=(-map "$AROS_TEST_BASE_DOS_PACKAGE" /boot/aros-base.pkg.xz)
         platform_inputs=("$AROS_TEST_BASE_DOS_PACKAGE")
     fi
+    if [[ -n ${AROS_TEST_BASE_AHCI_PACKAGE:-} ]];then
+        python3 aros/engine/verify-dos-package-overlay.py "$base" \
+            "$AROS_TEST_BASE_AHCI_PACKAGE" "${AROS_PACKAGE_TOOL:?package tool required}" ahci.device
+        platform_maps+=(-map "$AROS_TEST_BASE_AHCI_PACKAGE" /boot/pc-smp/aros-bsp.pkg.xz)
+        platform_inputs+=("$AROS_TEST_BASE_AHCI_PACKAGE")
+    fi
 else
     zlib=${AROS_TEST_ZLIB_LIBRARY:?explicit native z1.library required}
     dos=${AROS_TEST_DOS_OVERLAY:?private DOS overlay required}

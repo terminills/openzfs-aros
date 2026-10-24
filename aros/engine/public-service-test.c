@@ -537,13 +537,18 @@ static int inquiry_rpc_test(int denied)
     if(ahci_marker) {
         UnLock(ahci_marker);memset(&value,0xa5,sizeof(value));saved=value;
         error=oz_device_inquiry_read(OZ_ADMISSION_PORT,"ahci.device",0,&value);
+        if(!denied)bug("Public AHCI inquiry diagnostic errno=%d version=%u length=%u vendor=%.8s product=%.16s\n",
+            error,value.version,value.length,error?"":(char *)value.data+8,error?"":(char *)value.data+16);
         if(denied) {
             if(error!=EACCES||memcmp(&value,&saved,sizeof(value)))return EIO;
         } else {
             if(error||value.version!=1||value.length!=36||
                memcmp(value.data+8,"SATA    ",8)||memcmp(value.data+16,"QEMU HARDDISK",13))return EIO;
             struct oz_device_geometry geometry={0};
-            if(oz_device_geometry_read(OZ_ADMISSION_PORT,"ahci.device",0,&geometry)||
+            int geometry_error=oz_device_geometry_read(OZ_ADMISSION_PORT,"ahci.device",0,&geometry);
+            bug("Public AHCI geometry diagnostic errno=%d version=%u sector=%u bytes=%llu\n",
+                geometry_error,geometry.version,geometry.sector_size,(unsigned long long)geometry.bytes);
+            if(geometry_error||
                geometry.version!=1||geometry.sector_size!=512||geometry.bytes!=67108864)return EIO;
         }
         note(denied?"Public AHCI inquiry PASS denied=1 unchanged=1\n":

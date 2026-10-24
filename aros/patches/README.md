@@ -1,5 +1,31 @@
 # Native AROS integration patches
 
+## Current alpha18 AHCI inquiry qualification (2026-10-24)
+
+The current MetaMake upstream acceptance client reproduces AHCI inquiry EIO
+against the selected alpha18c5 boot platform (`public-service-run.O9c0Yw9z`,
+diagnostic repeat `bqfewl43`). IDE reads and inquiry pass first; AHCI returns
+errno=5 without modifying the output. The selected AROS source still contains
+the old inquiry implementation described below.
+
+Private overlay `ahci-capacity.j_4bxi4z` rebuilds the three affected units
+against the current build's headers and retained object map, applying the
+existing capacity, lifetime, flush, inquiry and completion-ack patches. It
+changes only `ahci.device` in the original ISO's BSP package, preserving every
+other module byte and order. It does not edit the shared AROS source/build.
+Use explicit `AROS_BUILD`, `AROS_SOURCE`, `AROS_CC` and
+`AROS_AHCI_BASE_PACKAGE` inputs to the overlay builder. The QEMU runner's
+`AROS_TEST_BASE_AHCI_PACKAGE` verifies that single-member replacement against
+the selected ISO before mapping it; unrelated changes are rejected.
+
+Run `public-service-run.YzIHuToW` then passes with eight guest CPUs: exact
+36-byte SATA/QEMU identity, 64 MiB/512-byte geometry, mixed ATA/AHCI inventory,
+unprivileged denial with unchanged outputs, partition extents/bounds, native
+device preflight and the full upstream/storage suite. All three backing image
+hashes remain unchanged. Failed and passing logs plus overlay provenance are
+under `aros/tests/evidence/current-ahci`. This establishes a required private
+platform correction for this fixture, not stock-nightly or physical-I/O safety.
+
 ## Public service AHCI identification and mixed inventory acceptance
 
 `public-service-run.c6uoUuzW` cold-boots the normal, non-test-mode service

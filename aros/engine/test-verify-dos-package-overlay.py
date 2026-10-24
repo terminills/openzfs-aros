@@ -31,6 +31,18 @@ class PackageTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             verify(self.original, self.original[:2])
 
+    def test_ahci_only(self):
+        original = [('ata.device', b'ata'), ('ahci.device', b'old')]
+        verify(original, [original[0], ('ahci.device', b'new')], 'ahci.device')
+        with self.assertRaises(ValueError):
+            verify(original, [('ata.device', b'changed'), ('ahci.device', b'new')], 'ahci.device')
+        with self.assertRaises(ValueError):
+            verify(original, original, 'ahci.device')
+
+    def test_unapproved_member(self):
+        with self.assertRaises(ValueError):
+            verify(self.original, self.original, 'exec.library')
+
 
 if __name__ == '__main__':
     unittest.main()

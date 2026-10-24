@@ -12,12 +12,14 @@ import subprocess
 import tempfile
 
 repo = pathlib.Path(__file__).resolve().parents[2]
-release = pathlib.Path('/opt/aros-workspace/aros-amiwest-nightly-release')
-source = pathlib.Path('/opt/aros-workspace/AROS-amiwest-nightly-src')
-toolchain = pathlib.Path('/opt/aros-workspace/aros-crosstools')
+release = pathlib.Path(os.environ.get('AROS_BUILD', '/opt/aros-workspace/aros-amiwest-nightly-release')).resolve()
+source = pathlib.Path(os.environ.get('AROS_SOURCE', '/opt/aros-workspace/AROS-amiwest-nightly-src')).resolve()
+compiler = pathlib.Path(os.environ.get('AROS_CC', '/opt/aros-workspace/aros-crosstools/x86_64-aros-gcc')).resolve()
+toolchain = compiler.parent
 sdk = release / 'bin/pc-x86_64-smp/AROS/Developer'
 gen = release / 'bin/pc-x86_64-smp/gen/rom/devs/ahci/ahci'
-base = repo / 'build-aros/ata-capacity.vtSNuh2f'
+base_package = pathlib.Path(os.environ.get('AROS_AHCI_BASE_PACKAGE',
+    str(repo / 'build-aros/ata-capacity.vtSNuh2f/aros-bsp.pkg.xz'))).resolve()
 out = pathlib.Path(tempfile.mkdtemp(prefix='ahci-capacity.', dir=repo / 'build-aros'))
 print('Evidence:', out, flush=True)
 stage = out / 'rom/devs/ahci'
@@ -34,7 +36,7 @@ if os.environ.get('AROS_AHCI_COMPLETION_ACK') == '1':
 for unit in units:
     shutil.copy2(source / 'rom/devs/ahci' / (unit + '.c'), stage)
 inputs = [pathlib.Path(__file__).resolve(), *patches,
-          gen / '.map', base / 'aros-bsp.pkg.xz']
+          gen / '.map', base_package]
 # Private device structures depend on release feature macros. Retain the
 # configuration and original dependency closure, not just the edited C file.
 inputs += [release / 'bin/pc-x86_64-smp/gen/config' / name
@@ -53,7 +55,7 @@ def run(args):
 
 for patch in patches:
     run(['patch', '--fuzz=0', '-p1', '-d', out, '-i', patch])
-common = ['/opt/aros-workspace/aros-crosstools/x86_64-aros-gcc',
+common = [compiler,
           '--sysroot', sdk, '-m64', '-mcmodel=large', '-mno-red-zone', '-mno-ms-bitfields',
           '-mgeneral-regs-only']
 for unit in units:
@@ -92,7 +94,7 @@ def unpack(path):
         entries.append((name, data))
     return entries
 
-entries = unpack(base / 'aros-bsp.pkg.xz')
+entries = unpack(base_package)
 assert sum(n == 'ahci.device' for n, _ in entries) == 1
 package = out / 'package'; package.mkdir()
 for name, data in entries:

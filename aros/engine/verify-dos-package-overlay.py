@@ -24,24 +24,30 @@ def entries(path, api):
     return result
 
 
-def verify(original, candidate):
+def verify(original, candidate, member='dos.library'):
+    if member not in ('dos.library', 'ahci.device'):
+        raise ValueError('unsupported overlay member')
     if [n for n, _ in original] != [n for n, _ in candidate]:
         raise ValueError('boot module order or membership changed')
     changed = [name for (name, a), (_, b) in zip(original, candidate) if a != b]
-    if changed != ['dos.library']:
-        raise ValueError(f'expected DOS-only replacement, got {changed!r}')
+    if changed != [member]:
+        raise ValueError(f'expected {member}-only replacement, got {changed!r}')
 
 
 def main():
-    iso, candidate, tool = map(pathlib.Path, sys.argv[1:])
+    iso, candidate, tool = map(pathlib.Path, sys.argv[1:4])
+    member = sys.argv[4] if len(sys.argv) == 5 else 'dos.library'
+    if len(sys.argv) not in (4, 5) or member not in ('dos.library', 'ahci.device'):
+        raise ValueError('expected ISO PACKAGE TOOL [dos.library|ahci.device]')
+    boot_path = '/boot/aros-base.pkg.xz' if member == 'dos.library' else '/boot/pc-smp/aros-bsp.pkg.xz'
     api = runpy.run_path(str(tool))
     with tempfile.TemporaryDirectory(prefix='openzfs-dos-package-') as temporary:
         original = pathlib.Path(temporary, 'aros-base.pkg.xz')
         subprocess.run(['xorriso', '-osirrox', 'on', '-indev', str(iso),
-                        '-extract', '/boot/aros-base.pkg.xz', str(original)],
+                        '-extract', boot_path, str(original)],
                        check=True, stdout=subprocess.DEVNULL)
-        verify(entries(original, api), entries(candidate, api))
-    print('PASS DOS-only package replacement; all other boot module bytes/order preserved')
+        verify(entries(original, api), entries(candidate, api), member)
+    print(f'PASS {member}-only package replacement; all other boot module bytes/order preserved')
 
 
 if __name__ == '__main__':

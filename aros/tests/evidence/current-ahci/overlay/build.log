@@ -1,0 +1,65 @@
+Evidence: /home/terminills/Documents/GitHub/openzfs-aros-public/build-aros/ahci-capacity.j_4bxi4z
+patch --fuzz=0 -p1 -d /home/terminills/Documents/GitHub/openzfs-aros-public/build-aros/ahci-capacity.j_4bxi4z -i /home/terminills/Documents/GitHub/openzfs-aros-public/aros/patches/ahci-exact-capacity.patch
+patching file rom/devs/ahci/ahci_io.c
+patch --fuzz=0 -p1 -d /home/terminills/Documents/GitHub/openzfs-aros-public/build-aros/ahci-capacity.j_4bxi4z -i /home/terminills/Documents/GitHub/openzfs-aros-public/aros/patches/ahci-scsi-capacity.patch
+patching file rom/devs/ahci/ahci_scsi.c
+Hunk #1 succeeded at 350 (offset -3 lines).
+Hunk #2 succeeded at 455 (offset -5 lines).
+patch --fuzz=0 -p1 -d /home/terminills/Documents/GitHub/openzfs-aros-public/build-aros/ahci-capacity.j_4bxi4z -i /home/terminills/Documents/GitHub/openzfs-aros-public/aros/patches/ahci-query-lifetime.patch
+patching file rom/devs/ahci/ahci_io.c
+patch --fuzz=0 -p1 -d /home/terminills/Documents/GitHub/openzfs-aros-public/build-aros/ahci-capacity.j_4bxi4z -i /home/terminills/Documents/GitHub/openzfs-aros-public/aros/patches/ahci-update-flush.patch
+patching file rom/devs/ahci/ahci_io.c
+Hunk #1 succeeded at 419 (offset 3 lines).
+patching file rom/devs/ahci/ahci.c
+Hunk #1 succeeded at 2595 (offset -9 lines).
+patching file rom/devs/ahci/ahci_scsi.c
+Hunk #1 succeeded at 460 (offset 27 lines).
+patch --fuzz=0 -p1 -d /home/terminills/Documents/GitHub/openzfs-aros-public/build-aros/ahci-capacity.j_4bxi4z -i /home/terminills/Documents/GitHub/openzfs-aros-public/aros/patches/ahci-inquiry.patch
+patching file rom/devs/ahci/ahci_scsi.c
+Hunk #2 succeeded at 343 (offset -1 lines).
+Hunk #3 succeeded at 412 (offset 46 lines).
+Hunk #4 succeeded at 447 (offset 35 lines).
+patch --fuzz=0 -p1 -d /home/terminills/Documents/GitHub/openzfs-aros-public/build-aros/ahci-capacity.j_4bxi4z -i /home/terminills/Documents/GitHub/openzfs-aros-public/aros/patches/ahci-completion-ack.patch
+patching file rom/devs/ahci/ahci.c
+Hunk #1 succeeded at 2771 (offset -10 lines).
+Hunk #2 succeeded at 3059 (offset -10 lines).
+Hunk #3 succeeded at 3062 (offset -10 lines).
+/home/terminills/Documents/GitHub/aros-adt-crosstools/x86_64-aros-gcc --sysroot /home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer -m64 -mcmodel=large -mno-red-zone -mno-ms-bitfields -mgeneral-regs-only -O2 -fno-asynchronous-unwind-tables -fno-omit-frame-pointer -Wno-pointer-sign -DDEBUG=0 -DAROS_USE_LOGRES -DAROS_BUILD_TYPE=AROS_BUILD_TYPE_PERSONAL -D__BSD_VISIBLE -D__OOP_NOLIBBASE__ -D__OOP_NOATTRBASES__ -D__OOP_NOMETHODBASES__ -include /home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/gen/rom/devs/ahci/ahci/include/ahci_deflibdefs.h -I/home/terminills/Documents/GitHub/aros-adt-src/rom/devs/ahci -I/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/gen/rom/devs/ahci/ahci/include -I/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/gen/rom/devs/ahci/ahci -c /home/terminills/Documents/GitHub/openzfs-aros-public/build-aros/ahci-capacity.j_4bxi4z/rom/devs/ahci/ahci_io.c -o /home/terminills/Documents/GitHub/openzfs-aros-public/build-aros/ahci-capacity.j_4bxi4z/ahci_io.o
+/home/terminills/Documents/GitHub/aros-adt-crosstools/x86_64-aros-gcc --sysroot /home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer -m64 -mcmodel=large -mno-red-zone -mno-ms-bitfields -mgeneral-regs-only -O2 -fno-asynchronous-unwind-tables -fno-omit-frame-pointer -Wno-pointer-sign -DDEBUG=0 -DAROS_USE_LOGRES -DAROS_BUILD_TYPE=AROS_BUILD_TYPE_PERSONAL -D__BSD_VISIBLE -D__OOP_NOLIBBASE__ -D__OOP_NOATTRBASES__ -D__OOP_NOMETHODBASES__ -include /home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/gen/rom/devs/ahci/ahci/include/ahci_deflibdefs.h -I/home/terminills/Documents/GitHub/aros-adt-src/rom/devs/ahci -I/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/gen/rom/devs/ahci/ahci/include -I/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/gen/rom/devs/ahci/ahci -c /home/terminills/Documents/GitHub/openzfs-aros-public/build-aros/ahci-capacity.j_4bxi4z/rom/devs/ahci/ahci_scsi.c -o /home/terminills/Documents/GitHub/openzfs-aros-public/build-aros/ahci-capacity.j_4bxi4z/ahci_scsi.o
+/home/terminills/Documents/GitHub/aros-adt-crosstools/x86_64-aros-gcc --sysroot /home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer -m64 -mcmodel=large -mno-red-zone -mno-ms-bitfields -mgeneral-regs-only -O2 -fno-asynchronous-unwind-tables -fno-omit-frame-pointer -Wno-pointer-sign -DDEBUG=0 -DAROS_USE_LOGRES -DAROS_BUILD_TYPE=AROS_BUILD_TYPE_PERSONAL -D__BSD_VISIBLE -D__OOP_NOLIBBASE__ -D__OOP_NOATTRBASES__ -D__OOP_NOMETHODBASES__ -include /home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/gen/rom/devs/ahci/ahci/include/ahci_deflibdefs.h -I/home/terminills/Documents/GitHub/aros-adt-src/rom/devs/ahci -I/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/gen/rom/devs/ahci/ahci/include -I/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/gen/rom/devs/ahci/ahci -c /home/terminills/Documents/GitHub/openzfs-aros-public/build-aros/ahci-capacity.j_4bxi4z/rom/devs/ahci/ahci.c -o /home/terminills/Documents/GitHub/openzfs-aros-public/build-aros/ahci-capacity.j_4bxi4z/ahci.o
+/home/terminills/Documents/GitHub/aros-adt-crosstools/x86_64-aros-gcc --sysroot /home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer -m64 -mcmodel=large -mno-red-zone -mno-ms-bitfields -mgeneral-regs-only -nostartfiles -Wl,-Map -Xlinker /home/terminills/Documents/GitHub/openzfs-aros-public/build-aros/ahci-capacity.j_4bxi4z/ahci.map /home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/gen/compiler/libinit/libentry.o /home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/gen/rom/devs/ahci/ahci/ahci_start.o /home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/gen/rom/devs/ahci/ahci/ahci_init.o /home/terminills/Documents/GitHub/openzfs-aros-public/build-aros/ahci-capacity.j_4bxi4z/ahci_io.o /home/terminills/Documents/GitHub/openzfs-aros-public/build-aros/ahci-capacity.j_4bxi4z/ahci_scsi.o /home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/gen/rom/devs/ahci/ahci/ahci_cam_aros.o /home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/gen/rom/devs/ahci/ahci/ahci_aros.o /home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/gen/rom/devs/ahci/ahci/ahci_aros_bus.o /home/terminills/Documents/GitHub/openzfs-aros-public/build-aros/ahci-capacity.j_4bxi4z/ahci.o /home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/gen/rom/devs/ahci/ahci/ahci_attach.o /home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/gen/rom/devs/ahci/ahci/ahci_pm.o /home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/gen/rom/devs/ahci/ahci/bus_pci.o /home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/gen/rom/devs/ahci/ahci/timer.o /home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/gen/rom/devs/ahci/ahci/subr_prf.o /home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/gen/rom/devs/ahci/ahci/ahci_controllerclass.o /home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/gen/rom/devs/ahci/ahci/ahci_busclass.o /home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/gen/rom/devs/ahci/ahci/ahci_unitclass.o /home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/gen/rom/devs/ahci/ahci/ahci_end.o -o /home/terminills/Documents/GitHub/openzfs-aros-public/build-aros/ahci-capacity.j_4bxi4z/ahci.device -static -Wl,--start-group -lhiddstubs -Wl,--end-group
+python3 /home/terminills/Documents/GitHub/aros-adt-src/tools/package/pkg c /home/terminills/Documents/GitHub/openzfs-aros-public/build-aros/ahci-capacity.j_4bxi4z/aros-bsp.pkg /home/terminills/Documents/GitHub/openzfs-aros-public/build-aros/ahci-capacity.j_4bxi4z/package ata.device ahci.device nvme.device virtio.device ata_pci.hidd bus.hidd i8042.hidd ipmi.hidd smbios-ipmi.hidd parallel.hidd pci.hidd pcipc.hidd pcivmd.hidd telemetry.hidd power.hidd serial.hidd vesagfx.hidd efifbgfx.hidd vgagfx.hidd storage.hidd system.hidd acpica.library security.library efi.resource hpet.resource log.resource entropy.resource timer.device expansion.library battclock.resource processor.resource serial.logger
+» ata.device (65128 bytes)
+» ahci.device (147400 bytes)
+» nvme.device (61528 bytes)
+» virtio.device (45040 bytes)
+» ata_pci.hidd (26600 bytes)
+» bus.hidd (11944 bytes)
+» i8042.hidd (31688 bytes)
+» ipmi.hidd (19024 bytes)
+» smbios-ipmi.hidd (17856 bytes)
+» parallel.hidd (16536 bytes)
+» pci.hidd (61784 bytes)
+» pcipc.hidd (26536 bytes)
+» pcivmd.hidd (35440 bytes)
+» telemetry.hidd (12672 bytes)
+» power.hidd (12000 bytes)
+» serial.hidd (20496 bytes)
+» vesagfx.hidd (25048 bytes)
+» efifbgfx.hidd (24240 bytes)
+» vgagfx.hidd (37720 bytes)
+» storage.hidd (19912 bytes)
+» system.hidd (12480 bytes)
+» acpica.library (473256 bytes)
+» security.library (106544 bytes)
+» efi.resource (11112 bytes)
+» hpet.resource (13008 bytes)
+» log.resource (19472 bytes)
+» entropy.resource (16096 bytes)
+» timer.device (20824 bytes)
+» expansion.library (17672 bytes)
+» battclock.resource (12848 bytes)
+» processor.resource (36032 bytes)
+» serial.logger (14536 bytes)
+PASS: only ahci.device changed; package module order preserved.
+Overlay: /home/terminills/Documents/GitHub/openzfs-aros-public/build-aros/ahci-capacity.j_4bxi4z
