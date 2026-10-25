@@ -12,6 +12,33 @@ spec.loader.exec_module(stage)
 
 
 class EvidenceTests(unittest.TestCase):
+    def test_posix_snapshot_requires_matching_binary_and_assembly(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = pathlib.Path(directory)
+            names = ['source/LICENSE', 'rebuild-fat-snapshot.py', 'provenance.json',
+                     'posixc.library', 'source/compiler/crt/posixc/posixc.conf',
+                     'source/arch/siglongjmp.s', 'source/arch/sigsetjmp.s',
+                     'source/arch/vfork.s', 'source/arch/vfork_longjmp.s']
+            for name in names:
+                path = root / name
+                path.parent.mkdir(parents=True, exist_ok=True)
+                path.write_text(name)
+            (root / 'rebuild.json').write_text(json.dumps({'format': 1,
+                'artifact': 'posixc.library', 'expected_binary': stage.digest(root / 'posixc.library')}))
+            names.append('rebuild.json')
+            def manifest():
+                (root / 'retained.sha256').write_text(''.join(
+                    stage.digest(root / name) + '  ' + name + '\n' for name in names))
+            manifest()
+            stage.require_posix_snapshot(root, root / 'posixc.library')
+            (root / 'different.library').write_text('different')
+            with self.assertRaises(ValueError):
+                stage.require_posix_snapshot(root, root / 'different.library')
+            names.remove('source/arch/vfork.s')
+            manifest()
+            with self.assertRaises(ValueError):
+                stage.require_posix_snapshot(root, root / 'posixc.library')
+
     def test_dos_snapshot_binds_module_package_and_policy(self):
         with tempfile.TemporaryDirectory() as directory:
             root = pathlib.Path(directory)

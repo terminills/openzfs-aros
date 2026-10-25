@@ -63,6 +63,23 @@ def require_dos_snapshot(snapshot, package):
     return paths
 
 
+def require_posix_snapshot(snapshot, binary):
+    paths = snapshot_paths(snapshot)
+    required = {pathlib.Path(name) for name in (
+        "rebuild.json", "rebuild-fat-snapshot.py", "source/LICENSE",
+        "provenance.json", "posixc.library", "source/compiler/crt/posixc/posixc.conf",
+        "source/arch/siglongjmp.s", "source/arch/sigsetjmp.s",
+        "source/arch/vfork.s", "source/arch/vfork_longjmp.s")}
+    if not required.issubset(paths):
+        raise ValueError("Incomplete posixc source snapshot")
+    recipe = json.loads((snapshot / "rebuild.json").read_text())
+    if (recipe.get("format") != 1 or recipe.get("artifact") != "posixc.library"
+            or recipe.get("expected_binary") != digest(binary)
+            or digest(snapshot / "posixc.library") != digest(binary)):
+        raise ValueError("posixc source recipe does not bind selected binary")
+    return paths
+
+
 def recorded_hash(run, name):
     values = set()
     for manifest in run.glob("*-input*.sha256"):
@@ -187,6 +204,7 @@ def main():
     parser.add_argument("--fat-source-snapshot", type=pathlib.Path, required=True)
     parser.add_argument("--dos-package", type=pathlib.Path, required=True)
     parser.add_argument("--dos-source-snapshot", type=pathlib.Path, required=True)
+    parser.add_argument("--posix-source-snapshot", type=pathlib.Path, required=True)
     args = parser.parse_args()
     repo = pathlib.Path(__file__).resolve().parents[2]
     build, gui, cold = (p.resolve(strict=True) for p in
@@ -255,6 +273,8 @@ def main():
         require_match(dos, run, "aros-base.pkg.xz")
     dos_snapshot = args.dos_source_snapshot.resolve(strict=True)
     dos_sources = require_dos_snapshot(dos_snapshot, dos)
+    posix_snapshot = args.posix_source_snapshot.resolve(strict=True)
+    posix_sources = require_posix_snapshot(posix_snapshot, selected["Platform/Libs/posixc.library"])
     selected["Platform/L/fat-handler"] = fat
     selected["Platform/Boot/aros-base.pkg.xz"] = dos
     companions = ("OpenZFSStartup", "OpenZFSStartupMount", "OpenZFSRuntimeCheck", "OpenZFSHostIdentity")
@@ -289,6 +309,13 @@ def main():
         target.parent.mkdir(parents=True, exist_ok=True)
         shutil.copy2(dos_snapshot / relative, target)
     require_dos_snapshot(sources, output / "Platform/Boot/aros-base.pkg.xz")
+    sources = output / "Sources/PosixC"
+    sources.mkdir(parents=True)
+    for relative in [*posix_sources, pathlib.Path("retained.sha256")]:
+        target = sources / relative
+        target.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(posix_snapshot / relative, target)
+    require_posix_snapshot(sources, output / "Platform/Libs/posixc.library")
     record = {"packaging_commit": subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=repo, text=True).strip(),
               "gui_run": str(gui), "cold_run": str(cold), "encrypted_root_run": str(encrypted), "build": str(build),
               "build_only_utilities": [], "native_companion_utilities": list(companions),

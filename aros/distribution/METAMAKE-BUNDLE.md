@@ -39,6 +39,17 @@ and requires byte-identical output. It does not fetch dependencies or install
 anything. Review recipes from untrusted sources before running them: hashes
 detect drift, not malicious provenance.
 
+`Sources/PosixC/` retains the qualified posixc C and assembly sources, private
+headers, licenses and hash-bound build recipe. Replay it with:
+
+```sh
+python3 Sources/PosixC/rebuild-fat-snapshot.py Sources/PosixC --output-parent /path/on/external/build-drive
+```
+
+The matching SDK/toolchain is still required. Package staging binds this
+snapshot to the exact posixc binary used in GUI, cold-boot and encrypted-root
+qualification; it is not a source closure for all platform modules.
+
 `Sources/DOS/` similarly retains the pinned DOS source/catalog revisions,
 generated sources and headers, execute-policy patch and upstream license
 texts. Its replay command uses the same helper (whose historical filename

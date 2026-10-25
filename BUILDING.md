@@ -1139,9 +1139,12 @@ The 2026-10-24 candidate `posix-source.krrt6d62` rebuilt byte-identically in
 `fat-replay.yyjps394` and passed the isolated eight-CPU native-partition storage
 suite in `public-service-run.3dp5tTRR`. Its SHA-256 is
 `32a510b850fc85c322d71b902bb6ca497945ef17e3269a6bfe2cf9a254feede8`.
-This is a new qualification candidate, not the existing package's posixc
-binary. Archive staging integration and fresh cold/GUI qualification remain
-pending. The SDK/toolchain remains external; this does not close provenance
+Archive staging requires `--posix-source-snapshot` and installs the validated
+snapshot at `Sources/PosixC`. Fresh cold qualification passed in
+`public-service-run.lNDHn70U` (healthy/degraded imports, unchanged member hashes,
+and both host zdb checks). GUI qualification passed in `native-gui-run.gO1uDSRB`
+(ONLINE pool listing, Wanderer files, post-UI exact read). These used the
+byte-identical replayed module. The SDK/toolchain remains external; this does not close provenance
 for every platform boot module. Evidence is under
 `aros/tests/evidence/posix-source-package`.
 
