@@ -45,3 +45,9 @@ are retained in `gui/`; this was a private QEMU, not the user's hosted session.
 
 These tests qualify inputs for staging; they are not themselves a newly built
 or archive-extracted distribution bundle.
+
+The distinct encrypted-root run `public-service-run.WX8Ix08i` also passed,
+including all required root properties, locked imports, mount refusal, key
+reload, exact data and conflicting-label cases. The staging encrypted-root
+gate and selected-runtime hash check pass. This is separate from the earlier
+native-cold test, whose markers alone do not satisfy that gate.
