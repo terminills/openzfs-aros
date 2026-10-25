@@ -1,0 +1,73 @@
+[bootstrap:multiboot2] smartfb: using VBE mode 0x417a (1280x800x32, fb=0xFD000000)
+[bootstrap:multiboot2] smartfb: KRN_FBAddr=0x00000000FD000000
+0000000000000000 0x0000000000000000 | 000 | AROS64 - The AROS Research OS
+0000000000000000 0x0000000000000000 | 000 | 64-bit SMP build. Compiled Oct 21 2026
+0000000000000000 0x0000000000000000 | 000 | [Kernel] Local APIC: x2APIC
+000000008fa9afb2 0x0000000000000000 | 000 | ACPI: RSDP 0x00000000000F52E0 000014 (v00 BOCHS )
+0000000090227c4e 0x0000000000000000 | 000 | ACPI: RSDT 0x000000007FFE238A 000034 (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+0000000090c1d190 0x0000000000000000 | 000 | ACPI: FACP 0x000000007FFE2236 000074 (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+0000000091630042 0x0000000000000000 | 000 | ACPI: DSDT 0x000000007FFE0040 0021F6 (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+0000000092036a46 0x0000000000000000 | 000 | ACPI: FACS 0x000000007FFE0000 000040
+000000009269da65 0x0000000000000000 | 000 | ACPI: APIC 0x000000007FFE22AA 000080 (v03 BOCHS  BXPC     00000001 BXPC 00000001)
+00000000930ad2e4 0x0000000000000000 | 000 | ACPI: HPET 0x000000007FFE232A 000038 (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+0000000093ab4567 0x0000000000000000 | 000 | ACPI: WAET 0x000000007FFE2362 000028 (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+00000000944a123c 0x0000000000000000 | 000 | [HPET] 2 units total
+0000000094f844dd 0x00000000013d33f0 | 000 | ACPI: 1 ACPI AML tables successfully acquired and loaded
+00000000959544c2 0x00000000013b1500 | 000 | [Kernel:ACPI-IOAPIC] Registering IO-APIC #1 [ID=000] @ 00000000fec00000 [GSI = 0]
+0000000096348f2d 0x00000000013b1500 | 000 | [Kernel:ACPI] System Total APICs: 2, 2 usable
+0000000096e3d01e 0x00000000013b1500 | 000 | [Kernel:APIC-IA32] MSI Interrupts Allocatable
+00000000975a50a4 0x00000000013b1500 | 000 | [Kernel:APIC-IA32]     start = 16
+0000000097bd1c70 0x00000000013b1500 | 000 | [Kernel:APIC-IA32]     total = 198
+00000000b6048001 0x00000000013b1500 | 000 | [Kernel:APIC-IA32] Heartbeat timer: TSC deadline
+00000000b806312e 0x00000000013d5ff0 | 001 | [Kernel:APIC-IA32.001] core_APIC_Calibrate: TSC freq inherited from BSP (2496008 kHz) [hypervisor]
+00000000b99c405a 0x00000000013d5ff0 | 001 | [Kernel:APIC-IA32.001] core_APIC_Calibrate: LAPIC timer freq inherited from BSP (900384840 Hz) [hypervisor]
+00000000bbe745e4 0x00000000013b1500 | 000 | [PCIPC:Driver] PCIPC_InitClass: No ACPI MCFG table
+00000000be3d8510 0x00000000013b1500 | 000 | [Timer] clock: PIT (no invariant TSC)
+00000001ab18e343 0x0000000001609b20 | 000 | [ATI] Init
+00000001ab622832 0x0000000001609b20 | 000 | [ATI] No supported cards found
+00000001c393bfc4 0x0000000001658c60 | 000 | [HW] HW__HW__AddDriver: Failed to instantiate Driver Object
+RESULT native platform primitives PASS hlist=1 counters=320000 threads=8
+RESULT native caller scopes PASS threads=16
+RESULT native dispatcher credentials PASS
+RESULT native file scopes PASS threads=8 exit-cleanup=1 retained-read=2 final-close=1
+RESULT native session files PASS rounds=16 capacity=64 stale=1 retained=1 threads=16
+RESULT native creation properties PASS cases=3 root-normalization=1
+RESULT native legacy versions PASS versions=1-4 write=1 remount=1 unchanged-format=1
+RESULT native filesystem version PASS legacy=4 upgraded=5
+UTF8 metadata version=5 norm=0 utf8=1 case=0
+RESULT native UTF8 mount PASS create=1 rename=1 rejected=5 reopen=1
+RESULT native DOS alias rename PASS lock=1 handle=1 hardlink=1 enumeration=3 unicode=1
+UTF8 metadata version=5 norm=80 utf8=1 case=0
+RESULT native normalized mount PASS equivalent=1 duplicate=1 case-sensitive=1 rename=1 reopen=1
+RESULT native DOS alias rename PASS lock=1 handle=1 hardlink=1 enumeration=3 unicode=1
+UTF8 metadata version=5 norm=16 utf8=1 case=0
+RESULT native normalized mount PASS equivalent=1 duplicate=1 case-sensitive=1 rename=1 reopen=1
+RESULT native DOS alias rename PASS lock=1 handle=1 hardlink=1 enumeration=3 unicode=1
+UTF8 metadata version=5 norm=96 utf8=1 case=0
+RESULT native normalized mount PASS equivalent=1 duplicate=1 case-sensitive=1 rename=1 reopen=1
+RESULT native DOS alias rename PASS lock=1 handle=1 hardlink=1 enumeration=3 unicode=1
+UTF8 metadata version=5 norm=32 utf8=1 case=0
+RESULT native normalized mount PASS equivalent=1 duplicate=1 case-sensitive=1 rename=1 reopen=1
+RESULT native DOS alias rename PASS lock=1 handle=1 hardlink=1 enumeration=3 unicode=1
+UTF8 metadata version=5 norm=0 utf8=1 case=1
+RESULT native case mount PASS lookup=1 duplicate-policy=1 rename=1 reopen=1
+RESULT native DOS alias rename PASS lock=1 handle=1 hardlink=1 enumeration=3 unicode=1
+UTF8 metadata version=5 norm=80 utf8=1 case=1
+RESULT native case mount PASS lookup=1 duplicate-policy=1 rename=1 reopen=1
+RESULT native DOS alias rename PASS lock=1 handle=1 hardlink=1 enumeration=3 unicode=1
+UTF8 metadata version=5 norm=0 utf8=1 case=2
+RESULT native case mount PASS lookup=1 duplicate-policy=1 rename=1 reopen=1
+RESULT native DOS alias rename PASS lock=1 handle=1 hardlink=1 enumeration=3 unicode=1
+UTF8 metadata version=5 norm=80 utf8=1 case=2
+RESULT native case mount PASS lookup=1 duplicate-policy=1 rename=1 reopen=1
+RESULT native DOS alias rename PASS lock=1 handle=1 hardlink=1 enumeration=3 unicode=1
+RESULT native filesystem deleteq suspend PASS pending=1 interrupted=1 resumed=1
+RESULT native filesystem deleteq cancel PASS pending=1 interrupted=1 republished=1
+RESULT native filesystem deleteq wait PASS pending=1 drained=1 waited=1
+RESULT native node resume PASS identity=3 refs=2
+RESULT native DOS identity PASS cases=3 stale-parent=1 persistent=1 cleanup=1 reopen=1
+RESULT native mounted rollback PASS rounds=2 failed-resume=1 owner-task=1
+RESULT native mounted end PASS stale-io=1 cleanup=1 disown=1 reopen=1
+FAIL quota line=671 error=13
+FAIL quota line=1512 error=13
+RESULT native default quota FAIL
