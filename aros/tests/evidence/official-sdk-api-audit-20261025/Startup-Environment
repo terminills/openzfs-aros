@@ -1,0 +1,21 @@
+FailAt 21
+Stack 262144
+MakeDir RAM:T RAM:ENV
+Assign T: RAM:T
+Assign ENV: RAM:ENV
+Mount DEVS:DOSDrivers/SER
+Echo "fixture" >ENV:OZ_SDK_GLOBAL
+C:OpenZFSEnvironmentStandardTest explicit >NIL:
+If WARN
+  Echo "RESULT official SDK environment explicit exit FAIL" >SER:
+Else
+  Echo "RESULT official SDK environment explicit exit PASS" >SER:
+EndIf
+C:OpenZFSEnvironmentStandardTest empty >NIL:
+If WARN
+  Echo "RESULT official SDK environment empty exit FAIL" >SER:
+Else
+  Echo "RESULT official SDK environment empty exit PASS" >SER:
+EndIf
+Delete ENV:OZ_SDK_GLOBAL
+Echo "RESULT official SDK environment audit DONE" >SER:
