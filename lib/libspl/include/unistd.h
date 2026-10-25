@@ -49,6 +49,11 @@ extern int pipe2(int [2], int);
 #endif
 #define pread64 pread
 #define pwrite64 pwrite
+/* AROS provides fsync rather than a data-only synchronization entry point.
+ * Request the stronger data-and-metadata flush, preserving its error result;
+ * never replace synchronization with a success-returning stub. Device cache
+ * durability still depends on the underlying filesystem and device driver. */
+#define fdatasync fsync
 #endif
 
 #if !defined(HAVE_ISSETUGID)

@@ -1,0 +1,6 @@
+FAIL zfs link: /mnt/short-term/openzfs-official-deps.fVjvrmGW/cli-link.2TWxBYlW/zfs.link.log
+FAIL zpool link: /mnt/short-term/openzfs-official-deps.fVjvrmGW/cli-link.2TWxBYlW/zpool.link.log
+FAIL OpenZFSStartupMount link: /mnt/short-term/openzfs-official-deps.fVjvrmGW/cli-link.2TWxBYlW/OpenZFSStartupMount.link.log
+FAIL OpenZFSStartup link: /mnt/short-term/openzfs-official-deps.fVjvrmGW/cli-link.2TWxBYlW/OpenZFSStartup.link.log
+PASS OpenZFSRuntimeCheck link
+PASS OpenZFSHostIdentity link

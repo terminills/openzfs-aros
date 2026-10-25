@@ -1,0 +1,3 @@
+There are undefined symbols in '/mnt/short-term/openzfs-official-deps.fVjvrmGW/cli-link.2TWxBYlW/OpenZFSStartupMount':
+                 U pipe2
+                 U pwrite

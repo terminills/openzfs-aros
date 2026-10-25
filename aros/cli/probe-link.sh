@@ -5,10 +5,25 @@ repo=$(cd -- "$(dirname -- "$0")/../.." && pwd)
 cd "$repo"
 probe=${1:?common compile probe required}
 deps=${2:?init dependency probe required}
-pipe=${3:?native pipe overlay required}
+pipe=${3:?native pipe overlay or - for SDK-only imports required}
 sdk=${AROS_SDK:-/opt/aros-workspace/aros-amiwest-nightly-release/bin/pc-x86_64-smp/AROS/Developer}
 cc=${AROS_CC:-/opt/aros-workspace/aros-adt-crosstools/x86_64-aros-gcc}
 pthread=${AROS_PTHREAD_BUILD:-$repo/build-aros/pthread-consistent.s3r1CHla}
+case ${AROS_PTHREAD_BACKEND:-private} in
+    sdk)
+        [[ -z ${AROS_PTHREAD_BUILD:-}${AROS_PRIVATE_PTHREAD:-}${AROS_PTHREAD_INCLUDE:-} ]] || {
+            echo 'SDK pthread mode cannot be combined with private pthread inputs' >&2; exit 1;
+        }
+        pthread_include="$sdk/include"
+        pthread_archive="$sdk/lib/libpthread.a"
+        ;;
+    private)
+        pthread_include="$pthread/source"
+        pthread_archive="$pthread/libpthread.a"
+        ;;
+    *) echo 'Unsupported pthread backend' >&2; exit 1 ;;
+esac
+[[ -f $pthread_include/pthread.h && -f $pthread_archive ]]
 source "$repo/aros/engine/storage-preflight.sh"
 artifact_root=$(oz_artifact_root "$repo/build-aros" "${AROS_ARTIFACT_ROOT:-}")
 out=$(mktemp -d "$artifact_root/cli-link.XXXXXXXX")
@@ -17,7 +32,7 @@ cp "$0" "$out/"
 git rev-parse HEAD > "$out/source-head.txt"
 flags=(--sysroot="$sdk" -B"$sdk/lib/" -O2 -g -ffunction-sections -fdata-sections
     -D_GNU_SOURCE -D_FILE_OFFSET_BITS=64 -DOZ_NATIVE_LABEL_CLIENT -include "$repo/aros/engine/config.h"
-    -I"$pthread/source" -I"$repo/aros/cli/include" -I"$repo/build-aros/include"
+    -I"$pthread_include" -I"$repo/aros/cli/include" -I"${AROS_GENERATED_INCLUDE:-$repo/build-aros/include}"
     -I"$repo/aros/engine/include" -I"$repo/lib/libspl/include"
     -I"$repo/lib/libspl/include/os/linux" -I"$repo/include" -I"$repo/include/os/linux/zfs")
 native=()
@@ -47,13 +62,20 @@ for src in aros/cli/arguments.c aros/cli/process.c aros/cli/output.c aros/cli/id
     "$cc" "${flags[@]}" -c "$src" -o "$out/$stem.o" > "$out/$stem.log" 2>&1
     native+=("$out/$stem.o")
 done
-"$cc" --sysroot="$sdk" -B"$sdk/lib/" -c "$pipe/stubs/posixc_pipe2_stub.c" -o "$out/pipe2.o"
+pipe_objects=()
+pipe_inputs=()
+if [[ $pipe != - ]]; then
+    "$cc" --sysroot="$sdk" -B"$sdk/lib/" -c "$pipe/stubs/posixc_pipe2_stub.c" -o "$out/pipe2.o"
+    pipe_objects+=("$out/pipe2.o")
+    pipe_inputs+=("$pipe/posixc.library" "$pipe/stubs/posixc_pipe2_stub.c")
+fi
+printf 'pthread_backend=%s\npipe_overlay=%s\n' "${AROS_PTHREAD_BACKEND:-private}" "$pipe" > "$out/platform-inputs.txt"
 common=("$probe"/lib_libzfs_libzfs_*.o "$probe"/lib_libzfs_core_*.o "$probe"/lib_libzutil_*.o
     "$probe/lib_libshare_libshare.c.o"
     "$deps"/module_*.o "$deps"/lib_libuutil_*.o
     "$deps/lib_libspl_atomic.c.o" "$deps/aros_cli_mount.c.o"
     "$deps/aros_cli_zone.c.o" "$deps/aros_cli_hostid.c.o"
-    "${native[@]}" "$out/pipe2.o")
+    "${native[@]}" "${pipe_objects[@]}")
 # The native streaming path changes the upstream core wrapper. Never silently
 # select a cached core object from the original compile probe.
 "$cc" "${flags[@]}" -I"${AROS_CRYPTO_INCLUDE:-/opt/aros-workspace/chromium-aros/src/third_party/boringssl/src/include}" \
@@ -118,10 +140,10 @@ for i in "${!common[@]}";do
     fi
 done
 if ((import_replaced!=1));then echo 'Expected exactly one upstream import object' >&2;exit 1;fi
-archives=("${AROS_NVPAIR_ARCHIVE:-$repo/build-aros/libnvpair-adt-consistent.a}" "$pthread/libpthread.a"
+archives=("${AROS_NVPAIR_ARCHIVE:-$repo/build-aros/libnvpair-adt-consistent.a}" "$pthread_archive"
     "$sdk/lib/libz.static.a"
     "${AROS_CRYPTO_ARCHIVE:-/opt/aros-workspace/chromium-aros/src/out/aros-chrome/obj/third_party/boringssl/libboringssl.a}")
-sha256sum "${common[@]}" "${archives[@]}" "$pipe/posixc.library" "$probe/metadata.h" > "$out/inputs.sha256"
+sha256sum "${common[@]}" "${archives[@]}" "${pipe_inputs[@]}" "$probe/metadata.h" "$pthread_include/pthread.h" > "$out/inputs.sha256"
 for archive in "${archives[@]}"; do
     if file "$archive" | grep -q 'thin archive'; then
         while IFS= read -r member; do sha256sum "$member"; done < <(ar t "$archive") \

@@ -47,12 +47,19 @@ tests against the pristine published 20261023 SDK and runtime:
   PBKDF2 tests. A subsequent fresh full-engine build compiles all 248 upstream
   sources but fails service linking on `pwrite`, which the published SDK does
   not provide. This is a failed build, not a newly qualified engine.
+- All 25 common upstream CLI source files compile after mapping AROS
+  `fdatasync` to the stronger native `fsync` operation. A RAM-file QEMU test
+  passes invalid/closed descriptor errors, data and unchanged-offset checks;
+  it does not test durability. SDK-only links of `zfs`, `zpool`, and both
+  startup commands fail on `pipe2` and `pwrite`. RuntimeCheck and HostIdentity
+  link, but this does not qualify the complete command suite.
 
 Evidence is under `aros/tests/evidence/official-sdk-api-audit-20261025`,
 `official-environment-matrix-20261025`, `official-manager-startup-20261025`,
 `official-runtime-worker-20261025`, and `official-inherited-capture-20261025`.
 Dependency and failed engine-build evidence is in `official-dependencies-20261025`
 and `official-engine-build-20261025`.
+CLI and synchronization evidence is in `official-cli-build-20261025`.
 These are isolated software tests, not new engine/pool, general SMP, or
 physical-device qualification. Shared-runtime compatibility repairs remain a
 separate prerequisite before rebuilding and qualifying the complete engine

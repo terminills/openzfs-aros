@@ -1,0 +1,45 @@
+diff --git a/aros/cli/probe-upstream.sh b/aros/cli/probe-upstream.sh
+index bd01d6d..313941d 100644
+--- a/aros/cli/probe-upstream.sh
++++ b/aros/cli/probe-upstream.sh
+@@ -23,11 +23,11 @@ flags=(--sysroot="$sdk" -B"$sdk/lib/" -O2 -g -Wall -Wextra
+     -include "$out/metadata.h"
+     -I"$repo/aros/cli/include"
+     -I"$crypto_include"
+-    -I"$repo/build-aros/include" -I"$repo/aros/engine/include"
++    -I"${AROS_GENERATED_INCLUDE:-$repo/build-aros/include}" -I"$repo/aros/engine/include"
+     -I"$repo/lib/libspl/include" -I"$repo/lib/libspl/include/os/linux"
+     -I"$repo/include" -I"$repo/include/os/linux/zfs"
+     -I"$repo/cmd/zpool" -I"$repo/cmd/zfs" -I"$repo/cmd"
+-    -I"$repo/build-aros/libtirpc-1.3.7/tirpc")
++    -I"${AROS_TIRPC_SOURCE:-$repo/build-aros/libtirpc-1.3.7}/tirpc")
+ if [[ -n ${AROS_PTHREAD_INCLUDE:-} ]]; then
+     flags=(-I"$AROS_PTHREAD_INCLUDE" "${flags[@]}")
+ fi
+@@ -67,6 +67,10 @@ for src in "${sources[@]}"; do
+         failed=1
+     fi
+ done
++if (( failed )); then
++    echo 'Common-source compilation failed; dependent link probes were not attempted.' >&2
++    exit "$failed"
++fi
+ if [[ ${AROS_TEST_BUILD_INIT:-0} == 1 ]]; then
+     cp "$repo/aros/cli/upstream-init-test.c" "$out/"
+     init_objects=()
+diff --git a/lib/libspl/include/unistd.h b/lib/libspl/include/unistd.h
+index b739803..3607e5e 100644
+--- a/lib/libspl/include/unistd.h
++++ b/lib/libspl/include/unistd.h
+@@ -49,6 +49,11 @@ extern int pipe2(int [2], int);
+ #endif
+ #define pread64 pread
+ #define pwrite64 pwrite
++/* AROS provides fsync rather than a data-only synchronization entry point.
++ * Request the stronger data-and-metadata flush, preserving its error result;
++ * never replace synchronization with a success-returning stub. Device cache
++ * durability still depends on the underlying filesystem and device driver. */
++#define fdatasync fsync
+ #endif
+ 
+ #if !defined(HAVE_ISSETUGID)

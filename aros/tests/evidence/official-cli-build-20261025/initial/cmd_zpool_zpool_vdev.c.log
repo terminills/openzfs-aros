@@ -1,0 +1,25 @@
+In file included from /mnt/short-term/openzfs-official-sdk-audit.xi9RkF3r/publication/cmd/zpool/zpool_vdev.c:72:
+/mnt/short-term/openzfs-official-sdk-audit.xi9RkF3r/publication/include/libzutil.h: In function 'zfs_strerror':
+/mnt/short-term/openzfs-official-sdk-audit.xi9RkF3r/publication/include/libzutil.h:295:9: warning: missing initializer for field 'sr_SpinLock' of 'struct SemaphoreRequest' [-Wmissing-field-initializers]
+  295 |         static pthread_mutex_t zfs_strerror_lock = PTHREAD_MUTEX_INITIALIZER;
+      |         ^~~~~~
+In file included from /run/media/terminills/Codex/show-consolidation-01a16962/sdk-prerequisite-audit/nightly-20261023/iso-Developer/include/pthread.h:162,
+                 from /mnt/short-term/openzfs-official-sdk-audit.xi9RkF3r/publication/include/libzutil.h:31:
+/run/media/terminills/Codex/show-consolidation-01a16962/sdk-prerequisite-audit/nightly-20261023/iso-Developer/include/exec/semaphores.h:43:33: note: 'sr_SpinLock' declared here
+   43 |     spinlock_t                  sr_SpinLock;
+      |                                 ^~~~~~~~~~~
+In file included from /mnt/short-term/openzfs-official-sdk-audit.xi9RkF3r/publication/lib/libspl/include/sys/uio.h:195,
+                 from /mnt/short-term/openzfs-official-sdk-audit.xi9RkF3r/publication/include/sys/zfs_context.h:116,
+                 from /mnt/short-term/openzfs-official-sdk-audit.xi9RkF3r/publication/include/sys/spa.h:39,
+                 from /mnt/short-term/openzfs-official-sdk-audit.xi9RkF3r/publication/cmd/zpool/zpool_vdev.c:74:
+/mnt/short-term/openzfs-official-sdk-audit.xi9RkF3r/publication/include/sys/uio_impl.h: In function 'zfs_uio_index_at_offset':
+/mnt/short-term/openzfs-official-sdk-audit.xi9RkF3r/publication/include/sys/uio_impl.h:97:25: warning: comparison of integer expressions of different signedness: 'uint_t' {aka 'unsigned int'} and 'int' [-Wsign-compare]
+   97 |         while (*vec_idx < zfs_uio_iovcnt(uio) &&
+      |                         ^
+/mnt/short-term/openzfs-official-sdk-audit.xi9RkF3r/publication/include/sys/uio_impl.h:98:17: warning: comparison of integer expressions of different signedness: 'offset_t' {aka 'long long int'} and 'size_t' {aka 'long unsigned int'} [-Wsign-compare]
+   98 |             off >= zfs_uio_iovlen(uio, *vec_idx)) {
+      |                 ^~
+/mnt/short-term/openzfs-official-sdk-audit.xi9RkF3r/publication/cmd/zpool/zpool_vdev.c: In function 'zero_label':
+/mnt/short-term/openzfs-official-sdk-audit.xi9RkF3r/publication/cmd/zpool/zpool_vdev.c:1008:16: error: implicit declaration of function 'fdatasync' [-Wimplicit-function-declaration]
+ 1008 |         (void) fdatasync(fd);
+      |                ^~~~~~~~~

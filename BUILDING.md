@@ -180,6 +180,16 @@ sources compiled, but service linking failed because the SDK lacks `pwrite`.
 See `aros/tests/evidence/official-engine-build-20261025`; no runnable engine
 or native-pool qualification resulted from that failed build.
 
+CLI audit helpers accept `AROS_GENERATED_INCLUDE` and `AROS_TIRPC_SOURCE` to
+select generated headers and XDR sources outside the checkout. After a complete
+`probe-upstream.sh --all` build, `probe-link.sh PROBE DEPS -` explicitly uses
+SDK-only pipe imports; it does not generate a private runtime-vector stub.
+`AROS_PTHREAD_BACKEND=sdk` selects the SDK pthread archive/headers and rejects
+private overrides. The default private mode and explicit pipe-overlay argument
+remain available for matched, separately qualified platform builds. On the
+20261023 SDK the SDK-only full command links fail on `pipe2` and `pwrite`;
+that failure must not be hidden with success stubs or non-atomic substitutes.
+
 Fresh 35-source pthread build `pthread-consistent.6ujRL4nB` was linked into
 shared engine `shared-engine.RDWvxF8a`. Hosted run
 `hosted-security-test.KzxOl3nq` passed the selected CLI replication/rollback,
