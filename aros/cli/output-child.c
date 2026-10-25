@@ -3,6 +3,10 @@
 #include <string.h>
 int main(int argc, char **argv)
 {
+    if (argc == 3 && !strcmp(argv[1], "token")) {
+        fputs(argv[2], stdout);
+        return fflush(stdout) == 0 ? 23 : 20;
+    }
     if (argc != 2) return 20;
     if (!strcmp(argv[1], "empty")) return 23;
     if (!strcmp(argv[1], "lines")) {

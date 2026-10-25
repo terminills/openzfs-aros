@@ -1,0 +1,148 @@
+0000000000000000 0x0000000000000000 | 000 | AROS64 - The AROS Research OS
+0000000000000000 0x0000000000000000 | 000 | 64-bit SMP build. Compiled Oct 23 2026
+00000000a0f29e37 0x0000000000000000 | 000 | ACPI: RSDP 0x00000000000F52E0 000014 (v00 BOCHS )
+00000000a1697a25 0x0000000000000000 | 000 | ACPI: RSDT 0x000000007FFE25BF 000034 (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+00000000a207a23b 0x0000000000000000 | 000 | ACPI: FACP 0x000000007FFE243B 000074 (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+00000000a2a61d85 0x0000000000000000 | 000 | ACPI: DSDT 0x000000007FFE0040 0023FB (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+00000000a344d1d7 0x0000000000000000 | 000 | ACPI: FACS 0x000000007FFE0000 000040
+00000000a3aabc45 0x0000000000000000 | 000 | ACPI: APIC 0x000000007FFE24AF 0000B0 (v03 BOCHS  BXPC     00000001 BXPC 00000001)
+00000000a448f077 0x0000000000000000 | 000 | ACPI: HPET 0x000000007FFE255F 000038 (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+00000000a4e796b9 0x0000000000000000 | 000 | ACPI: WAET 0x000000007FFE2597 000028 (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+00000000a585d577 0x0000000000000000 | 000 | [HPET] 2 units total
+00000000a62b1546 0x00000000013cd7d0 | 000 | ACPI: 1 ACPI AML tables successfully acquired and loaded
+00000000a6c4dc2b 0x00000000013ab960 | 000 | [Kernel:ACPI-IOAPIC] Registering IO-APIC #1 [ID=000] @ 00000000fec00000 [GSI = 0]
+00000000a7642c72 0x00000000013ab960 | 000 | [Kernel:ACPI] System Total APICs: 8, 8 usable
+00000000a8083de9 0x00000000013ab960 | 000 | [Kernel:APIC-IA32] MSI Interrupts Allocatable
+00000000a87cfa94 0x00000000013ab960 | 000 | [Kernel:APIC-IA32]     start = 16
+00000000a8dfa978 0x00000000013ab960 | 000 | [Kernel:APIC-IA32]     total = 198
+00000000c89f5c7c 0x00000000013d6990 | 001 | [Kernel:APIC-IA32.001] core_APIC_Calibrate: TSC freq inherited from BSP (2496049 kHz) [hypervisor]
+00000000ca3c740c 0x00000000013d6990 | 001 | [Kernel:APIC-IA32.001] core_APIC_Calibrate: LAPIC timer freq inherited from BSP (1000470400 Hz) [hypervisor]
+00000000cd8a31e9 0x00000000013d6fd0 | 002 | [Kernel:APIC-IA32.002] core_APIC_Calibrate: TSC freq inherited from BSP (2496049 kHz) [hypervisor]
+00000000cf30e1b9 0x00000000013d6fd0 | 002 | [Kernel:APIC-IA32.002] core_APIC_Calibrate: LAPIC timer freq inherited from BSP (1000470400 Hz) [hypervisor]
+00000000d282226a 0x00000000013d7d70 | 003 | [Kernel:APIC-IA32.003] core_APIC_Calibrate: TSC freq inherited from BSP (2496049 kHz) [hypervisor]
+00000000d4188f56 0x00000000013d7d70 | 003 | [Kernel:APIC-IA32.003] core_APIC_Calibrate: LAPIC timer freq inherited from BSP (1000470400 Hz) [hypervisor]
+00000000d75e128f 0x0000000001491be0 | 004 | [Kernel:APIC-IA32.004] core_APIC_Calibrate: TSC freq inherited from BSP (2496049 kHz) [hypervisor]
+00000000d8d1071c 0x0000000001491be0 | 004 | [Kernel:APIC-IA32.004] core_APIC_Calibrate: LAPIC timer freq inherited from BSP (1000470400 Hz) [hypervisor]
+00000000db276524 0x00000000014cc850 | 005 | [Kernel:APIC-IA32.005] core_APIC_Calibrate: TSC freq inherited from BSP (2496049 kHz) [hypervisor]
+00000000dcf0eebb 0x00000000014cc850 | 005 | [Kernel:APIC-IA32.005] core_APIC_Calibrate: LAPIC timer freq inherited from BSP (1000470400 Hz) [hypervisor]
+00000000e081f51b 0x00000000015074c0 | 006 | [Kernel:APIC-IA32.006] core_APIC_Calibrate: TSC freq inherited from BSP (2496049 kHz) [hypervisor]
+00000000e268ade3 0x00000000015074c0 | 006 | [Kernel:APIC-IA32.006] core_APIC_Calibrate: LAPIC timer freq inherited from BSP (1000470400 Hz) [hypervisor]
+00000000e5fa7059 0x0000000001542130 | 007 | [Kernel:APIC-IA32.007] core_APIC_Calibrate: TSC freq inherited from BSP (2496049 kHz) [hypervisor]
+00000000e7d2fa90 0x0000000001542130 | 007 | [Kernel:APIC-IA32.007] core_APIC_Calibrate: LAPIC timer freq inherited from BSP (1000470400 Hz) [hypervisor]
+00000000ea610522 0x00000000013ab960 | 000 | [PCIPC:Driver] PCIPC_InitClass: No ACPI MCFG table
+00000001a2ecbca3 0x0000000001755000 | 000 | RESULT inherited capture BEGIN runs=16 workers=1
+00000001a403df6d 0x0000000001755000 | 000 | RESULT inherited capture worker=0 run=0 mode=0 error=0 status=23 lines=0
+00000001a4e35611 0x0000000001755000 | 000 | RESULT inherited capture worker=0 run=0 mode=1 error=0 status=23 lines=3
+00000001a60ae702 0x0000000001755000 | 000 | RESULT inherited capture worker=0 run=0 mode=2 error=0 status=23 lines=2
+00000001a6f22815 0x0000000001755000 | 000 | RESULT inherited capture worker=0 run=0 mode=3 error=85 status=23 lines=0
+00000001a7f61ba4 0x0000000001755000 | 000 | RESULT inherited capture worker=0 run=0 mode=4 error=84 status=23 lines=0
+00000001a8b09ecf 0x0000000001755000 | 000 | RESULT inherited capture worker=0 run=0 mode=5 error=8 status=-1 lines=0
+00000001a98f2938 0x0000000001755000 | 000 | RESULT inherited capture worker=0 run=0 mode=6 error=0 status=23 lines=1
+00000001aa6aa341 0x0000000001755000 | 000 | RESULT inherited capture worker=0 run=1 mode=0 error=0 status=23 lines=0
+00000001ab47898c 0x0000000001755000 | 000 | RESULT inherited capture worker=0 run=1 mode=1 error=0 status=23 lines=3
+00000001acb45c91 0x0000000001755000 | 000 | RESULT inherited capture worker=0 run=1 mode=2 error=0 status=23 lines=2
+00000001ad954fc6 0x0000000001755000 | 000 | RESULT inherited capture worker=0 run=1 mode=3 error=85 status=23 lines=0
+00000001ae93f1cf 0x0000000001755000 | 000 | RESULT inherited capture worker=0 run=1 mode=4 error=84 status=23 lines=0
+00000001af3fe3e0 0x0000000001755000 | 000 | RESULT inherited capture worker=0 run=1 mode=5 error=8 status=-1 lines=0
+00000001b0215974 0x0000000001755000 | 000 | RESULT inherited capture worker=0 run=1 mode=6 error=0 status=23 lines=1
+00000001b0fc16b8 0x0000000001755000 | 000 | RESULT inherited capture worker=0 run=2 mode=0 error=0 status=23 lines=0
+00000001b1da3a33 0x0000000001755000 | 000 | RESULT inherited capture worker=0 run=2 mode=1 error=0 status=23 lines=3
+00000001b30bc412 0x0000000001755000 | 000 | RESULT inherited capture worker=0 run=2 mode=2 error=0 status=23 lines=2
+00000001b3eb4510 0x0000000001755000 | 000 | RESULT inherited capture worker=0 run=2 mode=3 error=85 status=23 lines=0
+00000001b4ef83ea 0x0000000001755000 | 000 | RESULT inherited capture worker=0 run=2 mode=4 error=84 status=23 lines=0
+00000001b5988b66 0x0000000001755000 | 000 | RESULT inherited capture worker=0 run=2 mode=5 error=8 status=-1 lines=0
+00000001b676d1d7 0x0000000001755000 | 000 | RESULT inherited capture worker=0 run=2 mode=6 error=0 status=23 lines=1
+00000001b756a159 0x0000000001755000 | 000 | RESULT inherited capture worker=0 run=3 mode=0 error=0 status=23 lines=0
+00000001b83165be 0x0000000001755000 | 000 | RESULT inherited capture worker=0 run=3 mode=1 error=0 status=23 lines=3
+00000001b9951c0c 0x0000000001755000 | 000 | RESULT inherited capture worker=0 run=3 mode=2 error=0 status=23 lines=2
+00000001ba722a2f 0x0000000001755000 | 000 | RESULT inherited capture worker=0 run=3 mode=3 error=85 status=23 lines=0
+00000001bb6c3ac9 0x0000000001755000 | 000 | RESULT inherited capture worker=0 run=3 mode=4 error=84 status=23 lines=0
+00000001bc1527b5 0x0000000001755000 | 000 | RESULT inherited capture worker=0 run=3 mode=5 error=8 status=-1 lines=0
+00000001bcf12788 0x0000000001755000 | 000 | RESULT inherited capture worker=0 run=3 mode=6 error=0 status=23 lines=1
+00000001bdc9ced0 0x0000000001755000 | 000 | RESULT inherited capture worker=0 run=4 mode=0 error=0 status=23 lines=0
+00000001bea47cf1 0x0000000001755000 | 000 | RESULT inherited capture worker=0 run=4 mode=1 error=0 status=23 lines=3
+00000001bfc9a787 0x0000000001755000 | 000 | RESULT inherited capture worker=0 run=4 mode=2 error=0 status=23 lines=2
+00000001c0a5a660 0x0000000001755000 | 000 | RESULT inherited capture worker=0 run=4 mode=3 error=85 status=23 lines=0
+00000001c1a02509 0x0000000001755000 | 000 | RESULT inherited capture worker=0 run=4 mode=4 error=84 status=23 lines=0
+00000001c248c740 0x0000000001755000 | 000 | RESULT inherited capture worker=0 run=4 mode=5 error=8 status=-1 lines=0
+00000001c32429a7 0x0000000001755000 | 000 | RESULT inherited capture worker=0 run=4 mode=6 error=0 status=23 lines=1
+00000001c3fc3464 0x0000000001755000 | 000 | RESULT inherited capture worker=0 run=5 mode=0 error=0 status=23 lines=0
+00000001c4d72a01 0x0000000001755000 | 000 | RESULT inherited capture worker=0 run=5 mode=1 error=0 status=23 lines=3
+00000001c64296a0 0x0000000001755000 | 000 | RESULT inherited capture worker=0 run=5 mode=2 error=0 status=23 lines=2
+00000001c7233e26 0x0000000001755000 | 000 | RESULT inherited capture worker=0 run=5 mode=3 error=85 status=23 lines=0
+00000001c82143d6 0x0000000001755000 | 000 | RESULT inherited capture worker=0 run=5 mode=4 error=84 status=23 lines=0
+00000001c8cb65f0 0x0000000001755000 | 000 | RESULT inherited capture worker=0 run=5 mode=5 error=8 status=-1 lines=0
+00000001c9a9f21b 0x0000000001755000 | 000 | RESULT inherited capture worker=0 run=5 mode=6 error=0 status=23 lines=1
+00000001ca8591a4 0x0000000001755000 | 000 | RESULT inherited capture worker=0 run=6 mode=0 error=0 status=23 lines=0
+00000001cb62e824 0x0000000001755000 | 000 | RESULT inherited capture worker=0 run=6 mode=1 error=0 status=23 lines=3
+00000001cc8a781b 0x0000000001755000 | 000 | RESULT inherited capture worker=0 run=6 mode=2 error=0 status=23 lines=2
+00000001cd6a7b91 0x0000000001755000 | 000 | RESULT inherited capture worker=0 run=6 mode=3 error=85 status=23 lines=0
+00000001ce68ae46 0x0000000001755000 | 000 | RESULT inherited capture worker=0 run=6 mode=4 error=84 status=23 lines=0
+00000001cf133447 0x0000000001755000 | 000 | RESULT inherited capture worker=0 run=6 mode=5 error=8 status=-1 lines=0
+00000001cff39532 0x0000000001755000 | 000 | RESULT inherited capture worker=0 run=6 mode=6 error=0 status=23 lines=1
+00000001d0cf87bd 0x0000000001755000 | 000 | RESULT inherited capture worker=0 run=7 mode=0 error=0 status=23 lines=0
+00000001d1ad6fbf 0x0000000001755000 | 000 | RESULT inherited capture worker=0 run=7 mode=1 error=0 status=23 lines=3
+00000001d31fc83e 0x0000000001755000 | 000 | RESULT inherited capture worker=0 run=7 mode=2 error=0 status=23 lines=2
+00000001d40059e4 0x0000000001755000 | 000 | RESULT inherited capture worker=0 run=7 mode=3 error=85 status=23 lines=0
+00000001d4ffa624 0x0000000001755000 | 000 | RESULT inherited capture worker=0 run=7 mode=4 error=84 status=23 lines=0
+00000001d5abb22f 0x0000000001755000 | 000 | RESULT inherited capture worker=0 run=7 mode=5 error=8 status=-1 lines=0
+00000001d68a64d4 0x0000000001755000 | 000 | RESULT inherited capture worker=0 run=7 mode=6 error=0 status=23 lines=1
+00000001d764e078 0x0000000001755000 | 000 | RESULT inherited capture worker=0 run=8 mode=0 error=0 status=23 lines=0
+00000001d841ebdf 0x0000000001755000 | 000 | RESULT inherited capture worker=0 run=8 mode=1 error=0 status=23 lines=3
+00000001d96d45db 0x0000000001755000 | 000 | RESULT inherited capture worker=0 run=8 mode=2 error=0 status=23 lines=2
+00000001da4cfe6a 0x0000000001755000 | 000 | RESULT inherited capture worker=0 run=8 mode=3 error=85 status=23 lines=0
+00000001db4a31a7 0x0000000001755000 | 000 | RESULT inherited capture worker=0 run=8 mode=4 error=84 status=23 lines=0
+00000001dbf5e35d 0x0000000001755000 | 000 | RESULT inherited capture worker=0 run=8 mode=5 error=8 status=-1 lines=0
+00000001dcd3ce4d 0x0000000001755000 | 000 | RESULT inherited capture worker=0 run=8 mode=6 error=0 status=23 lines=1
+00000001ddaddae8 0x0000000001755000 | 000 | RESULT inherited capture worker=0 run=9 mode=0 error=0 status=23 lines=0
+00000001de8b340b 0x0000000001755000 | 000 | RESULT inherited capture worker=0 run=9 mode=1 error=0 status=23 lines=3
+00000001dfb752b5 0x0000000001755000 | 000 | RESULT inherited capture worker=0 run=9 mode=2 error=0 status=23 lines=2
+00000001e09d2498 0x0000000001755000 | 000 | RESULT inherited capture worker=0 run=9 mode=3 error=85 status=23 lines=0
+00000001e1de9b6b 0x0000000001755000 | 000 | RESULT inherited capture worker=0 run=9 mode=4 error=84 status=23 lines=0
+00000001e28aa0eb 0x0000000001755000 | 000 | RESULT inherited capture worker=0 run=9 mode=5 error=8 status=-1 lines=0
+00000001e3684fcc 0x0000000001755000 | 000 | RESULT inherited capture worker=0 run=9 mode=6 error=0 status=23 lines=1
+00000001e443c2b4 0x0000000001755000 | 000 | RESULT inherited capture worker=0 run=10 mode=0 error=0 status=23 lines=0
+00000001e5221398 0x0000000001755000 | 000 | RESULT inherited capture worker=0 run=10 mode=1 error=0 status=23 lines=3
+00000001e64a3110 0x0000000001755000 | 000 | RESULT inherited capture worker=0 run=10 mode=2 error=0 status=23 lines=2
+00000001e72ad8af 0x0000000001755000 | 000 | RESULT inherited capture worker=0 run=10 mode=3 error=85 status=23 lines=0
+00000001e82a5497 0x0000000001755000 | 000 | RESULT inherited capture worker=0 run=10 mode=4 error=84 status=23 lines=0
+00000001e8d7ee63 0x0000000001755000 | 000 | RESULT inherited capture worker=0 run=10 mode=5 error=8 status=-1 lines=0
+00000001e9b6978f 0x0000000001755000 | 000 | RESULT inherited capture worker=0 run=10 mode=6 error=0 status=23 lines=1
+00000001ea940ead 0x0000000001755000 | 000 | RESULT inherited capture worker=0 run=11 mode=0 error=0 status=23 lines=0
+00000001eb7287b4 0x0000000001755000 | 000 | RESULT inherited capture worker=0 run=11 mode=1 error=0 status=23 lines=3
+00000001ec9c9783 0x0000000001755000 | 000 | RESULT inherited capture worker=0 run=11 mode=2 error=0 status=23 lines=2
+00000001ed7f9899 0x0000000001755000 | 000 | RESULT inherited capture worker=0 run=11 mode=3 error=85 status=23 lines=0
+00000001eec35d8f 0x0000000001755000 | 000 | RESULT inherited capture worker=0 run=11 mode=4 error=84 status=23 lines=0
+00000001ef796f6c 0x0000000001755000 | 000 | RESULT inherited capture worker=0 run=11 mode=5 error=8 status=-1 lines=0
+00000001f05e4f83 0x0000000001755000 | 000 | RESULT inherited capture worker=0 run=11 mode=6 error=0 status=23 lines=1
+00000001f13b047d 0x0000000001755000 | 000 | RESULT inherited capture worker=0 run=12 mode=0 error=0 status=23 lines=0
+00000001f21a047a 0x0000000001755000 | 000 | RESULT inherited capture worker=0 run=12 mode=1 error=0 status=23 lines=3
+00000001f3429b6e 0x0000000001755000 | 000 | RESULT inherited capture worker=0 run=12 mode=2 error=0 status=23 lines=2
+00000001f424ba71 0x0000000001755000 | 000 | RESULT inherited capture worker=0 run=12 mode=3 error=85 status=23 lines=0
+00000001f5394aa3 0x0000000001755000 | 000 | RESULT inherited capture worker=0 run=12 mode=4 error=84 status=23 lines=0
+00000001f5e6c4e4 0x0000000001755000 | 000 | RESULT inherited capture worker=0 run=12 mode=5 error=8 status=-1 lines=0
+00000001f6c4bd03 0x0000000001755000 | 000 | RESULT inherited capture worker=0 run=12 mode=6 error=0 status=23 lines=1
+00000001f79f9cf2 0x0000000001755000 | 000 | RESULT inherited capture worker=0 run=13 mode=0 error=0 status=23 lines=0
+00000001f87efa4b 0x0000000001755000 | 000 | RESULT inherited capture worker=0 run=13 mode=1 error=0 status=23 lines=3
+00000001f9a957a4 0x0000000001755000 | 000 | RESULT inherited capture worker=0 run=13 mode=2 error=0 status=23 lines=2
+00000001fa8abd98 0x0000000001755000 | 000 | RESULT inherited capture worker=0 run=13 mode=3 error=85 status=23 lines=0
+00000001fb8a0cf8 0x0000000001755000 | 000 | RESULT inherited capture worker=0 run=13 mode=4 error=84 status=23 lines=0
+00000001fc373ec3 0x0000000001755000 | 000 | RESULT inherited capture worker=0 run=13 mode=5 error=8 status=-1 lines=0
+00000001fd1769ad 0x0000000001755000 | 000 | RESULT inherited capture worker=0 run=13 mode=6 error=0 status=23 lines=1
+00000001fe38ee92 0x0000000001755000 | 000 | RESULT inherited capture worker=0 run=14 mode=0 error=0 status=23 lines=0
+00000001ff1797be 0x0000000001755000 | 000 | RESULT inherited capture worker=0 run=14 mode=1 error=0 status=23 lines=3
+00000002004528b8 0x0000000001755000 | 000 | RESULT inherited capture worker=0 run=14 mode=2 error=0 status=23 lines=2
+000000020125ac1c 0x0000000001755000 | 000 | RESULT inherited capture worker=0 run=14 mode=3 error=85 status=23 lines=0
+000000020224009b 0x0000000001755000 | 000 | RESULT inherited capture worker=0 run=14 mode=4 error=84 status=23 lines=0
+0000000202d1a3e0 0x0000000001755000 | 000 | RESULT inherited capture worker=0 run=14 mode=5 error=8 status=-1 lines=0
+0000000203b13753 0x0000000001755000 | 000 | RESULT inherited capture worker=0 run=14 mode=6 error=0 status=23 lines=1
+00000002048e8987 0x0000000001755000 | 000 | RESULT inherited capture worker=0 run=15 mode=0 error=0 status=23 lines=0
+00000002056ce8ad 0x0000000001755000 | 000 | RESULT inherited capture worker=0 run=15 mode=1 error=0 status=23 lines=3
+00000002069b0598 0x0000000001755000 | 000 | RESULT inherited capture worker=0 run=15 mode=2 error=0 status=23 lines=2
+00000002077cae3f 0x0000000001755000 | 000 | RESULT inherited capture worker=0 run=15 mode=3 error=85 status=23 lines=0
+00000002087957ca 0x0000000001755000 | 000 | RESULT inherited capture worker=0 run=15 mode=4 error=84 status=23 lines=0
+0000000209269de5 0x0000000001755000 | 000 | RESULT inherited capture worker=0 run=15 mode=5 error=8 status=-1 lines=0
+000000020a04af36 0x0000000001755000 | 000 | RESULT inherited capture worker=0 run=15 mode=6 error=0 status=23 lines=1
+000000020a9d6253 0x0000000001755000 | 000 | RESULT inherited capture PASS runs=16 workers=1 cases=112 cleanup=1
+RESULT inherited capture shell PASS
+RESULT inherited capture audit DONE

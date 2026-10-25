@@ -1,0 +1,2 @@
+PASS: 112 capture cases, 1 workers, cleanup and shell completion; not engine qualification
+PASS: 896 capture cases, 8 workers, cleanup and shell completion; not engine qualification
