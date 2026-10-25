@@ -79,6 +79,7 @@ int oz_zpl_rename_as(struct oz_zpl *,uint64_t,const char *,uint64_t,const char *
 /* Internal exchange; no DOS packet or public management opcode implied. */
 int oz_zpl_exchange_as(struct oz_zpl *,uint64_t,const char *,uint64_t,const char *,struct cred *);
 int oz_zpl_whiteout_as(struct oz_zpl *,uint64_t,const char *,uint64_t,const char *,struct cred *);
+int oz_zpl_whiteout_replace_as(struct oz_zpl *,uint64_t,const char *,uint64_t,const char *,struct cred *);
 int oz_zpl_link_as(struct oz_zpl *,uint64_t,uint64_t,const char *,struct cred *);
 int oz_zpl_symlink_as(struct oz_zpl *,uint64_t,const char *,const char *,uint32_t,struct cred *);
 int oz_zpl_readlink_as(struct oz_zpl *,uint64_t,char *,size_t,struct cred *);

@@ -815,6 +815,10 @@ int oz_read_mount_whiteout(struct oz_read_mount *mount,uint64_t source,const cha
     uint64_t target,const char *newname,cred_t *cr)
 {return mount_rename(mount,source,oldname,target,newname,cr,RENAME_WHITEOUT|RENAME_NOREPLACE);}
 
+int oz_read_mount_whiteout_replace(struct oz_read_mount *mount,uint64_t source,const char *oldname,
+    uint64_t target,const char *newname,cred_t *cr)
+{return mount_rename(mount,source,oldname,target,newname,cr,RENAME_WHITEOUT);}
+
 int oz_read_mount_replace(struct oz_read_mount *mount,uint64_t parent,
     const char *source,const char *target,const struct oz_zpl_info *fresh,
     const struct oz_zpl_info *old,cred_t *cr,int (*check)(void *),void *context)

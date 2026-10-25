@@ -59,6 +59,7 @@ int oz_read_mount_remove(struct oz_read_mount *,uint64_t,const char *,int,cred_t
 int oz_read_mount_rename(struct oz_read_mount *,uint64_t,const char *,uint64_t,const char *,cred_t *);
 int oz_read_mount_exchange(struct oz_read_mount *,uint64_t,const char *,uint64_t,const char *,cred_t *);
 int oz_read_mount_whiteout(struct oz_read_mount *,uint64_t,const char *,uint64_t,const char *,cred_t *);
+int oz_read_mount_whiteout_replace(struct oz_read_mount *,uint64_t,const char *,uint64_t,const char *,cred_t *);
 int oz_read_mount_link(struct oz_read_mount *,uint64_t,uint64_t,const char *,cred_t *);
 int oz_read_mount_symlink(struct oz_read_mount *,uint64_t,const char *,const char *,uint32_t,cred_t *);
 int oz_read_mount_readlink(struct oz_read_mount *,uint64_t,char *,size_t,cred_t *);

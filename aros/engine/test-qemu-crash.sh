@@ -172,6 +172,7 @@ for phase in "${phases[@]}"; do
             rg -a -q '^crash namespace staged=0' "$run/$phase-serial.log"
             rg -a -q '^crash exchange staged=0' "$run/$phase-serial.log"
             rg -a -q '^crash whiteout staged=0' "$run/$phase-serial.log"
+            rg -a -q '^crash whiteout replacement staged=0' "$run/$phase-serial.log"
             if ((slog));then
                 rg -a -q '^crash dedicated SLOG anchor=0' "$run/$phase-serial.log"
                 rg -a -q '^SLOG_CONFIG_END=0' "$run/$phase-serial.log"
@@ -194,6 +195,7 @@ for phase in "${phases[@]}"; do
         rg -a -q '^crash namespace recovered=0' "$run/$phase-serial.log"
         rg -a -q '^crash exchange recovered=0' "$run/$phase-serial.log"
         rg -a -q '^crash whiteout recovered=0' "$run/$phase-serial.log"
+        rg -a -q '^crash whiteout replacement recovered=0' "$run/$phase-serial.log"
         if [[ $phase == recover ]]; then
             rg -a -q '^crash failed replay retained log=0' "$run/$phase-serial.log"
             rg -a -q '^crash partial replay returned=5' "$run/$phase-serial.log"

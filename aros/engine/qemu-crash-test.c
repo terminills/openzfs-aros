@@ -167,6 +167,15 @@ static int namespace_stage(struct oz_zpl *fs)
     if(!error&&written!=sizeof(after))error=EIO;
     if(!error)error=oz_zpl_whiteout_as(fs,root,"crash-whiteout",dir.object,"whiteout-moved",kcred);
     report("crash whiteout staged",error);
+    if(!error)error=oz_zpl_create_as(fs,root,"crash-whiteout-replace",0,kcred,&temp);
+    if(!error)error=oz_zpl_write_as(fs,temp.object,0,after,sizeof(after),&written,kcred);
+    if(!error&&written!=sizeof(after))error=EIO;
+    if(!error)error=oz_zpl_create_as(fs,dir.object,"whiteout-target",0,kcred,&temp);
+    if(!error)error=oz_zpl_write_as(fs,temp.object,0,before,sizeof(before),&written,kcred);
+    if(!error&&written!=sizeof(before))error=EIO;
+    if(!error)error=oz_zpl_link_as(fs,dir.object,temp.object,"whiteout-saved",kcred);
+    if(!error)error=oz_zpl_whiteout_replace_as(fs,root,"crash-whiteout-replace",dir.object,"whiteout-target",kcred);
+    report("crash whiteout replacement staged",error);
     if(!error)error=oz_zpl_link_as(fs,root,file.object,"crash-alias",kcred);
     if(!error)error=oz_zpl_link_as(fs,root,file.object,"crash-kept-alias",kcred);
     if(!error)log_snapshot("after-links");
@@ -235,6 +244,16 @@ static int namespace_verify(struct oz_zpl *fs)
     if(!error)error=oz_zpl_read_as(fs,temp.object,0,bytes,sizeof(after),kcred);
     if(!error&&(temp.size!=sizeof(after)||memcmp(bytes,after,sizeof(after))))error=EIO;
     report("crash whiteout recovered",error);
+    if(!error)error=oz_zpl_lookup_at(fs,root,"crash-whiteout-replace",&temp);
+    if(!error&&(temp.special!=OZ_SPECIAL_CHARACTER||temp.size))error=EIO;
+    if(!error)error=oz_zpl_lookup_at(fs,dir.object,"whiteout-target",&temp);
+    if(!error)error=oz_zpl_read_as(fs,temp.object,0,bytes,sizeof(after),kcred);
+    if(!error&&(temp.size!=sizeof(after)||memcmp(bytes,after,sizeof(after))))error=EIO;
+    uint64_t replacement_object=error?0:temp.object;
+    if(!error)error=oz_zpl_lookup_at(fs,dir.object,"whiteout-saved",&temp);
+    if(!error)error=oz_zpl_read_as(fs,temp.object,0,bytes,sizeof(before),kcred);
+    if(!error&&(temp.object==replacement_object||temp.size!=sizeof(before)||memcmp(bytes,before,sizeof(before))))error=EIO;
+    report("crash whiteout replacement recovered",error);
     const char *gone[]={"crash-file","crash-alias","crash-gone","crash-gone-dir","crash-old","crash-old-dir"};
     for(unsigned i=0;i<sizeof(gone)/sizeof(gone[0])&&!error;i++)
         if(oz_zpl_lookup_at(fs,root,gone[i],&temp)!=ENOENT)error=EIO;
