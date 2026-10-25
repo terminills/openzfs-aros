@@ -1,0 +1,322 @@
+[bootstrap:multiboot2] smartfb: using VBE mode 0x417a (1280x800x32, fb=0xFD000000)
+[bootstrap:multiboot2] smartfb: KRN_FBAddr=0x00000000FD000000
+0000000000000000 0x0000000000000000 | 000 | AROS64 - The AROS Research OS
+0000000000000000 0x0000000000000000 | 000 | 64-bit SMP build. Compiled Oct 21 2026
+0000000000000000 0x0000000000000000 | 000 | [Kernel] Local APIC: x2APIC
+00000000928b4560 0x0000000000000000 | 000 | ACPI: RSDP 0x00000000000F52E0 000014 (v00 BOCHS )
+0000000093054581 0x0000000000000000 | 000 | ACPI: RSDT 0x000000007FFE25BF 000034 (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+0000000093a53ed3 0x0000000000000000 | 000 | ACPI: FACP 0x000000007FFE243B 000074 (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+000000009444e7c6 0x0000000000000000 | 000 | ACPI: DSDT 0x000000007FFE0040 0023FB (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+0000000094e47aa7 0x0000000000000000 | 000 | ACPI: FACS 0x000000007FFE0000 000040
+00000000954b8d46 0x0000000000000000 | 000 | ACPI: APIC 0x000000007FFE24AF 0000B0 (v03 BOCHS  BXPC     00000001 BXPC 00000001)
+0000000095eb791e 0x0000000000000000 | 000 | ACPI: HPET 0x000000007FFE255F 000038 (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+00000000968ac596 0x0000000000000000 | 000 | ACPI: WAET 0x000000007FFE2597 000028 (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+00000000972b0d53 0x0000000000000000 | 000 | [HPET] 2 units total
+0000000097e736c2 0x00000000013d33f0 | 000 | ACPI: 1 ACPI AML tables successfully acquired and loaded
+00000000988a262f 0x00000000013b1500 | 000 | [Kernel:ACPI-IOAPIC] Registering IO-APIC #1 [ID=000] @ 00000000fec00000 [GSI = 0]
+0000000099298936 0x00000000013b1500 | 000 | [Kernel:ACPI] System Total APICs: 8, 8 usable
+0000000099d821e4 0x00000000013b1500 | 000 | [Kernel:APIC-IA32] MSI Interrupts Allocatable
+000000009a4d0441 0x00000000013b1500 | 000 | [Kernel:APIC-IA32]     start = 16
+000000009aafed72 0x00000000013b1500 | 000 | [Kernel:APIC-IA32]     total = 198
+00000000b8d9239f 0x00000000013b1500 | 000 | [Kernel:APIC-IA32] Heartbeat timer: TSC deadline
+00000000bae087e1 0x00000000013dd250 | 001 | [Kernel:APIC-IA32.001] core_APIC_Calibrate: TSC freq inherited from BSP (2495987 kHz) [hypervisor]
+00000000bc798da5 0x00000000013dd250 | 001 | [Kernel:APIC-IA32.001] core_APIC_Calibrate: LAPIC timer freq inherited from BSP (1000406910 Hz) [hypervisor]
+00000000bfc56916 0x00000000013dd890 | 002 | [Kernel:APIC-IA32.002] core_APIC_Calibrate: TSC freq inherited from BSP (2495987 kHz) [hypervisor]
+00000000c16936d0 0x00000000013dd890 | 002 | [Kernel:APIC-IA32.002] core_APIC_Calibrate: LAPIC timer freq inherited from BSP (1000406910 Hz) [hypervisor]
+00000000c4a7ae6c 0x000000000145d880 | 003 | [Kernel:APIC-IA32.003] core_APIC_Calibrate: TSC freq inherited from BSP (2495987 kHz) [hypervisor]
+00000000c56504ee 0x000000000145d880 | 003 | [Kernel:APIC-IA32.003] core_APIC_Calibrate: LAPIC timer freq inherited from BSP (1000406910 Hz) [hypervisor]
+00000000c7aec320 0x00000000014984d0 | 004 | [Kernel:APIC-IA32.004] core_APIC_Calibrate: TSC freq inherited from BSP (2495987 kHz) [hypervisor]
+00000000c95658b9 0x00000000014984d0 | 004 | [Kernel:APIC-IA32.004] core_APIC_Calibrate: LAPIC timer freq inherited from BSP (1000406910 Hz) [hypervisor]
+00000000cc98a9e1 0x00000000014d3180 | 005 | [Kernel:APIC-IA32.005] core_APIC_Calibrate: TSC freq inherited from BSP (2495987 kHz) [hypervisor]
+00000000ce2f7cf3 0x00000000014d3180 | 005 | [Kernel:APIC-IA32.005] core_APIC_Calibrate: LAPIC timer freq inherited from BSP (1000406910 Hz) [hypervisor]
+00000000d1785ede 0x000000000150de30 | 006 | [Kernel:APIC-IA32.006] core_APIC_Calibrate: TSC freq inherited from BSP (2495987 kHz) [hypervisor]
+00000000d320e643 0x000000000150de30 | 006 | [Kernel:APIC-IA32.006] core_APIC_Calibrate: LAPIC timer freq inherited from BSP (1000406910 Hz) [hypervisor]
+00000000d6681f92 0x0000000001548ae0 | 007 | [Kernel:APIC-IA32.007] core_APIC_Calibrate: TSC freq inherited from BSP (2495987 kHz) [hypervisor]
+00000000d810a8eb 0x0000000001548ae0 | 007 | [Kernel:APIC-IA32.007] core_APIC_Calibrate: LAPIC timer freq inherited from BSP (1000406910 Hz) [hypervisor]
+00000000da67d0b5 0x00000000013b1500 | 000 | [PCIPC:Driver] PCIPC_InitClass: No ACPI MCFG table
+00000000dc856b00 0x00000000013b1500 | 000 | [Timer] clock: PIT (no invariant TSC)
+00000001ce477771 0x00000000017a3340 | 000 | [ATI] Init
+00000001ce9757e1 0x00000000017a3340 | 000 | [ATI] No supported cards found
+00000001e756c35c 0x000000000179b6c0 | 000 | [HW] HW__HW__AddDriver: Failed to instantiate Driver Object
+QEMU upstream pool test starting; handler access is a separate test
+Native engine/ZPL shared-layout tests=0
+Native file-size limits/internal flags tests=0
+Native upstream ACL storage helper tests=0
+Native upstream ACL conversion/core tests=0
+Native UIO scatter/gather/copy/skip/64-bit/bounds tests=0
+Native credential identity/groups/refcount/policy tests=0
+Native upstream FUID mapping/AVL/unmapped-identity tests=0
+Native ZPL timestamps/relatime/readonly/dirty-state tests=0
+Native named/GUID vdev policy intersection result=0
+disk ata.device/0 raw-open=0 bytes=536870912
+disk ata.device/0 partition-open=0 bytes=268435456
+disk ata.device/0 blank-label preflight=0
+disk ata.device/1 raw-open=0 bytes=536870912
+disk ata.device/1 partition-open=0 bytes=268435456
+disk ata.device/1 blank-label preflight=0
+kernel_init read/write
+RESULT native import replacing admission PASS case=0
+RESULT native unfinished replacement recovery PASS engine-restart=1 errno=0
+Native dynamic taskq growth/concurrency/join tests=0 rounds=16 workers=8 jobs=16
+Native dynamic taskq optional-failure/recovery tests=0 refused=7 jobs=32
+Native direct-buffer descriptors/borrowed ABD tests=0
+Native packet identity capture errno=13 expected=13 (0 means live identity)
+Native authenticated packet root/reader/group capture=0
+Native cross-task DOS sender identity/lifetime=0
+Native packet security access/property/defaults=0
+Native retained credential after packet context destruction=0
+Native security packet identity conversion/capture=0
+spa_create layout=mirror members=2
+spa_create=0
+Native suspended async config tests=0
+Direct write helper address=00000000045f9b40
+Upstream native direct UIO write=0
+Upstream buffered UIO partial-block write/read=0
+DMU write=0 object=1
+ZPL fixture creation=0
+Cache pressure begin files=320 readonly-passes=3
+Cache pressure created=32
+Cache pressure created=64
+Cache pressure created=96
+Cache pressure created=128
+Cache pressure created=160
+Cache pressure created=192
+Cache pressure created=224
+Cache pressure created=256
+Cache pressure created=288
+Cache pressure created=320
+Cache pressure pass=1 read=64
+Cache pressure pass=1 read=128
+Cache pressure pass=1 read=192
+Cache pressure pass=1 read=256
+Cache pressure pass=1 read=320
+Cache pressure pass=2 read=64
+Cache pressure pass=2 read=128
+Cache pressure pass=2 read=192
+Cache pressure pass=2 read=256
+Cache pressure pass=2 read=320
+Cache pressure pass=3 read=64
+Cache pressure pass=3 read=128
+Cache pressure pass=3 read=192
+Cache pressure pass=3 read=256
+Cache pressure pass=3 read=320
+Native cache pressure files=320 readonly-passes=3 tests=0
+Native locked stream file caller access result=0
+Native exclusive empty stream output result=0
+Native staged stream output creation result=0
+Native stream namespace authorization result=0
+Native stream directory search authorization result=0
+Native cross-task DOS sender identity/lifetime=0
+Native packet security access/property/defaults=0
+Native retained credential after packet context destruction=0
+Native MuFS packet delegated create expected=1 result=0
+Native locked stream file caller access result=0
+Native exclusive empty stream output result=0
+Native staged stream output creation result=0
+Native stream namespace authorization result=0
+Native stream directory search authorization result=0
+Native cross-task DOS sender identity/lifetime=0
+Native packet security access/property/defaults=0
+Native retained credential after packet context destruction=0
+Native MuFS packet delegated create expected=1 result=0
+Native locked stream file caller access result=0
+Native exclusive empty stream output result=0
+Native staged stream output creation result=0
+Native stream namespace authorization result=0
+Native stream directory search authorization result=0
+Native cross-task DOS sender identity/lifetime=0
+Native packet security access/property/defaults=0
+Native retained credential after packet context destruction=0
+Native MuFS packet delegated create expected=0 result=0
+Native locked stream file caller access result=0
+Native exclusive empty stream output result=0
+Native staged stream output creation result=0
+Native stream namespace authorization result=0
+Native stream directory search authorization result=0
+Native cross-task DOS sender identity/lifetime=0
+Native packet security access/property/defaults=0
+Native retained credential after packet context destruction=0
+Native MuFS packet delegated create expected=17 result=0
+Native authenticated admission endpoint=0
+Native upstream dataset delegation policy=0
+ACL persistence before setacl result=0 setacl=00000000045cb260 commit=000000000460cda0
+ACL persistence after setacl result=0 setacl=00000000045cb260 commit=000000000460cda0
+ACL persistence after commit result=0 setacl=00000000045cb260 commit=000000000460cda0
+ACL persistence before setacl result=0 setacl=00000000045cb260 commit=000000000460cda0
+ACL persistence after setacl result=0 setacl=00000000045cb260 commit=000000000460cda0
+ACL persistence after commit result=0 setacl=00000000045cb260 commit=000000000460cda0
+ACL persistence before setacl result=0 setacl=00000000045cb260 commit=000000000460cda0
+ACL persistence after setacl result=0 setacl=00000000045cb260 commit=000000000460cda0
+ACL persistence after commit result=0 setacl=00000000045cb260 commit=000000000460cda0
+ACL persistence before setacl result=0 setacl=00000000045cb260 commit=000000000460cda0
+ACL persistence after setacl result=0 setacl=00000000045cb260 commit=000000000460cda0
+ACL persistence after commit result=0 setacl=00000000045cb260 commit=000000000460cda0
+Native SA atime flush/persistence=0
+Native mount policy callbacks write=1 result=0
+Native directory shared/exclusive lifetime=0
+Native hardlink/remove/relink write=1 result=0
+Native upstream mknode write=1 result=0
+Native upstream mkdir/rollback write=1 result=0
+Native upstream symlink/readlink write=1 result=0
+Native ZPL hole/truncate/extend write=1 result=0
+Native namespace sync-failure kind=0 injected=1 result=0
+Native namespace sync-failure kind=1 injected=1 result=0
+Native namespace sync-failure kind=2 injected=1 result=0
+Native upstream create/open/truncate write=1 result=0
+Native upstream xattr directory/file write=1 result=0
+Native upstream rmdir/unlinked/xattr cleanup write=1 result=0
+Native upstream unlink/open-file/symlink write=1 result=0
+Native missing directory exchange PASS same-parent=1 cross-parent=1 unchanged=1
+Native sibling directory exchange PASS directories=1 mixed=1 restored=1 opposing-swaps=128
+Native rename ancestry SA failure/retry result=0
+Native upstream rename/move/replace/exchange write=1 result=0
+Native upstream setattr/owner/mode/times write=1 result=0
+Native protection xattr persistence write=1 result=0
+Native upstream vnode write/fsync/append=0
+Native foreign mount close write=1 errno=11 result=0
+Native DOS SetProtection readonly=0 result=0
+Native DOS SetFileDate readonly=0 result=0
+Native DOS owner property restoration readonly=0 result=0
+Native DOS SetProtection readonly=1 result=0
+Native DOS SetFileDate readonly=1 result=0
+Native DOS owner property restoration readonly=1 result=0
+Native repeated writable reopen result=0
+Native writable mount lifecycle write=1 result=0
+DOS replacement identity/reclaim hardlink=0 result=0 policy-calls=2
+DOS replacement identity/reclaim hardlink=1 result=0 policy-calls=2
+Native DOS sparse64 write=1 result=0
+Native DOS SetOwner write=1 result=0
+Native DOS SetComment write=1 result=0
+Native DOS hardlink write=1 result=0
+Native DOS symlink paths/loops write=1 result=0
+Native DOS symlink cross-volume/bounds write=1 result=0
+Native DOS symlink target authorization write=1 result=0
+OpenZFS unlink phase=namespace name=delete-test errno=66
+Native DOS write-only open/seek/read denial=0
+Native DOS content write=1 result=0
+Native DOS resize write=1 result=0
+Native DOS create defaults write=1 result=0
+Native DOS mkdir write=1 result=0
+Native DOS delete/reclaim write=1 result=0
+Native DOS rename/move write=1 result=0
+Native DOS replacement/exclusive write=1 result=0
+Legacy permissions version=1 operation=public-read result=0 count=35
+Legacy permissions version=1 operation=write-access result=13 count=0
+Legacy permissions version=1 operation=write result=13 count=0
+Legacy permissions version=1 operation=private-read result=13 count=35
+Legacy permissions version=2 operation=public-read result=0 count=35
+Legacy permissions version=2 operation=write-access result=13 count=0
+Legacy permissions version=2 operation=write result=13 count=0
+Legacy permissions version=2 operation=private-read result=13 count=35
+Legacy permissions version=3 operation=public-read result=0 count=35
+Legacy permissions version=3 operation=write-access result=13 count=0
+Legacy permissions version=3 operation=write result=13 count=0
+Legacy permissions version=3 operation=private-read result=13 count=35
+Legacy permissions version=4 operation=public-read result=0 count=35
+Legacy permissions version=4 operation=write-access result=13 count=0
+Legacy permissions version=4 operation=write result=13 count=0
+Legacy permissions version=4 operation=private-read result=13 count=35
+RESULT legacy disk matrix PASS create=1 versions=1-4 error=0 permissions=1
+Special DOS client stage=3 seen=31 error=0 ioerr=0
+RESULT native special-file metadata PASS version=1 write=1 enumerated=5 error=0
+Special DOS client stage=3 seen=31 error=0 ioerr=0
+RESULT native special-file metadata PASS version=2 write=1 enumerated=5 error=0
+Special DOS client stage=3 seen=31 error=0 ioerr=0
+RESULT native special-file metadata PASS version=3 write=1 enumerated=5 error=0
+Special DOS client stage=3 seen=31 error=0 ioerr=0
+RESULT native special-file metadata PASS version=4 write=1 enumerated=5 error=0
+Special DOS client stage=3 seen=31 error=0 ioerr=0
+RESULT native special-file metadata PASS version=5 write=1 enumerated=5 error=0
+export=0
+EXPORT_XDR_BEGIN 1784
+EXPORT_XDR 01010000000000000000000100000024000000200000000776657273696f6e00
+EXPORT_XDR 000000080000000100000000000013880000002800000028000000046e616d65
+EXPORT_XDR 00000009000000010000000b71656d755f6d6972726f72000000002400000020
+EXPORT_XDR 0000000573746174650000000000000800000001000000000000000100000020
+EXPORT_XDR 0000002000000003747867000000000800000001000000000000061500000028
+EXPORT_XDR 0000002800000009706f6f6c5f677569640000000000000800000001b4e9683d
+EXPORT_XDR 0837f06100000024000000200000000665727261746100000000000800000001
+EXPORT_XDR 00000000000000000000002800000028000000096d696e5f616c6c6f63000000
+EXPORT_XDR 000000080000000100000000000010000000002800000028000000096d61785f
+EXPORT_XDR 616c6c6f63000000000000080000000100000000000010000000002400000020
+EXPORT_XDR 00000006686f73746964000000000008000000010000000051a2051900000038
+EXPORT_XDR 0000003800000008686f73746e616d650000000900000001000000156c6f6361
+EXPORT_XDR 6c686f73742e6c6f63616c646f6d61696e00000000000034000000300000001d
+EXPORT_XDR 636f6d2e64656c706869783a6861735f7065725f766465765f7a617073000000
+EXPORT_XDR 00000001000000000000002c000000280000000d766465765f6368696c647265
+EXPORT_XDR 6e00000000000008000000010000000000000001000004c40000003800000009
+EXPORT_XDR 766465765f747265650000000000001300000001000000000000000100000020
+EXPORT_XDR 000000200000000474797065000000090000000100000004726f6f7400000020
+EXPORT_XDR 0000002000000002696400000000000800000001000000000000000000000020
+EXPORT_XDR 0000002000000004677569640000000800000001b4e9683d0837f06100000028
+EXPORT_XDR 000000280000000a6372656174655f7478670000000000080000000100000000
+EXPORT_XDR 000000040000040c00000040000000086368696c6472656e0000001400000001
+EXPORT_XDR 0000000000000001000000240000002000000004747970650000000900000001
+EXPORT_XDR 000000066d6972726f7200000000002000000020000000026964000000000008
+EXPORT_XDR 0000000100000000000000000000002000000020000000046775696400000008
+EXPORT_XDR 0000000184829d5b54f37ecf0000002c000000280000000e6d657461736c6162
+EXPORT_XDR 5f61727261790000000000080000000100000000000000840000002c00000028
+EXPORT_XDR 0000000e6d657461736c61625f73686966740000000000080000000100000000
+EXPORT_XDR 0000001800000024000000200000000661736869667400000000000800000001
+EXPORT_XDR 000000000000000c0000002400000020000000056173697a6500000000000008
+EXPORT_XDR 00000001000000000fb800000000002800000028000000096d696e5f616c6c6f
+EXPORT_XDR 6300000000000008000000010000000000001000000000240000002000000006
+EXPORT_XDR 69735f6c6f670000000000080000000100000000000000000000002800000028
+EXPORT_XDR 0000000a6372656174655f747867000000000008000000010000000000000004
+EXPORT_XDR 000000340000003800000018636f6d2e64656c706869783a766465765f7a6170
+EXPORT_XDR 5f746f7000000008000000010000000000000081000002340000006000000008
+EXPORT_XDR 6368696c6472656e000000140000000200000000000000010000002000000020
+EXPORT_XDR 00000004747970650000000900000001000000046469736b0000002000000020
+EXPORT_XDR 0000000269640000000000080000000100000000000000000000002000000020
+EXPORT_XDR 000000046775696400000008000000012e850706a29473840000003c00000038
+EXPORT_XDR 000000047061746800000009000000010000001e2f41524f532f6174612e6465
+EXPORT_XDR 766963652f302f706172746974696f6e2f30000000000028000000280000000a
+EXPORT_XDR 6372656174655f74786700000000000800000001000000000000000400000038
+EXPORT_XDR 0000003800000019636f6d2e64656c706869783a766465765f7a61705f6c6561
+EXPORT_XDR 6600000000000008000000010000000000000082000000000000000000000000
+EXPORT_XDR 0000000100000020000000200000000474797065000000090000000100000004
+EXPORT_XDR 6469736b00000020000000200000000269640000000000080000000100000000
+EXPORT_XDR 000000010000002000000020000000046775696400000008000000019453765d
+EXPORT_XDR d642aca70000003c00000038000000047061746800000009000000010000001e
+EXPORT_XDR 2f41524f532f6174612e6465766963652f312f706172746974696f6e2f300000
+EXPORT_XDR 00000028000000280000000a6372656174655f74786700000000000800000001
+EXPORT_XDR 0000000000000004000000380000003800000019636f6d2e64656c706869783a
+EXPORT_XDR 766465765f7a61705f6c65616600000000000008000000010000000000000083
+EXPORT_XDR 0000000000000000000000000000000000000000000000000000003800000040
+EXPORT_XDR 0000001166656174757265735f666f725f726561640000000000001300000001
+EXPORT_XDR 000000000000000100000000000000000000000000000000
+EXPORT_XDR_END
+read-only import=0
+Upstream native direct UIO read/compare=0
+DMU 16384-byte read/compare=0
+ZPL reopen=0
+ZPL file read/compare=0 bytes=60
+DOS volume collision result=0 rejected=1 foreign-preserved=1 retry=1
+DOS same-drain dynamic lock visibility=0
+Native mount ACL traversal/read bridge=0
+Native MuFS capability queries authenticated=0 result=0
+Native DOS exclusive lock conflicts=0
+Native DOS filehandle lock conversion/metadata=0
+Native DOS ChangeMode upgrade/downgrade=0
+Native DOS ExAll hooks/invalid packets=0
+Native DOS ExAll levels/continuation/filter=0
+Native MuFS retained endpoints/remount authenticated=0 result=0
+DOS lock/enumeration/relative-open tests stage=6 result=0
+DOS handler upstream dataset counters result=0
+Native mount ACL traversal/read bridge=0
+Native MuFS capability queries authenticated=1 result=0
+Native DOS exclusive lock conflicts=0
+Native DOS filehandle lock conversion/metadata=0
+Native DOS ChangeMode upgrade/downgrade=0
+Native DOS ExAll hooks/invalid packets=0
+Native DOS ExAll levels/continuation/filter=0
+Native MuFS capability queries authenticated=1 result=0
+Native MuFS retained endpoints/remount authenticated=1 result=0
+DOS lock/enumeration/relative-open tests stage=6 result=0
+DOS handler upstream dataset counters result=0
+DOS startup entry adoption rollback/read/retirement result=0
+Authenticated DOS handler ACL/logout/lifetime=0
+Authenticated DOS restricted file/directory ACL=0
+DOS handler Open/Read/Seek/Close repeated 3 times, missing file and readonly checks=0
+RESULT QEMU native two-device mirror PASS
+00000019a04239f7 0x00000000164a37c0 | 000 | [CrashReporter] server '' autosend 0
