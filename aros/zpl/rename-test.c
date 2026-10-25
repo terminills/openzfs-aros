@@ -192,6 +192,69 @@ static int exchange_race(znode_t *left, char *first, znode_t *right, char *secon
     }
     return (error);
 }
+static int marked_directory(znode_t *parent, char *name, unsigned char tag,
+    znode_t **out)
+{
+    int error=directory(parent,name,out);
+    znode_t *payload=NULL;
+    if (!error) error=tagged_file(*out,"payload",tag,&payload);
+    if (payload) oz_znode_rele(payload);
+    return error;
+}
+static int persisted_entry(znode_t *parent, char *name, boolean_t isdir,
+    unsigned char tag)
+{
+    znode_t *node=NULL, *payload=NULL;
+    int error=child(parent,name,&node);
+    uint64_t stored_parent=0;
+    if (!error) error=sa_lookup(node->z_sa_hdl,SA_ZPL_PARENT(ZTOZSB(node)),&stored_parent,8);
+    if (!error && (stored_parent!=parent->z_id ||
+        (isdir ? !S_ISDIR(node->z_mode) : !S_ISREG(node->z_mode)) ||
+        node->z_links!=(isdir?2:1))) error=EIO;
+    if (!error && isdir) {
+        if (node->z_size!=3) error=EIO;
+        if (!error) error=child(node,"payload",&payload);
+        if (!error) error=sa_lookup(payload->z_sa_hdl,SA_ZPL_PARENT(ZTOZSB(payload)),&stored_parent,8);
+        if (!error && (stored_parent!=node->z_id || payload->z_links!=1)) error=EIO;
+    }
+    if (!error) error=tag_check(isdir?payload:node,tag);
+    if (payload) oz_znode_rele(payload);
+    if (node) oz_znode_rele(node);
+    return error;
+}
+/* Unlike the stress pairs, these names stay exchanged on disk. Cold readers
+ * must discover the new object types, parents and unique payloads unaided by
+ * any in-memory znode identities from the creating process. */
+static int persistent_exchange(znode_t *fixture, boolean_t write)
+{
+    znode_t *base=NULL, *left=NULL, *right=NULL, *slots[4]={NULL};
+    int error=write?directory(fixture,"durable",&base):child(fixture,"durable",&base);
+    if (!error) error=write?directory(base,"left",&left):child(base,"left",&left);
+    if (!error) error=write?directory(base,"right",&right):child(base,"right",&right);
+    if (!error && write) {
+        error=marked_directory(left,"tree",0x11,&slots[0]);
+        if (!error) error=marked_directory(right,"tree",0x22,&slots[1]);
+        if (!error) error=tagged_file(left,"mixed",0x33,&slots[2]);
+        if (!error) error=marked_directory(right,"mixed",0x44,&slots[3]);
+        if (!error) error=RENAME(left,"tree",right,"tree",RENAME_EXCHANGE);
+        if (!error) error=RENAME(left,"mixed",right,"mixed",RENAME_EXCHANGE);
+        if (!error) error=zil_commit(ZTOZSB(fixture)->z_log,0);
+    }
+    for (unsigned i=0;i<4;i++) if (slots[i]) oz_znode_rele(slots[i]);
+    if (!error) error=persisted_entry(left,"tree",B_TRUE,0x22);
+    if (!error) error=persisted_entry(right,"tree",B_TRUE,0x11);
+    if (!error) error=persisted_entry(left,"mixed",B_TRUE,0x44);
+    if (!error) error=persisted_entry(right,"mixed",B_FALSE,0x33);
+    if (!error && (left->z_links!=4 || right->z_links!=3 ||
+        left->z_size!=4 || right->z_size!=4)) error=EIO;
+    if (right) oz_znode_rele(right);
+    if (left) oz_znode_rele(left);
+    if (base) oz_znode_rele(base);
+    char text[128];
+    snprintf(text,sizeof(text),"Native persistent directory exchange write=%d directories=1 mixed=1 parents=1 payloads=4 result=%d\n",write,error);
+    for (char *p=text;*p;p++) RawPutChar(*p);
+    return error;
+}
 static int replace_empty(znode_t *left, znode_t *right)
 {
     znode_t *source = NULL, *target = NULL, *found = NULL;
@@ -314,6 +377,7 @@ int oz_rename_test(zfsvfs_t *fs, boolean_t write)
         zap_contains(fs->z_os,left->z_id,"b") != ENOENT ||
         zap_contains(fs->z_os,left->z_id,"tree") != ENOENT ||
         zap_contains(fs->z_os,right->z_id,"x") != ENOENT)) error = EIO;
+    if (!error) error = persistent_exchange(fixture,write);
     if (!error) error = zap_count(fs->z_os,fs->z_unlinkedobj,&count);
     if (!error && count) error = EIO;
     znode_t *nodes[] = {a,b,c,tree,branch,empty,left,right,fixture,parent,root};
