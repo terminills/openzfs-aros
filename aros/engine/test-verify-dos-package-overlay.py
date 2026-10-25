@@ -43,6 +43,16 @@ class PackageTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             verify(self.original, self.original, 'exec.library')
 
+    def test_ata_only(self):
+        original = [('ata.device', b'old'), ('ahci.device', b'ahci')]
+        verify(original, [('ata.device', b'new'), original[1]], 'ata.device')
+        for candidate in (original,
+                          [('ata.device', b'new'), ('ahci.device', b'changed')],
+                          [original[1], ('ata.device', b'new')],
+                          [('ata.device', b'new')]):
+            with self.subTest(candidate=candidate), self.assertRaises(ValueError):
+                verify(original, candidate, 'ata.device')
+
 
 if __name__ == '__main__':
     unittest.main()
