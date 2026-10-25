@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 """Build a private capacity-only ATA overlay; never edit the AROS checkout.
 
-Uses the selected build's other objects, so this is not a clean full-driver
-source rebuild. All consumed dependencies and the resulting package are hashed.
+Default mode reuses the selected build's other objects. With --full-source,
+all driver objects are compiled, but selected generated sources, SDK headers
+and SDK archives remain prerequisites. Dependencies and outputs are hashed.
 """
 import argparse
 import hashlib
@@ -20,6 +21,8 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     for name in ('build', 'source', 'cc', 'iso', 'output-parent'):
         parser.add_argument('--' + name, type=Path, required=True)
+    parser.add_argument('--full-source', action='store_true',
+                        help='Compile every driver object, including generated entry sources')
     args = parser.parse_args()
     build, source, cc, iso, parent = (p.resolve(strict=True) for p in
         (args.build, args.source, args.cc, args.iso, args.output_parent))
@@ -44,12 +47,11 @@ def main():
         run(['patch', '--fuzz=0', '-p1', '-d', out, '-i', patch])
         common = [cc, '--sysroot', sdk, '-m64', '-mcmodel=large',
                   '-mno-red-zone', '-mno-ms-bitfields', '-mgeneral-regs-only']
-        run(common + ['-O2', '-fno-asynchronous-unwind-tables', '-fno-omit-frame-pointer',
+        compile_flags = common + ['-O2', '-fno-asynchronous-unwind-tables', '-fno-omit-frame-pointer',
             '-Wno-pointer-sign', '-DAROS_USE_LOGRES', '-DAROS_BUILD_TYPE=AROS_BUILD_TYPE_PERSONAL',
             '-DUSE_EXEC_DEBUG', '-D__OOP_NOMETHODBASES__', '-D__OOP_NOATTRBASES__',
             '-include', gen / 'include/ata_deflibdefs.h', '-I' + str(stage),
-            '-I' + str(gen / 'include'), '-I' + str(gen), '-MD', '-MF', out / 'scsiemu.d',
-            '-c', stage / 'scsiemu.c', '-o', out / 'scsiemu.o'])
+            '-I' + str(gen / 'include'), '-I' + str(gen)]
         objects = [Path(line[5:]) for line in (gen / '.map').read_text().splitlines()
                    if line.startswith('LOAD ') and line.endswith('.o')]
         old = gen / 'scsiemu.o'
@@ -57,12 +59,31 @@ def main():
             raise ValueError('Unexpected ATA object inventory')
         if any(not p.is_file() or not p.is_relative_to(build) for p in objects):
             raise ValueError('ATA objects outside selected build')
-        inputs += objects
+        rebuilt = {}
+        for obj in objects if args.full_source else [old]:
+            if obj.name == 'libentry.o':
+                src = source / 'compiler/libinit/libentry.c'
+            elif obj.name in ('ata_start.o', 'ata_end.o'):
+                src = gen / (obj.stem + '.c')
+            else:
+                src = stage / (obj.stem + '.c')
+            if not src.is_file():
+                raise ValueError('Missing source: ' + str(src))
+            private_src = out / (obj.stem + '.c')
+            shutil.copy2(src, private_src)
+            dep = out / (obj.stem + '.d')
+            rebuilt[obj] = out / obj.name
+            run(compile_flags + ['-MD', '-MF', dep, '-c', private_src,
+                                 '-o', rebuilt[obj]])
+            inputs += [Path(name) for name in shlex.split(
+                dep.read_text().replace('\\\n', '').split(':', 1)[1])]
+        inputs += [obj for obj in objects if obj not in rebuilt]
+        (out / 'build-mode.txt').write_text(
+            'all driver objects rebuilt; SDK archives and generated sources remain inputs\n'
+            if args.full_source else 'scsiemu rebuilt; remaining objects reused\n')
         run(common + ['-nostartfiles', '-static', '-Wl,-Map,' + str(out / 'ata.map'),
-                      *[out / 'scsiemu.o' if p == old else p for p in objects],
+                      *[rebuilt.get(p, p) for p in objects],
                       '-o', out / 'ata.device'])
-        inputs += [Path(name) for name in shlex.split(
-            (out / 'scsiemu.d').read_text().replace('\\\n', '').split(':', 1)[1])]
         inputs += [Path(line[5:]) for line in (out / 'ata.map').read_text().splitlines()
                    if line.startswith('LOAD ') and line.endswith('.a')]
         base = out / 'baseline.pkg.xz'
