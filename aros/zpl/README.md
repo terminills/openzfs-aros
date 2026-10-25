@@ -1881,6 +1881,11 @@ flush check because its capacity-only ATA overlay retained a no-op UPDATE.
 The passing run uses the existing cache-flush companion, built from source
 with `build-ata-capacity-overlay.py --full-source --flush`. This establishes
 virtual-device command behavior, not physical stable-storage guarantees.
+Follow-up eight-CPU run `qemu-run.4YGtkuKO` adds two synchronized opposing
+workers for each directory/directory and file/directory pair, completing 128
+swaps before verifying identities and restoration. All five boot phases and
+read-only hash checks passed. This exercises competing sibling-name locks;
+it does not qualify cross-parent directory exchange or exhaustive scheduling.
 Casefold/Unicode variants and injected low-space rollback remain unverified.
 These internal operations assume authorized resolution of parent paths;
 public DOS mutation dispatch is still unfinished.
