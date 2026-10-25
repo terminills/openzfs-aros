@@ -212,6 +212,7 @@ int oz_write_persistence_test(boolean_t write)
     if (!error) error = zap_lookup(fs.z_os, fs.z_root, "hello.txt", 8, 1, &entry);
     if (error) { dmu_objset_disown(fs.z_os, B_FALSE, &fs); return (error); }
     ZFS_TEARDOWN_INIT(&fs);
+    oz_mount_refs_init(&fs);
     oz_znode_cache_init(&fs);
     error = dataset_kstats_create(&fs.z_kstat, fs.z_os);
     znode_t *zp = NULL;
@@ -320,6 +321,7 @@ int oz_write_persistence_test(boolean_t write)
     }
     dataset_kstats_destroy(&fs.z_kstat);
     ZFS_TEARDOWN_DESTROY(&fs);
+    oz_mount_refs_fini(&fs);
     free(actual); free(expected);
     dmu_objset_disown(fs.z_os, B_FALSE, &fs);
     return (error ? error : cleanup);
