@@ -49,6 +49,14 @@ fi
 posix=${AROS_TEST_POSIX_LIBRARY:?private POSIX library required}
 service=${AROS_TEST_SERVICE_BINARY:?public service executable required}
 client=${AROS_TEST_CLIENT_BINARY:?native acceptance client required}
+if [[ ${AROS_TEST_REQUIRE_INIT:-0} == 1 ]] &&
+    ! strings "$client" | grep -F 'Public upstream libzfs init PASS' >/dev/null;then
+    echo 'Selected acceptance client lacks the required optional libzfs-init probe' >&2;exit 2
+fi
+if [[ ${AROS_TEST_REQUIRE_CPU:-0} == 1 ]] &&
+    ! strings "$client" | grep -F 'Public native CPU topology PASS' >/dev/null;then
+    echo 'Selected acceptance client lacks the required optional CPU-topology probe' >&2;exit 2
+fi
 shared=${AROS_TEST_SHARED_BUILD:-}
 cli_dir=${AROS_TEST_CLI_DIR:-}
 companions=${AROS_TEST_COMPANION_TOOLS:-0}
