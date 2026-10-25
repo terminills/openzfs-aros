@@ -1,0 +1,49 @@
+[bootstrap:multiboot2] smartfb: using VBE mode 0x417a (1280x800x32, fb=0xFD000000)
+[bootstrap:multiboot2] smartfb: KRN_FBAddr=0x00000000FD000000
+0000000000000000 0x0000000000000000 | 000 | AROS64 - The AROS Research OS
+0000000000000000 0x0000000000000000 | 000 | 64-bit SMP build. Compiled Oct 21 2026
+0000000000000000 0x0000000000000000 | 000 | [Kernel] Local APIC: x2APIC
+000000008fa4af3a 0x0000000000000000 | 000 | ACPI: RSDP 0x00000000000F52E0 000014 (v00 BOCHS )
+00000000901fc3b9 0x0000000000000000 | 000 | ACPI: RSDT 0x000000007FFE25BF 000034 (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+0000000090c1e8b5 0x0000000000000000 | 000 | ACPI: FACP 0x000000007FFE243B 000074 (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+0000000091624c2e 0x0000000000000000 | 000 | ACPI: DSDT 0x000000007FFE0040 0023FB (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+0000000092021736 0x0000000000000000 | 000 | ACPI: FACS 0x000000007FFE0000 000040
+0000000092696936 0x0000000000000000 | 000 | ACPI: APIC 0x000000007FFE24AF 0000B0 (v03 BOCHS  BXPC     00000001 BXPC 00000001)
+0000000093090cfc 0x0000000000000000 | 000 | ACPI: HPET 0x000000007FFE255F 000038 (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+0000000093aa1999 0x0000000000000000 | 000 | ACPI: WAET 0x000000007FFE2597 000028 (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+000000009449bb07 0x0000000000000000 | 000 | [HPET] 2 units total
+000000009502b427 0x00000000013d33f0 | 000 | ACPI: 1 ACPI AML tables successfully acquired and loaded
+0000000095a55d44 0x00000000013b1500 | 000 | [Kernel:ACPI-IOAPIC] Registering IO-APIC #1 [ID=000] @ 00000000fec00000 [GSI = 0]
+0000000096464128 0x00000000013b1500 | 000 | [Kernel:ACPI] System Total APICs: 8, 8 usable
+0000000096f5d980 0x00000000013b1500 | 000 | [Kernel:APIC-IA32] MSI Interrupts Allocatable
+00000000976b4783 0x00000000013b1500 | 000 | [Kernel:APIC-IA32]     start = 16
+0000000097d0493a 0x00000000013b1500 | 000 | [Kernel:APIC-IA32]     total = 198
+00000000b6297668 0x00000000013b1500 | 000 | [Kernel:APIC-IA32] Heartbeat timer: TSC deadline
+00000000b838745e 0x00000000013dd250 | 001 | [Kernel:APIC-IA32.001] core_APIC_Calibrate: TSC freq inherited from BSP (2496021 kHz) [hypervisor]
+00000000ca420363 0x00000000013dd890 | 002 | [Kernel:APIC-IA32.002] core_APIC_Calibrate: TSC freq inherited from BSP (2496021 kHz) [hypervisor]
+00000000dc4918e9 0x000000000145d880 | 003 | [Kernel:APIC-IA32.003] core_APIC_Calibrate: TSC freq inherited from BSP (2496021 kHz) [hypervisor]
+00000000ee59818b 0x00000000014984d0 | 004 | [Kernel:APIC-IA32.004] core_APIC_Calibrate: TSC freq inherited from BSP (2496021 kHz) [hypervisor]
+00000001006d6b58 0x00000000014d3180 | 005 | [Kernel:APIC-IA32.005] core_APIC_Calibrate: TSC freq inherited from BSP (2496021 kHz) [hypervisor]
+00000001127f6bb1 0x000000000150de30 | 006 | [Kernel:APIC-IA32.006] core_APIC_Calibrate: TSC freq inherited from BSP (2496021 kHz) [hypervisor]
+000000012484edb3 0x0000000001548ae0 | 007 | [Kernel:APIC-IA32.007] core_APIC_Calibrate: TSC freq inherited from BSP (2496021 kHz) [hypervisor]
+0000000135b4380f 0x00000000013b1500 | 000 | [PCIPC:Driver] PCIPC_InitClass: No ACPI MCFG table
+0000000138b9ff2b 0x00000000013b1500 | 000 | [Timer] clock: PIT (no invariant TSC)
+000000022ff93ce8 0x00000000017aee70 | 000 | [ATI] Init
+000000023042a676 0x00000000017aee70 | 000 | [ATI] No supported cards found
+000000024bcfbf0a 0x00000000018102c0 | 000 | [HW] HW__HW__AddDriver: Failed to instantiate Driver Object
+000000025fe3ba00 0x000000000196ac10 | 000 | OpenZFS capacity16 error=0 status=0 command=16 data=32 sense=0/0/0
+0000000260841671 0x000000000196ac10 | 000 | OpenZFS capacity16 error=0 status=0 command=16 data=32 sense=0/0/0
+000000026133f3a2 0x000000000196ac10 | 000 | OpenZFS native I/O failure stage=bounds error=22 device=ata.device unit=0 write=0 offset=54975581388800 count=512 base=0 size=54975581388800 sector=512
+00000002622c0add 0x000000000196ac10 | 000 | OpenZFS native I/O failure stage=readonly error=30 device=ata.device unit=0 write=1 offset=54975581388288 count=512 base=0 size=54975581388800 sector=512
+00000002632773cd 0x000000000196ac10 | 000 | OpenZFS capacity16 error=0 status=0 command=16 data=32 sense=0/0/0
+Native capacity command case=0 rc=20 actual=0 command=0 PASS
+Native capacity command case=1 rc=20 actual=0 command=0 PASS
+Native capacity command case=2 rc=20 actual=0 command=0 PASS
+Native capacity command case=3 rc=20 actual=0 command=0 PASS
+Native capacity command case=4 rc=20 actual=0 command=0 PASS
+Native capacity command case=5 rc=20 actual=0 command=0 PASS
+Native capacity command case=6 rc=20 actual=0 command=0 PASS
+Native capacity command case=7 rc=0 actual=0 command=16 PASS
+Native capacity command case=8 rc=0 actual=12 command=16 PASS
+Native capacity command case=9 rc=0 actual=32 command=16 PASS
+RESULT native capacity PASS size=54975581388800 last-sector=1 range=1 bounds=1 readonly=1 large-gpt=1 rc=0 line=0

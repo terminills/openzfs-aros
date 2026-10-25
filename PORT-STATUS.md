@@ -226,6 +226,16 @@ results, not a fresh qualification of this public snapshot.
   not a 50 TiB pool test or hardware qualification. Captures are in
   `aros/tests/evidence/current-ata-capacity`. The private builder uses the
   selected build's remaining ATA objects, not a clean full-driver rebuild.
+  Subsequent command-boundary qualification exposed three companion defects:
+  wrong-direction requests were accepted, and legal zero/short allocation
+  lengths were rejected (`capacity-run.9DrpPME5`). Commit `119d0e1` checks
+  read direction and copies only the requested response length, capped at 32
+  bytes. Fresh eight-CPU runs `capacity-run.9WBHwAUV` and
+  `capacity-run.O3l2jVcH` (capacity diagnostics disabled) pass all ten command
+  cases plus the same 50 TiB/high-LBA/GPT checks with unchanged disk hashes.
+  Cases cover malformed CDBs, service action, PMI/LBA, direction, null/short
+  buffers, zero/short/oversized allocations and output guards. Failed and
+  passing captures are retained in `aros/tests/evidence/ata-capacity-boundaries`.
 - Physical storage flush, disconnect, and abrupt power-loss behavior require
   hardware qualification. Virtual-disk tests do not establish these guarantees.
 - Not every upstream feature or topology has end-to-end AROS validation.

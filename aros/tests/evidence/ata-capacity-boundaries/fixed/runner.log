@@ -1,0 +1,6 @@
+Formatting '/mnt/short-term/openzfs-qualification-20261024.aGFlVF7T/capacity-run.9WBHwAUV/disk.qcow2', fmt=qcow2 cluster_size=65536 extended_l2=off compression_type=zlib size=54975581388800 lazy_refcounts=off refcount_bits=16
+Formatting '/mnt/short-term/openzfs-qualification-20261024.aGFlVF7T/capacity-run.9WBHwAUV/gpt.raw', fmt=raw size=3298534883328
+Formatting '/mnt/short-term/openzfs-qualification-20261024.aGFlVF7T/capacity-run.9WBHwAUV/gpt.qcow2', fmt=qcow2 cluster_size=65536 extended_l2=off compression_type=zlib size=3298534883328 backing_file=/mnt/short-term/openzfs-qualification-20261024.aGFlVF7T/capacity-run.9WBHwAUV/gpt.raw backing_fmt=raw lazy_refcounts=off refcount_bits=16
+/mnt/short-term/openzfs-qualification-20261024.aGFlVF7T/capacity-run.9WBHwAUV/disk.qcow2: OK
+/mnt/short-term/openzfs-qualification-20261024.aGFlVF7T/capacity-run.9WBHwAUV/gpt.qcow2: OK
+PASS: native 50 TiB capacity and high-LBA read; separate 3 TiB GPT. Evidence: /mnt/short-term/openzfs-qualification-20261024.aGFlVF7T/capacity-run.9WBHwAUV
