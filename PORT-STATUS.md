@@ -264,6 +264,15 @@ results, not a fresh qualification of this public snapshot.
   mount-private cross-parent rename mutex and both ancestry checks. Whiteout
   remains unsupported. Evidence and limitations
   are recorded in `aros/zpl/README.md` and `aros/tests/evidence/sibling-exchange`.
+  Exchange intent-log replay is now enabled on AROS, correcting a Linux-only
+  upstream callback guard that clean-export tests did not exercise. Native
+  record dispatch (including byte-swapped headers), private VM power loss,
+  and a second shutdown after partial replay pass with exact exchanged payloads
+  and independent leak checks. See `aros/tests/evidence/exchange-replay`.
+  These are controlled two-file exchange cases, not all topology/record or
+  physical power-loss qualification. Ordinary rename and exchange also reject
+  tested malformed parent cycles; see `ordinary-rename-cycle` and
+  `exchange-ancestry-errors` in the same evidence directory.
 - Physical storage flush, disconnect, and abrupt power-loss behavior require
   hardware qualification. Virtual-disk tests do not establish these guarantees.
 - Not every upstream feature or topology has end-to-end AROS validation.
