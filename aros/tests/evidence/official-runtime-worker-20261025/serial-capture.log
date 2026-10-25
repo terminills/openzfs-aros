@@ -1,0 +1,108 @@
+0000000000000000 0x0000000000000000 | 000 | AROS64 - The AROS Research OS
+0000000000000000 0x0000000000000000 | 000 | 64-bit SMP build. Compiled Oct 23 2026
+000000009a4d10c1 0x0000000000000000 | 000 | ACPI: RSDP 0x00000000000F52E0 000014 (v00 BOCHS )
+000000009ac554f0 0x0000000000000000 | 000 | ACPI: RSDT 0x000000007FFE238A 000034 (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+000000009b656021 0x0000000000000000 | 000 | ACPI: FACP 0x000000007FFE2236 000074 (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+000000009c04af6e 0x0000000000000000 | 000 | ACPI: DSDT 0x000000007FFE0040 0021F6 (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+000000009ca3d026 0x0000000000000000 | 000 | ACPI: FACS 0x000000007FFE0000 000040
+000000009d0b3b71 0x0000000000000000 | 000 | ACPI: APIC 0x000000007FFE22AA 000080 (v03 BOCHS  BXPC     00000001 BXPC 00000001)
+000000009daa69bc 0x0000000000000000 | 000 | ACPI: HPET 0x000000007FFE232A 000038 (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+000000009e49abc1 0x0000000000000000 | 000 | ACPI: WAET 0x000000007FFE2362 000028 (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+000000009ee9006d 0x0000000000000000 | 000 | [HPET] 2 units total
+000000009f8a9270 0x00000000013cd7d0 | 000 | ACPI: 1 ACPI AML tables successfully acquired and loaded
+00000000a0254fd1 0x00000000013ab960 | 000 | [Kernel:ACPI-IOAPIC] Registering IO-APIC #1 [ID=000] @ 00000000fec00000 [GSI = 0]
+00000000a0c542e3 0x00000000013ab960 | 000 | [Kernel:ACPI] System Total APICs: 2, 2 usable
+00000000a1695e50 0x00000000013ab960 | 000 | [Kernel:APIC-IA32] MSI Interrupts Allocatable
+00000000a1ddf1c5 0x00000000013ab960 | 000 | [Kernel:APIC-IA32]     start = 16
+00000000a2412fba 0x00000000013ab960 | 000 | [Kernel:APIC-IA32]     total = 198
+00000000c1ff4175 0x00000000013ce2f0 | 001 | [Kernel:APIC-IA32.001] core_APIC_Calibrate: TSC freq inherited from BSP (2496000 kHz) [hypervisor]
+00000000c3aca0cb 0x00000000013ce2f0 | 001 | [Kernel:APIC-IA32.001] core_APIC_Calibrate: LAPIC timer freq inherited from BSP (1000494360 Hz) [hypervisor]
+00000000c5fa679b 0x00000000013ab960 | 000 | [PCIPC:Driver] PCIPC_InitClass: No ACPI MCFG table
+000000017eab0615 0x00000000015ec770 | 000 | RESULT runtime capture BEGIN runs=4
+000000018851a8e5 0x00000000015ec770 | 000 | RESULT runtime capture run=0 complete=1 status=1 cleanup=0 prerequisite-pass=0
+0000000188ec9c15 0x00000000015ec770 | 000 | RESULT runtime capture report run=0
+Runtime checker OpenZFSRuntimeCheck : exit=20, DOS=0, capture errno=0
+OpenZFS runtime check (no pools or devices opened)
+PASS errno accessor and POSIX writer
+INFO posixc.library 0.40 available
+INFO stdcio.library 0.11 available
+INFO z1.library 1.10 available
+INFO iffparse.library 50.2 available
+INFO muimaster.library 19.81 available
+FAIL security.library configured=0
+PASS redirected stdio: transport=0 child=0 stdout=1 stderr=1
+PASS ExecHelper subprocess: status=23 lines=1
+PASS LoadSeg execute=on loaded=1 DOS=0
+PASS NewLoadSeg execute=on loaded=1 DOS=0
+FAIL LoadSeg execute=off loaded=1 DOS=0
+FAIL NewLoadSeg execute=off loaded=1 DOS=0
+FAIL loader execute protection; verify the matching DOS runtime patch
+Not tested: pipe disconnects, storage I/O, durability, GUI or pool operations.
+FAIL runtime prerequisites; review diagnostics above
+
+0000000193773771 0x00000000015ec770 | 000 | RESULT runtime capture run=1 complete=1 status=1 cleanup=0 prerequisite-pass=0
+000000019411f14e 0x00000000015ec770 | 000 | RESULT runtime capture report run=1
+Runtime checker OpenZFSRuntimeCheck : exit=20, DOS=0, capture errno=0
+OpenZFS runtime check (no pools or devices opened)
+PASS errno accessor and POSIX writer
+INFO posixc.library 0.40 available
+INFO stdcio.library 0.11 available
+INFO z1.library 1.10 available
+INFO iffparse.library 50.2 available
+INFO muimaster.library 19.81 available
+FAIL security.library configured=0
+PASS redirected stdio: transport=0 child=0 stdout=1 stderr=1
+PASS ExecHelper subprocess: status=23 lines=1
+PASS LoadSeg execute=on loaded=1 DOS=0
+PASS NewLoadSeg execute=on loaded=1 DOS=0
+FAIL LoadSeg execute=off loaded=1 DOS=0
+FAIL NewLoadSeg execute=off loaded=1 DOS=0
+FAIL loader execute protection; verify the matching DOS runtime patch
+Not tested: pipe disconnects, storage I/O, durability, GUI or pool operations.
+FAIL runtime prerequisites; review diagnostics above
+
+000000019e9f421f 0x00000000015ec770 | 000 | RESULT runtime capture run=2 complete=1 status=1 cleanup=0 prerequisite-pass=0
+000000019f3a3b2b 0x00000000015ec770 | 000 | RESULT runtime capture report run=2
+Runtime checker OpenZFSRuntimeCheck : exit=20, DOS=0, capture errno=0
+OpenZFS runtime check (no pools or devices opened)
+PASS errno accessor and POSIX writer
+INFO posixc.library 0.40 available
+INFO stdcio.library 0.11 available
+INFO z1.library 1.10 available
+INFO iffparse.library 50.2 available
+INFO muimaster.library 19.81 available
+FAIL security.library configured=0
+PASS redirected stdio: transport=0 child=0 stdout=1 stderr=1
+PASS ExecHelper subprocess: status=23 lines=1
+PASS LoadSeg execute=on loaded=1 DOS=0
+PASS NewLoadSeg execute=on loaded=1 DOS=0
+FAIL LoadSeg execute=off loaded=1 DOS=0
+FAIL NewLoadSeg execute=off loaded=1 DOS=0
+FAIL loader execute protection; verify the matching DOS runtime patch
+Not tested: pipe disconnects, storage I/O, durability, GUI or pool operations.
+FAIL runtime prerequisites; review diagnostics above
+
+00000001a9c5c565 0x00000000015ec770 | 000 | RESULT runtime capture run=3 complete=1 status=1 cleanup=0 prerequisite-pass=0
+00000001aa60e86f 0x00000000015ec770 | 000 | RESULT runtime capture report run=3
+Runtime checker OpenZFSRuntimeCheck : exit=20, DOS=0, capture errno=0
+OpenZFS runtime check (no pools or devices opened)
+PASS errno accessor and POSIX writer
+INFO posixc.library 0.40 available
+INFO stdcio.library 0.11 available
+INFO z1.library 1.10 available
+INFO iffparse.library 50.2 available
+INFO muimaster.library 19.81 available
+FAIL security.library configured=0
+PASS redirected stdio: transport=0 child=0 stdout=1 stderr=1
+PASS ExecHelper subprocess: status=23 lines=1
+PASS LoadSeg execute=on loaded=1 DOS=0
+PASS NewLoadSeg execute=on loaded=1 DOS=0
+FAIL LoadSeg execute=off loaded=1 DOS=0
+FAIL NewLoadSeg execute=off loaded=1 DOS=0
+FAIL loader execute protection; verify the matching DOS runtime patch
+Not tested: pipe disconnects, storage I/O, durability, GUI or pool operations.
+FAIL runtime prerequisites; review diagnostics above
+
+00000001aef7a283 0x00000000015ec770 | 000 | RESULT runtime capture PASS runs=4 delivery-only=1
+RESULT runtime capture shell PASS
+RESULT runtime capture audit DONE

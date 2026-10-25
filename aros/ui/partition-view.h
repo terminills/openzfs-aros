@@ -102,7 +102,7 @@ static void inventory_poll(void)
     if(error==EAGAIN)return;
     if(error){set(partnote,MUIA_Text_Contents,"Waiting for device scan cleanup...");return;}
     if(operation==ENOENT)snprintf(partmessage,sizeof(partmessage),
-        "Device scan unavailable (2). Check that OpenZFSService is running.");
+        "Device scan unavailable (2). Check that OpenZFSServiceNative is running.");
     else if(operation==EACCES||operation==EPERM)snprintf(partmessage,sizeof(partmessage),
         "Device scan denied (%d). Root access is required.",operation);
     else if(operation)snprintf(partmessage,sizeof(partmessage),"Device scan failed: %s (%d)",strerror(operation),operation);

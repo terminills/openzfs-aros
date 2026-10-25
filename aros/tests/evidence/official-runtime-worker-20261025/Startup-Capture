@@ -1,0 +1,21 @@
+FailAt 21
+Stack 1048576
+MakeDir RAM:T RAM:ENV RAM:ENVARC RAM:Clipboards
+Assign T: RAM:T
+Assign ENV: RAM:ENV
+Assign ENVARC: RAM:ENVARC
+Assign CLIPS: RAM:Clipboards
+Assign LIBS: SYS:Classes ADD
+Assign KEYMAPS: DEVS:Keymaps
+Assign LOCALE: SYS:Locale
+Assign FONTS: SYS:Fonts
+Mount DEVS:DOSDrivers/SER
+C:RuntimeCaptureTest >NIL:
+If WARN
+  Echo "RESULT runtime capture shell FAIL" >SER:
+Else
+  Echo "RESULT runtime capture shell PASS" >SER:
+EndIf
+Echo "RESULT runtime capture audit DONE" >SER:
+C:IPrefs
+SYS:Tools/OpenZFSManagerNative

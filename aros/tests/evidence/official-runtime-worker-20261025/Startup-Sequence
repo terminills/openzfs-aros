@@ -1,0 +1,13 @@
+FailAt 21
+Stack 262144
+MakeDir RAM:T RAM:ENV
+Assign T: RAM:T
+Assign ENV: RAM:ENV
+Mount DEVS:DOSDrivers/SER
+C:RuntimeWorkerTest >NIL:
+If WARN
+  Echo "RESULT runtime worker shell FAIL" >SER:
+Else
+  Echo "RESULT runtime worker shell PASS" >SER:
+EndIf
+Echo "RESULT runtime worker audit DONE" >SER:

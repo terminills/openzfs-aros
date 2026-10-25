@@ -415,7 +415,7 @@ static void send_request(ULONG operation,int preview_only) {
     if(result==OZ_OK){last_request=m;next_cursor=0;set(next_page,MUIA_Disabled,TRUE);}
     snprintf(line,sizeof(line),"%s: %s (request %lu)",op->key,oz_status(result),(unsigned long)client.pending);logline(line);
     set(status,MUIA_Text_Contents,result==OZ_OK?"Waiting for management service...":oz_status(result));
-    if(result==OZ_NO_SERVICE)show_response("No OpenZFS management service is registered.\nStart C:OpenZFSService and choose Connect.\nRequest was not delivered. No storage was changed.");
+    if(result==OZ_NO_SERVICE)show_response("No OpenZFS management service is registered.\nStart C:OpenZFSServiceNative and choose Connect.\nRequest was not delivered. No storage was changed.");
 }
 static Object *listview(Object **list) {
     return ListviewObject, MUIA_Listview_List, *list=ListObject,
