@@ -1125,6 +1125,26 @@ binding both the rebuilt DOS module and selected boot package. This does not
 rebuild the other modules carried in that package. Fresh QEMU and extracted
 source replay evidence is in `aros/tests/evidence/dos-source-package`.
 
+`aros/engine/build-posix-snapshot.py` rebuilds the private alpha18 posixc
+candidate from its selected source tree, generated ABI headers and link-map
+object ordering. Supply `--build`, `--upstream`, `--sdk`, `--cc` and
+`--output-parent` explicitly. It retains the C and x86-64 assembly sources,
+private assembly/platform headers, licenses, compiler recipe and external
+SDK/archive hashes. The output filesystem must retain 100 GiB free. The same
+snapshot replay helper supports assembly inputs and regenerates all 305
+objects; no cached objects are copied. Linker-generated absolute object
+filenames are avoided by discarding nonessential local symbols.
+
+The 2026-10-24 candidate `posix-source.krrt6d62` rebuilt byte-identically in
+`fat-replay.yyjps394` and passed the isolated eight-CPU native-partition storage
+suite in `public-service-run.3dp5tTRR`. Its SHA-256 is
+`32a510b850fc85c322d71b902bb6ca497945ef17e3269a6bfe2cf9a254feede8`.
+This is a new qualification candidate, not the existing package's posixc
+binary. Archive staging integration and fresh cold/GUI qualification remain
+pending. The SDK/toolchain remains external; this does not close provenance
+for every platform boot module. Evidence is under
+`aros/tests/evidence/posix-source-package`.
+
 Native destroyed-member changes can be tested with `AROS_TEST_NATIVE_CHANGES`
 set to `1` (CLI attach/replace), `2` (Manager API attach/replace), `3` (CLI add),
 or `4` (Manager API add), alongside `AROS_TEST_REQUIRE_PARTITIONS=1` and

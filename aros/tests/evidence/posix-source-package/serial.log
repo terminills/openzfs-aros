@@ -1,0 +1,912 @@
+[bootstrap:multiboot2] smartfb: using VBE mode 0x417a (1280x800x32, fb=0xFD000000)
+[bootstrap:multiboot2] smartfb: KRN_FBAddr=0x00000000FD000000
+0000000000000000 0x0000000000000000 | 000 | AROS64 - The AROS Research OS
+0000000000000000 0x0000000000000000 | 000 | 64-bit SMP build. Compiled Oct 21 2026
+0000000000000000 0x0000000000000000 | 000 | [Kernel] Local APIC: x2APIC
+00000000c1e19a71 0x0000000000000000 | 000 | ACPI: RSDP 0x00000000000F52E0 000014 (v00 BOCHS )
+00000000c25b2e5e 0x0000000000000000 | 000 | ACPI: RSDT 0x000000007FFE25C5 000034 (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+00000000c2fd9b9e 0x0000000000000000 | 000 | ACPI: FACP 0x000000007FFE2441 000074 (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+00000000c39df2fb 0x0000000000000000 | 000 | ACPI: DSDT 0x000000007FFE0040 002401 (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+00000000c43d4a63 0x0000000000000000 | 000 | ACPI: FACS 0x000000007FFE0000 000040
+00000000c4a3bc5d 0x0000000000000000 | 000 | ACPI: APIC 0x000000007FFE24B5 0000B0 (v03 BOCHS  BXPC     00000001 BXPC 00000001)
+00000000c5448de5 0x0000000000000000 | 000 | ACPI: HPET 0x000000007FFE2565 000038 (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+00000000c5e36b6d 0x0000000000000000 | 000 | ACPI: WAET 0x000000007FFE259D 000028 (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+00000000c6832c1b 0x0000000000000000 | 000 | [HPET] 2 units total
+00000000c742820a 0x00000000013d2020 | 000 | ACPI: 1 ACPI AML tables successfully acquired and loaded
+00000000c7e5c23a 0x00000000013b0130 | 000 | [Kernel:ACPI-IOAPIC] Registering IO-APIC #1 [ID=000] @ 00000000fec00000 [GSI = 0]
+00000000c8861276 0x00000000013b0130 | 000 | [Kernel:ACPI] System Total APICs: 8, 8 usable
+00000000c933ef0e 0x00000000013b0130 | 000 | [Kernel:APIC-IA32] MSI Interrupts Allocatable
+00000000c9a9999d 0x00000000013b0130 | 000 | [Kernel:APIC-IA32]     start = 16
+00000000ca0e2b6a 0x00000000013b0130 | 000 | [Kernel:APIC-IA32]     total = 198
+00000000e837bf3e 0x00000000013b0130 | 000 | [Kernel:APIC-IA32] Heartbeat timer: TSC deadline
+00000000ea36ad4a 0x00000000013dbe80 | 001 | [Kernel:APIC-IA32.001] core_APIC_Calibrate: TSC freq inherited from BSP (2496029 kHz) [hypervisor]
+00000000eb7545a4 0x00000000013dbe80 | 001 | [Kernel:APIC-IA32.001] core_APIC_Calibrate: LAPIC timer freq inherited from BSP (1000403280 Hz) [hypervisor]
+00000000ee59e527 0x00000000013dc4c0 | 002 | [Kernel:APIC-IA32.002] core_APIC_Calibrate: TSC freq inherited from BSP (2496029 kHz) [hypervisor]
+00000000eff71fad 0x00000000013dc4c0 | 002 | [Kernel:APIC-IA32.002] core_APIC_Calibrate: LAPIC timer freq inherited from BSP (1000403280 Hz) [hypervisor]
+00000000f341f06b 0x000000000145c4b0 | 003 | [Kernel:APIC-IA32.003] core_APIC_Calibrate: TSC freq inherited from BSP (2496029 kHz) [hypervisor]
+00000000f489a41e 0x000000000145c4b0 | 003 | [Kernel:APIC-IA32.003] core_APIC_Calibrate: LAPIC timer freq inherited from BSP (1000403280 Hz) [hypervisor]
+00000000f75c8da5 0x0000000001497100 | 004 | [Kernel:APIC-IA32.004] core_APIC_Calibrate: TSC freq inherited from BSP (2496029 kHz) [hypervisor]
+00000000f90a5867 0x0000000001497100 | 004 | [Kernel:APIC-IA32.004] core_APIC_Calibrate: LAPIC timer freq inherited from BSP (1000403280 Hz) [hypervisor]
+00000000fc61efd9 0x00000000014d1db0 | 005 | [Kernel:APIC-IA32.005] core_APIC_Calibrate: TSC freq inherited from BSP (2496029 kHz) [hypervisor]
+00000000fdfd0aea 0x00000000014d1db0 | 005 | [Kernel:APIC-IA32.005] core_APIC_Calibrate: LAPIC timer freq inherited from BSP (1000403280 Hz) [hypervisor]
+00000001014ac2a0 0x000000000150ca60 | 006 | [Kernel:APIC-IA32.006] core_APIC_Calibrate: TSC freq inherited from BSP (2496029 kHz) [hypervisor]
+0000000102e6afd9 0x000000000150ca60 | 006 | [Kernel:APIC-IA32.006] core_APIC_Calibrate: LAPIC timer freq inherited from BSP (1000403280 Hz) [hypervisor]
+000000010640d14b 0x0000000001547710 | 007 | [Kernel:APIC-IA32.007] core_APIC_Calibrate: TSC freq inherited from BSP (2496029 kHz) [hypervisor]
+0000000107dc56b5 0x0000000001547710 | 007 | [Kernel:APIC-IA32.007] core_APIC_Calibrate: LAPIC timer freq inherited from BSP (1000403280 Hz) [hypervisor]
+000000010a481a47 0x00000000013b0130 | 000 | [PCIPC:Driver] PCIPC_InitClass: No ACPI MCFG table
+000000010dfe8423 0x00000000013b0130 | 000 | [Timer] clock: PIT (no invariant TSC)
+000000022166ac7e 0x0000000001850f20 | 000 | [ATI] Init
+0000000221af673e 0x0000000001850f20 | 000 | [ATI] No supported cards found
+000000023b07392d 0x00000000018b2370 | 000 | [HW] HW__HW__AddDriver: Failed to instantiate Driver Object
+Native authenticated admission ready
+OpenZFS management API 3 ready; engine initialized
+0000000275a5107d 0x000000000184bb20 | 000 | Public service op=1 status=0 engine=1 rows=0
+000000027b9d28f8 0x000000000184bb20 | 000 | Public service op=2 status=0 engine=1 rows=0
+000000028195d57f 0x000000000184bb20 | 000 | Public service op=3 status=0 engine=1 rows=0
+00000002878ea916 0x000000000184bb20 | 000 | Public mutation requires authenticated admission PASS
+OpenZFS service engine shutdown complete
+000000029978e141 0x000000000184bb20 | 000 | Public service test line=0
+RESULT public service lifecycle PASS
+Native authenticated admission ready
+OpenZFS management API 3 ready; engine initialized
+00000002bd4c5d5a 0x000000000184bb20 | 000 | Public service op=1 status=0 engine=1 rows=0
+00000002c3450d7e 0x000000000184bb20 | 000 | Public service op=2 status=0 engine=1 rows=0
+00000002c93da9e8 0x000000000184bb20 | 000 | Public service op=3 status=0 engine=1 rows=0
+00000002cf374615 0x000000000184bb20 | 000 | Public mutation requires authenticated admission PASS
+OpenZFS service engine shutdown complete
+00000002e11e9da1 0x000000000184bb20 | 000 | Public service test line=0
+RESULT public service lifecycle PASS
+Writable startup denied: configured security.library and system task identity required.
+00000002f7704a50 0x000000000184bb20 | 000 | Public configuration created-directory owner=65535:65535 protection=8800 type=2
+00000002f8488aaa 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:OpenZFSHostIdentity 5a465301 SAVE >T:companion-identity.log
+00000002f8fc5d6e 0x000000000184bb20 | 000 | Public diagnostic begin T:companion-identity.log
+00000002f9719f1b 0x000000000184bb20 | 000 | Host identity 5A465301 saved to ENVARC and ENV. Start OpenZFS to use it.
+00000002fa052e4d 0x000000000184bb20 | 000 | 
+Public diagnostic end
+00000002fdab1085 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:OpenZFSStartup 5a46530000000001 CHECK
+00000003018b438c 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:OpenZFSStartup 5a46530000000001
+00000003054e6fb7 0x000000000184bb20 | 000 | Public diagnostic begin T:public-cli-errors.log
+0000000305c2e7d4 0x000000000184bb20 | 000 | Startup check: errno=2; no import attempted
+00000003063226a3 0x000000000184bb20 | 000 | 
+Public diagnostic end
+000000030687f349 0x000000000184bb20 | 000 | Public CLI command result=1 ioerr=209: C:OpenZFSStartup 5a46530000000001 CHECK
+000000030a5dca2a 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:OpenZFSStartup 5a46530000000001 PREPARE
+000000030e322bb4 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:OpenZFSStartup 5a46530000000001 RESTORE
+000000030ecef14c 0x000000000184bb20 | 000 | Public companion configuration PASS hostid-save=1 iff-readback=2 trusted-check=1 prepare=1 disabled-restore=1 assigns-restored=1
+000000030fc38de7 0x000000000184bb20 | 000 | Public startup invalid-mode and non-root denial PASS
+Native authenticated admission ready
+OpenZFS management API 3 ready; engine initialized
+000000032227ce03 0x000000000184bb20 | 000 | Public service op=1 status=0 engine=1 rows=0
+000000032820d336 0x000000000184bb20 | 000 | Public service op=2 status=0 engine=1 rows=0
+000000032e1a069a 0x000000000184bb20 | 000 | Public service op=3 status=0 engine=1 rows=0
+Service remains resident: active client sessions or admitted operations.
+000000037c27408c 0x000000000184bb20 | 000 | Public native control descriptors PASS capacity=64 ownership=1 stale=1 session-cleanup=1
+000000038fcbc24d 0x000000000184bb20 | 000 | Public task-exit session reclamation PASS cycles=4 sessions=32
+000000039059acac 0x000000000184bb20 | 000 | Public authenticated sessions ownership, capacity, stale handles and shutdown guard PASS
+0000000394035646 0x000000000184bb20 | 000 | Public mutation requires authenticated admission PASS
+OpenZFS service engine shutdown complete
+00000003a5ec80e9 0x000000000184bb20 | 000 | Public service test line=0
+RESULT public service lifecycle PASS
+Writable startup denied: configured security.library and system task identity required.
+0000000443bf195d 0x000000000184bb20 | 000 | Public configuration created-directory owner=65535:65535 protection=8800 type=2
+000000044494dd31 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:OpenZFSHostIdentity 5a465301 SAVE >T:companion-identity.log
+000000044548fc9e 0x000000000184bb20 | 000 | Public diagnostic begin T:companion-identity.log
+0000000445be6c31 0x000000000184bb20 | 000 | Host identity 5A465301 saved to ENVARC and ENV. Start OpenZFS to use it.
+000000044651f19f 0x000000000184bb20 | 000 | 
+Public diagnostic end
+00000004498e7428 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:OpenZFSStartup 5a46530000000001 CHECK
+000000044cc69aad 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:OpenZFSStartup 5a46530000000001
+0000000450044f5d 0x000000000184bb20 | 000 | Public diagnostic begin T:public-cli-errors.log
+00000004507b78ee 0x000000000184bb20 | 000 | Startup check: errno=2; no import attempted
+0000000450ec226f 0x000000000184bb20 | 000 | 
+Public diagnostic end
+0000000451434590 0x000000000184bb20 | 000 | Public CLI command result=1 ioerr=209: C:OpenZFSStartup 5a46530000000001 CHECK
+0000000454951e67 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:OpenZFSStartup 5a46530000000001 PREPARE
+0000000457eb6698 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:OpenZFSStartup 5a46530000000001 RESTORE
+0000000458897149 0x000000000184bb20 | 000 | Public companion configuration PASS hostid-save=1 iff-readback=2 trusted-check=1 prepare=1 disabled-restore=1 assigns-restored=1
+0000000459804546 0x000000000184bb20 | 000 | Public startup invalid-mode and non-root denial PASS
+Native authenticated admission ready
+OpenZFS management API 3 ready; engine initialized
+000000046e53bfac 0x000000000184bb20 | 000 | Public service op=1 status=0 engine=1 rows=0
+00000004744d52dd 0x000000000184bb20 | 000 | Public service op=2 status=0 engine=1 rows=0
+000000047a45402e 0x000000000184bb20 | 000 | Public service op=3 status=0 engine=1 rows=0
+Service remains resident: active client sessions or admitted operations.
+00000004c7eb9a94 0x000000000184bb20 | 000 | Public native control descriptors PASS capacity=64 ownership=1 stale=1 session-cleanup=1
+00000004d5ebbc5f 0x000000000184bb20 | 000 | Public task-exit session reclamation PASS cycles=4 sessions=32
+00000004d672f418 0x000000000184bb20 | 000 | Public authenticated sessions ownership, capacity, stale handles and shutdown guard PASS
+00000004da16c054 0x000000000184bb20 | 000 | Public mutation requires authenticated admission PASS
+00000004da93dbde 0x000000000184bb20 | 000 | Public fixture directory: AROS Live CD:
+00000006fb5ab32c 0x000000000184bb20 | 000 | Public pool alias identity PASS duplicate-refused=1
+00000006fd44353c 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:OpenZFSRuntimeCheck >T:companion-runtime.log
+00000006fde81e2c 0x000000000184bb20 | 000 | Public diagnostic begin T:companion-runtime.log
+00000006fe5c3d84 0x000000000184bb20 | 000 | OpenZFS runtime check (no pools or devices opened)
+INFO posixc.library 0.43 available
+INFO stdcio.library 0.11 available
+INFO z1.library 1.10 available
+INFO iffparse.library 50.2 available
+INFO muimaster.library 19.81 available
+PASS security.library configured=1
+PASS redirected stdio: transport=0 c0000000700100ba1 0x000000000184bb20 | 000 | hild=0 stdout=1 stderr=1
+PASS ExecHelper subprocess: status=23 lines=1
+PASS LoadSeg execute=on loaded=1 DOS=0
+PASS NewLoadSeg execute=on loaded=1 DOS=0
+PASS LoadSeg execute=off loaded=0 DOS=224
+PASS NewLoadSeg execute=off loaded=0 DOS=224
+PASS LoadSeg execute=on loaded=1 DOS=0
+PASS NewLoadSeg execu0000000701c41618 0x000000000184bb20 | 000 | te=on loaded=1 DOS=0
+Not tested: pipe disconnects, storage I/O, durability, GUI or pool operations.
+PASS checked runtime prerequisites only
+0000000702acb92c 0x000000000184bb20 | 000 | 
+Public diagnostic end
+0000000706ec8bb1 0x000000000184bb20 | 000 | Public diagnostic begin T:public-cli-errors.log
+0000000707617228 0x000000000184bb20 | 000 | Usage: OpenZFSStartup GUID-16-HEX [RESTORE|PREPARE|CHECK]
+0000000707e3a3d8 0x000000000184bb20 | 000 | 
+Public diagnostic end
+0000000708399487 0x000000000184bb20 | 000 | Public CLI command result=1 ioerr=209: C:OpenZFSStartup INVALID
+000000070ba93b8b 0x000000000184bb20 | 000 | Public diagnostic begin T:public-cli-errors.log
+000000070c1f53f7 0x000000000184bb20 | 000 | 
+Public diagnostic end
+000000070c7610c0 0x000000000184bb20 | 000 | Public CLI command result=1 ioerr=209: C:OpenZFSStartup 0000000000000000 CHECK
+000000070feeb0ef 0x000000000184bb20 | 000 | Public diagnostic begin T:public-cli-errors.log
+000000071063625f 0x000000000184bb20 | 000 | Usage: OpenZFSStartupMount POOL GUID-16-HEX
+0000000710d2e4c2 0x000000000184bb20 | 000 | 
+Public diagnostic end
+000000071128d170 0x000000000184bb20 | 000 | Public CLI command result=1 ioerr=209: C:OpenZFSStartupMount public_mirror INVALID
+0000000712424118 0x000000000184bb20 | 000 | Public diagnostic begin T:public-cli-errors.log
+0000000712b6d96f 0x000000000184bb20 | 000 | 
+Public diagnostic end
+00000007130cd527 0x000000000184bb20 | 000 | Public CLI command result=20 ioerr=0: C:OpenZFSHostIdentity 00000000 SAVE
+0000000713b6a5b6 0x000000000184bb20 | 000 | Public diagnostic begin T:public-cli-errors.log
+00000007142b1392 0x000000000184bb20 | 000 | 
+Public diagnostic end
+0000000714835a02 0x000000000184bb20 | 000 | Public CLI command result=20 ioerr=0: C:OpenZFSHostIdentity 12345678
+000000071511285a 0x000000000184bb20 | 000 | Public companion tools PASS runtime-prerequisites=1 invalid-arguments=1 no-identity-write=1
+0000000716a3127d 0x000000000184bb20 | 000 | Public native device read PASS denied=0 mbr=1 blank=8 last-sector=1 max=1 bounds=1 unchanged=1
+00000007175ad3fe 0x000000000184bb20 | 000 | Public native DOS claim RPC PASS denied=0 missing=1 malformed=1
+0000000717ec667f 0x000000000184bb20 | 000 | Public native inquiry PASS denied=0 absent=1 malformed=1 unchanged=1
+000000071892de06 0x000000000184bb20 | 000 | Public native inventory PASS denied=0 cycles=8 units=1 optical=1 identity=1 malformed=1 absent=1
+000000071962695f 0x000000000184bb20 | 000 | Public native sector quirk PASS match=0 partition=1 absent=1 unchanged=1
+000000071ae82d28 0x000000000184bb20 | 000 | Native underlying resolved file=RAM Disk:OZPublicPool/disk0
+000000071b87b820 0x000000000184bb20 | 000 | Public native relative file identity PASS paths=5 missing=3 nondirs=3 cwd=1
+000000071c1ec175 0x000000000184bb20 | 000 | Public upstream native device predicate PASS denied=0 cycles=16 underlying=1
+000000075b71ecee 0x000000000184bb20 | 000 | Public native device wait PASS denied=0 ready=4 settle=1 timeout=1 break=1 errors=1
+000000075c77da0e 0x000000000184bb20 | 000 | Public native DOS preflight PASS inactive=1 whole=1 partition=1 force-denied=1
+000000075d7a8e15 0x000000000184bb20 | 000 | Public native device preflight PASS denied=0 blank=1 type=1 missing=1 malformed=1
+000000075e2b797d 0x000000000583e2c0 | 000 | OpenZFS native I/O failure stage=bounds error=22 device=ata.device unit=1 write=0 offset=268435456 count=512 base=0 size=268435456 sector=512
+000000075f197871 0x000000000184bb20 | 000 | Public native retained device PASS denied=0 lifetime=1
+0000000760dd5290 0x000000000184bb20 | 000 | Public upstream native labels PASS denied=0 blank=4 missing=1 malformed=1 hook=1
+0000000763c29f83 0x000000000184bb20 | 000 | Public native device read PASS denied=1 unchanged=1
+00000007643c9b8a 0x000000000184bb20 | 000 | Public native DOS claim RPC PASS denied=1
+0000000764a9b35f 0x000000000184bb20 | 000 | Public native inquiry PASS denied=1 unchanged=1
+000000076521c2b9 0x000000000184bb20 | 000 | Public native inventory PASS denied=1 unchanged=1
+00000007659eaf31 0x000000000184bb20 | 000 | Public upstream native device predicate PASS denied=1 cycles=16 underlying=1
+000000076637619f 0x000000000184bb20 | 000 | Public native device wait PASS denied=1
+0000000767034747 0x000000000184bb20 | 000 | Public native device preflight PASS denied=1 force-denied=1
+0000000767884096 0x000000000184bb20 | 000 | Public native retained device PASS denied=1 lifetime=1
+000000076808001a 0x000000000184bb20 | 000 | Native scanner candidate=/AROS/ata.device/1
+00000007687f5a1b 0x000000000184bb20 | 000 | Public upstream native scanner PASS denied=1 explicit=1 duplicate=1 malformed=1
+00000007691c4fa6 0x000000000184bb20 | 000 | Public native default discovery PASS denied=1 no-cache=1
+00000007699bbe99 0x000000000184bb20 | 000 | Public upstream native labels PASS denied=1 access-flag=1
+000000076aeb254b 0x000000000184bb20 | 000 | Public native device read PASS denied=0 mbr=1 blank=8 last-sector=1 max=1 bounds=1 unchanged=1
+000000076bfe2c85 0x000000000184bb20 | 000 | Public native DOS preflight PASS inactive=1 whole=1 partition=1 force-denied=1
+000000076ce7d99d 0x000000000184bb20 | 000 | Public native device preflight PASS denied=0 blank=1 type=1 missing=1 malformed=1
+000000076d987c76 0x000000000583e2c0 | 000 | OpenZFS native I/O failure stage=bounds error=22 device=ata.device unit=1 write=0 offset=268435456 count=512 base=0 size=268435456 sector=512
+000000076e87646c 0x000000000184bb20 | 000 | Public native retained device PASS denied=0 lifetime=1
+0000000770332d9b 0x000000000184bb20 | 000 | Public upstream native labels PASS denied=0 blank=4 missing=1 malformed=1 hook=1
+0000000770da1d72 0x000000000184bb20 | 000 | Public native sector quirk PASS match=0 partition=1 absent=1 unchanged=1
+0000000772617555 0x000000000184bb20 | 000 | Native underlying resolved file=RAM Disk:OZPublicPool/disk0
+0000000773017f73 0x000000000184bb20 | 000 | Public native relative file identity PASS paths=5 missing=3 nondirs=3 cwd=1
+000000077398394a 0x000000000184bb20 | 000 | Public upstream native device predicate PASS denied=0 cycles=16 underlying=1
+0000000774499bd6 0x000000000184bb20 | 000 | Public native partition RPC PASS cycles=16 exact-extents=1 slots=1 bounds=1 malformed=1 denied=1 restored=1 unchanged-output=1
+0000000775215922 0x000000000184bb20 | 000 | Public native geometry RPC PASS cycles=16 devices=2 blank=1 absent=1 malformed=1 denied=1 restored=1 unchanged-output=1
+00000007ac36e85a 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zpool create -o cachefile=none -O mountpoint=none public_neighbor /AROS/ata.device/0/partition/2 >T:cli-package-output.txt
+00000007b35be126 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zfs set org.openzfs:discovery=preserved public_neighbor >T:cli-package-output.txt
+00000007e1099393 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zpool create -o cachefile=none -O mountpoint=none -O encryption=aes-256-gcm -O keyformat=raw -O keylocation=file:///RAM/discovery-root.key -O compression=lz4 -O casesensitivity=mixed -O normalization=formD public_discovery /AROS/ata.device/0/partition/0 >T:cli-package-output.txt
+00000007e2d8764e 0x000000000184bb20 | 000 | Public diagnostic begin T:cli-package-output.txt
+00000007e34dfba8 0x000000000184bb20 | 000 | 
+Public diagnostic end
+00000007e8994d60 0x000000000184bb20 | 000 | Public diagnostic begin T:public-cli-errors.log
+00000007e90f5f28 0x000000000184bb20 | 000 | invalid vdev specification
+the following errors must be manually repaired:
+/AROS/ata.device/0/partition/0 is part of active pool 'public_discovery'
+00000007ea049114 0x000000000184bb20 | 000 | 
+Public diagnostic end
+00000007ea5bbfd4 0x000000000184bb20 | 000 | Public CLI command result=1 ioerr=209: C:zpool create -f -o cachefile=none -O mountpoint=none public_reuse_denied /AROS/ata.device/0/partition/0
+00000007efd5d6b1 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zfs get -H -o value encryption public_discovery >T:cli-package-output.txt
+00000007f52c0946 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zfs get -H -o value keyformat public_discovery >T:cli-package-output.txt
+00000007fa85d282 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zfs get -H -o value encryptionroot public_discovery >T:cli-package-output.txt
+00000007ffddb59c 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zfs get -H -o value compression public_discovery >T:cli-package-output.txt
+00000008064da725 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zfs get -H -o value casesensitivity public_discovery >T:cli-package-output.txt
+000000080cce6c7e 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zfs get -H -o value normalization public_discovery >T:cli-package-output.txt
+00000008251c5241 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zpool export public_discovery >T:cli-package-output.txt
+0000000825ce9d07 0x000000000184bb20 | 000 | Public diagnostic begin T:cli-package-output.txt
+0000000826444acf 0x000000000184bb20 | 000 | 
+Public diagnostic end
+000000082c2a7be4 0x000000000184bb20 | 000 | Public diagnostic begin T:public-cli-errors.log
+000000082c9fa478 0x000000000184bb20 | 000 | cannot create 'public_reuse_denied': pool already exists
+000000082d1ffec5 0x000000000184bb20 | 000 | 
+Public diagnostic end
+000000082d78da9f 0x000000000184bb20 | 000 | Public CLI command result=1 ioerr=209: C:zpool create -f -o cachefile=none -O mountpoint=none public_reuse_denied /AROS/ata.device/0/partition/0
+000000083b97a5a2 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zpool import >T:cli-package-output.txt
+000000083c32f485 0x000000000184bb20 | 000 | Public diagnostic begin T:cli-package-output.txt
+000000083ca8e771 0x000000000184bb20 | 000 |   pool: public_discovery
+    id: 4516193030213289367
+ state: ONLINE
+action: The pool can be imported using its name or numeric identifier.
+config:
+
+	public_discovery            ONLINE
+	  ata.device/0/partition/0  ONLINE
+000000083dfca3e7 0x000000000184bb20 | 000 | 
+Public diagnostic end
+0000000854069422 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zpool import -N -o cachefile=none -o readonly=on public_discovery >T:cli-package-output.txt
+0000000854e3f592 0x000000000184bb20 | 000 | Public diagnostic begin T:cli-package-output.txt
+000000085559af44 0x000000000184bb20 | 000 | 
+Public diagnostic end
+000000085b246324 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zfs get -H -o value keystatus public_discovery >T:cli-package-output.txt
+0000000861336044 0x000000000184bb20 | 000 | Public diagnostic begin T:public-cli-errors.log
+0000000861a8382e 0x000000000184bb20 | 000 | Key load error: Incorrect key provided for 'public_discovery'.
+000000086230907a 0x000000000184bb20 | 000 | 
+Public diagnostic end
+000000086286a7a3 0x000000000184bb20 | 000 | Public CLI command result=-1 ioerr=209: C:zfs load-key -L file:///RAM/discovery-wrong.key public_discovery
+000000086809aba8 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zfs get -H -o value keystatus public_discovery >T:cli-package-output.txt
+OpenZFS mount failed stage=objset-own errno=13
+000000086ecc6de0 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zfs load-key public_discovery
+000000087442ee61 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zfs get -H -o value encryption public_discovery >T:cli-package-output.txt
+0000000879d19bd9 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zfs get -H -o value keyformat public_discovery >T:cli-package-output.txt
+000000087f6c65e7 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zfs get -H -o value encryptionroot public_discovery >T:cli-package-output.txt
+00000008850098c0 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zfs get -H -o value compression public_discovery >T:cli-package-output.txt
+000000088bfad46f 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zfs get -H -o value casesensitivity public_discovery >T:cli-package-output.txt
+000000089289aedc 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zfs get -H -o value normalization public_discovery >T:cli-package-output.txt
+0000000899d54660 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zpool get -H -o value readonly public_discovery >T:cli-package-output.txt
+000000089a9d78c4 0x000000000184bb20 | 000 | Public diagnostic begin T:cli-package-output.txt
+000000089b142dd4 0x000000000184bb20 | 000 | on
+000000089b5104ed 0x000000000184bb20 | 000 | 
+Public diagnostic end
+00000008a16412ad 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zpool export public_discovery >T:cli-package-output.txt
+00000008a214e993 0x000000000184bb20 | 000 | Public diagnostic begin T:cli-package-output.txt
+00000008a28dfed7 0x000000000184bb20 | 000 | 
+Public diagnostic end
+00000008c6b9471c 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zpool import -N -o cachefile=none public_discovery >T:cli-package-output.txt
+00000008c7871606 0x000000000184bb20 | 000 | Public diagnostic begin T:cli-package-output.txt
+00000008c7fe6530 0x000000000184bb20 | 000 | 
+Public diagnostic end
+00000008cd6ce5a5 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zfs get -H -o value keystatus public_discovery >T:cli-package-output.txt
+00000008d3841f2b 0x000000000184bb20 | 000 | Public diagnostic begin T:public-cli-errors.log
+00000008d3f9bd9e 0x000000000184bb20 | 000 | Key load error: Incorrect key provided for 'public_discovery'.
+00000008d4835eb9 0x000000000184bb20 | 000 | 
+Public diagnostic end
+00000008d4da5985 0x000000000184bb20 | 000 | Public CLI command result=-1 ioerr=209: C:zfs load-key -L file:///RAM/discovery-wrong.key public_discovery
+00000008dac569f7 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zfs get -H -o value keystatus public_discovery >T:cli-package-output.txt
+OpenZFS mount failed stage=objset-own errno=13
+00000008e1d5b6f7 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zfs load-key public_discovery
+00000008e7882d5f 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zfs get -H -o value encryption public_discovery >T:cli-package-output.txt
+00000008ed8ad68a 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zfs get -H -o value keyformat public_discovery >T:cli-package-output.txt
+00000008f3702b9a 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zfs get -H -o value encryptionroot public_discovery >T:cli-package-output.txt
+00000008f970e7b4 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zfs get -H -o value compression public_discovery >T:cli-package-output.txt
+0000000943e2122d 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zfs get -H -o value casesensitivity public_discovery >T:cli-package-output.txt
+000000094b1be02d 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zfs get -H -o value normalization public_discovery >T:cli-package-output.txt
+000000095e6a5eb1 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zpool destroy public_discovery >T:cli-package-output.txt
+000000095f1d5b97 0x000000000184bb20 | 000 | Public diagnostic begin T:cli-package-output.txt
+000000095f93f40a 0x000000000184bb20 | 000 | 
+Public diagnostic end
+00000009bc7a412e 0x000000000184bb20 | 000 | Public diagnostic begin T:public-cli-errors.log
+00000009bcf6d55e 0x000000000184bb20 | 000 | cannot create 'public_discovery': insufficient replicas
+00000009bd7508b1 0x000000000184bb20 | 000 | 
+Public diagnostic end
+00000009bdcc0e86 0x000000000184bb20 | 000 | Public CLI command result=1 ioerr=209: C:zpool create -o cachefile=none -O mountpoint=none -O encryption=aes-256-gcm -O keyformat=raw -O keylocation=file:///RAM/discovery-root.key -O compression=lz4 -O casesensitivity=mixed -O normalization=formD public_discovery /AROS/ata.device/0/partition/0
+00000009e423a29c 0x000000000184bb20 | 000 | Public diagnostic begin T:public-cli-errors.log
+00000009e4a7d756 0x000000000184bb20 | 000 | cannot create 'public_discovery': insufficient replicas
+00000009e5266d7d 0x000000000184bb20 | 000 | 
+Public diagnostic end
+00000009e57c93b0 0x000000000184bb20 | 000 | Public CLI command result=1 ioerr=209: C:zpool create -o cachefile=none -O mountpoint=none -O encryption=aes-256-gcm -O keyformat=raw -O keylocation=file:///RAM/discovery-root.key -O compression=lz4 -O casesensitivity=mixed -O normalization=formD public_discovery /AROS/ata.device/0/partition/0
+0000000a058bf718 0x000000000184bb20 | 000 | Public diagnostic begin T:public-cli-errors.log
+0000000a06013fcd 0x000000000184bb20 | 000 | cannot create 'public_discovery': insufficient replicas
+0000000a067f7064 0x000000000184bb20 | 000 | 
+Public diagnostic end
+0000000a06d5ae9d 0x000000000184bb20 | 000 | Public CLI command result=1 ioerr=209: C:zpool create -o cachefile=none -O mountpoint=none -O encryption=aes-256-gcm -O keyformat=raw -O keylocation=file:///RAM/discovery-root.key -O compression=lz4 -O casesensitivity=mixed -O normalization=formD public_discovery /AROS/ata.device/0/partition/0
+0000000a277c2744 0x000000000184bb20 | 000 | Public diagnostic begin T:public-cli-errors.log
+0000000a27f1904c 0x000000000184bb20 | 000 | cannot create 'public_discovery': insufficient replicas
+0000000a286fd646 0x000000000184bb20 | 000 | 
+Public diagnostic end
+0000000a28c63888 0x000000000184bb20 | 000 | Public CLI command result=1 ioerr=209: C:zpool create -o cachefile=none -O mountpoint=none -O encryption=aes-256-gcm -O keyformat=raw -O keylocation=file:///RAM/discovery-root.key -O compression=lz4 -O casesensitivity=mixed -O normalization=formD public_discovery /AROS/ata.device/0/partition/0
+0000000a43e89c69 0x000000000184bb20 | 000 | Public native corrupt reuse PASS labels=4 create-denied=4 full-extent-unchanged=4 restored=4
+0000000a5654b3a6 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zpool create -o cachefile=none -O mountpoint=none -O encryption=aes-256-gcm -O keyformat=raw -O keylocation=file:///RAM/discovery-root.key -O compression=lz4 -O casesensitivity=mixed -O normalization=formD public_discovery /AROS/ata.device/0/partition/0
+0000000a7216424e 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zpool destroy public_discovery
+0000000a72a868db 0x000000000184bb20 | 000 | Public native destroyed reuse PASS same-extent=1 no-force=1 old-payload-absent=1 new-write=1 destroyed=1
+0000000a7802b250 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zpool list -H -o health public_neighbor >T:cli-package-output.txt
+0000000a7d62c1fe 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zfs get -H -o value org.openzfs:discovery public_neighbor >T:cli-package-output.txt
+0000000a8841c47b 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zpool destroy public_neighbor >T:cli-package-output.txt
+0000000aa2aec9e4 0x000000000184bb20 | 000 | Public diagnostic begin T:public-cli-errors.log
+0000000aa3250320 0x000000000184bb20 | 000 | cannot create 'public_discovery': pool already exists
+0000000aa3a1680c 0x000000000184bb20 | 000 | 
+Public diagnostic end
+0000000aa3f899a1 0x000000000184bb20 | 000 | Public CLI command result=1 ioerr=209: C:zpool create -o cachefile=none -O mountpoint=none -O encryption=aes-256-gcm -O keyformat=raw -O keylocation=file:///RAM/discovery-root.key -O compression=lz4 -O casesensitivity=mixed -O normalization=formD public_discovery /AROS/ata.device/0/partition/0
+0000000ac43fc022 0x000000000184bb20 | 000 | Public diagnostic begin T:public-cli-errors.log
+0000000ac4b51958 0x000000000184bb20 | 000 | cannot create 'public_discovery': insufficient replicas
+0000000ac5348418 0x000000000184bb20 | 000 | 
+Public diagnostic end
+0000000ac58b3781 0x000000000184bb20 | 000 | Public CLI command result=1 ioerr=209: C:zpool create -o cachefile=none -O mountpoint=none -O encryption=aes-256-gcm -O keyformat=raw -O keylocation=file:///RAM/discovery-root.key -O compression=lz4 -O casesensitivity=mixed -O normalization=formD public_discovery /AROS/ata.device/0/partition/0
+0000000ae6350bba 0x000000000184bb20 | 000 | Public diagnostic begin T:public-cli-errors.log
+0000000ae6aab504 0x000000000184bb20 | 000 | cannot create 'public_discovery': insufficient replicas
+0000000ae729a0b7 0x000000000184bb20 | 000 | 
+Public diagnostic end
+0000000ae780075e 0x000000000184bb20 | 000 | Public CLI command result=1 ioerr=209: C:zpool create -o cachefile=none -O mountpoint=none -O encryption=aes-256-gcm -O keyformat=raw -O keylocation=file:///RAM/discovery-root.key -O compression=lz4 -O casesensitivity=mixed -O normalization=formD public_discovery /AROS/ata.device/0/partition/0
+0000000b0688ab7e 0x000000000184bb20 | 000 | Public diagnostic begin T:public-cli-errors.log
+0000000b070017c2 0x000000000184bb20 | 000 | cannot create 'public_discovery': insufficient replicas
+0000000b077eb8d9 0x000000000184bb20 | 000 | 
+Public diagnostic end
+0000000b07d4de8f 0x000000000184bb20 | 000 | Public CLI command result=1 ioerr=209: C:zpool create -o cachefile=none -O mountpoint=none -O encryption=aes-256-gcm -O keyformat=raw -O keylocation=file:///RAM/discovery-root.key -O compression=lz4 -O casesensitivity=mixed -O normalization=formD public_discovery /AROS/ata.device/0/partition/0
+0000000b208a2737 0x000000000184bb20 | 000 | Public native conflicting reuse PASS labels=4 create-denied=4 full-extent-unchanged=4 restored=4
+0000000b3178db1a 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zpool create -o cachefile=none -O mountpoint=none -O encryption=aes-256-gcm -O keyformat=raw -O keylocation=file:///RAM/discovery-root.key -O compression=lz4 -O casesensitivity=mixed -O normalization=formD public_discovery /AROS/ata.device/0/partition/0
+0000000b4c48680c 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zpool destroy public_discovery
+0000000b4cd94b74 0x000000000184bb20 | 000 | Public native conflicting restore PASS recreate=1 exact-data=1 destroyed=1
+0000000b4d70db29 0x000000000184bb20 | 000 | Public native reuse guards PASS active-force-denied=1 exported-force-denied=1 original-data-preserved=1
+0000000b4e31ca46 0x000000000184bb20 | 000 | Public native discovery PASS create=1 default-scan=1 readonly-import=1 rw-import=1 destroy=1
+0000000b4ee98681 0x000000000184bb20 | 000 | Public native discovery coexistence PASS separate-partitions=1 neighbor-online=1 neighbor-property=1 cleanup=1
+0000000b4facbceb 0x000000000184bb20 | 000 | Public native discovery data PASS handler-write=1 readonly-import-read=1 readonly-write-denied=1 writable-import-read=1 cleanup=1
+0000000b5089e922 0x000000000184bb20 | 000 | Public native encrypted root PASS properties=6 locked-import=2 mount-denied=2 key-reload=2 exact-data=1 cleanup=1
+0000000b5155a9f9 0x000000000184bb20 | 000 | Public native encrypted root wrong key PASS denied=2 remains-locked=2 mount-denied=2 correct-recovery=2
+0000000b8a2f349d 0x000000000184bb20 | 000 | Public storage op=5 status=0 Authenticated pool creation returned errno=0
+0000000ba31a0979 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zpool destroy public_file_reuse
+0000000c20b62bc9 0x000000000184bb20 | 000 | Public storage op=5 status=9 Authenticated pool creation returned errno=4096
+0000000c28934886 0x000000000184bb20 | 000 | Public diagnostic begin T:public-cli-errors.log
+0000000c2909e6bc 0x000000000184bb20 | 000 | cannot create 'public_file_refused': insufficient replicas
+0000000c298bd77b 0x000000000184bb20 | 000 | 
+Public diagnostic end
+0000000c29e1bbdc 0x000000000184bb20 | 000 | Public CLI command result=1 ioerr=209: C:zpool create -f -o cachefile=none -O mountpoint=none public_file_refused mirror /RAM/OZFileReuse/disk0 /RAM/OZFileReuse/disk1
+0000000c3922d85b 0x000000000184bb20 | 000 | Public storage op=5 status=9 Authenticated pool creation returned errno=4096
+0000000c3f5012b1 0x000000000184bb20 | 000 | Public diagnostic begin T:public-cli-errors.log
+0000000c3fc5391f 0x000000000184bb20 | 000 | cannot create 'public_file_refused': insufficient replicas
+0000000c404756e3 0x000000000184bb20 | 000 | 
+Public diagnostic end
+0000000c409e9912 0x000000000184bb20 | 000 | Public CLI command result=1 ioerr=209: C:zpool create -f -o cachefile=none -O mountpoint=none public_file_refused mirror /RAM/OZFileReuse/disk0 /RAM/OZFileReuse/disk1
+0000000c4efbdd3f 0x000000000184bb20 | 000 | Public storage op=5 status=9 Authenticated pool creation returned errno=4096
+0000000c54e5d80e 0x000000000184bb20 | 000 | Public diagnostic begin T:public-cli-errors.log
+0000000c555a5a53 0x000000000184bb20 | 000 | cannot create 'public_file_refused': insufficient replicas
+0000000c55def006 0x000000000184bb20 | 000 | 
+Public diagnostic end
+0000000c56350347 0x000000000184bb20 | 000 | Public CLI command result=1 ioerr=209: C:zpool create -f -o cachefile=none -O mountpoint=none public_file_refused mirror /RAM/OZFileReuse/disk0 /RAM/OZFileReuse/disk1
+0000000c64a3cb0c 0x000000000184bb20 | 000 | Public storage op=5 status=9 Authenticated pool creation returned errno=4096
+0000000c6ab91e3e 0x000000000184bb20 | 000 | Public diagnostic begin T:public-cli-errors.log
+0000000c6b2d62b2 0x000000000184bb20 | 000 | cannot create 'public_file_refused': insufficient replicas
+0000000c6bafd88c 0x000000000184bb20 | 000 | 
+Public diagnostic end
+0000000c6c05a3ed 0x000000000184bb20 | 000 | Public CLI command result=1 ioerr=209: C:zpool create -f -o cachefile=none -O mountpoint=none public_file_refused mirror /RAM/OZFileReuse/disk0 /RAM/OZFileReuse/disk1
+0000000c7a600041 0x000000000184bb20 | 000 | Public storage op=5 status=9 Authenticated pool creation returned errno=17
+0000000c8004cccf 0x000000000184bb20 | 000 | Public diagnostic begin T:public-cli-errors.log
+0000000c80798d7b 0x000000000184bb20 | 000 | cannot create 'public_file_refused': pool already exists
+0000000c80f89d9b 0x000000000184bb20 | 000 | 
+Public diagnostic end
+0000000c814e838c 0x000000000184bb20 | 000 | Public CLI command result=1 ioerr=209: C:zpool create -f -o cachefile=none -O mountpoint=none public_file_refused mirror /RAM/OZFileReuse/disk0 /RAM/OZFileReuse/disk1
+0000000c8f60515d 0x000000000184bb20 | 000 | Public storage op=5 status=9 Authenticated pool creation returned errno=4096
+0000000c959e130c 0x000000000184bb20 | 000 | Public diagnostic begin T:public-cli-errors.log
+0000000c96131bfc 0x000000000184bb20 | 000 | cannot create 'public_file_refused': insufficient replicas
+0000000c9694dcc8 0x000000000184bb20 | 000 | 
+Public diagnostic end
+0000000c96eac705 0x000000000184bb20 | 000 | Public CLI command result=1 ioerr=209: C:zpool create -f -o cachefile=none -O mountpoint=none public_file_refused mirror /RAM/OZFileReuse/disk0 /RAM/OZFileReuse/disk1
+0000000ca537eced 0x000000000184bb20 | 000 | Public storage op=5 status=9 Authenticated pool creation returned errno=4096
+0000000cab58be04 0x000000000184bb20 | 000 | Public diagnostic begin T:public-cli-errors.log
+0000000cabcd8761 0x000000000184bb20 | 000 | cannot create 'public_file_refused': insufficient replicas
+0000000cac4f66a5 0x000000000184bb20 | 000 | 
+Public diagnostic end
+0000000caca5e59d 0x000000000184bb20 | 000 | Public CLI command result=1 ioerr=209: C:zpool create -f -o cachefile=none -O mountpoint=none public_file_refused mirror /RAM/OZFileReuse/disk0 /RAM/OZFileReuse/disk1
+0000000cbb2e3dea 0x000000000184bb20 | 000 | Public storage op=5 status=9 Authenticated pool creation returned errno=4096
+0000000cc16fb17f 0x000000000184bb20 | 000 | Public diagnostic begin T:public-cli-errors.log
+0000000cc1e48504 0x000000000184bb20 | 000 | cannot create 'public_file_refused': insufficient replicas
+0000000cc26734e0 0x000000000184bb20 | 000 | 
+Public diagnostic end
+0000000cc2be7935 0x000000000184bb20 | 000 | Public CLI command result=1 ioerr=209: C:zpool create -f -o cachefile=none -O mountpoint=none public_file_refused mirror /RAM/OZFileReuse/disk0 /RAM/OZFileReuse/disk1
+0000000ce2bd4815 0x000000000184bb20 | 000 | Public storage op=5 status=9 Authenticated pool creation returned errno=4096
+0000000ce9bbb9b2 0x000000000184bb20 | 000 | Public diagnostic begin T:public-cli-errors.log
+0000000cea3091ce 0x000000000184bb20 | 000 | cannot create 'public_file_refused': insufficient replicas
+0000000ceab40d2e 0x000000000184bb20 | 000 | 
+Public diagnostic end
+0000000ceb09f577 0x000000000184bb20 | 000 | Public CLI command result=1 ioerr=209: C:zpool create -f -o cachefile=none -O mountpoint=none public_file_refused mirror /RAM/OZFileReuse/disk0 /RAM/OZFileReuse/disk1
+0000000d0cdda478 0x000000000184bb20 | 000 | Public storage op=5 status=9 Authenticated pool creation returned errno=4096
+0000000d13329af9 0x000000000184bb20 | 000 | Public diagnostic begin T:public-cli-errors.log
+0000000d13a8744f 0x000000000184bb20 | 000 | cannot create 'public_file_refused': insufficient replicas
+0000000d142b19b8 0x000000000184bb20 | 000 | 
+Public diagnostic end
+0000000d14815328 0x000000000184bb20 | 000 | Public CLI command result=1 ioerr=209: C:zpool create -f -o cachefile=none -O mountpoint=none public_file_refused mirror /RAM/OZFileReuse/disk0 /RAM/OZFileReuse/disk1
+0000000d22e4be55 0x000000000184bb20 | 000 | Public storage op=5 status=9 Authenticated pool creation returned errno=4096
+0000000d292569b8 0x000000000184bb20 | 000 | Public diagnostic begin T:public-cli-errors.log
+0000000d299a0a75 0x000000000184bb20 | 000 | cannot create 'public_file_refused': insufficient replicas
+0000000d2a1c1240 0x000000000184bb20 | 000 | 
+Public diagnostic end
+0000000d2a721aaa 0x000000000184bb20 | 000 | Public CLI command result=1 ioerr=209: C:zpool create -f -o cachefile=none -O mountpoint=none public_file_refused mirror /RAM/OZFileReuse/disk0 /RAM/OZFileReuse/disk1
+0000000d38f63e67 0x000000000184bb20 | 000 | Public storage op=5 status=9 Authenticated pool creation returned errno=4096
+0000000d3f0c627c 0x000000000184bb20 | 000 | Public diagnostic begin T:public-cli-errors.log
+0000000d3f810af0 0x000000000184bb20 | 000 | cannot create 'public_file_refused': insufficient replicas
+0000000d40034745 0x000000000184bb20 | 000 | 
+Public diagnostic end
+0000000d4059e9b0 0x000000000184bb20 | 000 | Public CLI command result=1 ioerr=209: C:zpool create -f -o cachefile=none -O mountpoint=none public_file_refused mirror /RAM/OZFileReuse/disk0 /RAM/OZFileReuse/disk1
+0000000d4e830954 0x000000000184bb20 | 000 | Public file label denial PASS corrupt=4 conflicting-member=4 checksum=4 manager-denied=12 forced-cli-denied=12 whole-members-unchanged=12 restored=12
+0000000d611ba58a 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zpool create -o cachefile=none -O mountpoint=none public_file_reuse mirror /RAM/OZFileReuse/disk0 /RAM/OZFileReuse/disk1
+0000000d7b76c775 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zpool export public_file_reuse
+0000000d7c2a23c4 0x000000000184bb20 | 000 | Public storage op=5 status=9 Authenticated pool creation returned errno=17
+0000000d81b9ab02 0x000000000184bb20 | 000 | Public diagnostic begin T:public-cli-errors.log
+0000000d822e5c0e 0x000000000184bb20 | 000 | cannot create 'public_file_refused': pool already exists
+0000000d82ae94aa 0x000000000184bb20 | 000 | 
+Public diagnostic end
+0000000d83078d3a 0x000000000184bb20 | 000 | Public CLI command result=1 ioerr=209: C:zpool create -f -o cachefile=none -O mountpoint=none public_file_refused mirror /RAM/OZFileReuse/disk0 /RAM/OZFileReuse/disk1
+0000000d9f72fe50 0x000000000184bb20 | 000 | Public storage op=7 status=0 Authenticated pool import returned errno=0
+0000000db1953684 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zpool destroy public_file_reuse
+0000000dbb79dac4 0x000000000184bb20 | 000 | Public storage op=5 status=0 Authenticated pool creation returned errno=0
+0000000dd40b8817 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zpool destroy public_file_reuse
+0000000ebf1d3d5a 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zpool create -o cachefile=none -o ashift=12 -O mountpoint=none public_reuse_source mirror /RAM/OZReuseChanges/disk0 /RAM/OZReuseChanges/disk1
+0000000ed5ee2e68 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zpool create -o cachefile=none -o ashift=12 -O mountpoint=none public_reuse_target /RAM/OZReuseChanges/disk2
+0000000f3130fcec 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zpool create -o cachefile=none -o ashift=12 -O mountpoint=none public_reuse_donor mirror /RAM/OZReuseChanges/disk3 /RAM/OZReuseChanges/disk4
+0000000f45959d00 0x000000000184bb20 | 000 | Public diagnostic begin T:public-cli-errors.log
+0000000f460b3c86 0x000000000184bb20 | 000 | invalid vdev specification
+the following errors must be manually repaired:
+/RAM Disk/OZReuseChanges/disk0 is part of active pool 'public_reuse_source'
+0000000f4702ba24 0x000000000184bb20 | 000 | 
+Public diagnostic end
+0000000f4758d7a6 0x000000000184bb20 | 000 | Public CLI command result=1 ioerr=209: C:zpool attach -f public_reuse_target 18263489739454515428 /RAM/OZReuseChanges/disk0
+0000000f4e122e71 0x000000000184bb20 | 000 | Public diagnostic begin T:public-cli-errors.log
+0000000f4e89d421 0x000000000184bb20 | 000 | invalid vdev specification
+the following errors must be manually repaired:
+/RAM Disk/OZReuseChanges/disk0 is part of active pool 'public_reuse_source'
+0000000f4f813a68 0x000000000184bb20 | 000 | 
+Public diagnostic end
+0000000f4fd74174 0x000000000184bb20 | 000 | Public CLI command result=1 ioerr=209: C:zpool replace -f public_reuse_target 18263489739454515428 /RAM/OZReuseChanges/disk0
+0000000f56669cfb 0x000000000184bb20 | 000 | Public diagnostic begin T:public-cli-errors.log
+0000000f56db96fa 0x000000000184bb20 | 000 | invalid vdev specification
+the following errors must be manually repaired:
+/RAM Disk/OZReuseChanges/disk0 is part of active pool 'public_reuse_source'
+/RAM Disk/OZReuseChanges/disk1 is part of active pool 'public_reuse_source'
+0000000f58339f3e 0x000000000184bb20 | 000 | 
+Public diagnostic end
+0000000f588a355b 0x000000000184bb20 | 000 | Public CLI command result=1 ioerr=209: C:zpool add -f public_reuse_target mirror /RAM/OZReuseChanges/disk0 /RAM/OZReuseChanges/disk1
+0000000f6ba51840 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zpool export public_reuse_source
+0000000f719805e1 0x000000000184bb20 | 000 | Public diagnostic begin T:public-cli-errors.log
+0000000f720c9f00 0x000000000184bb20 | 000 | cannot attach /RAM/OZReuseChanges/disk0 to 18263489739454515428: pool already exists
+0000000f72aecdd9 0x000000000184bb20 | 000 | 
+Public diagnostic end
+0000000f73058287 0x000000000184bb20 | 000 | Public CLI command result=-1 ioerr=209: C:zpool attach -f public_reuse_target 18263489739454515428 /RAM/OZReuseChanges/disk0
+0000000f78e9c55f 0x000000000184bb20 | 000 | Public diagnostic begin T:public-cli-errors.log
+0000000f795e87e6 0x000000000184bb20 | 000 | cannot replace 18263489739454515428 with /RAM/OZReuseChanges/disk0: pool already exists
+0000000f7a074b9c 0x000000000184bb20 | 000 | 
+Public diagnostic end
+0000000f7a5dc021 0x000000000184bb20 | 000 | Public CLI command result=-1 ioerr=209: C:zpool replace -f public_reuse_target 18263489739454515428 /RAM/OZReuseChanges/disk0
+0000000f8056e47b 0x000000000184bb20 | 000 | Public diagnostic begin T:public-cli-errors.log
+0000000f80cb79b2 0x000000000184bb20 | 000 | cannot add to 'public_reuse_target': pool already exists
+0000000f814b3567 0x000000000184bb20 | 000 | 
+Public diagnostic end
+0000000f81a13ecb 0x000000000184bb20 | 000 | Public CLI command result=1 ioerr=209: C:zpool add -f public_reuse_target mirror /RAM/OZReuseChanges/disk0 /RAM/OZReuseChanges/disk1
+0000000fa5ff28fa 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zpool import -N -o cachefile=none -d /RAM/OZReuseChanges/disk0 -d /RAM/OZReuseChanges/disk1 public_reuse_source
+0000000fb28cb13c 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zpool destroy public_reuse_source
+0000000fc1ce32e7 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zpool attach  public_reuse_target 18263489739454515428 /RAM/OZReuseChanges/disk0
+0000000fcf91ce43 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zpool wait -t resilver public_reuse_target
+0000000fea742896 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zpool replace  public_reuse_target 14617304523691152025 /RAM/OZReuseChanges/disk1
+0000001002e292c3 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zpool wait -t resilver,replace public_reuse_target
+000000101618a954 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zpool destroy public_reuse_donor
+000000102b683da6 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zpool add  public_reuse_target mirror /RAM/OZReuseChanges/disk3 /RAM/OZReuseChanges/disk4
+00000010424b3ed3 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zpool destroy public_reuse_target
+00000012e63e6743 0x000000000184bb20 | 000 | Public destroyed changes CLI PASS attach=1 replace=1 add=1 active-force-refused=3 exported-force-refused=3 exact-read=5 cleanup=1
+000000130bfa86c4 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zpool create -o cachefile=none -o ashift=12 -O mountpoint=none public_reuse_source mirror /RAM/OZReuseChanges/disk0 /RAM/OZReuseChanges/disk1
+000000131ea0aa5b 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zpool create -o cachefile=none -o ashift=12 -O mountpoint=none public_reuse_target /RAM/OZReuseChanges/disk2
+000000133aef10ad 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zpool create -o cachefile=none -o ashift=12 -O mountpoint=none public_reuse_donor mirror /RAM/OZReuseChanges/disk3 /RAM/OZReuseChanges/disk4
+000000135d104c9c 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zpool export public_reuse_source
+00000013825a4f20 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zpool import -N -o cachefile=none -d /RAM/OZReuseChanges/disk0 -d /RAM/OZReuseChanges/disk1 public_reuse_source
+000000138ede7a82 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zpool destroy public_reuse_source
+00000013a4d0db4b 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zpool wait -t resilver public_reuse_target
+00000013ce42ee97 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zpool wait -t resilver,replace public_reuse_target
+00000013e109f93a 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zpool destroy public_reuse_donor
+00000014059e0e03 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zpool destroy public_reuse_target
+00000016ffadcb89 0x000000000184bb20 | 000 | Public destroyed changes Manager PASS attach=1 replace=1 add=1 active-refused=3 exported-refused=3 exact-read=5 cleanup=1
+00000017008d8f6c 0x000000000184bb20 | 000 | Public file destroyed reuse PASS cli=1 manager-api=1 old-payload-absent=2 exact-read=3 exported-refused=2 cleanup=1
+0000001701689b66 0x000000000184bb20 | 000 | Public native engine version value=zfs-2.4.4-1
+0000001701e38c40 0x000000000184bb20 | 000 | Public native engine version PASS query=1 upstream=1 bounds=1 missing=1
+000000170283354c 0x000000000184bb20 | 000 | Public native supported tables PASS feature=1 properties=3 unknown=1 missing=1
+000000170327ca80 0x000000000184bb20 | 000 | Public native CPU topology PASS cpus=8 queries=128
+0000001703a7188a 0x000000000184bb20 | 000 | Public native init diagnostics PASS missing=1 denied=1 protocol=1 settings=1 memory=1
+000000174c0e0cfa 0x000000000184bb20 | 000 | Public upstream libzfs init PASS cycles=80 simultaneous=2
+0000001793e21567 0x000000000184bb20 | 000 | Public upstream init failure cleanup PASS cycles=80 survivor=1 errno=EINVAL
+00000017bfb10f63 0x000000000184bb20 | 000 | Public storage op=5 status=0 Authenticated pool creation returned errno=0
+00000017c051e537 0x000000000184bb20 | 000 | Public pool assign PASS op=5 kind=0 removed=1
+00000017cb69169d 0x000000000184bb20 | 000 | Public pool root payload PASS written=1 flushed=1 detached=1
+RESULT native event cursor PASS tiny-retry=1 seek-start-eid=1 seek-end-empty=1 bad-handle=1
+Public upstream snapshot ioctls PASS create=1 hold=1 onexit=1 release=1 destroy=1 schema=1
+Public upstream snapshot authorization PASS changed-user=1 own-session-denied=1 no-mutation=1
+Public upstream libzfs_core PASS snapshot=1 temporary-hold=1 destroy=1 reopen=1
+Public upstream enumeration PASS dataset=1 snapshot=1 properties=1 end=1 snapshot-growth=1
+Public upstream dataset ioctls PASS create=1 clone=1 rollback=1 volume=1 handler-ready=1
+Public upstream ioctl transport PASS stats=1 configs=1 resize=1 bounds=1 stale=1
+0000001811ff3420 0x000000000184bb20 | 000 | Public upstream hostid PASS service-identity=1 client-environment-ignored=1
+000000184fbbcd91 0x000000000184bb20 | 000 | Public upstream pool property authorization PASS own-session-denied=1 fresh-read=1 no-mutation=1
+00000018507d5600 0x000000000184bb20 | 000 | Public upstream property ioctls PASS set=4 inherit=4 fresh-read=8 denied-set=1 denied-inherit=1 no-mutation=1
+00000018513fa4c6 0x000000000184bb20 | 000 | Public upstream property sources PASS received=1 local-precedence=1 revert-received=1 invalid-value=1 invalid-source=1
+0000001854a80fbd 0x000000000184bb20 | 000 | Public upstream shares object PASS native-metadata=1 absent=1
+000000185f84a392 0x000000000184bb20 | 000 | Public upstream bookmark authorization PASS own-session=1 create-denied=1 destroy-denied=1 unchanged=1
+000000186e36cb63 0x000000000184bb20 | 000 | Public upstream bookmark delegation PASS grant=1 fresh-acl=1 delegated-create=1 delegated-destroy=1 revoke=1 denied-again=1
+0000001877248323 0x000000000184bb20 | 000 | Public upstream bookmark lifecycle PASS create=1 duplicate=1 guid=1 list=1 survives-snapshot=1 destroy=1 absent=1
+0000001877edd2af 0x000000000184bb20 | 000 | Public upstream snapshot lifecycle PASS busy-preserved=1 detach=1 destroy=1 absent=1
+0000001896682e01 0x000000000184bb20 | 000 | Public upstream promotion mount guard PASS busy=1 endpoint-retained=1 origin-unchanged=1
+00000018beb0cfe4 0x000000000184bb20 | 000 | Public upstream promotion PASS denied=1 unchanged=1 conflict=1 promote=1 origins=1 repeat-invalid=1 cleanup=1
+00000018bf7a8884 0x000000000184bb20 | 000 | Public upstream mount adapter PASS real-handle=1 mount=1 unmount=1 unsupported=1 duplicate=1
+00000018de7773dc 0x000000000184bb20 | 000 | Public upstream file flush PASS write=1 reopen=1 invalid=1 closed=1 readonly=1
+00000018e5d7d58b 0x000000000184bb20 | 000 | Public upstream pool sync PASS phase=0 ordinary=1 forced=1 errno=0
+00000018ecb8136b 0x000000000184bb20 | 000 | Public upstream upgrade notice PASS phase=0 unset=1 configured=1 no-boot-write=1 readonly-denied=0
+00000018ed8d5e40 0x000000000184bb20 | 000 | Public upstream enclosure unsupported PASS phase=0 query=1 on=1 off=1
+00000018f097e835 0x000000000184bb20 | 000 | Public upstream file vdev PASS phase=0 members=2 force-policy=1 missing=1 directory=1 query-failure=1
+00000018f7020a89 0x000000000184bb20 | 000 | Public exec helper PASS real-zpool=1 captured-output=1 missing-executable=1
+00000018fca5b0da 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zpool get -H -p -o value guid public_mirror >T:companion-guid.txt
+00000019054f1771 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zfs set canmount=off public_mirror
+00000019149599ad 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zfs set mountpoint=OZSTARTUP: public_mirror/files
+000000191cc12fde 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zfs unmount public_mirror/files
+000000192143f302 0x000000000184bb20 | 000 | Public diagnostic begin T:public-cli-errors.log
+0000001921b8cad3 0x000000000184bb20 | 000 | Startup mount pool identity unavailable or mismatched
+0000001922353c71 0x000000000184bb20 | 000 | 
+Public diagnostic end
+00000019228be503 0x000000000184bb20 | 000 | Public CLI command result=1 ioerr=209: C:OpenZFSStartupMount public_mirror 71a2673eafda3844
+000000192b9febb2 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:OpenZFSStartupMount public_mirror 71a2673eafda3845 >T:companion-mount.log
+000000192c677d0d 0x000000000184bb20 | 000 | Public diagnostic begin T:companion-mount.log
+000000192cd992e9 0x000000000184bb20 | 000 | Startup mounts: mounted=1 already=0 skipped=3 failed=0
+000000192d60626f 0x000000000184bb20 | 000 | 
+Public diagnostic end
+0000001934ead9a7 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:OpenZFSStartupMount public_mirror 71a2673eafda3845 >T:companion-mount.log
+0000001935b279a8 0x000000000184bb20 | 000 | Public diagnostic begin T:companion-mount.log
+0000001936256a12 0x000000000184bb20 | 000 | Startup mounts: mounted=0 already=1 skipped=3 failed=0
+0000001936a3901d 0x000000000184bb20 | 000 | 
+Public diagnostic end
+000000193f0616c2 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zfs set canmount=on public_mirror
+0000001949e86d1a 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zfs inherit mountpoint public_mirror/files
+000000194a899fb4 0x000000000184bb20 | 000 | Public companion mount PASS guid-bound=1 wrong-guid-refused=1 parent-skipped=1 child-mounted=1 repeat-idempotent=1 detached=1
+000000194c47c92f 0x000000000184bb20 | 000 | Public native shares object PASS absent=1 unmounted=1 missing=1 invalid=1
+000000194f8f352d 0x000000000184bb20 | 000 | Public storage op=41 status=0 Authenticated dataset property set returned errno=0
+00000019539f0be8 0x000000000184bb20 | 000 | Public storage op=41 status=0 Authenticated dataset property set returned errno=0
+0000001957b1f1a5 0x000000000184bb20 | 000 | Public storage op=41 status=0 Authenticated dataset property set returned errno=0
+000000195aee7fcd 0x000000000184bb20 | 000 | Public storage op=41 status=0 Authenticated dataset property set returned errno=0
+000000195ef34059 0x000000000184bb20 | 000 | Public storage op=41 status=0 Authenticated dataset property set returned errno=0
+00000019630df247 0x000000000184bb20 | 000 | Public storage op=41 status=0 Authenticated dataset property set returned errno=0
+00000019666beb6a 0x000000000184bb20 | 000 | Public storage op=41 status=0 Authenticated dataset property set returned errno=0
+000000196a7dd452 0x000000000184bb20 | 000 | Public storage op=41 status=0 Authenticated dataset property set returned errno=0
+000000196e8af3ef 0x000000000184bb20 | 000 | Public storage op=41 status=0 Authenticated dataset property set returned errno=0
+0000001971d727f3 0x000000000184bb20 | 000 | Public storage op=41 status=0 Authenticated dataset property set returned errno=0
+0000001975ddb3c6 0x000000000184bb20 | 000 | Public storage op=41 status=0 Authenticated dataset property set returned errno=0
+0000001979f13d93 0x000000000184bb20 | 000 | Public storage op=41 status=0 Authenticated dataset property set returned errno=0
+000000197a91ab7f 0x000000000184bb20 | 000 | Public native mount policy PASS properties=4 transitions=8 missing=1 absent=1
+00000019ad5c9f8d 0x000000000184bb20 | 000 | Public storage op=41 status=0 Authenticated dataset property set returned errno=0
+00000019af30723f 0x000000000184bb20 | 000 | Native loader policy phase=0 api=LoadSeg exec=on protection=0 readable=1 loaded=1 ioerr=0
+00000019b0d6b2bb 0x000000000184bb20 | 000 | Native loader policy phase=0 api=NewLoadSeg exec=on protection=0 readable=1 loaded=1 ioerr=0
+00000019b42e48cf 0x000000000184bb20 | 000 | Public storage op=41 status=0 Authenticated dataset property set returned errno=0
+00000019b4ef45e3 0x000000000184bb20 | 000 | Native loader policy phase=1 api=LoadSeg exec=off protection=2 readable=1 loaded=0 ioerr=224
+00000019b5aa90c3 0x000000000184bb20 | 000 | Native loader policy phase=1 api=NewLoadSeg exec=off protection=2 readable=1 loaded=0 ioerr=224
+00000019b8e5d761 0x000000000184bb20 | 000 | Public storage op=41 status=0 Authenticated dataset property set returned errno=0
+00000019ba992fea 0x000000000184bb20 | 000 | Native loader policy phase=2 api=LoadSeg exec=on protection=0 readable=1 loaded=1 ioerr=0
+00000019bc46e25b 0x000000000184bb20 | 000 | Native loader policy phase=2 api=NewLoadSeg exec=on protection=0 readable=1 loaded=1 ioerr=0
+00000019bfa3cf9f 0x000000000184bb20 | 000 | Public storage op=41 status=0 Authenticated dataset property set returned errno=0
+00000019c83f9b4d 0x000000000184bb20 | 000 | RESULT native loader execution policy PASS
+00000019d145602e 0x000000000184bb20 | 000 | Public sparse64 PASS write=1 boundary=4294967296 size=4294971392 holes=1 legacy-refused=1
+00000019e67824d1 0x000000000184bb20 | 000 | Public DOS links PASS write=1 hard=1 relative-soft=1 unlinked-source=1 dangling-refused=1
+00000019f6d66617 0x000000000184bb20 | 000 | Metadata observed write=1 comment='OpenZFS native metadata' protection=50 size=8 date=17000/721/1234 DOS=0
+00000019f7a66461 0x000000000184bb20 | 000 | Public DOS metadata PASS write=1 comment=1 protection=1 timestamp=1 exact-data=1
+0000001a3b32e394 0x000000000184bb20 | 000 | Public DOS notifications PASS absent-watch=1 create=1 wait-reply=1 coalesced=1 end=1 late-reply-reuse=3
+0000001a5f1a59d6 0x000000000184bb20 | 000 | Public DOS signal notifications PASS initial=1 metadata=1 deletion=1 end=1
+0000001a60730080 0x000000000184bb20 | 000 | Public desktop directory PASS phase=post-sparse64 stage=exall exnext=1/6 exall=1/6 errno=0 doserr=232
+0000001a6149de43 0x000000000184bb20 | 000 | Public pool self-assign PASS deadlock-refused=1 responsive=1
+0000001a61f15416 0x000000000184bb20 | 000 | Public native root resolution PASS alias=1 file-rejected=1 unrelated=1 absent=1
+0000001a628de4d9 0x000000000184bb20 | 000 | Public native path dataset PASS file=1 alias=1 unrelated=1 absent=1 bounds=1
+0000001a70568b20 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zfs create -s -V 2M -b 8K public_mirror/public_volume
+0000001a7a138b09 0x000000000184bb20 | 000 | Public zvol PASS create=1 geometry=1 write=1 discard-edges=1 flush=1 exact-read=1 bounds=1 stale-descriptor=1
+0000001a7b2b55cb 0x000000005ca2d3d0 | 000 | OpenZFS device ready unit=0 dataset= writable=0
+0000001a7ba08729 0x000000005ca2d3d0 | 000 | OpenZFS device ready unit=1 dataset= writable=0
+0000001a7c14fec9 0x000000005ca2d3d0 | 000 | OpenZFS device ready unit=2 dataset= writable=0
+0000001a7c896426 0x000000005ca2d3d0 | 000 | OpenZFS device ready unit=3 dataset= writable=0
+0000001a7cffb455 0x000000005ca2d3d0 | 000 | OpenZFS device ready unit=4 dataset= writable=0
+0000001a7d743988 0x000000005ca2d3d0 | 000 | OpenZFS device ready unit=5 dataset= writable=0
+0000001a7de8dfd6 0x000000005ca2d3d0 | 000 | OpenZFS device ready unit=6 dataset= writable=0
+0000001a7e60ffb1 0x000000005ca2d3d0 | 000 | OpenZFS device ready unit=7 dataset= writable=0
+0000001a7ed5b5d1 0x000000005ca2d3d0 | 000 | OpenZFS device ready unit=8 dataset= writable=0
+0000001a7f4a3799 0x000000005ca2d3d0 | 000 | OpenZFS device ready unit=9 dataset= writable=0
+0000001a7fbf6302 0x000000005ca2d3d0 | 000 | OpenZFS device ready unit=10 dataset= writable=0
+0000001a80356bb5 0x000000005ca2d3d0 | 000 | OpenZFS device ready unit=11 dataset= writable=0
+0000001a80abc305 0x000000005ca2d3d0 | 000 | OpenZFS device ready unit=12 dataset= writable=0
+0000001a8121b448 0x000000005ca2d3d0 | 000 | OpenZFS device ready unit=13 dataset= writable=0
+0000001a8198a328 0x000000005ca2d3d0 | 000 | OpenZFS device ready unit=14 dataset= writable=0
+0000001a820e881d 0x000000005ca2d3d0 | 000 | OpenZFS device ready unit=15 dataset= writable=0
+0000001a8284abdd 0x000000005ca2d3d0 | 000 | OpenZFS device ready unit=16 dataset= writable=0
+0000001a82fbb06b 0x000000005ca2d3d0 | 000 | OpenZFS device ready unit=17 dataset= writable=0
+0000001a83717f80 0x000000005ca2d3d0 | 000 | OpenZFS device ready unit=18 dataset= writable=0
+0000001a83e7ce83 0x000000005ca2d3d0 | 000 | OpenZFS device ready unit=19 dataset= writable=0
+0000001a845df900 0x000000005ca2d3d0 | 000 | OpenZFS device ready unit=20 dataset= writable=0
+0000001a84d4a672 0x000000005ca2d3d0 | 000 | OpenZFS device ready unit=21 dataset= writable=0
+0000001a854b7aa9 0x000000005ca2d3d0 | 000 | OpenZFS device ready unit=22 dataset= writable=0
+0000001a85c15ce2 0x000000005ca2d3d0 | 000 | OpenZFS device ready unit=23 dataset= writable=0
+0000001a863737fa 0x000000005ca2d3d0 | 000 | OpenZFS device ready unit=24 dataset= writable=0
+0000001a86ace6d5 0x000000005ca2d3d0 | 000 | OpenZFS device ready unit=25 dataset= writable=0
+0000001a8722828c 0x000000005ca2d3d0 | 000 | OpenZFS device ready unit=26 dataset= writable=0
+0000001a87993c4c 0x000000005ca2d3d0 | 000 | OpenZFS device ready unit=27 dataset= writable=0
+0000001a880fff08 0x000000005ca2d3d0 | 000 | OpenZFS device ready unit=28 dataset= writable=0
+0000001a8886709d 0x000000005ca2d3d0 | 000 | OpenZFS device ready unit=29 dataset= writable=0
+0000001a88fc1776 0x000000005ca2d3d0 | 000 | OpenZFS device ready unit=30 dataset= writable=0
+0000001a8971f243 0x000000005ca2d3d0 | 000 | OpenZFS device ready unit=31 dataset= writable=0
+0000001a8a03a003 0x000000000184bb20 | 000 | Public diagnostic begin T:public-cli-errors.log
+0000001a8a793561 0x000000000184bb20 | 000 | 
+Public diagnostic end
+0000001a8acf87b8 0x000000000184bb20 | 000 | Public CLI command result=10 ioerr=209: C:OpenZFSDevice EMPTY
+0000001a8bf8cce4 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:OpenZFSDevice REMAP 0 public_mirror/public_volume WRITABLE
+0000001a8cd167ac 0x000000000184bb20 | 000 | Public diagnostic begin T:public-cli-errors.log
+0000001a8d47b7c2 0x000000000184bb20 | 000 | 
+Public diagnostic end
+0000001a8d9eb8e7 0x000000000184bb20 | 000 | Public CLI command result=20 ioerr=209: C:OpenZFSDevice EJECT 0
+0000001a8f95033b 0x000000000184bb20 | 000 | Public diagnostic begin T:public-cli-errors.log
+0000001a900ca328 0x000000000184bb20 | 000 | 
+Public diagnostic end
+0000001a90636249 0x000000000184bb20 | 000 | Public CLI command result=20 ioerr=209: C:OpenZFSDevice EJECT 0
+0000001a912acf69 0x000000000184bb20 | 000 | Public diagnostic begin T:public-cli-errors.log
+0000001a91a36c5d 0x000000000184bb20 | 000 | 
+Public diagnostic end
+0000001a91fa05e5 0x000000000184bb20 | 000 | Public CLI command result=20 ioerr=209: C:OpenZFSDevice EJECT 0
+0000001a96972ec0 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:OpenZFSDevice EJECT 0
+0000001a971ccf26 0x000000000184bb20 | 000 | Public device PASS geometry=1 async-128KiB=1 reopen=3 exact-read=1 eject=1 busy-refused=1 bounds=1
+0000001a9c629b32 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zpool list -H -o name public_mirror >T:cli-package-output.txt
+0000001aa171fb4f 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zfs list -H -o name public_mirror/files >T:cli-package-output.txt
+0000001aa64ad4d4 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zfs get -H -o value type public_mirror/files >T:cli-package-output.txt
+0000001abd952577 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zfs create -o mountpoint=none public_mirror/defer_tree
+0000001acebcaf8c 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zfs create -o mountpoint=none public_mirror/defer_tree/child
+0000001adb0e9e7b 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zfs snapshot -r public_mirror/defer_tree@held
+0000001ae3c86ce0 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zfs hold keep public_mirror/defer_tree/child@held
+0000001af6102433 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zfs get -H -o value defer_destroy public_mirror/defer_tree@held >T:cli-package-output.txt
+0000001afb56b11e 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zfs get -H -o value defer_destroy public_mirror/defer_tree/child@held >T:cli-package-output.txt
+0000001b009e1176 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zfs get -H -o value userrefs public_mirror/defer_tree/child@held >T:cli-package-output.txt
+0000001b017a0e10 0x000000000184bb20 | 000 | Public destruction dry-run PASS async=1 recursive-plan=1 deferred-unchanged=1 hold-unchanged=1 dryrun-required=1 force-refused=1 confirmation=1
+0000001b0b2a8787 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zfs snapshot public_mirror/defer_tree@permission_probe
+0000001b146b0baa 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zfs allow -l -u 77 mount,destroy public_mirror/defer_tree
+0000001b15571e3c 0x000000000184bb20 | 000 | Public storage op=38 status=9 Authenticated dataset destruction returned errno=1
+0000001b1a81107f 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zfs get -H -o value defer_destroy public_mirror/defer_tree@permission_probe >T:cli-package-output.txt
+0000001b2387a9ae 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zfs allow -d -u 77 mount,destroy public_mirror/defer_tree
+0000001b285b7848 0x000000000184bb20 | 000 | Public storage op=38 status=0 Authenticated dataset destruction returned errno=0
+0000001b2cfb15a7 0x000000000184bb20 | 000 | Public diagnostic begin T:public-cli-errors.log
+0000001b2d71820f 0x000000000184bb20 | 000 | cannot open 'public_mirror/defer_tree@permission_probe': dataset does not exist
+0000001b2e0f714f 0x000000000184bb20 | 000 | 
+Public diagnostic end
+0000001b2e6596ba 0x000000000184bb20 | 000 | Public CLI command result=1 ioerr=209: C:zfs list -t snapshot public_mirror/defer_tree@permission_probe
+0000001b36df5f47 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zfs unallow -d -u 77 mount,destroy public_mirror/defer_tree
+0000001b37e8f4d4 0x000000000184bb20 | 000 | Public storage op=38 status=9 Authenticated dataset destruction returned errno=1
+0000001b3cc8cc31 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zfs get -H -o value defer_destroy public_mirror/defer_tree@held >T:cli-package-output.txt
+0000001b41e7d8b5 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zfs get -H -o value defer_destroy public_mirror/defer_tree/child@held >T:cli-package-output.txt
+0000001b4acb71ee 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zfs unallow -l -u 77 mount,destroy public_mirror/defer_tree
+0000001b4b7f04a2 0x000000000184bb20 | 000 | Public recursive deferred authorization PASS local-only-denied=1 descendant-granted=1 revoked-denied=1 no-partial-mutation=1 identity-restored=1
+0000001b50a4fec8 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zfs get -H -o value defer_destroy public_mirror/defer_tree@held >T:cli-package-output.txt
+0000001b55e31ce9 0x000000000184bb20 | 000 | Public storage op=38 status=0 Authenticated dataset destruction returned errno=0
+0000001b5a80b838 0x000000000184bb20 | 000 | Public diagnostic begin T:public-cli-errors.log
+0000001b5af5712d 0x000000000184bb20 | 000 | cannot open 'public_mirror/defer_tree@held': dataset does not exist
+0000001b5b83fbb4 0x000000000184bb20 | 000 | 
+Public diagnostic end
+0000001b5bd9faa5 0x000000000184bb20 | 000 | Public CLI command result=1 ioerr=209: C:zfs list -t snapshot public_mirror/defer_tree@held
+0000001b60cb1d5a 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zfs get -H -o value defer_destroy public_mirror/defer_tree/child@held >T:cli-package-output.txt
+0000001b6a4c25fe 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zfs release keep public_mirror/defer_tree/child@held
+0000001b6f33b61d 0x000000000184bb20 | 000 | Public diagnostic begin T:public-cli-errors.log
+0000001b6fa87665 0x000000000184bb20 | 000 | cannot open 'public_mirror/defer_tree/child@held': dataset does not exist
+0000001b703d0f9b 0x000000000184bb20 | 000 | 
+Public diagnostic end
+0000001b7095604c 0x000000000184bb20 | 000 | Public CLI command result=1 ioerr=209: C:zfs list -t snapshot public_mirror/defer_tree/child@held
+0000001b90300dad 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zfs destroy -r public_mirror/defer_tree
+0000001b90cbf30d 0x000000000184bb20 | 000 | Public recursive deferred destroy PASS confirmation=1 dataset-refused=1 unheld-removed=1 held-retained=1 release-removes=1 cleanup=1
+0000001ba0dd14c5 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zfs create -o mountpoint=none public_mirror/defer_pending
+0000001bb2705017 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zfs create -o mountpoint=none public_mirror/defer_pending/child
+0000001bbefd821e 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zfs snapshot -r public_mirror/defer_pending@pending
+0000001bca62d92e 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zfs hold -r cold_keep public_mirror/defer_pending@pending
+0000001bced2dc20 0x000000000184bb20 | 000 | Public storage op=38 status=0 Authenticated dataset destruction returned errno=0
+0000001bd463660f 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zfs get -H -o value defer_destroy public_mirror/defer_pending@pending >T:cli-package-output.txt
+0000001bda0ca2a6 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zfs get -H -o value defer_destroy public_mirror/defer_pending/child@pending >T:cli-package-output.txt
+0000001bdaf5e277 0x000000000184bb20 | 000 | Public pending deferred snapshots PASS recursive=1 parent-held=1 child-held=1 retained-for-cold=1
+0000001bf2d9c95d 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zfs get -Hp -o value quota public_mirror/manager_clone >T:cli-package-output.txt
+0000001bf8afa49c 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zfs get -H -o value compression public_mirror/manager_clone >T:cli-package-output.txt
+0000001bfe35a498 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zfs get -H -o value mounted public_mirror/manager_clone >T:cli-package-output.txt
+0000001c0d048b33 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zfs destroy public_mirror/manager_clone
+0000001c1903b800 0x000000000184bb20 | 000 | Public diagnostic begin T:public-cli-errors.log
+0000001c1978e751 0x000000000184bb20 | 000 | cannot open 'public_mirror/denied_clone': dataset does not exist
+0000001c1a0345ae 0x000000000184bb20 | 000 | 
+Public diagnostic end
+0000001c1a5981da 0x000000000184bb20 | 000 | Public CLI command result=1 ioerr=209: C:zfs list public_mirror/denied_clone
+0000001c1af3b3c7 0x000000000184bb20 | 000 | Public Manager clone authorization PASS nonroot-worker=1 upstream-denied=1 absent-destination=1 identity-restored=1
+0000001c2b18e524 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zfs create -o mountpoint=none public_mirror/delegated_clones
+0000001c33bd7aeb 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zfs allow -u 77 clone public_mirror/files
+0000001c3d0262b0 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zfs allow -u 77 create,mount,compression,mountpoint public_mirror/delegated_clones
+0000001c562c5aa2 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zfs get -H -o value origin public_mirror/delegated_clones/child >T:cli-package-output.txt
+0000001c5c1b03af 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zfs get -H -o value compression public_mirror/delegated_clones/child >T:cli-package-output.txt
+0000001c61f26d13 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zfs get -H -o value mounted public_mirror/delegated_clones/child >T:cli-package-output.txt
+0000001c6a5f1c80 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zfs unallow -u 77 clone public_mirror/files
+0000001c73569219 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zfs unallow -u 77 create,mount,compression,mountpoint public_mirror/delegated_clones
+0000001c8251f178 0x000000000184bb20 | 000 | Public diagnostic begin T:public-cli-errors.log
+0000001c82c70526 0x000000000184bb20 | 000 | cannot open 'public_mirror/delegated_clones/after_revoke': dataset does not exist
+0000001c83664023 0x000000000184bb20 | 000 | 
+Public diagnostic end
+0000001c83bc8ec4 0x000000000184bb20 | 000 | Public CLI command result=1 ioerr=209: C:zfs list public_mirror/delegated_clones/after_revoke
+0000001c93143480 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zfs destroy public_mirror/delegated_clones/child
+0000001ca2d4a1f7 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zfs destroy public_mirror/delegated_clones
+0000001ca37ae558 0x000000000184bb20 | 000 | Public Manager clone delegation PASS granted=1 property=1 no-mount=1 revoked=1 no-stale-authority=1 cleanup=1
+0000001cadbdc698 0x000000000184bb20 | 000 | Public diagnostic begin T:public-cli-errors.log
+0000001cae334e31 0x000000000184bb20 | 000 | cannot open 'public_mirror/manager_clone': dataset does not exist
+0000001caec04d36 0x000000000184bb20 | 000 | 
+Public diagnostic end
+0000001caf169bbe 0x000000000184bb20 | 000 | Public CLI command result=1 ioerr=209: C:zfs list public_mirror/manager_clone
+0000001cafafddba 0x000000000184bb20 | 000 | Public Manager clone properties PASS quota=1 compression=1 no-mount=1 duplicate-refused=1 malformed-refused=1 confirmation=1 async-worker=1 invalid-property-no-create=1
+0000001cb55602b7 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zfs list -H -o name -t snapshot public_mirror/files@cli_roundtrip >T:cli-package-output.txt
+0000001cc88d2f4f 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zfs get -H -o value origin public_mirror/cli_clone >T:cli-package-output.txt
+0000001cdc722aec 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zpool set feature@lz4_compress=enabled public_mirror
+0000001ce233d2e1 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zpool get -H -o value feature@lz4_compress public_mirror >T:cli-package-output.txt
+0000001ceb884f52 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zfs set compression=lz4 public_mirror/cli_renamed
+0000001cf12faadb 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zfs get -H -o value compression public_mirror/cli_renamed >T:cli-package-output.txt
+0000001d13e2d850 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zfs rollback public_mirror/cli_renamed@rollback
+0000001d20863638 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zfs send public_mirror/cli_renamed@rollback >T:cli-replication.zfs
+0000001d368f749e 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zfs receive -u -o mountpoint=none public_mirror/cli_received <T:cli-replication.zfs
+0000001d38974a8c 0x000000000184bb20 | 000 | Public sparse64 PASS write=0 boundary=4294967296 size=4294971392 holes=1 legacy-refused=1
+0000001d50d1027d 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zfs snapshot public_mirror/cli_renamed@incremental
+0000001d5c36d322 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zfs send -i public_mirror/cli_renamed@rollback public_mirror/cli_renamed@incremental >T:cli-incremental.zfs
+0000001d6fa45ede 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zfs receive -u public_mirror/cli_received <T:cli-incremental.zfs
+0000001d71602870 0x000000000184bb20 | 000 | Public sparse64 PASS write=0 boundary=4294967296 size=4294971392 holes=1 legacy-refused=1
+0000001d7b53af3c 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zfs destroy public_mirror/cli_received@incremental
+0000001d856f2f23 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zfs destroy public_mirror/cli_received@rollback
+0000001d946adae0 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zfs destroy public_mirror/cli_received
+0000001d9dc57f00 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zfs destroy public_mirror/cli_renamed@incremental
+0000001d9e6e40f4 0x000000000184bb20 | 000 | Public packaged replication PASS send=1 receive=1 mounted-data=1 snapshot-boundary=1 incremental=1
+0000001dbec5e64f 0x000000000184bb20 | 000 | Public packaged CLI PASS pool-list=1 dataset-list=1 property=1 snapshot-create-list-destroy=1 clone=1 rename=1 set-get=1 rollback-data=1
+0000001dc7800833 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zpool set feature@encryption=enabled public_mirror
+0000001dd7c014db 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zfs create -u -o mountpoint=none -o encryption=aes-256-gcm -o keyformat=raw -o keylocation=file:///RAM/public-test.key public_mirror/encrypted
+0000001ddddfd563 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zfs get -H -o value encryption public_mirror/encrypted >T:cli-package-output.txt
+0000001df1c17c2b 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zfs unload-key public_mirror/encrypted
+0000001df75def20 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zfs get -H -o value keystatus public_mirror/encrypted >T:cli-package-output.txt
+0000001dfd4b03e1 0x000000000184bb20 | 000 | Public diagnostic begin T:public-cli-errors.log
+0000001dfdbffd95 0x000000000184bb20 | 000 | Key load error: Incorrect key provided for 'public_mirror/encrypted'.
+0000001dfe5016a5 0x000000000184bb20 | 000 | 
+Public diagnostic end
+0000001dfea73fed 0x000000000184bb20 | 000 | Public CLI command result=-1 ioerr=209: C:zfs load-key -L file:///RAM/public-wrong.key public_mirror/encrypted
+0000001e043e396b 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zfs get -H -o value keystatus public_mirror/encrypted >T:cli-package-output.txt
+0000001e0599be75 0x000000000184bb20 | 000 | Public storage op=62 status=0 Authenticated key verification (not loaded) returned errno=0
+0000001e0b658ae6 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zfs get -H -o value keystatus public_mirror/encrypted >T:cli-package-output.txt
+OpenZFS mount failed stage=objset-own errno=13
+0000001e0d10716c 0x000000000184bb20 | 000 | Public storage op=62 status=9 Authenticated key verification (not loaded) returned errno=13
+0000001e12c0b121 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zfs get -H -o value keystatus public_mirror/encrypted >T:cli-package-output.txt
+0000001e138e2746 0x000000000184bb20 | 000 | Public authenticated key dry-run PASS correct=1 wrong-refused=1 locked=1 mount-refused=1 confirmation=1 force-refused=1 change-key-refused=1
+0000001e14c83ecb 0x000000000184bb20 | 000 | Public storage op=62 status=9 Authenticated key verification (not loaded) returned errno=1
+0000001e1dbd21b3 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zfs allow -l -u 77 load-key public_mirror/encrypted
+0000001e1f45eb1e 0x000000000184bb20 | 000 | Public storage op=62 status=0 Authenticated key verification (not loaded) returned errno=0
+0000001e24ca25fa 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zfs get -H -o value keystatus public_mirror/encrypted >T:cli-package-output.txt
+0000001e32e88546 0x000000000184bb20 | 000 | Public storage op=62 status=9 Authenticated key verification (not loaded) returned errno=13
+0000001e3850cc2d 0x000000000184bb20 | 000 | Public storage op=62 status=0 Authenticated key verification (not loaded) returned errno=0
+0000001e3cf8b4e3 0x000000000184bb20 | 000 | Public storage op=62 status=9 Authenticated key verification (not loaded) returned errno=13
+0000001e44d2f5ca 0x000000000184bb20 | 000 | Public key file authorization PASS delegated=1 private-denied=1 readable-allowed=1 revoked-denied=1 cleanup=1
+0000001e5b9d785c 0x000000000184bb20 | 000 | Public storage op=62 status=9 Authenticated key verification (not loaded) returned errno=13
+0000001e60614f12 0x000000000184bb20 | 000 | Public storage op=62 status=0 Authenticated key verification (not loaded) returned errno=0
+0000001e64fc972a 0x000000000184bb20 | 000 | Public storage op=62 status=9 Authenticated key verification (not loaded) returned errno=13
+0000001e739f6a91 0x000000000184bb20 | 000 | Public key traversal authorization PASS readable-file=1 private-parent-denied=1 search-allowed=1 revoked-denied=1 cleanup=1
+0000001e7cd110d8 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zfs unallow -l -u 77 load-key public_mirror/encrypted
+0000001e7de13d68 0x000000000184bb20 | 000 | Public storage op=62 status=9 Authenticated key verification (not loaded) returned errno=1
+0000001e83c18503 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zfs get -H -o value keystatus public_mirror/encrypted >T:cli-package-output.txt
+0000001e848f94f7 0x000000000184bb20 | 000 | Public key verification delegation PASS unprivileged-denied=1 explicit-grant=1 remains-locked=1 revoke-denied=1 root-restored=1
+0000001e8b5c3bff 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zfs load-key -L file:///RAM/public-test.key public_mirror/encrypted
+0000001e90e0dd7e 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zfs get -H -o value keystatus public_mirror/encrypted >T:cli-package-output.txt
+0000001e99ca550f 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zfs unload-key public_mirror/encrypted
+0000001ea2c26da5 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zfs snapshot public_mirror/encrypted@raw
+0000001ead52f99c 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zfs send -w public_mirror/encrypted@raw >T:cli-raw-encrypted.zfs
+0000001ec3558be7 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zfs receive -u -o mountpoint=none public_mirror/encrypted_received <T:cli-raw-encrypted.zfs
+0000001ec96eca6b 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zfs get -H -o value encryption public_mirror/encrypted_received >T:cli-package-output.txt
+0000001ecf1843c0 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zfs get -H -o value keystatus public_mirror/encrypted_received >T:cli-package-output.txt
+OpenZFS mount failed stage=objset-own errno=13
+0000001ed64d60df 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zfs load-key -L file:///RAM/public-test.key public_mirror/encrypted_received
+0000001edfc6b26a 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zfs unload-key public_mirror/encrypted_received
+0000001ee66a4f19 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zfs load-key -L file:///RAM/public-test.key public_mirror/encrypted
+0000001ef9da8861 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zfs unload-key public_mirror/encrypted
+0000001f034a6777 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zfs snapshot public_mirror/encrypted@raw_incremental
+0000001f103640a5 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zfs send -w -i public_mirror/encrypted@raw public_mirror/encrypted@raw_incremental >T:cli-raw-incremental.zfs
+0000001f25fd47df 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zfs receive -u public_mirror/encrypted_received <T:cli-raw-incremental.zfs
+0000001f2c29a617 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zfs get -H -o value keystatus public_mirror/encrypted_received >T:cli-package-output.txt
+OpenZFS mount failed stage=objset-own errno=13
+0000001f337bae3d 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zfs load-key -L file:///RAM/public-test.key public_mirror/encrypted_received
+0000001f3d23d13b 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zfs unload-key public_mirror/encrypted_received
+0000001f46d1122f 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zfs destroy public_mirror/encrypted_received@raw_incremental
+0000001f5089d4be 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zfs destroy public_mirror/encrypted@raw_incremental
+0000001f516c600e 0x000000000184bb20 | 000 | Public raw incremental replication PASS locked-send=1 locked-receive=1 locked-mount-denied=1 exact-old-new=1 cleanup=1
+0000001f5bf1820c 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zfs destroy public_mirror/encrypted_received@raw
+0000001f6b58884e 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zfs destroy public_mirror/encrypted_received
+0000001f7652829a 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zfs destroy public_mirror/encrypted@raw
+0000001f771c36a3 0x000000000184bb20 | 000 | Public raw encrypted replication PASS locked-send=1 receive=1 locked-mount-denied=1 key-load=1 exact-read=1 cleanup=1
+0000001f867feecd 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zfs destroy public_mirror/encrypted
+0000001f871753bc 0x000000000184bb20 | 000 | Public packaged encryption PASS create=1 unload=1 wrong-key-denied=1 reload=1 exact-read=1 cleanup=1
+0000001f9774a750 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zfs create -u -o mountpoint=none -o encryption=aes-256-gcm -o keyformat=hex -o keylocation=file:///RAM/public-hex.key public_mirror/check_hex
+0000001fa091f563 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zfs unload-key public_mirror/check_hex
+0000001fa1bb3003 0x000000000184bb20 | 000 | Public storage op=62 status=0 Authenticated key verification (not loaded) returned errno=0
+0000001fa2f05390 0x000000000184bb20 | 000 | Public storage op=62 status=0 Authenticated key verification (not loaded) returned errno=0
+0000001fa4259c9d 0x000000000184bb20 | 000 | Public storage op=62 status=0 Authenticated key verification (not loaded) returned errno=0
+0000001fa9f96b27 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zfs get -H -o value keystatus public_mirror/check_hex >T:cli-package-output.txt
+0000001fac386244 0x000000000184bb20 | 000 | Public storage op=62 status=0 Authenticated key load returned errno=0
+0000001fad537047 0x000000000184bb20 | 000 | Public storage op=62 status=0 Authenticated key verification (not loaded) returned errno=0
+0000001fb2e552d7 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zfs get -H -o value keystatus public_mirror/check_hex >T:cli-package-output.txt
+0000001fb3b4b338 0x000000000184bb20 | 000 | Public storage op=64 status=9 Authenticated key replacement returned errno=22
+0000001fb4ca7834 0x000000000184bb20 | 000 | Public storage op=64 status=9 Authenticated key replacement returned errno=22
+0000001fb56692cd 0x000000000184bb20 | 000 | Public storage op=64 status=9 Authenticated key replacement returned errno=22
+0000001fb6029d49 0x000000000184bb20 | 000 | Public storage op=64 status=9 Authenticated key replacement returned errno=22
+0000001fb69ef310 0x000000000184bb20 | 000 | Public storage op=64 status=9 Authenticated key replacement returned errno=22
+0000001fb73b7bd1 0x000000000184bb20 | 000 | Public storage op=64 status=9 Authenticated key replacement returned errno=22
+0000001fb7d9b7ec 0x000000000184bb20 | 000 | Public storage op=64 status=9 Authenticated key replacement returned errno=22
+0000001fb87580e1 0x000000000184bb20 | 000 | Public storage op=64 status=9 Authenticated key replacement returned errno=22
+0000001fbe093430 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zfs get -H -o value keyformat public_mirror/check_hex >T:cli-package-output.txt
+0000001fcd37d731 0x000000000184bb20 | 000 | Public storage op=64 status=9 Authenticated key replacement returned errno=1
+0000001fd696875a 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zfs allow -l -u 77 load-key public_mirror/check_hex
+0000001fd79c96c1 0x000000000184bb20 | 000 | Public storage op=64 status=9 Authenticated key replacement returned errno=1
+0000001fdd2a06d7 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zfs get -H -o value keyformat public_mirror/check_hex >T:cli-package-output.txt
+0000001fe2c8eb17 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zfs get -H -o value keylocation public_mirror/check_hex >T:cli-package-output.txt
+0000001feb7f0b65 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zfs allow -l -u 77 change-key public_mirror/check_hex
+0000001ff92ae51d 0x000000000184bb20 | 000 | Public storage op=64 status=9 Authenticated key replacement returned errno=13
+0000001fff0cf26e 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zfs get -H -o value keyformat public_mirror/check_hex >T:cli-package-output.txt
+000000202ecfb3a6 0x000000000184bb20 | 000 | Public storage op=64 status=0 Authenticated key replacement returned errno=0
+000000203c20ea25 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zfs get -H -o value keyformat public_mirror/check_hex >T:cli-package-output.txt
+000000204211995c 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zfs get -H -o value pbkdf2iters public_mirror/check_hex >T:cli-package-output.txt
+0000002047bdaaa8 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zfs get -H -o value keylocation public_mirror/check_hex >T:cli-package-output.txt
+000000204d81cad7 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zfs unload-key public_mirror/check_hex
+000000207a502243 0x000000000184bb20 | 000 | Public diagnostic begin T:public-cli-errors.log
+000000207ac50f5e 0x000000000184bb20 | 000 | Key load error: Incorrect key provided for 'public_mirror/check_hex'.
+000000207b564bd6 0x000000000184bb20 | 000 | 
+Public diagnostic end
+000000207baca7d8 0x000000000184bb20 | 000 | Public CLI command result=-1 ioerr=209: C:zfs load-key -L file:///RAM/public-hex.key public_mirror/check_hex
+00000020a9f7f7fa 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zfs load-key public_mirror/check_hex
+00000020b3849eef 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zfs unallow -l -u 77 change-key public_mirror/check_hex
+00000020b496679b 0x000000000184bb20 | 000 | Public storage op=64 status=9 Authenticated key replacement returned errno=1
+00000020ba6a1a82 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zfs get -H -o value keyformat public_mirror/check_hex >T:cli-package-output.txt
+00000020c03b1ff6 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zfs get -H -o value pbkdf2iters public_mirror/check_hex >T:cli-package-output.txt
+00000020c5e93d61 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zfs get -H -o value keylocation public_mirror/check_hex >T:cli-package-output.txt
+00000020cb580f16 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zfs get -H -o value keystatus public_mirror/check_hex >T:cli-package-output.txt
+00000020d46eee62 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zfs unallow -l -u 77 load-key public_mirror/check_hex
+00000020d51be7ed 0x000000000184bb20 | 000 | Public key change authorization PASS no-grant-denied=1 load-only-denied=1 private-file-denied=1 explicit-grant=1 revoke-denied=1 properties-preserved=1 root-restored=1
+00000020d96c0fcb 0x000000000184bb20 | 000 | Public storage op=64 status=0 Authenticated key replacement returned errno=0
+00000020dedf5d28 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zfs get -H -o value keyformat public_mirror/check_hex >T:cli-package-output.txt
+00000020e4a246fd 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zfs unload-key public_mirror/check_hex
+00000020e6adb072 0x000000000184bb20 | 000 | Public storage op=62 status=0 Authenticated key load returned errno=0
+00000020eaddfacb 0x000000000184bb20 | 000 | Public storage op=64 status=0 Authenticated key replacement returned errno=0
+00000020f08d7ece 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zfs unload-key public_mirror/check_hex
+00000020f6e666fa 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zfs load-key public_mirror/check_hex
+00000020f8908580 0x000000000184bb20 | 000 | Public key format rotation PASS invalid-options=8 hex-to-passphrase=1 iterations=400000 location=1 old-key-denied=1 passphrase-to-raw=1 raw-to-hex=1 exact-data=1
+0000002101054755 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zfs unload-key public_mirror/check_hex
+00000021021d48f9 0x000000000184bb20 | 000 | Public storage op=62 status=9 Authenticated key verification (not loaded) returned errno=22
+00000021079e9e54 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zfs get -H -o value keystatus public_mirror/check_hex >T:cli-package-output.txt
+000000211697548c 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zfs destroy public_mirror/check_hex
+00000021172e3c62 0x000000000184bb20 | 000 | Public hex key verification PASS newline=1 repeated=3 locked-preserved=1 loaded-preserved=1 malformed-refused=1 cleanup=1
+000000214a6f1c09 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zfs create -u -o mountpoint=none -o encryption=aes-256-gcm -o keyformat=passphrase -o pbkdf2iters=350000 -o keylocation=file:///RAM/public-passphrase public_mirror/passphrase
+000000215127c7a3 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zfs get -H -o value keyformat public_mirror/passphrase >T:cli-package-output.txt
+0000002190b051e7 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zfs change-key -o keyformat=passphrase -o pbkdf2iters=400000 -o keylocation=file:///RAM/public-passphrase-new public_mirror/passphrase
+00000021972eacfd 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zfs get -H -o value pbkdf2iters public_mirror/passphrase >T:cli-package-output.txt
+000000219feec3c8 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zfs unload-key public_mirror/passphrase
+00000021cce4e6cd 0x000000000184bb20 | 000 | Public diagnostic begin T:public-cli-errors.log
+00000021cd59f503 0x000000000184bb20 | 000 | Key load error: Incorrect key provided for 'public_mirror/passphrase'.
+00000021cdeb52c8 0x000000000184bb20 | 000 | 
+Public diagnostic end
+00000021ce41ece6 0x000000000184bb20 | 000 | Public CLI command result=-1 ioerr=209: C:zfs load-key -L file:///RAM/public-passphrase public_mirror/passphrase
+00000021d47671a4 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zfs get -H -o value keystatus public_mirror/passphrase >T:cli-package-output.txt
+OpenZFS mount failed stage=objset-own errno=13
+00000021fd7cebeb 0x000000000184bb20 | 000 | Public storage op=62 status=0 Authenticated key verification (not loaded) returned errno=0
+0000002226109e1d 0x000000000184bb20 | 000 | Public storage op=62 status=9 Authenticated key verification (not loaded) returned errno=13
+000000222c4a1093 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zfs get -H -o value keystatus public_mirror/passphrase >T:cli-package-output.txt
+000000222d18b98e 0x000000000184bb20 | 000 | Public passphrase key verification PASS pbkdf2=400000 current=1 old-refused=1 locked-preserved=1
+000000225b4a3850 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zfs load-key public_mirror/passphrase
+00000022655afb7c 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zfs unload-key public_mirror/passphrase
+0000002274fb8d17 0x000000000184bb20 | 000 | Public CLI command result=0 ioerr=0: C:zfs destroy public_mirror/passphrase
+0000002275949016 0x000000000184bb20 | 000 | Public passphrase rotation PASS iterations=400000 old-key-denied=1 still-locked=1 new-key-load=1 exact-read=1 cleanup=1
+0000002276626847 0x000000000184bb20 | 000 | Public passphrase encryption PASS create-pbkdf2=350000 locked-mount-denied=1 reload=1 exact-read=1 cleanup=1
+000000227a142142 0x000000000184bb20 | 000 | Public desktop detach phase=post-ui retries=0 errno=0
+000000227bf9d5c9 0x000000000184bb20 | 000 | Public desktop detach phase=packaged-handler retries=0 errno=0
+000000227c82303b 0x000000000184bb20 | 000 | Public packaged handler PASS mount=1 exact-read=1 readonly=1 detach=1
+00000022846322ce 0x000000000184bb20 | 000 | Public storage op=8 status=0 Authenticated pool export returned errno=0
+00000022859b8983 0x000000000184bb20 | 000 | Public upstream file discovery PASS members=2 identity=1 mismatch=1 directory=1 missing=1
+0000002286caf6c2 0x000000000184bb20 | 000 | Public upstream pool sync PASS phase=1 ordinary=1 forced=1 errno=2
+00000022881d4bd8 0x000000000184bb20 | 000 | Public upstream file vdev PASS phase=1 members=2 force-policy=1 missing=1 directory=1 query-failure=1
+000000229fddd3dc 0x000000000184bb20 | 000 | Public storage op=7 status=0 Authenticated pool import returned errno=0
+00000022a0731cc1 0x000000000184bb20 | 000 | Public pool assign PASS op=7 kind=2 removed=1
+00000022a16f4c6c 0x000000000184bb20 | 000 | Public upstream pool sync PASS phase=2 ordinary=1 forced=1 errno=30
+00000022a27df3ba 0x000000000184bb20 | 000 | Public upstream upgrade notice PASS phase=2 unset=1 configured=0 no-boot-write=1 readonly-denied=1
+00000022a333ccda 0x000000000184bb20 | 000 | Public upstream enclosure unsupported PASS phase=2 query=1 on=1 off=1
+00000022a6406dc5 0x000000000184bb20 | 000 | Public upstream file vdev PASS phase=2 members=2 force-policy=1 missing=1 directory=1 query-failure=1
+00000022b3b8b1d3 0x000000000184bb20 | 000 | Public upstream readonly promotion PASS reimport=1 denied=1 origins-unchanged=1 snapshot-guid=1
+00000022b5a9447b 0x000000000184bb20 | 000 | Public desktop detach phase=readonly-reimport retries=0 errno=0
+00000022b6312a85 0x000000000184bb20 | 000 | Public native mount control PASS writable=1 readonly=1 busy=1 duplicate=1 absent=1 invalid=1
+00000022b804eb71 0x000000000184bb20 | 000 | Public storage op=8 status=0 Authenticated pool export returned errno=0
+00000022b8988bd3 0x000000000184bb20 | 000 | Public native mount snapshot PASS empty=1 writable=1 readonly=1 retired-absent=1 bounds=1
+00000022b940f408 0x000000000184bb20 | 000 | Public authenticated mirror, DOS write/read and readonly reimport PASS
+Service remains resident: mounted or retired DOS endpoints still require servicing.
+000000230475a275 0x000000000184bb20 | 000 | Public service retains retired DOS endpoints after export
+0000002304f82759 0x000000000184bb20 | 000 | Public service test line=0
+RESULT public service storage PASS

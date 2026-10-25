@@ -32,6 +32,16 @@ def verify_snapshot(root):
     return paths
 
 
+def copy_sources(root, output, paths):
+    """Copy retained source inputs, never cached objects or output binaries."""
+    for relative in paths:
+        if relative.suffix not in ('.c', '.h', '.s', '.S', '.inc'):
+            continue
+        target = output / relative
+        target.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(root / relative, target)
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('snapshot', type=Path)
@@ -55,19 +65,14 @@ def main():
         raise ValueError('100 GiB artifact filesystem reserve required')
     output = Path(tempfile.mkdtemp(prefix='fat-replay.', dir=parent))
     (output / 'objects').mkdir()
-    for relative in paths:
-        # Explicitly omit the binary and prior dependency/provenance outputs.
-        if relative.suffix not in ('.c', '.h'):
-            continue
-        target = output / relative
-        target.parent.mkdir(parents=True, exist_ok=True)
-        shutil.copy2(root / relative, target)
+    copy_sources(root, output, paths)
     with (output / 'build.log').open('w') as log:
         for command in recipe['commands']:
             if command[0] != recipe['compiler']:
                 raise ValueError('Unexpected executable in recipe')
             command = [arg.replace(recipe['snapshot'], str(output)) for arg in command]
             if '-c' in command:
+                Path(command[command.index('-o') + 1]).parent.mkdir(parents=True, exist_ok=True)
                 # Preserve recorded __FILE__ strings when the original build
                 # used absolute paths, without requiring that directory.
                 command.append('-ffile-prefix-map=' + str(output) + '=' + recipe['snapshot'])

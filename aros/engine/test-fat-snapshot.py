@@ -46,6 +46,21 @@ class Snapshot(unittest.TestCase):
         with self.assertRaises(ValueError):
             replay.verify_snapshot(self.root)
 
+    def test_copy_assembly_sources_without_cached_objects(self):
+        paths = []
+        for name in ('arch/jump.s', 'arch/entry.S', 'arch/registers.inc',
+                     'source.c', 'header.h', 'jump.o', 'posixc.library', 'build.log'):
+            path = self.root / name
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_text(name)
+            paths.append(Path(name))
+        output = self.root / 'replay'
+        output.mkdir()
+        replay.copy_sources(self.root, output, paths)
+        actual = sorted(str(p.relative_to(output)) for p in output.rglob('*') if p.is_file())
+        self.assertEqual(actual, ['arch/entry.S', 'arch/jump.s', 'arch/registers.inc',
+                                  'header.h', 'source.c'])
+
 
 if __name__ == '__main__':
     unittest.main()
