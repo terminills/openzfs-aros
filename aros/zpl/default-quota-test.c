@@ -1480,7 +1480,15 @@ static int run(void)
     CHECK(utf8_mount_test(pool,U8_TEXTPREP_NFC,ZFS_CASE_INSENSITIVE));
     CHECK(utf8_mount_test(pool,0,ZFS_CASE_MIXED));
     CHECK(utf8_mount_test(pool,U8_TEXTPREP_NFC,ZFS_CASE_MIXED));
-    CHECK(oz_zpl_fixture_create(dataset));
+    /* Disposable fixture creation still requires an explicit identity.
+     * Do not restore an implicit privileged default in the engine. */
+    CHECK(CRED()==NULL?0:EIO);
+    CHECK(oz_zpl_fixture_create(dataset)==EACCES?0:EIO);
+    struct oz_cred_scope *fixture_scope=NULL;
+    CHECK(oz_cred_push(kcred,&fixture_scope));
+    int fixture_error=oz_zpl_fixture_create(dataset);
+    CHECK(oz_cred_pop(fixture_scope));
+    CHECK(fixture_error);
     objset_t *accounted;
     CHECK(dmu_objset_hold(dataset,FTAG,&accounted));
     CHECK(dmu_objset_userused_enabled(accounted) ? 0 : EIO);
