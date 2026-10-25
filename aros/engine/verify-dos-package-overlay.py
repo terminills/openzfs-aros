@@ -25,7 +25,7 @@ def entries(path, api):
 
 
 def verify(original, candidate, member='dos.library'):
-    if member not in ('dos.library', 'ahci.device'):
+    if member not in ('dos.library', 'ahci.device', 'ata.device'):
         raise ValueError('unsupported overlay member')
     if [n for n, _ in original] != [n for n, _ in candidate]:
         raise ValueError('boot module order or membership changed')
@@ -37,8 +37,8 @@ def verify(original, candidate, member='dos.library'):
 def main():
     iso, candidate, tool = map(pathlib.Path, sys.argv[1:4])
     member = sys.argv[4] if len(sys.argv) == 5 else 'dos.library'
-    if len(sys.argv) not in (4, 5) or member not in ('dos.library', 'ahci.device'):
-        raise ValueError('expected ISO PACKAGE TOOL [dos.library|ahci.device]')
+    if len(sys.argv) not in (4, 5) or member not in ('dos.library', 'ahci.device', 'ata.device'):
+        raise ValueError('expected ISO PACKAGE TOOL [dos.library|ahci.device|ata.device]')
     boot_path = '/boot/aros-base.pkg.xz' if member == 'dos.library' else '/boot/pc-smp/aros-bsp.pkg.xz'
     api = runpy.run_path(str(tool))
     with tempfile.TemporaryDirectory(prefix='openzfs-dos-package-') as temporary:

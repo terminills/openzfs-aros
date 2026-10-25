@@ -17,11 +17,19 @@ platform_maps=() platform_inputs=()
 if [[ $base_platform == 1 ]];then
     # Never silently combine a current boot image with older ABI overlays.
     [[ -z ${AROS_TEST_ZLIB_LIBRARY:-}${AROS_TEST_DOS_OVERLAY:-}${AROS_TEST_ATA_OVERLAY:-} ]]
+    # Both replace the BSP package; never silently let one discard the other.
+    [[ -z ${AROS_TEST_BASE_ATA_PACKAGE:-} || -z ${AROS_TEST_BASE_AHCI_PACKAGE:-} ]]
+    if [[ -n ${AROS_TEST_BASE_ATA_PACKAGE:-} ]];then
+        python3 aros/engine/verify-dos-package-overlay.py "$base" \
+            "$AROS_TEST_BASE_ATA_PACKAGE" "${AROS_PACKAGE_TOOL:?package tool required}" ata.device
+        platform_maps+=(-map "$AROS_TEST_BASE_ATA_PACKAGE" /boot/pc-smp/aros-bsp.pkg.xz)
+        platform_inputs+=("$AROS_TEST_BASE_ATA_PACKAGE")
+    fi
     if [[ -n ${AROS_TEST_BASE_DOS_PACKAGE:-} ]];then
         python3 aros/engine/verify-dos-package-overlay.py "$base" \
             "$AROS_TEST_BASE_DOS_PACKAGE" "${AROS_PACKAGE_TOOL:?package tool required}"
-        platform_maps=(-map "$AROS_TEST_BASE_DOS_PACKAGE" /boot/aros-base.pkg.xz)
-        platform_inputs=("$AROS_TEST_BASE_DOS_PACKAGE")
+        platform_maps+=(-map "$AROS_TEST_BASE_DOS_PACKAGE" /boot/aros-base.pkg.xz)
+        platform_inputs+=("$AROS_TEST_BASE_DOS_PACKAGE")
     fi
     if [[ -n ${AROS_TEST_BASE_AHCI_PACKAGE:-} ]];then
         python3 aros/engine/verify-dos-package-overlay.py "$base" \
