@@ -818,14 +818,15 @@ int main(int argc,char **argv) {
                     struct oz_row *r=&reply->rows[row];
                     size_t used=strlen(summary);
                     oz_simple_dataset_row(summary+used,sizeof(summary)-used,
-                        r->kind,r->name,r->state,r->available);
+                        r->kind,r->name,r->state,r->available,r->used,
+                        !strncmp(r->value,"used=",5));
                 }
                 size_t used=strlen(summary);
                 snprintf(summary+used,sizeof(summary)-used,"\n%s",
                     reply->next_cursor?"More datasets are available: choose Next page.":"");
                 show_response(summary);
-                /* Do not reinterpret the zero 'used' field as measured use:
-                 * dataset.list carries referenced bytes only in its detail. */
+                /* Older services omit measured used accounting. The detail
+                 * prefix distinguishes that from a legitimate zero value. */
                 snprintf(response_text,sizeof(response_text),"%s\n",rendered);
             }
             if(reply->job_id){snprintf(line,sizeof(line),"Background job: %llu (use Advanced/jobs)",(unsigned long long)reply->job_id);logline(line);}

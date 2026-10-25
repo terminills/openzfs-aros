@@ -1686,8 +1686,10 @@ static int dataset_row(const char *name,void *arg)
         oz_zpl_readonly(mounts[mounted].fs)?"read-only":"writable",mounts[mounted].name);
     else snprintf(r->state,sizeof(r->state),"%s, not mounted",
         !strchr(name,'@') && spa_writeable(dmu_objset_spa(os))?"writable":"read-only");
-    snprintf(r->value,sizeof(r->value),"referenced=%llu available=%llu objects=%llu",
-        (unsigned long long)referenced,(unsigned long long)available,(unsigned long long)objects);
+    r->used=dsl_get_used(os->os_dsl_dataset);
+    snprintf(r->value,sizeof(r->value),"used=%llu referenced=%llu available=%llu objects=%llu",
+        (unsigned long long)r->used,(unsigned long long)referenced,
+        (unsigned long long)available,(unsigned long long)objects);
     if(mounted>=0) {
         uint64_t reads=0,nread=0;
         int stats=oz_zpl_counter(mounts[mounted].fs,"reads",&reads);
@@ -1699,7 +1701,7 @@ static int dataset_row(const char *name,void *arg)
             " mount-reads=%llu mount-read-bytes=%llu",
             (unsigned long long)reads,(unsigned long long)nread);
     }
-    r->available=available; /* referenced is not the ZFS 'used' property */
+    r->available=available; /* used is upstream accounting, not referenced */
     dmu_objset_rele(os,FTAG);m->row_count++;return 0;
 }
 /* Diagnostic file-backed import boundary, not a generic device scanner.

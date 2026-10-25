@@ -20,14 +20,18 @@ int main(void)
     assert(strstr(text,"Capacity unavailable"));
     oz_simple_pool_row(small,sizeof(small),"tank","ONLINE",0,0,0);
     assert(small[1]==0);
-    oz_simple_dataset_row(text,sizeof(text),"filesystem","tank/files","writable mount WORK:",1536);
+    oz_simple_dataset_row(text,sizeof(text),"filesystem","tank/files","writable mount WORK:",1536,2048,1);
     assert(strstr(text,"tank/files (filesystem)")&&strstr(text,"WORK:")&&strstr(text,"1.5 KiB"));
     assert(!strstr(text,"used=")&&!strstr(text,"progress="));
-    oz_simple_dataset_row(text,sizeof(text),"volume","tank/disk","writable, not mounted",0);
+    assert(strstr(text,"Used: 2.0 KiB"));
+    oz_simple_dataset_row(text,sizeof(text),"volume","tank/disk","writable, not mounted",0,0,1);
     assert(strstr(text,"Available: 0 B")&&strstr(text,"not mounted"));
-    oz_simple_dataset_row(text,sizeof(text),"snapshot","tank/files@save","read-only",0);
+    assert(strstr(text,"Used: 0 B"));
+    oz_simple_dataset_row(text,sizeof(text),"filesystem","old/files","read-only",1536,0,0);
+    assert(!strstr(text,"Used:")&&strstr(text,"Available: 1.5 KiB"));
+    oz_simple_dataset_row(text,sizeof(text),"snapshot","tank/files@save","read-only",0,2048,1);
     assert(strstr(text,"read-only")&&!strstr(text,"Available:"));
-    oz_simple_dataset_row(small,sizeof(small),"filesystem","tank","read-only",UINT64_MAX);
+    oz_simple_dataset_row(small,sizeof(small),"filesystem","tank","read-only",UINT64_MAX,UINT64_MAX,1);
     assert(small[1]==0);
     puts("Simple pool and dataset formatting PASS");return 0;
 }
