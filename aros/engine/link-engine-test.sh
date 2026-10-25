@@ -41,7 +41,7 @@ case "$test_source" in
     aros/engine/raid-read-test.c) output=OpenZFSRAIDReadTest; startup=(-nix); adapter=(aros/engine/zpl-fixture.c aros/engine/dos-handler.c) ;;
     aros/engine/qemu-reopen-test.c) output=OpenZFSQEMUReopenTest; startup=(-nix); adapter=(aros/engine/zpl-fixture.c) ;;
     aros/engine/qemu-management-test.c) output=OpenZFSQEMUManagementTest; startup=(-nix); adapter=(aros/ui/api.c aros/ui/broker.c aros/engine/zpl-fixture.c aros/engine/dos-handler.c aros/engine/properties.c aros/engine/management.c) ;;
-    aros/engine/qemu-crash-test.c) output=OpenZFSQEMUCrashTest; startup=(-nix); adapter=(aros/engine/zpl-fixture.c); wrap_flags=(--wrap=zil_replay_checked --wrap=zfs_file_pwrite) ;;
+    aros/engine/qemu-crash-test.c) output=OpenZFSQEMUCrashTest; startup=(-nix); adapter=(aros/engine/zpl-fixture.c aros/zpl/create-fs.c); wrap_flags=(--wrap=zil_replay_checked --wrap=zfs_file_pwrite) ;;
     aros/ui/service.c) output=OpenZFSServiceNative; startup=(-nix); adapter=(aros/ui/api.c aros/ui/broker.c aros/engine/zpl-fixture.c aros/engine/dos-handler.c aros/engine/properties.c aros/engine/management.c) ;;
     aros/engine/admission-service-harness.c) output=OpenZFSAdmissionServiceHarness; startup=(-nix); adapter=(aros/ui/api.c aros/ui/broker.c aros/engine/zpl-fixture.c aros/engine/dos-handler.c aros/engine/properties.c aros/engine/management.c) ;;
     *) echo 'Unknown engine test source' >&2; exit 2 ;;

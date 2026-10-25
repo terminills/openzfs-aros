@@ -57,6 +57,7 @@ int oz_read_mount_mkdir(struct oz_read_mount *,uint64_t,const char *,uint32_t,cr
 /* Caller serializes the mount and excludes DOS handles/locks on the target. */
 int oz_read_mount_remove(struct oz_read_mount *,uint64_t,const char *,int,cred_t *);
 int oz_read_mount_rename(struct oz_read_mount *,uint64_t,const char *,uint64_t,const char *,cred_t *);
+int oz_read_mount_exchange(struct oz_read_mount *,uint64_t,const char *,uint64_t,const char *,cred_t *);
 int oz_read_mount_link(struct oz_read_mount *,uint64_t,uint64_t,const char *,cred_t *);
 int oz_read_mount_symlink(struct oz_read_mount *,uint64_t,const char *,const char *,uint32_t,cred_t *);
 int oz_read_mount_readlink(struct oz_read_mount *,uint64_t,char *,size_t,cred_t *);

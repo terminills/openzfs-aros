@@ -154,6 +154,14 @@ static int namespace_stage(struct oz_zpl *fs)
     if(!error)error=oz_zpl_write_as(fs,file.object,0,after,sizeof(after),&written,kcred);
     if(!error&&written!=sizeof(after))error=EIO;
     if(!error)error=oz_zpl_mkdir_as(fs,root,"crash-dir",0,kcred,&dir);
+    if(!error)error=oz_zpl_create_as(fs,root,"crash-exchange",0,kcred,&temp);
+    if(!error)error=oz_zpl_write_as(fs,temp.object,0,after,sizeof(after),&written,kcred);
+    if(!error&&written!=sizeof(after))error=EIO;
+    if(!error)error=oz_zpl_create_as(fs,dir.object,"crash-exchange",0,kcred,&temp);
+    if(!error)error=oz_zpl_write_as(fs,temp.object,0,before,sizeof(before),&written,kcred);
+    if(!error&&written!=sizeof(before))error=EIO;
+    if(!error)error=oz_zpl_exchange_as(fs,root,"crash-exchange",dir.object,"crash-exchange",kcred);
+    report("crash exchange staged",error);
     if(!error)error=oz_zpl_link_as(fs,root,file.object,"crash-alias",kcred);
     if(!error)error=oz_zpl_link_as(fs,root,file.object,"crash-kept-alias",kcred);
     if(!error)log_snapshot("after-links");
@@ -209,6 +217,13 @@ static int namespace_verify(struct oz_zpl *fs)
     if(!error&&!link.symlink)error=EIO;
     if(!error)error=oz_zpl_readlink_as(fs,link.object,target,sizeof(target),kcred);
     if(!error&&strcmp(target,"crash-dir/moved"))error=EIO;
+    if(!error)error=oz_zpl_lookup_at(fs,root,"crash-exchange",&temp);
+    if(!error)error=oz_zpl_read_as(fs,temp.object,0,bytes,sizeof(before),kcred);
+    if(!error&&(temp.size!=sizeof(before)||memcmp(bytes,before,sizeof(before))))error=EIO;
+    if(!error)error=oz_zpl_lookup_at(fs,dir.object,"crash-exchange",&temp);
+    if(!error)error=oz_zpl_read_as(fs,temp.object,0,bytes,sizeof(after),kcred);
+    if(!error&&(temp.size!=sizeof(after)||memcmp(bytes,after,sizeof(after))))error=EIO;
+    report("crash exchange recovered",error);
     const char *gone[]={"crash-file","crash-alias","crash-gone","crash-gone-dir","crash-old","crash-old-dir"};
     for(unsigned i=0;i<sizeof(gone)/sizeof(gone[0])&&!error;i++)
         if(oz_zpl_lookup_at(fs,root,gone[i],&temp)!=ENOENT)error=EIO;

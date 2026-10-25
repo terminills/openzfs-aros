@@ -7,10 +7,15 @@ if [[ ${OZ_CRASH_RUNNER_FROZEN:-0} != 1 ]];then
 fi
 repo=$(cd -- "$(dirname -- "$0")/../.." && pwd)
 cd "$repo"
-[[ -x build-control/zdb ]] || {
+host_zdb=${AROS_TEST_HOST_ZDB:-$repo/build-control/zdb}
+[[ -x $host_zdb ]] || {
     echo 'Independent zdb verifier is required for crash qualification.' >&2
     exit 2
 }
+host_zdb=$(realpath -e "$host_zdb")
+host_zdb_dir=$(dirname "$host_zdb")
+zlib=${AROS_TEST_ZLIB_LIBRARY:-$repo/build-aros/hosted/Libs/z1.library}
+[[ -f $zlib ]] || { echo 'Native z1.library is required' >&2;exit 2; }
 qemu=${AROS_TEST_QEMU:-qemu-system-x86_64}
 command -v "$qemu" >/dev/null
 disk_aio=${AROS_TEST_DISK_AIO:-default}
@@ -23,7 +28,7 @@ artifact_root="$repo/build-aros"
 if [[ -n ${AROS_TEST_ARTIFACT_ROOT:-} ]];then
     artifact_root=$(realpath -e "$AROS_TEST_ARTIFACT_ROOT")
     [[ -d $artifact_root && -w $artifact_root ]]
-    [[ $(stat -c %d "$artifact_root") != $(stat -c %d "$repo/build-aros") ]] || {
+    [[ $(stat -c %d "$artifact_root") != $(stat -c %d "$repo") ]] || {
         echo 'External artifact root must reside on a separate mounted filesystem' >&2;exit 2;
     }
 fi
@@ -68,6 +73,7 @@ fi
 tar -czf "$run/aros-source.tar.gz" aros/engine aros/zpl aros/patches
 cp "$binary" "$run/OpenZFSQEMUCrashTest"
 sha256sum "$base" "$run/OpenZFSQEMUCrashTest" "$dos/aros-base.pkg.xz" "$ata/aros-bsp.pkg.xz" >"$run/inputs.sha256"
+sha256sum "$host_zdb" "$zlib" >>"$run/inputs.sha256"
 extra_maps=()
 members=(0 1)
 if ((slog));then
@@ -125,7 +131,7 @@ for phase in "${phases[@]}"; do
         -map aros/engine/grub-qemu-test.cfg /boot/grub/grub.cfg \
         -map "$dos/aros-base.pkg.xz" /boot/aros-base.pkg.xz \
         -map "$ata/aros-bsp.pkg.xz" /boot/pc-smp/aros-bsp.pkg.xz \
-        -map build-aros/hosted/Libs/z1.library /Libs/z1.library \
+        -map "$zlib" /Libs/z1.library \
         -map "$run/OpenZFSQEMUCrashTest" /C/OpenZFSQEMUCrashTest "${extra_maps[@]}" \
         -map "$current_config" /export.nvlist -map "$startup" /S/Startup-Sequence \
         -boot_image any discard -boot_image grub bin_path=/boot/grub/i386-pc/eltorito.img \
@@ -164,6 +170,7 @@ for phase in "${phases[@]}"; do
     if [[ $phase == stage || $phase == partial ]]; then
         if [[ $phase == stage ]]; then
             rg -a -q '^crash namespace staged=0' "$run/$phase-serial.log"
+            rg -a -q '^crash exchange staged=0' "$run/$phase-serial.log"
             if ((slog));then
                 rg -a -q '^crash dedicated SLOG anchor=0' "$run/$phase-serial.log"
                 rg -a -q '^SLOG_CONFIG_END=0' "$run/$phase-serial.log"
@@ -184,6 +191,7 @@ for phase in "${phases[@]}"; do
     else
         rg -a -q '^crash recovered committed bytes=0' "$run/$phase-serial.log"
         rg -a -q '^crash namespace recovered=0' "$run/$phase-serial.log"
+        rg -a -q '^crash exchange recovered=0' "$run/$phase-serial.log"
         if [[ $phase == recover ]]; then
             rg -a -q '^crash failed replay retained log=0' "$run/$phase-serial.log"
             rg -a -q '^crash partial replay returned=5' "$run/$phase-serial.log"
@@ -218,7 +226,7 @@ sha256sum -c "$baseline/disks-before.sha256"
         python3 aros/engine/pool-partition-fixture.py extract "$run/recover3.raw" "$run/recover-partition3.raw"
         extra_verify=(-p "$run/recover-partition3.raw")
     fi
-    LD_LIBRARY_PATH="$repo/build-control/.libs:$repo/build-control/deps/usr/lib/x86_64-linux-gnu" \
-        build-control/zdb -e -p "$verify0" -p "$verify1" "${extra_verify[@]}" -bcc qemu_mirror >"$run/recovery-zdb.log" 2>&1
+    LD_LIBRARY_PATH="$host_zdb_dir/.libs:$host_zdb_dir/deps/usr/lib/x86_64-linux-gnu" \
+        "$host_zdb" -e -p "$verify0" -p "$verify1" "${extra_verify[@]}" -bcc qemu_mirror >"$run/recovery-zdb.log" 2>&1
     rg -q 'No leaks' "$run/recovery-zdb.log"
 echo "PASS: committed intent-log bytes recovered after private VM power loss. Evidence: $run"

@@ -783,8 +783,8 @@ int oz_read_mount_remove(struct oz_read_mount *mount,uint64_t parent,const char 
     return error;
 }
 
-int oz_read_mount_rename(struct oz_read_mount *mount,uint64_t source,const char *oldname,
-    uint64_t target,const char *newname,cred_t *cr)
+static int mount_rename(struct oz_read_mount *mount,uint64_t source,const char *oldname,
+    uint64_t target,const char *newname,cred_t *cr,uint64_t flags)
 {
     if (!mount || !oldname || !newname || !*oldname || !*newname ||
         strpbrk(oldname,"/:") || strpbrk(newname,"/:") || !strcmp(oldname,".") ||
@@ -795,12 +795,20 @@ int oz_read_mount_rename(struct oz_read_mount *mount,uint64_t source,const char 
     int error=zfs_zget(&mount->fs,source,&from);
     if (!error) error=zfs_zget(&mount->fs,target,&to);
     if (!error) error=zfs_rename(from,(char *)oldname,to,(char *)newname,
-        cr,0,RENAME_NOREPLACE,NULL,NULL);
+        cr,0,flags,NULL,NULL);
     if (to) oz_znode_rele(to);
     if (from) oz_znode_rele(from);
     if (!error) error=oz_read_mount_sync(mount);
     return error;
 }
+
+int oz_read_mount_rename(struct oz_read_mount *mount,uint64_t source,const char *oldname,
+    uint64_t target,const char *newname,cred_t *cr)
+{return mount_rename(mount,source,oldname,target,newname,cr,RENAME_NOREPLACE);}
+
+int oz_read_mount_exchange(struct oz_read_mount *mount,uint64_t source,const char *oldname,
+    uint64_t target,const char *newname,cred_t *cr)
+{return mount_rename(mount,source,oldname,target,newname,cr,RENAME_EXCHANGE);}
 
 int oz_read_mount_replace(struct oz_read_mount *mount,uint64_t parent,
     const char *source,const char *target,const struct oz_zpl_info *fresh,
