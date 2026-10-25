@@ -379,6 +379,50 @@ static int persistent_whiteout(znode_t *fixture, boolean_t write)
     for (char *p=text;*p;p++) RawPutChar(*p);
     return error;
 }
+static int persistent_whiteout_replace(znode_t *fixture, boolean_t write)
+{
+    znode_t *base=NULL,*left=NULL,*right=NULL,*source=NULL,*target=NULL;
+    znode_t *marker=NULL,*moved=NULL,*saved=NULL;
+    int error=write?directory(fixture,"whiteout-replace",&base):
+        child(fixture,"whiteout-replace",&base);
+    if (!error) error=write?directory(base,"left",&left):child(base,"left",&left);
+    if (!error) error=write?directory(base,"right",&right):child(base,"right",&right);
+    vattr_t va={.va_mask=ATTR_MODE,.va_mode=S_IFCHR,.va_rdev=0};
+    if (!error && write) {
+        error=tagged_file(left,"source",0x81,&source);
+        if (!error) error=tagged_file(right,"target",0x92,&target);
+        if (!error) error=zfs_link(right,target,"saved",kcred,0);
+        if (!error && zfs_rename(left,"source",right,"target",kcred,0,
+            RENAME_WHITEOUT|RENAME_NOREPLACE,&va,NULL)!=EEXIST) error=EIO;
+        if (!error) error=tag_check(source,0x81);
+        if (!error) error=tag_check(target,0x92);
+        if (!error && (source->z_links!=1 || target->z_links!=2)) error=EIO;
+        if (!error) error=zfs_rename(left,"source",right,"target",kcred,0,
+            RENAME_WHITEOUT,&va,NULL);
+        if (!error) error=zil_commit(ZTOZSB(base)->z_log,0);
+    }
+    if (!error) error=child(left,"source",&marker);
+    if (!error) error=child(right,"target",&moved);
+    if (!error) error=child(right,"saved",&saved);
+    if (!error) error=tag_check(moved,0x81);
+    if (!error) error=tag_check(saved,0x92);
+    uint64_t device=UINT64_MAX,marker_parent=0,moved_parent=0;
+    if (!error) error=sa_lookup(marker->z_sa_hdl,SA_ZPL_RDEV(ZTOZSB(base)),&device,8);
+    if (!error) error=sa_lookup(marker->z_sa_hdl,SA_ZPL_PARENT(ZTOZSB(base)),&marker_parent,8);
+    if (!error) error=sa_lookup(moved->z_sa_hdl,SA_ZPL_PARENT(ZTOZSB(base)),&moved_parent,8);
+    if (!error && (!S_ISCHR(marker->z_mode)||device||marker->z_size||
+        marker->z_links!=1||marker_parent!=left->z_id||moved_parent!=right->z_id||
+        moved->z_links!=1||saved->z_links!=1||saved->z_unlinked||moved==saved||
+        (source&&moved!=source)||(target&&saved!=target)||left->z_size!=3||
+        right->z_size!=4||left->z_links!=2||right->z_links!=2)) error=EIO;
+    znode_t *nodes[]={saved,moved,marker,target,source,right,left,base};
+    for (unsigned i=0;i<sizeof(nodes)/sizeof(*nodes);i++)
+        if (nodes[i]) oz_znode_rele(nodes[i]);
+    char text[128];
+    snprintf(text,sizeof(text),"Native whiteout replacement write=%d cross-parent=1 retained-target=1 result=%d\n",write,error);
+    for (char *p=text;*p;p++) RawPutChar(*p);
+    return error;
+}
 static int replace_empty(znode_t *left, znode_t *right)
 {
     znode_t *source = NULL, *target = NULL, *found = NULL;
@@ -515,6 +559,7 @@ int oz_rename_test(zfsvfs_t *fs, boolean_t write)
         zap_contains(fs->z_os,right->z_id,"x") != ENOENT)) error = EIO;
     if (!error) error = persistent_exchange(fixture,write);
     if (!error) error = persistent_whiteout(fixture,write);
+    if (!error) error = persistent_whiteout_replace(fixture,write);
     if (!error) error = zap_count(fs->z_os,fs->z_unlinkedobj,&count);
     if (!error && count) error = EIO;
     znode_t *nodes[] = {a,b,c,tree,branch,empty,left,right,fixture,parent,root};
