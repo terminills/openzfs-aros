@@ -27,4 +27,15 @@ static void oz_simple_pool_row(char *out,size_t size,const char *name,
     oz_simple_bytes(t,sizeof(t),total);
     snprintf(out,size,"%.159s : %.47s\n  Size: %s   Allocated: %s   Free: %s\n",name,state,t,u,a);
 }
+static void oz_simple_dataset_row(char *out,size_t size,const char *kind,
+    const char *name,const char *state,uint64_t available)
+{
+    if(strcmp(kind,"filesystem")&&strcmp(kind,"volume")) {
+        snprintf(out,size,"%.159s (%.23s)\n  %.47s\n",name,kind,state);
+        return;
+    }
+    char space[40];oz_simple_bytes(space,sizeof(space),available);
+    snprintf(out,size,"%.159s (%.23s)\n  %.47s\n  Available: %s\n",
+        name,kind,state,space);
+}
 #endif
