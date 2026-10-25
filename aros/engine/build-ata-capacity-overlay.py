@@ -23,7 +23,11 @@ def main():
         parser.add_argument('--' + name, type=Path, required=True)
     parser.add_argument('--full-source', action='store_true',
                         help='Compile every driver object, including generated entry sources')
+    parser.add_argument('--flush', action='store_true',
+                        help='Include ATA CMD_UPDATE cache-flush companion (requires --full-source)')
     args = parser.parse_args()
+    if args.flush and not args.full_source:
+        parser.error('--flush requires --full-source to rebuild ata.c and lowlevel.c')
     build, source, cc, iso, parent = (p.resolve(strict=True) for p in
         (args.build, args.source, args.cc, args.iso, args.output_parent))
     if shutil.disk_usage(parent).free < 100 * 2**30:
@@ -45,6 +49,11 @@ def main():
             log.write(shlex.join(command) + '\n'); log.flush()
             subprocess.run(command, cwd=out, stdout=log, stderr=subprocess.STDOUT, check=True)
         run(['patch', '--fuzz=0', '-p1', '-d', out, '-i', patch])
+        if args.flush:
+            flush_patch = repo / 'aros/patches/ata-update-flush.patch'
+            shutil.copy2(flush_patch, out / flush_patch.name)
+            inputs.append(flush_patch)
+            run(['patch', '--fuzz=0', '-p1', '-d', out, '-i', flush_patch])
         common = [cc, '--sysroot', sdk, '-m64', '-mcmodel=large',
                   '-mno-red-zone', '-mno-ms-bitfields', '-mgeneral-regs-only']
         compile_flags = common + ['-O2', '-fno-asynchronous-unwind-tables', '-fno-omit-frame-pointer',
