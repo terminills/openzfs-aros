@@ -2,6 +2,7 @@
 /* Non-pool runtime checks. No global assign or credential changes. Temporary
  * probes use RAM: and the process adapter's T: output capture. */
 #include "process.h"
+#include "errno-check.h"
 #include <proto/exec.h>
 #include <proto/dos.h>
 #include <proto/security.h>
@@ -105,6 +106,11 @@ static int subprocess(void)
 }
 int main(int argc,char **argv)
 {
+    if(argc==2&&!strcmp(argv[1],"--errno-only")){
+        int ok=oz_errno_check();
+        puts(ok?"PASS errno accessor and POSIX writer":"FAIL errno accessor or POSIX writer");
+        return ok?0:20;
+    }
     if(argc==2&&!strcmp(argv[1],"--exec-child")){
         if(puts("OpenZFS exec probe")==EOF||fflush(stdout))return 20;
         return 23;
@@ -115,9 +121,10 @@ int main(int argc,char **argv)
             fputs("OpenZFS stderr probe\n",stderr)<0)return 20;
         return fflush(stdout)||fflush(stderr)?20:0;
     }
-    if(argc!=1){puts("Usage: OpenZFSRuntimeCheck");return 20;}
+    if(argc!=1){puts("Usage: OpenZFSRuntimeCheck [--errno-only]");return 20;}
     puts("OpenZFS runtime check (no pools or devices opened)");
-    int ok=1;
+    int ok=oz_errno_check();
+    puts(ok?"PASS errno accessor and POSIX writer":"FAIL errno accessor or POSIX writer");
     const char *names[]={"posixc.library","stdcio.library","z1.library","iffparse.library","muimaster.library"};
     for(unsigned i=0;i<sizeof(names)/sizeof(names[0]);i++){
         struct Library *library=OpenLibrary((CONST_STRPTR)names[i],0);
