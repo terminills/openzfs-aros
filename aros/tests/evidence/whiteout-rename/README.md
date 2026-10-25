@@ -55,3 +55,29 @@ unchanged. Evidence is retained in `replacement/`.
 This extends clean-export/cold-import qualification, not abrupt-crash replay
 of destination replacement. The earlier interrupted-replay test covers a
 non-replacing whiteout. Production code was unchanged for this added test.
+
+## Interrupted replacement replay
+
+`2e18dca` adds an explicit internal replacing-whiteout entry point, keeping the
+existing whiteout entry point's NOREPLACE behavior. No DOS packet or management
+operation was added. The native crash fixture creates distinct source/target
+payloads and a retained hardlink to the target before the cross-parent whiteout.
+
+Two-CPU `crash-run.py50jPRT` passes staging, interrupted replay, resumed recovery
+and final verification. The private VM is killed after committing ZIL with TXG
+persistence frozen, then killed again after an injected SETATTR replay failure
+and partial-replay persistence. Resume observes replay needed and recovers the
+character marker, moved source bytes and distinct original-target bytes through
+the surviving alias. Final boot needs no replay and verifies those again.
+Independent zdb reports No leaks; original crash, partial-replay and baseline
+disk hashes remain unchanged. Logs and hashes are in `replacement-crash/`.
+
+This qualifies the controlled replacing-whiteout record sequence, not every
+possible interruption point or physical-device durability.
+
+The non-diagnostic shared engine was rebuilt as `shared-engine.tbM9IzcN` from
+`sibling-production.IXtA7XZ4` (incremental upstream objects, not a fresh SDK).
+Eight-CPU `public-service-run.RzqI8zfH` passes the service lifecycle, mirror DOS
+round trip and native cold exact-read/read-only regression. See
+`replacement-production/`. This production regression is separate from the
+diagnostic crash fixture above.
