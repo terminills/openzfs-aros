@@ -454,6 +454,7 @@ static int utf8_mount_test(const char *pool,uint64_t normalization,uint64_t case
     CHECK(oz_read_mount_mkdir(mount,root,invalid,0,kcred,&found)==EILSEQ?0:EIO);
     CHECK(oz_read_mount_lookup(mount,root,invalid,&found)==EILSEQ?0:EIO);
     CHECK(oz_read_mount_rename(mount,root,name,root,invalid,kcred)==EILSEQ?0:EIO);
+    CHECK(oz_read_mount_rename(mount,root,invalid,root,renamed,kcred)==EILSEQ?0:EIO);
     CHECK(oz_read_mount_rename(mount,root,case_mode==ZFS_CASE_INSENSITIVE?upper:
         normalization?equivalent:name,root,renamed,kcred));
     CHECK(oz_read_mount_sync(mount));CHECK(oz_read_mount_close(mount));mount=NULL;
@@ -467,7 +468,7 @@ static int utf8_mount_test(const char *pool,uint64_t normalization,uint64_t case
     const char *s=case_mode!=ZFS_CASE_SENSITIVE?
         "RESULT native case mount PASS lookup=1 duplicate-policy=1 rename=1 reopen=1\n":normalization?
         "RESULT native normalized mount PASS equivalent=1 duplicate=1 case-sensitive=1 rename=1 reopen=1\n":
-        "RESULT native UTF8 mount PASS create=1 rename=1 rejected=4 reopen=1\n";
+        "RESULT native UTF8 mount PASS create=1 rename=1 rejected=5 reopen=1\n";
     while(*s)RawPutChar(*s++);
     /* Restore the original spelling, then exercise actual authenticated DOS
      * packets while retaining both the source references and a hard link. */

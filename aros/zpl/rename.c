@@ -252,8 +252,9 @@ rename_impl(znode_t *sdzp, char *snm, znode_t *tdzp, char *tnm,
 		return (SET_ERROR(EXDEV));
 	}
 
-	if (zfsvfs->z_utf8 && u8_validate(tnm,
-	    strlen(tnm), NULL, U8_VALIDATE_ENTIRE, &error) < 0) {
+	if (zfsvfs->z_utf8 &&
+	    (u8_validate(snm, strlen(snm), NULL, U8_VALIDATE_ENTIRE, &error) < 0 ||
+	    u8_validate(tnm, strlen(tnm), NULL, U8_VALIDATE_ENTIRE, &error) < 0)) {
 		rename_exit(zfsvfs, sdzp, tdzp);
 		return (SET_ERROR(EILSEQ));
 	}

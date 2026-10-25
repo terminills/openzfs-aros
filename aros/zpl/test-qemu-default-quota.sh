@@ -8,6 +8,8 @@ base=${AROS_TEST_ISO:-/opt/aros-workspace/aros-amiwest-nightly-release/distfiles
 dos=${AROS_TEST_DOS_OVERLAY:?private DOS overlay required}
 ata=${AROS_TEST_ATA_OVERLAY:?private ATA overlay required}
 posix=${AROS_TEST_POSIX_LIBRARY:?private POSIX library required}
+zlib=${AROS_TEST_ZLIB_LIBRARY:-$repo/build-aros/hosted/Libs/z1.library}
+[[ -f $zlib ]]
 run=$(mktemp -d "$repo/build-aros/default-quota-run.XXXXXXXX")
 echo "Evidence: $run"
 exec > >(tee "$run/runner.log") 2>&1
@@ -19,14 +21,14 @@ git diff --binary > "$run/source.patch"
 tar -czf "$run/aros-source.tar.gz" aros/engine aros/zpl aros/cli \
     module/zfs/spa.c module/zfs/dmu_send.c include/sys/zfs_context.h
 sha256sum "$base" "$run/OpenZFSDefaultQuotaTest" "$dos/aros-base.pkg.xz" \
-    "$ata/aros-bsp.pkg.xz" "$posix" build-aros/hosted/Libs/z1.library > "$run/inputs.sha256"
+    "$ata/aros-bsp.pkg.xz" "$posix" "$zlib" > "$run/inputs.sha256"
 xorriso -indev "$base" -outdev "$run/test.iso" \
     -map aros/engine/grub-qemu-test.cfg /boot/grub/grub.cfg \
     -map "$dos/aros-base.pkg.xz" /boot/aros-base.pkg.xz \
     -map "$ata/aros-bsp.pkg.xz" /boot/pc-smp/aros-bsp.pkg.xz \
     -map "$posix" /Libs/posixc.library \
     -map aros/engine/security-fixture /Security \
-    -map build-aros/hosted/Libs/z1.library /Libs/z1.library \
+    -map "$zlib" /Libs/z1.library \
     -map "$run/OpenZFSDefaultQuotaTest" /C/OpenZFSDefaultQuotaTest \
     -map aros/engine/public-service-test-only /openzfs-quota-test-only \
     -map "$run/Startup-Sequence" /S/Startup-Sequence \
@@ -54,7 +56,7 @@ while :; do
                rg -q '^RESULT native zvol PASS write=1 reopen=1 readonly=1 resize=1 export-busy=1' "$run/serial-completion.log" &&
                rg -q '^RESULT native zvol lifecycle PASS rename=1 snapshot-readonly=1 recreate=1' "$run/serial-completion.log" &&
                rg -q '^RESULT native dispatcher runtime PASS cycles=80 upstream-stats=1 stopped-denial=1' "$run/serial-completion.log"; }; } &&
-           rg -q '^RESULT native UTF8 mount PASS create=1 rename=1 rejected=4 reopen=1' "$run/serial-completion.log" &&
+           rg -q '^RESULT native UTF8 mount PASS create=1 rename=1 rejected=5 reopen=1' "$run/serial-completion.log" &&
            [[ $(rg -c '^RESULT native normalized mount PASS equivalent=1 duplicate=1 case-sensitive=1 rename=1 reopen=1' "$run/serial-completion.log") == 4 ]] &&
            [[ $(rg -c '^RESULT native case mount PASS lookup=1 duplicate-policy=1 rename=1 reopen=1' "$run/serial-completion.log") == 4 ]] &&
            [[ $(rg -c '^RESULT native DOS alias rename PASS lock=1 handle=1 hardlink=1 enumeration=3 unicode=1' "$run/serial-completion.log") == 9 ]] &&
