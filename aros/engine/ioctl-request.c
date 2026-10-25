@@ -62,6 +62,7 @@ static int execute(void *storage,size_t length,const struct oz_packet_security *
     boolean_t prefetch=w->command==ZFS_IOC_POOL_PREFETCH;
     boolean_t pruning=w->command==ZFS_IOC_DDT_PRUNE;
     boolean_t initializing=w->command==ZFS_IOC_POOL_INITIALIZE;
+    boolean_t trimming=w->command==ZFS_IOC_POOL_TRIM;
     boolean_t program=w->command==ZFS_IOC_CHANNEL_PROGRAM;
     boolean_t redacting=w->command==ZFS_IOC_REDACT;
     boolean_t events_next=w->command==ZFS_IOC_EVENTS_NEXT;
@@ -70,7 +71,7 @@ static int execute(void *storage,size_t length,const struct oz_packet_security *
     boolean_t events=events_next||events_seek||events_clear;
     boolean_t waiting=streamfd==-2&&
         (w->command==ZFS_IOC_WAIT||w->command==ZFS_IOC_WAIT_FS);
-    boolean_t modern=vdevprops||history_log||initializing||redacting||program||pruning||waiting||prefetch||temporary||diff||sending||receiving||w->command==ZFS_IOC_SNAPSHOT||w->command==ZFS_IOC_DESTROY_SNAPS||
+    boolean_t modern=vdevprops||history_log||initializing||trimming||redacting||program||pruning||waiting||prefetch||temporary||diff||sending||receiving||w->command==ZFS_IOC_SNAPSHOT||w->command==ZFS_IOC_DESTROY_SNAPS||
         w->command==ZFS_IOC_HOLD||w->command==ZFS_IOC_GET_HOLDS||w->command==ZFS_IOC_RELEASE||
         w->command==ZFS_IOC_CREATE||w->command==ZFS_IOC_CLONE||w->command==ZFS_IOC_ROLLBACK||
         w->command==ZFS_IOC_DESTROY||w->command==ZFS_IOC_SNAPSHOT_LIST_NEXT||
@@ -164,6 +165,13 @@ static int execute(void *storage,size_t length,const struct oz_packet_security *
     if(initializing&&(!w->src_size||w->history_size||command.zc_cookie||
         command.zc_guid||command.zc_obj||command.zc_flags||
         command.zc_value[0]||command.zc_string[0]||command.zc_cleanup_fd))return EINVAL;
+    /* TRIM names existing GUIDs only. The upstream schema, config privilege,
+     * read-only guard and per-vdev capability errors remain authoritative.
+     * Admitting this ioctl does not advertise physical discard support. */
+    if(trimming&&(!w->src_size||w->history_size||command.zc_cookie||
+        command.zc_guid||command.zc_obj||command.zc_flags||
+        command.zc_history_offset||command.zc_cleanup_fd||
+        command.zc_value[0]||command.zc_string[0]))return EINVAL;
     /* Crypto operations take a bounded packed nvlist, with secret material
      * inside upstream hidden_args. No extra pointers, history or inline
      * operation flags are admitted. Upstream owns schema, delegated load-key/

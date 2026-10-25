@@ -751,6 +751,22 @@ static int cli_result(const char *command,const char *expected)
     while(count>0&&(text[count-1]=='\n'||text[count-1]=='\r'))text[--count]=0;
     return strcmp(text,expected)?EIO:0;
 }
+static int cli_trim_unsupported(void)
+{
+    const char *commands[]={"C:zpool trim public_mirror",
+        "C:zpool trim -s public_mirror","C:zpool trim -c public_mirror"};
+    for(unsigned i=0;i<sizeof(commands)/sizeof(*commands);i++) {
+        if(cli_command(commands[i])!=1)return EIO;
+        BPTR f=Open((CONST_STRPTR)"T:public-cli-errors.log",MODE_OLDFILE);
+        if(!f)return EIO;
+        char text[2048]={0};LONG n=Read(f,text,sizeof(text)-1);
+        int closed=Close(f);
+        if(n<=0||n==sizeof(text)-1||!closed||
+            !strstr(text,"no devices in pool support trim operations"))return EIO;
+    }
+    note("Public CLI TRIM unsupported PASS start=1 suspend=1 cancel=1 upstream-device-errors=1\n");
+    return 0;
+}
 static int companion_tools_test(void)
 {
     BPTR marker=Lock((CONST_STRPTR)"SYS:openzfs-companion-tools-test",SHARED_LOCK);
@@ -2615,6 +2631,7 @@ static int storage_test(int gui){
         }
         if(storage_dspare)STORAGE_CHECK(!storage_spare_test());
         STORAGE_CHECK(!cli_result("C:zpool list -H -o name public_mirror >T:cli-package-output.txt","public_mirror"));
+        STORAGE_CHECK(!cli_trim_unsupported());
         STORAGE_CHECK(!cli_result("C:zfs list -H -o name public_mirror/files >T:cli-package-output.txt","public_mirror/files"));
         STORAGE_CHECK(!cli_result("C:zfs get -H -o value type public_mirror/files >T:cli-package-output.txt","filesystem"));
         STORAGE_CHECK(SystemTags((CONST_STRPTR)"C:zfs snapshot public_mirror/files@cli_roundtrip",TAG_DONE)==0);

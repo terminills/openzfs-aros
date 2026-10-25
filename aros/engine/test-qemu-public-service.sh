@@ -565,6 +565,8 @@ while :;do
              rg -q '^RESULT native loader execution policy PASS' "$run/serial-results.log"; } &&
            { [[ -z $cli_dir ]] || {
              rg -q '^Public packaged CLI PASS' "$run/serial-results.log" &&
+             { [[ ${AROS_TEST_REQUIRE_TRIM:-0} != 1 ]] ||
+               rg -q '^Public CLI TRIM unsupported PASS start=1 suspend=1 cancel=1 upstream-device-errors=1' "$run/serial-results.log"; } &&
              rg -q '^Public packaged replication PASS .*incremental=1' "$run/serial-results.log"; }; } &&
            { [[ -z $handler ]] ||
              rg -q '^Public packaged handler PASS' "$run/serial-results.log"; } &&
