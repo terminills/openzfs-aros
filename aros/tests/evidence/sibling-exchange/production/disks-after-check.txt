@@ -1,0 +1,2 @@
+/mnt/short-term/openzfs-qualification-20261024.aGFlVF7T/public-service-run.BKqlHdAu/partition.raw: OK
+/mnt/short-term/openzfs-qualification-20261024.aGFlVF7T/public-service-run.BKqlHdAu/blank.raw: OK
