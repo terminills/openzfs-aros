@@ -152,7 +152,7 @@ sha256sum "$(command -v "$qemu")" >"$run/qemu.sha256"
 printf '%s\n' "$disk_aio" >"$run/disk-aio.txt"
 tar -czf "$run/aros-source.tar.gz" aros/engine aros/zpl aros/patches aros/platform
 sha256sum "$base" "$binary_dir/OpenZFSQEMUPoolTest" "$binary_dir/OpenZFSQEMUImportTest" "$binary_dir/OpenZFSQEMUReopenTest" \
-    build-aros/hosted/Libs/z1.library >"$run/inputs.sha256"
+    "$zlib" >"$run/inputs.sha256"
 vm_pid=
 cleanup() { if [[ -n $vm_pid ]] && kill -0 "$vm_pid" 2>/dev/null; then kill "$vm_pid"; wait "$vm_pid" || true; fi; }
 trap cleanup EXIT
