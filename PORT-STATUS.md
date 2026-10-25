@@ -13,13 +13,44 @@ still uses a link-library errno accessor and exposes neither of these vectors.
 Its source commit has not been established. Do not install these old consumers
 with that runtime. A fresh matched SDK/dependency/application rebuild and
 new-baseline QEMU tests are required. `fb61d32` adds an errno accessor/POSIX
-writer probe, verified only on the established baseline so far.
+writer probe. Subsequent standalone official-SDK/runtime tests pass; that
+does not qualify this older engine archive on a different runtime.
 
 The standalone `aros/cli/errno-native-test.c` emits serial BEGIN, three case
 results, and a final PASS/FAIL marker without opening storage. It is intended
 for the official/custom caller-runtime compatibility matrix. A clean compile
 or a matched custom-SDK run does not prove compatibility with official callers;
 both cross-runtime directions require isolated native tests.
+
+### Published nightly SDK qualification (2026-10-25)
+
+The `qualification/official-sdk-20261025` branch additionally records bounded
+tests against the pristine published 20261023 SDK and runtime:
+
+- Native errno accessor/writer and ordinary pipe transport probes pass.
+  The SDK does not provide `pipe2`; `pipe` plus `fcntl` is not claimed to
+  reproduce atomic close-on-exec behavior.
+- The complete 16-case POSIX environment matrix reproduces ten failures and
+  six passes. Explicit/empty environment global fallback, nested execution,
+  unset behavior and direct `environ` replacement remain unresolved. The
+  known-defect verifier is a reproduction check, **not qualification**.
+- The native Manager opens from the shell, closes through its supported
+  break path, and reopens independently from Workbench without a backend.
+- Runtime-check workers complete 16 missing-command lifecycles and four
+  real-checker report captures. The checker still reports unmet security and
+  execution-policy prerequisites; successful delivery does not turn those
+  failures into passes.
+- Ordinary inherited-environment command capture passes 112 sequential and
+  896 concurrent cases, including exact per-caller tokens, error status,
+  bounded output rejection, thread joins and temporary-file cleanup.
+
+Evidence is under `aros/tests/evidence/official-sdk-api-audit-20261025`,
+`official-environment-matrix-20261025`, `official-manager-startup-20261025`,
+`official-runtime-worker-20261025`, and `official-inherited-capture-20261025`.
+These are isolated software tests, not new engine/pool, general SMP, or
+physical-device qualification. Shared-runtime compatibility repairs remain a
+separate prerequisite before rebuilding and qualifying the complete engine
+against a newly accepted SDK/runtime pair.
 
 `mmake-bundle.7ospuo7d.tar.xz` includes the corrected snapshot-local POSIX ABI
 header, retained FAT/DOS/POSIX sources and current qualified engine/Manager.
