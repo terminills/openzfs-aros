@@ -1,0 +1,7 @@
+{"time": 1792912196.020947, "action": "capture", "args": ["manager-initial.png"]}
+{"time": 1792912305.4191098, "action": "click", "args": ["337", "224", "1280", "800"]}
+{"time": 1792912306.6996667, "action": "click", "args": ["784", "207", "1280", "800"]}
+{"time": 1792912309.0367289, "action": "type", "args": ["public_mirror"]}
+{"time": 1792912309.308847, "action": "click", "args": ["875", "226", "1280", "800"]}
+{"time": 1792912310.4643605, "action": "capture", "args": ["manager-simple-datasets.png"]}
+{"time": 1792912894.817704, "action": "click", "args": ["296", "143", "1280", "800"]}
