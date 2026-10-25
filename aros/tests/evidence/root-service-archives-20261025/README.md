@@ -24,3 +24,12 @@ AROS instance merely to recreate the old path.
 This record describes the archival procedure, not a completed cleanup total.
 The manifest and terminal process result determine actual progress. A
 failure or interruption does not authorize deleting unrecorded loose copies.
+
+## Independent restore check
+
+`verification-prefix.jsonl` is a complete-line snapshot of the first 421
+records, not the final manifest. Independent `gzip -cd | sha256sum` checks
+passed for all 172 distinct archives named in that snapshot. Results are in
+`verification-prefix.log`; the verification command exited zero. Later records
+are not covered by this second check until a subsequent verification is run.
+The archival process itself also verifies every archive before each deletion.
