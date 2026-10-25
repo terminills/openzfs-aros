@@ -207,6 +207,12 @@ static int capacity16(struct oz_device *d,unsigned sector,uint64_t *size)
     scsi.scsi_Flags=SCSIF_READ|SCSIF_AUTOSENSE;
     scsi.scsi_SenseData=sense;scsi.scsi_SenseLength=sizeof(sense);
     int error=request(d,HD_SCSICMD,&scsi,sizeof(scsi),0,0);
+#ifdef OZ_DEVICE_IO_DIAGNOSTIC
+    bug("OpenZFS capacity16 error=%d status=%u command=%u data=%lu sense=%u/%u/%u\n",
+        error,(unsigned)scsi.scsi_Status,(unsigned)scsi.scsi_CmdActual,
+        (unsigned long)scsi.scsi_Actual,(unsigned)(sense[2]&15),
+        (unsigned)sense[12],(unsigned)sense[13]);
+#endif
     if(error)return error;
     if(scsi.scsi_Status||scsi.scsi_CmdActual!=sizeof(command)||
        scsi.scsi_Actual!=sizeof(data))return EIO;

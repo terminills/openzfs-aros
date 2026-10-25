@@ -12,6 +12,10 @@ posix=${AROS_TEST_POSIX_LIBRARY:?private POSIX library required}
 pthread=${AROS_TEST_PTHREAD_DIR:?matching private pthread directory required}
 artifact_root=${AROS_TEST_ARTIFACT_ROOT:-$repo/build-aros}
 cpus=${AROS_TEST_CPUS:-2}
+diagnostic=${AROS_TEST_DEVICE_DIAGNOSTIC:-0}
+[[ $diagnostic == 0 || $diagnostic == 1 ]]
+diagnostic_flags=()
+if [[ $diagnostic == 1 ]]; then diagnostic_flags=(-DOZ_DEVICE_IO_DIAGNOSTIC); fi
 [[ $cpus =~ ^[1-8]$ ]]
 [[ -d $artifact_root && -f $pthread/libpthread.a && -f $pthread/source/pthread.h ]]
 available=$(df -B1 --output=avail "$artifact_root" | tail -1)
@@ -27,7 +31,7 @@ cp aros/platform/partitions.{c,h} "$run/"
 cp "$0" aros/engine/Startup-Device-Range "$run/"
 # Reuse the bounded test startup, replacing only the executable mapped below.
 "$cc" --sysroot="$sdk" -B"$sdk/lib/" -I"$pthread/source" -Wall -Wextra -Werror -O2 \
-    -DOZ_CAPACITY_TIB="$capacity_tib" "$run/device-io.c" "$run/capacity-test.c" aros/platform/partitions.c \
+    "${diagnostic_flags[@]}" -DOZ_CAPACITY_TIB="$capacity_tib" "$run/device-io.c" "$run/capacity-test.c" aros/platform/partitions.c \
     "$pthread/libpthread.a" -o "$run/OpenZFSDeviceRangeTest" >"$run/build.log" 2>&1
 qemu-img create -f qcow2 "$run/disk.qcow2" "${capacity_tib}T"
 # Distinguish the final sector from a wrapped low-LBA read of this empty image.
@@ -53,6 +57,7 @@ if [[ -n $ata ]]; then
 fi
 printf '%s\n' "${ata:-baseline ISO ATA driver}" > "$run/ata-source.txt"
 printf '%s\n' "$cpus" > "$run/cpus.txt"
+printf '%s\n' "$diagnostic" > "$run/diagnostic.txt"
 xorriso -indev "$base" -outdev "$run/test.iso" \
     -map aros/engine/grub-qemu-test.cfg /boot/grub/grub.cfg \
     "${ata_maps[@]}" \
