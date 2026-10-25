@@ -244,6 +244,13 @@ results, not a fresh qualification of this public snapshot.
   unchanged disk hashes. Evidence is in the `full-source` subdirectory of
   `ata-capacity-boundaries`. Selected generated AROS sources/headers and SDK
   libraries remain prerequisites; this is not a standalone AROS source build.
+  The same source-rebuilt ATA overlay also passes the current eight-CPU
+  public-service acceptance workload (`public-service-run.U0sLqzCA`): native
+  partition discovery, handler writes/reads and read-only reimport, encrypted
+  native retention, conflicting-label rejection/restoration, and file-backed
+  mirror lifecycle. This supplements raw-capacity qualification with actual
+  pool/handler operations; it does not add physical-device evidence. Captures
+  are in `ata-capacity-boundaries/full-source-service`.
 - Physical storage flush, disconnect, and abrupt power-loss behavior require
   hardware qualification. Virtual-disk tests do not establish these guarantees.
 - Not every upstream feature or topology has end-to-end AROS validation.
