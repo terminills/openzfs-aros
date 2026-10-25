@@ -753,16 +753,24 @@ static int cli_result(const char *command,const char *expected)
 }
 static int cli_trim_unsupported(void)
 {
-    const char *commands[]={"C:zpool trim public_mirror",
-        "C:zpool trim -s public_mirror","C:zpool trim -c public_mirror"};
+    char *commands[][5]={{"C:zpool","trim","public_mirror",NULL,NULL},
+        {"C:zpool","trim","-s","public_mirror",NULL},
+        {"C:zpool","trim","-c","public_mirror",NULL}};
     for(unsigned i=0;i<sizeof(commands)/sizeof(*commands);i++) {
-        if(cli_command(commands[i])!=1)return EIO;
+        BPTR errors=Open((CONST_STRPTR)"T:public-cli-errors.log",MODE_NEWFILE);
+        if(!errors)return EIO;
+        struct oz_cli_result result={0};
+        int error=oz_cli_spawn_exact(commands[i][0],commands[i],Output(),errors,&result);
+        if(!Close(errors))error=EIO;
+        diagnostic_log("T:public-cli-errors.log");
+        if(error||result.dos_error||!result.status)return EIO;
         BPTR f=Open((CONST_STRPTR)"T:public-cli-errors.log",MODE_OLDFILE);
         if(!f)return EIO;
         char text[2048]={0};LONG n=Read(f,text,sizeof(text)-1);
         int closed=Close(f);
-        if(n<=0||n==sizeof(text)-1||!closed||
-            !strstr(text,"no devices in pool support trim operations"))return EIO;
+        const char *first=strstr(text,"trim operations are not supported by this device");
+        if(n<=0||n==sizeof(text)-1||!closed||!first||
+            !strstr(first+1,"trim operations are not supported by this device"))return EIO;
     }
     note("Public CLI TRIM unsupported PASS start=1 suspend=1 cancel=1 upstream-device-errors=1\n");
     return 0;
