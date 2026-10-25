@@ -39,6 +39,20 @@ actual discard verification on disposable storage, asynchronous progress and
 cold lifecycle tests. Secure TRIM must not be advertised without support.
 No physical device was used and no ATA driver code was changed here.
 
+## Native upstream CLI transport
+
+`7836561` admits `ZFS_IOC_POOL_TRIM` through the native bounded ioctl transport.
+The upstream handler retains schema validation, config privilege, read-only
+pool checks and per-vdev errors. Extra inline flags, history data and client
+pointer-like fields are rejected. No backing capability is enabled by this
+change: `zpool trim`, `zpool trim -s` and `zpool trim -c` must report unsupported
+devices on current AROS backings, rather than fail before upstream dispatch.
+
+The native acceptance client uses the direct exact-path process launcher,
+not shell status assumptions, and requires both mirror members' specific
+unsupported messages. `AROS_TEST_REQUIRE_TRIM=1` makes the public-service QEMU
+runner require that marker. Positive media-discard qualification is still open.
+
 ## Verification
 
 The native fixture checks malformed options/duplicates/overflow, nonroot and
