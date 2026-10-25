@@ -79,6 +79,33 @@ static int ancestry_failure(znode_t *left, znode_t *right, znode_t *tree,
     return error;
 }
 struct exchange_worker { znode_t *source, *target; char *from, *to; int error; };
+static int sibling_exchange(znode_t *parent, const char *first,
+    const char *second, znode_t *a, znode_t *b)
+{
+    uint64_t size=parent->z_size, links=parent->z_links;
+    uint64_t asize=a->z_size, alinks=a->z_links;
+    uint64_t bsize=b->z_size, blinks=b->z_links;
+    int error=0;
+    for (unsigned i=0; i<2 && !error; i++) {
+        error=RENAME(parent,(char *)first,parent,(char *)second,RENAME_EXCHANGE);
+        znode_t *found=NULL;
+        if (!error) error=child(parent,(char *)first,&found);
+        if (!error && found!=(i?a:b)) error=EIO;
+        if (found) oz_znode_rele(found);
+        found=NULL;
+        if (!error) error=child(parent,(char *)second,&found);
+        if (!error && found!=(i?b:a)) error=EIO;
+        if (found) oz_znode_rele(found);
+        uint64_t ap=0,bp=0;
+        if (!error) error=sa_lookup(a->z_sa_hdl,SA_ZPL_PARENT(ZTOZSB(a)),&ap,8);
+        if (!error) error=sa_lookup(b->z_sa_hdl,SA_ZPL_PARENT(ZTOZSB(b)),&bp,8);
+        if (!error && (ap!=parent->z_id || bp!=parent->z_id ||
+            parent->z_size!=size || parent->z_links!=links ||
+            a->z_size!=asize || a->z_links!=alinks ||
+            b->z_size!=bsize || b->z_links!=blinks)) error=EIO;
+    }
+    return error;
+}
 static void *exchange_names(void *arg)
 {
     struct exchange_worker *w = arg;
@@ -162,6 +189,16 @@ int oz_rename_test(zfsvfs_t *fs, boolean_t write)
         if (!error) error = replace_empty(left,right);
         if (!error) error = directory(left,"tree",&tree);
         if (!error) error = directory(tree,"branch",&branch);
+        if (!error) error = directory(left,"sibling",&empty);
+        if (!error) error = sibling_exchange(left,"tree","sibling",tree,empty);
+        if (!error) error = sibling_exchange(left,"a","tree",b,tree);
+        if (!error) error = zfs_rmdir(left,"sibling",NULL,kcred,0);
+        if (empty) { oz_znode_rele(empty); empty=NULL; }
+        if (!error) error = oz_unlinked_drain_exclusive(fs);
+        if (!error) {
+            const char *proof="Native sibling directory exchange PASS directories=1 mixed=1 restored=1\n";
+            for (const char *p=proof; *p; p++) RawPutChar(*p);
+        }
         if (!error && RENAME(left,"tree",branch,"cycle",0) != EINVAL) error = EIO;
         if (!error) error = ancestry_failure(left,right,tree,right);
         if (!error) error = ancestry_failure(left,right,tree,fixture);

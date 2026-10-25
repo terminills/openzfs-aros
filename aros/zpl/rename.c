@@ -396,17 +396,21 @@ top:
 	if (error)
 		goto out;
 	if ((rflags & RENAME_EXCHANGE) &&
-	    (error = zfs_zaccess(sdzp, ACE_ADD_FILE, 0, B_FALSE, cr, mnt_ns)))
+	    (error = zfs_zaccess(sdzp,
+	    (tzp && S_ISDIR(tzp->z_mode)) ? ACE_ADD_SUBDIRECTORY : ACE_ADD_FILE,
+	    0, B_FALSE, cr, mnt_ns)))
 		goto out;
 
-	/* Directory exchange additionally needs the Linux VFS reverse-ancestry
-	 * contract; do not expose it before native two-tree locking is proven. */
-	if ((rflags & RENAME_EXCHANGE) &&
+	/* Siblings keep the same parent during exchange. Their existing name
+	 * locks serialize both entries and no ancestry edge changes. Cross-parent
+	 * directory exchange still needs a native two-tree ancestry contract. */
+	if ((rflags & RENAME_EXCHANGE) && sdzp != tdzp &&
 	    (S_ISDIR(szp->z_mode) || (tzp && S_ISDIR(tzp->z_mode)))) {
 		error = ENOTSUP;
 		goto out;
 	}
-	if (S_ISDIR(szp->z_mode)) {
+	if (S_ISDIR(szp->z_mode) &&
+	    !((rflags & RENAME_EXCHANGE) && sdzp == tdzp)) {
 		/*
 		 * Check to make sure rename is valid.
 		 * Can't do a move like this: /usr/a/b to /usr/a/b/c/d
