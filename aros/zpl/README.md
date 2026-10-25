@@ -1923,6 +1923,26 @@ run for concurrency qualification. The selected pthread implementation has
 a lazy static-mutex path, but this test must not depend on that path.
 Evidence: `aros/tests/evidence/persistent-exchange`.
 
+Malformed exchange ancestry now returns EIO for multi-node cycles rather
+than looping indefinitely. The serialized walk uses constant-memory cycle
+detection with one lookup per traversed edge and no arbitrary valid-depth
+limit. The host test compiles the production helper and compares 12,500
+five-node graph cases against an independent visited-set oracle; root and
+lookup-error cases also verify reference cleanup. Before the fix the bounded
+negative test exited 99 after exceeding 64 lookups. Corrected plain and
+ASan/UBSan runs pass. This is exhaustive only for that small synthetic graph
+space, not for all filesystem states.
+
+Native run `qemu-run.kJBQOQaf` injects forward and reverse SA lookup errors
+and a two-node cycle for the calling test task only. All return EIO without
+changing names or parent size/link counts, followed by successful exchanges,
+persisted swapped layouts and all five cold regression phases. Independent
+zdb checks find no leaks and leave backing hashes unchanged. Production
+shared library `shared-engine.4OvHDEDZ` passes CLI/handler and encrypted
+cold-import run `public-service-run.Nj27HwRM`. Logs and provenance are in
+`aros/tests/evidence/exchange-ancestry-errors`. No on-disk corruption was
+written by the fault injector; physical recovery remains outside this proof.
+
 The fixture persists a renamed directory tree and distinct file contents
 across cold imports. It checks cross-directory moves, NOREPLACE, replacement
 of a held file (old bytes stay readable until release/reclamation), atomic
