@@ -78,7 +78,12 @@ static int ancestry_failure(znode_t *left, znode_t *right, znode_t *tree,
     if (found) oz_znode_rele(found);
     return error;
 }
-struct exchange_worker { znode_t *source, *target; char *from, *to; int error; };
+struct exchange_worker {
+    znode_t *source, *target;
+    char *from, *to;
+    int error;
+    unsigned *ready, *release, completed;
+};
 static int sibling_exchange(znode_t *parent, const char *first,
     const char *second, znode_t *a, znode_t *b)
 {
@@ -109,23 +114,35 @@ static int sibling_exchange(znode_t *parent, const char *first,
 static void *exchange_names(void *arg)
 {
     struct exchange_worker *w = arg;
-    for (unsigned i = 0; i < 32 && !w->error; i++)
+    __atomic_fetch_add(w->ready,1,__ATOMIC_RELEASE);
+    while (!__atomic_load_n(w->release,__ATOMIC_ACQUIRE)) Delay(1);
+    for (unsigned i = 0; i < 32 && !w->error; i++) {
         w->error = RENAME(w->source,w->from,w->target,w->to,RENAME_EXCHANGE);
+        if (!w->error) w->completed++;
+    }
     return (NULL);
 }
-static int exchange_race(znode_t *left, znode_t *right)
+static int exchange_race(znode_t *left, char *first, znode_t *right, char *second)
 {
+    unsigned ready=0, release=0;
     struct exchange_worker workers[2] = {
-        {left,right,"a","moved",0}, {right,left,"moved","a",0}
+        {left,right,first,second,0,&ready,&release,0},
+        {right,left,second,first,0,&ready,&release,0}
     };
     pthread_t threads[2]; unsigned started = 0; int error = 0;
     for (; started < 2; started++) {
         error = pthread_create(&threads[started],NULL,exchange_names,&workers[started]);
         if (error) break;
     }
+    unsigned polls=0;
+    while (__atomic_load_n(&ready,__ATOMIC_ACQUIRE)<started && polls++<500) Delay(1);
+    if (__atomic_load_n(&ready,__ATOMIC_ACQUIRE)!=started && !error) error=ETIMEDOUT;
+    __atomic_store_n(&release,1,__ATOMIC_RELEASE);
     for (unsigned i = 0; i < started; i++) {
-        pthread_join(threads[i],NULL);
+        int joined=pthread_join(threads[i],NULL);
+        if (!error) error=joined;
         if (!error) error = workers[i].error;
+        if (!error && workers[i].completed!=32) error=EIO;
     }
     return (error);
 }
@@ -185,18 +202,20 @@ int oz_rename_test(zfsvfs_t *fs, boolean_t write)
         if (!error) error = oz_unlinked_drain_exclusive(fs);
         if (!error) error = tagged_file(left,"a",0xc3,&c);
         if (!error) error = RENAME(left,"a",right,"moved",RENAME_EXCHANGE);
-        if (!error) error = exchange_race(left,right);
+        if (!error) error = exchange_race(left,"a",right,"moved");
         if (!error) error = replace_empty(left,right);
         if (!error) error = directory(left,"tree",&tree);
         if (!error) error = directory(tree,"branch",&branch);
         if (!error) error = directory(left,"sibling",&empty);
+        if (!error) error = exchange_race(left,"tree",left,"sibling");
         if (!error) error = sibling_exchange(left,"tree","sibling",tree,empty);
+        if (!error) error = exchange_race(left,"a",left,"tree");
         if (!error) error = sibling_exchange(left,"a","tree",b,tree);
         if (!error) error = zfs_rmdir(left,"sibling",NULL,kcred,0);
         if (empty) { oz_znode_rele(empty); empty=NULL; }
         if (!error) error = oz_unlinked_drain_exclusive(fs);
         if (!error) {
-            const char *proof="Native sibling directory exchange PASS directories=1 mixed=1 restored=1\n";
+            const char *proof="Native sibling directory exchange PASS directories=1 mixed=1 restored=1 opposing-swaps=128\n";
             for (const char *p=proof; *p; p++) RawPutChar(*p);
         }
         if (!error && RENAME(left,"tree",branch,"cycle",0) != EINVAL) error = EIO;
