@@ -201,7 +201,10 @@ fi
 if [[ $native_cold == 1 ]];then
     extra_maps+=(-map aros/engine/public-service-test-only /openzfs-native-cold-test)
 fi
-[[ $native_discovery == 0 || ( $native_discovery == 1 && $partitions == 1 && $persistent == 0 && -n $cli_dir ) ]]
+[[ $native_discovery == 0 || ( $native_discovery == 1 && $partitions == 1 && $persistent == 0 && -n $cli_dir ) ]] || {
+    echo 'Native discovery requires PARTITIONS=1, CLI_DIR and PERSISTENT=0; use NATIVE_COLD=1 for native-device cold boots (PERSISTENT=1 selects file-backed pools).' >&2
+    exit 2
+}
 if [[ $native_discovery == 1 ]];then
     extra_maps+=(-map aros/engine/public-service-test-only /openzfs-native-discovery-test)
 fi
