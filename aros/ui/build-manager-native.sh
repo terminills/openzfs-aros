@@ -5,13 +5,29 @@ cd "$repo"
 : "${AROS_SDK:?set AROS_SDK to the SDK matching the target runtime (hosted and PC/SMP are not interchangeable)}"
 sdk=$AROS_SDK
 cc=${AROS_CC:-/opt/aros-workspace/aros-adt-crosstools/x86_64-aros-gcc}
-pthread=${AROS_PRIVATE_PTHREAD:-$repo/build-aros/pthread-consistent.s3r1CHla/libpthread.a}
-pthread_include=${AROS_PTHREAD_INCLUDE:-$repo/build-aros/pthread-consistent.s3r1CHla/source}
+pthread_backend=${AROS_PTHREAD_BACKEND:-private}
+case "$pthread_backend" in
+    sdk)
+        if [[ -n ${AROS_PRIVATE_PTHREAD:-}${AROS_PTHREAD_INCLUDE:-} ]]; then
+            echo 'SDK pthread mode cannot be combined with private pthread inputs' >&2
+            exit 1
+        fi
+        pthread="$sdk/lib/libpthread.a"
+        pthread_include="$sdk/include"
+        test -f "$pthread"
+        test -f "$pthread_include/pthread.h"
+        ;;
+    private)
+        pthread=${AROS_PRIVATE_PTHREAD:-$repo/build-aros/pthread-consistent.s3r1CHla/libpthread.a}
+        pthread_include=${AROS_PTHREAD_INCLUDE:-$repo/build-aros/pthread-consistent.s3r1CHla/source}
+        cmp "$(dirname "$pthread")/source/pthread.h" "$pthread_include/pthread.h"
+        ;;
+    *) echo "Unsupported pthread backend: $pthread_backend" >&2; exit 1 ;;
+esac
 output=${1:-build-aros/OpenZFSManagerNative}
-cmp "$(dirname "$pthread")/source/pthread.h" "$pthread_include/pthread.h"
 mkdir -p "$(dirname "$output")"
 "$cc" --version >"$output.compiler.txt"
-printf 'sdk=%s\npthread=%s\npthread_include=%s\n' "$sdk" "$pthread" "$pthread_include" >"$output.target.txt"
+printf 'sdk=%s\npthread=%s\npthread_include=%s\npthread_backend=%s\n' "$sdk" "$pthread" "$pthread_include" "$pthread_backend" >"$output.target.txt"
 # Preserve the actual compile-time layout and startup archive identity. AROS
 # SMP SDK generations can differ despite sharing the x86_64 target triple.
 "$cc" --sysroot="$sdk" -B"$sdk/lib/" -I"$pthread_include" -S \

@@ -1,0 +1,2 @@
+qemu-system-x86_64: -monitor unix:/mnt/short-term/openzfs-official-sdk-audit.xi9RkF3r/publication/build-aros/manager-startup-run.1cgeHWSB/monitor,server=on,wait=off: UNIX socket path '/mnt/short-term/openzfs-official-sdk-audit.xi9RkF3r/publication/build-aros/manager-startup-run.1cgeHWSB/monitor' is too long
+Path must be less than 108 bytes

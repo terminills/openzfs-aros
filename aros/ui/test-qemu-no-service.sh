@@ -30,13 +30,17 @@ xorriso -indev "$base" -outdev "$run/test.iso" \
     -map "$run/Startup-Sequence" /S/Startup-Sequence \
     -map "$run/OpenZFSManagerNative" /Tools/OpenZFSManagerNative \
     "${extra_maps[@]}" \
-    -boot_image any discard -boot_image grub bin_path=/boot/grub/i386-pc/eltorito.img \
+    -boot_image any discard -boot_image any system_area=/dev/zero \
+    -boot_image grub bin_path=/boot/grub/i386-pc/eltorito.img \
     -boot_image grub boot_info_table=on -boot_image grub grub2_boot_info=on >"$run/pack.log" 2>&1
-qemu-system-x86_64 -name "openzfs-manager-startup-$$" -machine pc,accel=kvm \
+(
+cd "$run"
+exec qemu-system-x86_64 -name "openzfs-manager-startup-$$" -machine pc,accel=kvm \
     -cpu host -smp 2 -m 2048 -drive "file=$run/test.iso,media=cdrom,if=ide,index=2,readonly=on" \
     -vga std -display none -nic none -boot d -no-reboot -no-shutdown \
     -device qemu-xhci -device usb-tablet -serial "file:$run/serial.log" \
-    -monitor "unix:$run/monitor,server=on,wait=off" >"$run/qemu.log" 2>&1 &
+    -monitor "unix:monitor,server=on,wait=off"
+) >"$run/qemu.log" 2>&1 &
 pid=$!
 printf '%s\n' "$pid" >"$run/qemu.pid"
 trap 'kill "$pid" 2>/dev/null || true; wait "$pid" 2>/dev/null || true' EXIT
