@@ -51,7 +51,8 @@ with (RECORD / 'archived-services.jsonl').open('a') as log:
         if not archive.exists():
             temporary = archive.with_suffix('.partial')
             with path.open('rb') as src, temporary.open('xb') as dst:
-                with gzip.GzipFile(filename='', mode='wb', fileobj=dst, mtime=0) as packed:
+                with gzip.GzipFile(filename='', mode='wb', fileobj=dst, mtime=0,
+                                   compresslevel=1) as packed:
                     shutil.copyfileobj(src, packed)
                 dst.flush()
                 os.fsync(dst.fileno())
