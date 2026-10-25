@@ -340,6 +340,45 @@ static int persistent_exchange(znode_t *fixture, boolean_t write)
     for (char *p=text;*p;p++) RawPutChar(*p);
     return error;
 }
+static int persistent_whiteout(znode_t *fixture, boolean_t write)
+{
+    znode_t *base=NULL,*file=NULL,*marker=NULL,*found=NULL;
+    int error=write?directory(fixture,"whiteout",&base):child(fixture,"whiteout",&base);
+    vattr_t va={.va_mask=ATTR_MODE,.va_mode=S_IFCHR,.va_rdev=0};
+    if (!error && write) {
+        error=tagged_file(base,"source",0x75,&file);
+        if (!error && (zfs_rename(base,"source",base,"target",kcred,0,
+            RENAME_WHITEOUT,NULL,NULL)!=EINVAL ||
+            zfs_rename(base,"source",base,"target",kcred,0,0,&va,NULL)!=EINVAL ||
+            zfs_rename(base,"source",base,"target",kcred,0,
+            RENAME_EXCHANGE|RENAME_WHITEOUT,&va,NULL)!=EINVAL)) error=EIO;
+        va.va_rdev=1;
+        if (!error && zfs_rename(base,"source",base,"target",kcred,0,
+            RENAME_WHITEOUT,&va,NULL)!=EINVAL) error=EIO;
+        va.va_rdev=0;
+        if (!error) error=zfs_rename(base,"source",base,"target",kcred,0,
+            RENAME_WHITEOUT,&va,NULL);
+        if (!error) error=zil_commit(ZTOZSB(base)->z_log,0);
+    } else if (!error && zfs_rename(base,"target",base,"denied",kcred,0,
+        RENAME_WHITEOUT,&va,NULL)!=EROFS) error=EIO;
+    if (!error) error=child(base,"source",&marker);
+    if (!error) error=child(base,"target",&found);
+    if (!error) error=tag_check(found,0x75);
+    uint64_t device=UINT64_MAX,parent=0;
+    if (!error) error=sa_lookup(marker->z_sa_hdl,SA_ZPL_RDEV(ZTOZSB(base)),&device,8);
+    if (!error) error=sa_lookup(marker->z_sa_hdl,SA_ZPL_PARENT(ZTOZSB(base)),&parent,8);
+    if (!error && (!S_ISCHR(marker->z_mode)||device||parent!=base->z_id||
+        marker->z_links!=1||marker->z_size||found->z_links!=1||
+        (file && found!=file)||base->z_links!=2||base->z_size!=4)) error=EIO;
+    if (found) oz_znode_rele(found);
+    if (marker) oz_znode_rele(marker);
+    if (file) oz_znode_rele(file);
+    if (base) oz_znode_rele(base);
+    char text[100];
+    snprintf(text,sizeof(text),"Native whiteout rename write=%d metadata=1 payload=1 result=%d\n",write,error);
+    for (char *p=text;*p;p++) RawPutChar(*p);
+    return error;
+}
 static int replace_empty(znode_t *left, znode_t *right)
 {
     znode_t *source = NULL, *target = NULL, *found = NULL;
@@ -475,6 +514,7 @@ int oz_rename_test(zfsvfs_t *fs, boolean_t write)
         zap_contains(fs->z_os,left->z_id,"tree") != ENOENT ||
         zap_contains(fs->z_os,right->z_id,"x") != ENOENT)) error = EIO;
     if (!error) error = persistent_exchange(fixture,write);
+    if (!error) error = persistent_whiteout(fixture,write);
     if (!error) error = zap_count(fs->z_os,fs->z_unlinkedobj,&count);
     if (!error && count) error = EIO;
     znode_t *nodes[] = {a,b,c,tree,branch,empty,left,right,fixture,parent,root};

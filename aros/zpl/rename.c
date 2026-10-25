@@ -191,8 +191,7 @@ rename_impl(znode_t *sdzp, char *snm, znode_t *tdzp, char *tnm,
 	if (!cr) return (EACCES);
 	if (!S_ISDIR(sdzp->z_mode) || !S_ISDIR(tdzp->z_mode)) return (ENOTDIR);
 	if (ZTOZSB(sdzp) != ZTOZSB(tdzp)) return (EXDEV);
-	if (mnt_ns || (flags & ~FIGNORECASE) || wo_vap ||
-	    (rflags & RENAME_WHITEOUT)) return (ENOTSUP);
+	if (mnt_ns || (flags & ~FIGNORECASE)) return (ENOTSUP);
 	if (!ZTOZSB(sdzp)->z_longname && strlen(tnm) >= ZAP_MAXNAMELEN)
 		return (ENAMETOOLONG);
 	znode_t		*szp, *tzp;
@@ -223,14 +222,11 @@ rename_impl(znode_t *sdzp, char *snm, znode_t *tdzp, char *tnm,
 	    (rflags & (RENAME_NOREPLACE | RENAME_WHITEOUT)))
 		return (SET_ERROR(EINVAL));
 
-	/*
-	 * Make sure we only get wo_vap iff. RENAME_WHITEOUT and that it's the
-	 * right kind of vattr_t for the whiteout file. These are set
-	 * internally by ZFS so should never be incorrect.
-	 */
-	VERIFY_EQUIV(rflags & RENAME_WHITEOUT, wo_vap != NULL);
-	VERIFY_IMPLY(wo_vap, wo_vap->va_mode == S_IFCHR);
-	VERIFY_IMPLY(wo_vap, wo_vap->va_rdev == 0);
+	/* Native callers do not pass through Linux VFS validation. Reject
+	 * malformed whiteout attributes instead of asserting on caller input. */
+	if (!!(rflags & RENAME_WHITEOUT) != (wo_vap != NULL)) return (EINVAL);
+	if (wo_vap && (!(wo_vap->va_mask & ATTR_MODE) ||
+	    wo_vap->va_mode != S_IFCHR || wo_vap->va_rdev != 0)) return (EINVAL);
 
 	if ((error = zfs_enter_verify_zp(zfsvfs, sdzp, FTAG)) != 0)
 		return (error);
