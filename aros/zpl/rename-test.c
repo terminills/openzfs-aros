@@ -6,6 +6,7 @@
 #include <sys/zap.h>
 #include <pthread.h>
 #include <proto/exec.h>
+#include <proto/dos.h>
 
 static int child(znode_t *parent, char *name, znode_t **out)
 {
