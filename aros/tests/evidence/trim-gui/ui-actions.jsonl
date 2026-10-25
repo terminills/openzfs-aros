@@ -1,0 +1,26 @@
+{"time": 1792943388.235109, "action": "capture", "args": ["initial.png"]}
+{"time": 1792943991.9842424, "action": "click", "args": ["435", "156", "1280", "800"]}
+{"time": 1792943992.2558239, "action": "click", "args": ["300", "184", "1280", "800"]}
+{"time": 1792943992.4161415, "action": "capture", "args": ["pools.png"]}
+{"time": 1792944089.3014514, "action": "click", "args": ["330", "207", "1280", "800"]}
+{"time": 1792944089.5696838, "action": "click", "args": ["784", "207", "1280", "800"]}
+{"time": 1792944091.9077957, "action": "type", "args": ["public_mirror"]}
+{"time": 1792944092.1794386, "action": "click", "args": ["864", "291", "1280", "800"]}
+{"time": 1792944092.3409529, "action": "capture", "args": ["status.png"]}
+{"time": 1792944210.2238033, "action": "click", "args": ["330", "337", "1280", "800"]}
+{"time": 1792944210.4999363, "action": "click", "args": ["784", "221", "1280", "800"]}
+{"time": 1792944211.3675456, "action": "type", "args": ["start"]}
+{"time": 1792944211.642699, "action": "click", "args": ["784", "235", "1280", "800"]}
+{"time": 1792944219.3833013, "action": "type", "args": ["guids=11195651265049954339,11759672791445284032"]}
+{"time": 1792944219.6562216, "action": "click", "args": ["864", "291", "1280", "800"]}
+{"time": 1792944219.8151064, "action": "capture", "args": ["trim-confirm.png"]}
+{"time": 1792944381.9955382, "action": "click", "args": ["773", "430", "1280", "800"]}
+{"time": 1792944382.2623248, "action": "click", "args": ["784", "239", "1280", "800"]}
+{"time": 1792944389.975966, "action": "type", "args": ["guids=11195651265049954339,11759672791445284032"]}
+{"time": 1792944390.1360881, "action": "capture", "args": ["trim-fields.png"]}
+{"time": 1792944504.6456888, "action": "click", "args": ["864", "291", "1280", "800"]}
+{"time": 1792944504.7925377, "action": "capture", "args": ["trim-confirm-guids.png"]}
+{"time": 1792944600.9617321, "action": "click", "args": ["461", "430", "1280", "800"]}
+{"time": 1792944601.0809755, "action": "capture", "args": ["trim-result.png"]}
+{"time": 1792944716.6655138, "action": "click", "args": ["114", "87", "1280", "800"]}
+{"time": 1792944716.9373739, "action": "click", "args": ["291", "143", "1280", "800"]}
