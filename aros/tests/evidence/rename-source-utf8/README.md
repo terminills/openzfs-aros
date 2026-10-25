@@ -11,6 +11,12 @@ quota suite. Coverage includes all nine UTF8/normalization/case configurations,
 DOS alias/hardlink enumeration, mount lifecycle and user/group/project quota
 checks. This build does not enable the optional full-dispatcher/zvol cases.
 
+A second two-CPU run, `default-quota-run.7xDepkcb`, rebuilt with the full native
+dispatcher and required the optional zvol results. It also passes, including
+upstream creation properties, zvol write/reopen/read-only/resize/export-busy,
+zvol rename/snapshot/recreate, and 80 dispatcher runtime cycles. See
+`full-dispatcher/` for this distinct binary's hashes and results.
+
 The two earlier attempts passed the Unicode checks but failed later with
 EACCES: disposable dataset creation lacked explicit credential scopes.
 `8ff6a77` and `64b01fe` fix only those test fixtures. The engine's refusal of
