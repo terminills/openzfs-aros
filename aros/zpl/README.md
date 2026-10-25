@@ -1910,6 +1910,19 @@ modify the images. Evidence is in `aros/tests/evidence/cross-parent-exchange`.
 This does not establish exhaustive scheduling, malformed ancestry recovery,
 injected failure at every transaction stage or physical-device durability.
 
+Persistence follow-up `qemu-run.mrcj8cgM` leaves separate directory/directory
+and file/directory pairs exchanged instead of restoring them. Fresh mirror
+and both single-member readers verify swapped types, four distinct payloads,
+stored parent attributes and parent/object link counts. All five phases pass;
+independent zdb checks report no leaks and unchanged inspected images.
+The direct-write fixture now explicitly initializes/finalizes mount-private
+state, including the rename mutex, just as production mounts do. Earlier
+diagnostic runs (including the first persistence run `qemu-run.BkLlOzNw`)
+omitted that explicit initialization and are superseded by this corrected
+run for concurrency qualification. The selected pthread implementation has
+a lazy static-mutex path, but this test must not depend on that path.
+Evidence: `aros/tests/evidence/persistent-exchange`.
+
 The fixture persists a renamed directory tree and distinct file contents
 across cold imports. It checks cross-directory moves, NOREPLACE, replacement
 of a held file (old bytes stay readable until release/reclamation), atomic
