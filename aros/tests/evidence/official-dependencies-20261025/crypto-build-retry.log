@@ -1,0 +1,3 @@
+Crypto build: /mnt/short-term/openzfs-official-deps.fVjvrmGW/crypto-source.OGx1CS2g
+AROS_CRYPTO_ARCHIVE=/mnt/short-term/openzfs-official-deps.fVjvrmGW/crypto-source.OGx1CS2g/build/crypto/libcrypto.a
+AROS_CRYPTO_INCLUDE=/mnt/short-term/openzfs-qualification-20261024.aGFlVF7T/build-workspace.98Zx7n6B/build-aros/crypto-input.97AxCjOW/source/include

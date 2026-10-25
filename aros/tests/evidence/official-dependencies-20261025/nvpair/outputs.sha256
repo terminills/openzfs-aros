@@ -1,0 +1,12 @@
+ed10567f150f96fd8d65520f6c5f3561588face8033c8ed3304ea0de016b5bc3  /mnt/short-term/openzfs-official-deps.fVjvrmGW/nvpair/objects/nvpair.o
+e2c3cd7e5854bab3225246147e6b37c19fd8d5dc8ce7f2e307792fd759e96adc  /mnt/short-term/openzfs-official-deps.fVjvrmGW/nvpair/objects/fnvpair.o
+12a6fda82069907cc31269fd833034054c1e8a2d02c9d2ad644d161a3c6df798  /mnt/short-term/openzfs-official-deps.fVjvrmGW/nvpair/objects/nvpair_alloc_fixed.o
+32d5c8aadff345564c93ba62b62b80e1f694edc9e0fb72944dd0486e6dc14217  /mnt/short-term/openzfs-official-deps.fVjvrmGW/nvpair/objects/nvpair_alloc_system.o
+8dadfbe0ebf7a8c434876e8dd11d1f5cdb9d435c63322547de85937e643d7fff  /mnt/short-term/openzfs-official-deps.fVjvrmGW/nvpair/objects/assert.o
+8f387f124fcd68eb3d9fc507f781ca9a5f4ea3b3558042810ff1d601d1b50401  /mnt/short-term/openzfs-official-deps.fVjvrmGW/nvpair/objects/backtrace.o
+3c2b20dc2407cd8c6a4ae911b1c755f2845886b382fee1e47eaeaf8acf928135  /mnt/short-term/openzfs-official-deps.fVjvrmGW/nvpair/objects/xdr.o
+d05e2051641b4c7e8e7e9ceea94afed1532e0c54a9d8a8da1a04daa2240676d2  /mnt/short-term/openzfs-official-deps.fVjvrmGW/nvpair/objects/xdr_mem.o
+07afe0f248f314aa9601857ba47442d17f6405a77d1970aa21bc14c8c4b92686  /mnt/short-term/openzfs-official-deps.fVjvrmGW/nvpair/objects/xdr_array.o
+75afc1c080c20a16a30060a0cc1b2a776ee24f8712adf7ae1cb6c75c33c2eea7  /mnt/short-term/openzfs-official-deps.fVjvrmGW/nvpair/objects/xdr_float.o
+2f7e2150bbd1ba571634d52f5e8be414cfd2dae8c755c1484e3e2744b09d6020  /mnt/short-term/openzfs-official-deps.fVjvrmGW/nvpair/libnvpair.a
+ef517ea9073cc6b5d087507d590b4f6be5f7a315d44e4d33bc21966f2abffd8f  /mnt/short-term/openzfs-official-deps.fVjvrmGW/nvpair/OpenZFSNvpairTest

@@ -1,0 +1,344 @@
+[1/234] Building C object crypto/fipsmodule/CMakeFiles/fipsmodule.dir/fips_shared_support.c.obj
+[2/234] Building C object crypto/fipsmodule/CMakeFiles/fipsmodule.dir/bcm.c.obj
+In file included from /mnt/short-term/openzfs-qualification-20261024.aGFlVF7T/build-workspace.98Zx7n6B/build-aros/crypto-input.97AxCjOW/source/crypto/fipsmodule/bcm.c:71:
+/mnt/short-term/openzfs-qualification-20261024.aGFlVF7T/build-workspace.98Zx7n6B/build-aros/crypto-input.97AxCjOW/source/crypto/fipsmodule/ec/ec_key.c:86:1: warning: missing initializer for field 'sr_SpinLock' of 'struct SemaphoreRequest' [-Wmissing-field-initializers]
+   86 | DEFINE_STATIC_EX_DATA_CLASS(g_ec_ex_data_class)
+      | ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+In file included from /run/media/terminills/Codex/show-consolidation-01a16962/sdk-prerequisite-audit/nightly-20261023/iso-Developer/include/pthread.h:162,
+                 from /mnt/short-term/openzfs-official-sdk-audit.xi9RkF3r/publication/aros/engine/crypto-pthread-limits.h:11,
+                 from <command-line>:
+/run/media/terminills/Codex/show-consolidation-01a16962/sdk-prerequisite-audit/nightly-20261023/iso-Developer/include/exec/semaphores.h:43:33: note: 'sr_SpinLock' declared here
+   43 |     spinlock_t                  sr_SpinLock;
+      |                                 ^~~~~~~~~~~
+In file included from /mnt/short-term/openzfs-qualification-20261024.aGFlVF7T/build-workspace.98Zx7n6B/build-aros/crypto-input.97AxCjOW/source/crypto/fipsmodule/bcm.c:100:
+/mnt/short-term/openzfs-qualification-20261024.aGFlVF7T/build-workspace.98Zx7n6B/build-aros/crypto-input.97AxCjOW/source/crypto/fipsmodule/rsa/rsa.c:84:1: warning: missing initializer for field 'sr_SpinLock' of 'struct SemaphoreRequest' [-Wmissing-field-initializers]
+   84 | DEFINE_STATIC_EX_DATA_CLASS(g_rsa_ex_data_class)
+      | ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+/run/media/terminills/Codex/show-consolidation-01a16962/sdk-prerequisite-audit/nightly-20261023/iso-Developer/include/exec/semaphores.h:43:33: note: 'sr_SpinLock' declared here
+   43 |     spinlock_t                  sr_SpinLock;
+      |                                 ^~~~~~~~~~~
+[3/234] Generating err_data.c
+[4/234] Building C object crypto/CMakeFiles/crypto.dir/asn1/a_i2d_fp.c.obj
+[5/234] Building C object crypto/CMakeFiles/crypto.dir/asn1/a_bool.c.obj
+[6/234] Building C object crypto/CMakeFiles/crypto.dir/asn1/a_d2i_fp.c.obj
+[7/234] Building C object crypto/CMakeFiles/crypto.dir/asn1/a_dup.c.obj
+[8/234] Building C object crypto/CMakeFiles/crypto.dir/asn1/a_gentm.c.obj
+[9/234] Building C object crypto/CMakeFiles/crypto.dir/asn1/a_octet.c.obj
+[10/234] Building C object crypto/CMakeFiles/crypto.dir/asn1/a_mbstr.c.obj
+[11/234] Building C object crypto/CMakeFiles/crypto.dir/asn1/a_bitstr.c.obj
+[12/234] Building C object crypto/CMakeFiles/crypto.dir/asn1/a_strnid.c.obj
+/mnt/short-term/openzfs-qualification-20261024.aGFlVF7T/build-workspace.98Zx7n6B/build-aros/crypto-input.97AxCjOW/source/crypto/asn1/a_strnid.c:75:1: warning: missing initializer for field 'sr_SpinLock' of 'struct SemaphoreRequest' [-Wmissing-field-initializers]
+   75 | static CRYPTO_MUTEX string_tables_lock = CRYPTO_MUTEX_INIT;
+      | ^~~~~~
+In file included from /run/media/terminills/Codex/show-consolidation-01a16962/sdk-prerequisite-audit/nightly-20261023/iso-Developer/include/pthread.h:162,
+                 from /mnt/short-term/openzfs-official-sdk-audit.xi9RkF3r/publication/aros/engine/crypto-pthread-limits.h:11,
+                 from <command-line>:
+/run/media/terminills/Codex/show-consolidation-01a16962/sdk-prerequisite-audit/nightly-20261023/iso-Developer/include/exec/semaphores.h:43:33: note: 'sr_SpinLock' declared here
+   43 |     spinlock_t                  sr_SpinLock;
+      |                                 ^~~~~~~~~~~
+[13/234] Building C object crypto/CMakeFiles/crypto.dir/asn1/a_object.c.obj
+[14/234] Building C object crypto/CMakeFiles/crypto.dir/asn1/a_time.c.obj
+[15/234] Building C object crypto/CMakeFiles/crypto.dir/asn1/a_type.c.obj
+[16/234] Building C object crypto/CMakeFiles/crypto.dir/asn1/asn1_par.c.obj
+[17/234] Building C object crypto/CMakeFiles/crypto.dir/asn1/a_utctm.c.obj
+[18/234] Building C object crypto/CMakeFiles/crypto.dir/asn1/asn_pack.c.obj
+[19/234] Building C object crypto/CMakeFiles/crypto.dir/asn1/f_string.c.obj
+[20/234] Building C object crypto/CMakeFiles/crypto.dir/asn1/f_int.c.obj
+[21/234] Building C object crypto/CMakeFiles/crypto.dir/asn1/a_int.c.obj
+[22/234] Building C object crypto/CMakeFiles/crypto.dir/asn1/asn1_lib.c.obj
+[23/234] Building C object crypto/CMakeFiles/crypto.dir/asn1/a_strex.c.obj
+[24/234] Building C object crypto/CMakeFiles/crypto.dir/asn1/tasn_fre.c.obj
+[25/234] Building C object crypto/CMakeFiles/crypto.dir/asn1/tasn_new.c.obj
+[26/234] Building C object crypto/CMakeFiles/crypto.dir/asn1/tasn_utl.c.obj
+[27/234] Building C object crypto/CMakeFiles/crypto.dir/asn1/tasn_typ.c.obj
+[28/234] Building C object crypto/CMakeFiles/crypto.dir/bio/connect.c.obj
+[29/234] Building C object crypto/CMakeFiles/crypto.dir/asn1/tasn_enc.c.obj
+[30/234] Building C object crypto/CMakeFiles/crypto.dir/bio/errno.c.obj
+[31/234] Building C object crypto/CMakeFiles/crypto.dir/asn1/tasn_dec.c.obj
+[32/234] Building C object crypto/CMakeFiles/crypto.dir/asn1/posix_time.c.obj
+[33/234] Building C object crypto/CMakeFiles/crypto.dir/bio/bio_mem.c.obj
+[34/234] Building C object crypto/CMakeFiles/crypto.dir/bio/fd.c.obj
+[35/234] Building C object crypto/CMakeFiles/crypto.dir/base64/base64.c.obj
+[36/234] Building C object crypto/CMakeFiles/crypto.dir/bio/socket.c.obj
+[37/234] Building C object crypto/CMakeFiles/crypto.dir/bio/printf.c.obj
+[38/234] Building C object crypto/CMakeFiles/crypto.dir/bio/file.c.obj
+[39/234] Building C object crypto/CMakeFiles/crypto.dir/bio/hexdump.c.obj
+[40/234] Building C object crypto/CMakeFiles/crypto.dir/bio/socket_helper.c.obj
+[41/234] Building C object crypto/CMakeFiles/crypto.dir/bn_extra/bn_asn1.c.obj
+[42/234] Building C object crypto/CMakeFiles/crypto.dir/bio/pair.c.obj
+[43/234] Building C object crypto/CMakeFiles/crypto.dir/bytestring/asn1_compat.c.obj
+[44/234] Building C object crypto/CMakeFiles/crypto.dir/bio/bio.c.obj
+/mnt/short-term/openzfs-qualification-20261024.aGFlVF7T/build-workspace.98Zx7n6B/build-aros/crypto-input.97AxCjOW/source/crypto/bio/bio.c:73:5: warning: missing initializer for field 'sr_SpinLock' of 'struct SemaphoreRequest' [-Wmissing-field-initializers]
+   73 |     CRYPTO_EX_DATA_CLASS_INIT_WITH_APP_DATA;
+      |     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In file included from /run/media/terminills/Codex/show-consolidation-01a16962/sdk-prerequisite-audit/nightly-20261023/iso-Developer/include/pthread.h:162,
+                 from /mnt/short-term/openzfs-official-sdk-audit.xi9RkF3r/publication/aros/engine/crypto-pthread-limits.h:11,
+                 from <command-line>:
+/run/media/terminills/Codex/show-consolidation-01a16962/sdk-prerequisite-audit/nightly-20261023/iso-Developer/include/exec/semaphores.h:43:33: note: 'sr_SpinLock' declared here
+   43 |     spinlock_t                  sr_SpinLock;
+      |                                 ^~~~~~~~~~~
+/mnt/short-term/openzfs-qualification-20261024.aGFlVF7T/build-workspace.98Zx7n6B/build-aros/crypto-input.97AxCjOW/source/crypto/bio/bio.c:635:1: warning: missing initializer for field 'sr_SpinLock' of 'struct SemaphoreRequest' [-Wmissing-field-initializers]
+  635 | static CRYPTO_MUTEX g_index_lock = CRYPTO_MUTEX_INIT;
+      | ^~~~~~
+/run/media/terminills/Codex/show-consolidation-01a16962/sdk-prerequisite-audit/nightly-20261023/iso-Developer/include/exec/semaphores.h:43:33: note: 'sr_SpinLock' declared here
+   43 |     spinlock_t                  sr_SpinLock;
+      |                                 ^~~~~~~~~~~
+[45/234] Building C object crypto/CMakeFiles/crypto.dir/buf/buf.c.obj
+[46/234] Building C object crypto/CMakeFiles/crypto.dir/blake2/blake2.c.obj
+[47/234] Building C object crypto/CMakeFiles/crypto.dir/bytestring/unicode.c.obj
+[48/234] Building C object crypto/CMakeFiles/crypto.dir/cipher_extra/cipher_extra.c.obj
+[49/234] Building C object crypto/CMakeFiles/crypto.dir/cipher_extra/derive_key.c.obj
+[50/234] Building C object crypto/CMakeFiles/crypto.dir/bytestring/ber.c.obj
+[51/234] Building C object crypto/CMakeFiles/crypto.dir/chacha/chacha.c.obj
+[52/234] Building C object crypto/CMakeFiles/crypto.dir/bn_extra/convert.c.obj
+[53/234] Building C object crypto/CMakeFiles/crypto.dir/cipher_extra/e_aesctrhmac.c.obj
+[54/234] Building C object crypto/CMakeFiles/crypto.dir/cipher_extra/e_null.c.obj
+[55/234] Building C object crypto/CMakeFiles/crypto.dir/cipher_extra/e_des.c.obj
+[56/234] Building C object crypto/CMakeFiles/crypto.dir/cipher_extra/e_rc4.c.obj
+[57/234] Building C object crypto/CMakeFiles/crypto.dir/cipher_extra/e_aesgcmsiv.c.obj
+[58/234] Building C object crypto/CMakeFiles/crypto.dir/cipher_extra/e_chacha20poly1305.c.obj
+[59/234] Building C object crypto/CMakeFiles/crypto.dir/cpu_aarch64_apple.c.obj
+[60/234] Building C object crypto/CMakeFiles/crypto.dir/cpu_aarch64_openbsd.c.obj
+[61/234] Building C object crypto/CMakeFiles/crypto.dir/cpu_aarch64_linux.c.obj
+[62/234] Building C object crypto/CMakeFiles/crypto.dir/cpu_aarch64_fuchsia.c.obj
+[63/234] Building C object crypto/CMakeFiles/crypto.dir/cpu_aarch64_sysreg.c.obj
+[64/234] Building C object crypto/CMakeFiles/crypto.dir/cpu_aarch64_win.c.obj
+[65/234] Building C object crypto/CMakeFiles/crypto.dir/cipher_extra/e_rc2.c.obj
+[66/234] Building C object crypto/CMakeFiles/crypto.dir/cpu_arm_linux.c.obj
+[67/234] Building C object crypto/CMakeFiles/crypto.dir/cpu_arm_freebsd.c.obj
+[68/234] Building C object crypto/CMakeFiles/crypto.dir/cipher_extra/e_tls.c.obj
+[69/234] Building C object crypto/CMakeFiles/crypto.dir/cpu_intel.c.obj
+[70/234] Building C object crypto/CMakeFiles/crypto.dir/curve25519/curve25519_64_adx.c.obj
+[71/234] Building C object crypto/CMakeFiles/crypto.dir/crypto.c.obj
+[72/234] Building C object crypto/CMakeFiles/crypto.dir/cipher_extra/tls_cbc.c.obj
+[73/234] Building C object crypto/CMakeFiles/crypto.dir/conf/conf.c.obj
+[74/234] Building C object crypto/CMakeFiles/crypto.dir/dh_extra/dh_asn1.c.obj
+[75/234] Building C object crypto/CMakeFiles/crypto.dir/curve25519/spake25519.c.obj
+[76/234] Building C object crypto/CMakeFiles/crypto.dir/dh_extra/params.c.obj
+[77/234] Building C object crypto/CMakeFiles/crypto.dir/bytestring/cbb.c.obj
+[78/234] Building C object crypto/CMakeFiles/crypto.dir/ecdh_extra/ecdh_extra.c.obj
+[79/234] Building C object crypto/CMakeFiles/crypto.dir/digest_extra/digest_extra.c.obj
+[80/234] Building C object crypto/CMakeFiles/crypto.dir/bytestring/cbs.c.obj
+[81/234] Building C object crypto/CMakeFiles/crypto.dir/ec_extra/ec_derive.c.obj
+[82/234] Building C object crypto/CMakeFiles/crypto.dir/dsa/dsa_asn1.c.obj
+[83/234] Building C object crypto/CMakeFiles/crypto.dir/ecdsa_extra/ecdsa_asn1.c.obj
+[84/234] Building C object crypto/CMakeFiles/crypto.dir/err_data.c.obj
+[85/234] Building C object crypto/CMakeFiles/crypto.dir/engine/engine.c.obj
+[86/234] Building C object crypto/CMakeFiles/crypto.dir/dsa/dsa.c.obj
+/mnt/short-term/openzfs-qualification-20261024.aGFlVF7T/build-workspace.98Zx7n6B/build-aros/crypto-input.97AxCjOW/source/crypto/dsa/dsa.c:88:1: warning: missing initializer for field 'sr_SpinLock' of 'struct SemaphoreRequest' [-Wmissing-field-initializers]
+   88 | static CRYPTO_EX_DATA_CLASS g_ex_data_class = CRYPTO_EX_DATA_CLASS_INIT;
+      | ^~~~~~
+In file included from /run/media/terminills/Codex/show-consolidation-01a16962/sdk-prerequisite-audit/nightly-20261023/iso-Developer/include/pthread.h:162,
+                 from /mnt/short-term/openzfs-official-sdk-audit.xi9RkF3r/publication/aros/engine/crypto-pthread-limits.h:11,
+                 from <command-line>:
+/run/media/terminills/Codex/show-consolidation-01a16962/sdk-prerequisite-audit/nightly-20261023/iso-Developer/include/exec/semaphores.h:43:33: note: 'sr_SpinLock' declared here
+   43 |     spinlock_t                  sr_SpinLock;
+      |                                 ^~~~~~~~~~~
+[87/234] Building C object crypto/CMakeFiles/crypto.dir/ec_extra/ec_asn1.c.obj
+[88/234] Building C object crypto/CMakeFiles/crypto.dir/ec_extra/hash_to_curve.c.obj
+[89/234] Building C object crypto/CMakeFiles/crypto.dir/evp/evp.c.obj
+[90/234] Building C object crypto/CMakeFiles/crypto.dir/evp/p_dsa_asn1.c.obj
+[91/234] Building C object crypto/CMakeFiles/crypto.dir/evp/p_ec.c.obj
+[92/234] Building C object crypto/CMakeFiles/crypto.dir/evp/evp_asn1.c.obj
+[93/234] Building C object crypto/CMakeFiles/crypto.dir/evp/evp_ctx.c.obj
+[94/234] Building C object crypto/CMakeFiles/crypto.dir/evp/p_ed25519.c.obj
+[95/234] Building C object crypto/CMakeFiles/crypto.dir/evp/p_ec_asn1.c.obj
+[96/234] Building C object crypto/CMakeFiles/crypto.dir/des/des.c.obj
+[97/234] Building C object crypto/CMakeFiles/crypto.dir/evp/p_hkdf.c.obj
+[98/234] Building C object crypto/CMakeFiles/crypto.dir/evp/p_ed25519_asn1.c.obj
+[99/234] Building C object crypto/CMakeFiles/crypto.dir/err/err.c.obj
+/mnt/short-term/openzfs-qualification-20261024.aGFlVF7T/build-workspace.98Zx7n6B/build-aros/crypto-input.97AxCjOW/source/crypto/err/err.c:195:1: warning: missing initializer for field 'sr_SpinLock' of 'struct SemaphoreRequest' [-Wmissing-field-initializers]
+  195 | static CRYPTO_MUTEX global_next_library_mutex = CRYPTO_MUTEX_INIT;
+      | ^~~~~~
+In file included from /run/media/terminills/Codex/show-consolidation-01a16962/sdk-prerequisite-audit/nightly-20261023/iso-Developer/include/pthread.h:162,
+                 from /mnt/short-term/openzfs-official-sdk-audit.xi9RkF3r/publication/aros/engine/crypto-pthread-limits.h:11,
+                 from <command-line>:
+/run/media/terminills/Codex/show-consolidation-01a16962/sdk-prerequisite-audit/nightly-20261023/iso-Developer/include/exec/semaphores.h:43:33: note: 'sr_SpinLock' declared here
+   43 |     spinlock_t                  sr_SpinLock;
+      |                                 ^~~~~~~~~~~
+[100/234] Building C object crypto/CMakeFiles/crypto.dir/evp/p_x25519.c.obj
+[101/234] Building C object crypto/CMakeFiles/crypto.dir/evp/p_rsa_asn1.c.obj
+[102/234] Building C object crypto/CMakeFiles/crypto.dir/evp/pbkdf.c.obj
+[103/234] Building C object crypto/CMakeFiles/crypto.dir/evp/p_x25519_asn1.c.obj
+[104/234] Building C object crypto/CMakeFiles/crypto.dir/evp/p_rsa.c.obj
+[105/234] Building C object crypto/CMakeFiles/crypto.dir/evp/sign.c.obj
+[106/234] Building C object crypto/CMakeFiles/crypto.dir/ex_data.c.obj
+[107/234] Building C object crypto/CMakeFiles/crypto.dir/evp/print.c.obj
+[108/234] Building C object crypto/CMakeFiles/crypto.dir/evp/scrypt.c.obj
+[109/234] Building C object crypto/CMakeFiles/crypto.dir/lhash/lhash.c.obj
+[110/234] Building C object crypto/CMakeFiles/crypto.dir/keccak/keccak.c.obj
+[111/234] Building C object crypto/CMakeFiles/crypto.dir/obj/obj_xref.c.obj
+[112/234] Building C object crypto/CMakeFiles/crypto.dir/hpke/hpke.c.obj
+[113/234] Building C object crypto/CMakeFiles/crypto.dir/mem.c.obj
+[114/234] Building C object crypto/CMakeFiles/crypto.dir/obj/obj.c.obj
+/mnt/short-term/openzfs-qualification-20261024.aGFlVF7T/build-workspace.98Zx7n6B/build-aros/crypto-input.97AxCjOW/source/crypto/obj/obj.c:80:1: warning: missing initializer for field 'sr_SpinLock' of 'struct SemaphoreRequest' [-Wmissing-field-initializers]
+   80 | static CRYPTO_MUTEX global_added_lock = CRYPTO_MUTEX_INIT;
+      | ^~~~~~
+In file included from /run/media/terminills/Codex/show-consolidation-01a16962/sdk-prerequisite-audit/nightly-20261023/iso-Developer/include/pthread.h:162,
+                 from /mnt/short-term/openzfs-official-sdk-audit.xi9RkF3r/publication/aros/engine/crypto-pthread-limits.h:11,
+                 from <command-line>:
+/run/media/terminills/Codex/show-consolidation-01a16962/sdk-prerequisite-audit/nightly-20261023/iso-Developer/include/exec/semaphores.h:43:33: note: 'sr_SpinLock' declared here
+   43 |     spinlock_t                  sr_SpinLock;
+      |                                 ^~~~~~~~~~~
+/mnt/short-term/openzfs-qualification-20261024.aGFlVF7T/build-workspace.98Zx7n6B/build-aros/crypto-input.97AxCjOW/source/crypto/obj/obj.c:87:1: warning: missing initializer for field 'sr_SpinLock' of 'struct SemaphoreRequest' [-Wmissing-field-initializers]
+   87 | static CRYPTO_MUTEX global_next_nid_lock = CRYPTO_MUTEX_INIT;
+      | ^~~~~~
+/run/media/terminills/Codex/show-consolidation-01a16962/sdk-prerequisite-audit/nightly-20261023/iso-Developer/include/exec/semaphores.h:43:33: note: 'sr_SpinLock' declared here
+   43 |     spinlock_t                  sr_SpinLock;
+      |                                 ^~~~~~~~~~~
+[115/234] Building C object crypto/CMakeFiles/crypto.dir/pem/pem_info.c.obj
+[116/234] Building C object crypto/CMakeFiles/crypto.dir/pem/pem_oth.c.obj
+[117/234] Building C object crypto/CMakeFiles/crypto.dir/pem/pem_all.c.obj
+[118/234] Building C object crypto/CMakeFiles/crypto.dir/pem/pem_pkey.c.obj
+[119/234] Building C object crypto/CMakeFiles/crypto.dir/pem/pem_xaux.c.obj
+[120/234] Building C object crypto/CMakeFiles/crypto.dir/pem/pem_x509.c.obj
+[121/234] Building C object crypto/CMakeFiles/crypto.dir/pem/pem_pk8.c.obj
+[122/234] Building C object crypto/CMakeFiles/crypto.dir/pem/pem_lib.c.obj
+[123/234] Building C object crypto/CMakeFiles/crypto.dir/pkcs7/pkcs7.c.obj
+[124/234] Building C object crypto/CMakeFiles/crypto.dir/poly1305/poly1305.c.obj
+[125/234] Building C object crypto/CMakeFiles/crypto.dir/poly1305/poly1305_arm.c.obj
+[126/234] Building C object crypto/CMakeFiles/crypto.dir/pkcs8/p5_pbev2.c.obj
+[127/234] Building C object crypto/CMakeFiles/crypto.dir/pkcs8/pkcs8.c.obj
+[128/234] Building C object crypto/CMakeFiles/crypto.dir/kyber/kyber.c.obj
+[129/234] Building C object crypto/CMakeFiles/crypto.dir/pkcs7/pkcs7_x509.c.obj
+[130/234] Building C object crypto/CMakeFiles/crypto.dir/rand_extra/deterministic.c.obj
+[131/234] Building C object crypto/CMakeFiles/crypto.dir/rand_extra/forkunsafe.c.obj
+[132/234] Building C object crypto/CMakeFiles/crypto.dir/rand_extra/ios.c.obj
+[133/234] Building C object crypto/CMakeFiles/crypto.dir/rand_extra/getentropy.c.obj
+[134/234] Building C object crypto/CMakeFiles/crypto.dir/rand_extra/passive.c.obj
+[135/234] Building C object crypto/CMakeFiles/crypto.dir/pool/pool.c.obj
+[136/234] Building C object crypto/CMakeFiles/crypto.dir/rand_extra/trusty.c.obj
+[137/234] Building C object crypto/CMakeFiles/crypto.dir/rand_extra/rand_extra.c.obj
+[138/234] Building C object crypto/CMakeFiles/crypto.dir/rand_extra/windows.c.obj
+[139/234] Building C object crypto/CMakeFiles/crypto.dir/rc4/rc4.c.obj
+[140/234] Building C object crypto/CMakeFiles/crypto.dir/refcount.c.obj
+[141/234] Building C object crypto/CMakeFiles/crypto.dir/rsa_extra/rsa_print.c.obj
+[142/234] Building C object crypto/CMakeFiles/crypto.dir/spx/address.c.obj
+[143/234] Building C object crypto/CMakeFiles/crypto.dir/pkcs8/pkcs8_x509.c.obj
+[144/234] Building C object crypto/CMakeFiles/crypto.dir/rsa_extra/rsa_asn1.c.obj
+[145/234] Building C object crypto/CMakeFiles/crypto.dir/poly1305/poly1305_vec.c.obj
+[146/234] Building C object crypto/CMakeFiles/crypto.dir/spx/spx.c.obj
+[147/234] Building C object crypto/CMakeFiles/crypto.dir/spx/fors.c.obj
+[148/234] Building C object crypto/CMakeFiles/crypto.dir/spx/merkle.c.obj
+[149/234] Building C object crypto/CMakeFiles/crypto.dir/spx/thash.c.obj
+[150/234] Building C object crypto/CMakeFiles/crypto.dir/spx/spx_util.c.obj
+[151/234] Building C object crypto/CMakeFiles/crypto.dir/thread_none.c.obj
+[152/234] Building C object crypto/CMakeFiles/crypto.dir/spx/wots.c.obj
+[153/234] Building C object crypto/CMakeFiles/crypto.dir/thread.c.obj
+[154/234] Building C object crypto/CMakeFiles/crypto.dir/siphash/siphash.c.obj
+[155/234] Building C object crypto/CMakeFiles/crypto.dir/thread_win.c.obj
+[156/234] Building C object crypto/CMakeFiles/crypto.dir/rsa_extra/rsa_crypt.c.obj
+[157/234] Building C object crypto/CMakeFiles/crypto.dir/thread_pthread.c.obj
+/mnt/short-term/openzfs-qualification-20261024.aGFlVF7T/build-workspace.98Zx7n6B/build-aros/crypto-input.97AxCjOW/source/crypto/thread_pthread.c:66:1: warning: missing initializer for field 'sr_SpinLock' of 'struct SemaphoreRequest' [-Wmissing-field-initializers]
+   66 | static pthread_mutex_t g_destructors_lock = PTHREAD_MUTEX_INITIALIZER;
+      | ^~~~~~
+In file included from /run/media/terminills/Codex/show-consolidation-01a16962/sdk-prerequisite-audit/nightly-20261023/iso-Developer/include/pthread.h:162,
+                 from /mnt/short-term/openzfs-official-sdk-audit.xi9RkF3r/publication/aros/engine/crypto-pthread-limits.h:11,
+                 from <command-line>:
+/run/media/terminills/Codex/show-consolidation-01a16962/sdk-prerequisite-audit/nightly-20261023/iso-Developer/include/exec/semaphores.h:43:33: note: 'sr_SpinLock' declared here
+   43 |     spinlock_t                  sr_SpinLock;
+      |                                 ^~~~~~~~~~~
+[158/234] Building C object crypto/CMakeFiles/crypto.dir/x509/a_digest.c.obj
+[159/234] Building C object crypto/CMakeFiles/crypto.dir/stack/stack.c.obj
+[160/234] Building C object crypto/CMakeFiles/crypto.dir/x509/a_sign.c.obj
+[161/234] Building C object crypto/CMakeFiles/crypto.dir/x509/a_verify.c.obj
+[162/234] Building C object crypto/CMakeFiles/crypto.dir/x509/algorithm.c.obj
+[163/234] Building C object crypto/CMakeFiles/crypto.dir/trust_token/trust_token.c.obj
+[164/234] Building C object crypto/CMakeFiles/crypto.dir/hrss/hrss.c.obj
+[165/234] Building C object crypto/CMakeFiles/crypto.dir/x509/i2d_pr.c.obj
+[166/234] Building C object crypto/CMakeFiles/crypto.dir/x509/by_file.c.obj
+[167/234] Building C object crypto/CMakeFiles/crypto.dir/x509/asn1_gen.c.obj
+[168/234] Building C object crypto/CMakeFiles/crypto.dir/x509/name_print.c.obj
+[169/234] Building C object crypto/CMakeFiles/crypto.dir/x509/by_dir.c.obj
+[170/234] Building C object crypto/CMakeFiles/crypto.dir/trust_token/voprf.c.obj
+[171/234] Building C object crypto/CMakeFiles/crypto.dir/x509/t_crl.c.obj
+[172/234] Building C object crypto/CMakeFiles/crypto.dir/x509/rsa_pss.c.obj
+[173/234] Building C object crypto/CMakeFiles/crypto.dir/x509/t_req.c.obj
+[174/234] Building C object crypto/CMakeFiles/crypto.dir/x509/t_x509.c.obj
+[175/234] Building C object crypto/CMakeFiles/crypto.dir/x509/t_x509a.c.obj
+[176/234] Building C object crypto/CMakeFiles/crypto.dir/x509/v3_akey.c.obj
+[177/234] Building C object crypto/CMakeFiles/crypto.dir/x509/v3_akeya.c.obj
+[178/234] Building C object crypto/CMakeFiles/crypto.dir/x509/policy.c.obj
+[179/234] Building C object crypto/CMakeFiles/crypto.dir/trust_token/pmbtoken.c.obj
+[180/234] Building C object crypto/CMakeFiles/crypto.dir/x509/v3_bcons.c.obj
+[181/234] Building C object crypto/CMakeFiles/crypto.dir/x509/v3_bitst.c.obj
+[182/234] Building C object crypto/CMakeFiles/crypto.dir/x509/v3_enum.c.obj
+[183/234] Building C object crypto/CMakeFiles/crypto.dir/x509/v3_extku.c.obj
+[184/234] Building C object crypto/CMakeFiles/crypto.dir/x509/v3_conf.c.obj
+[185/234] Building C object crypto/CMakeFiles/crypto.dir/x509/v3_genn.c.obj
+[186/234] Building C object crypto/CMakeFiles/crypto.dir/x509/v3_cpols.c.obj
+[187/234] Building C object crypto/CMakeFiles/crypto.dir/x509/v3_ia5.c.obj
+[188/234] Building C object crypto/CMakeFiles/crypto.dir/x509/v3_alt.c.obj
+[189/234] Building C object crypto/CMakeFiles/crypto.dir/x509/v3_int.c.obj
+[190/234] Building C object crypto/CMakeFiles/crypto.dir/x509/v3_crld.c.obj
+[191/234] Building C object crypto/CMakeFiles/crypto.dir/x509/v3_info.c.obj
+[192/234] Building C object crypto/CMakeFiles/crypto.dir/x509/v3_ocsp.c.obj
+[193/234] Building C object crypto/CMakeFiles/crypto.dir/x509/v3_pcons.c.obj
+[194/234] Building C object crypto/CMakeFiles/crypto.dir/x509/v3_pmaps.c.obj
+[195/234] Building C object crypto/CMakeFiles/crypto.dir/x509/v3_lib.c.obj
+[196/234] Building C object crypto/CMakeFiles/crypto.dir/x509/v3_prn.c.obj
+[197/234] Building C object crypto/CMakeFiles/crypto.dir/x509/v3_ncons.c.obj
+[198/234] Building C object crypto/CMakeFiles/crypto.dir/x509/v3_skey.c.obj
+[199/234] Building C object crypto/CMakeFiles/crypto.dir/x509/x_algor.c.obj
+[200/234] Building C object crypto/CMakeFiles/crypto.dir/x509/x_attrib.c.obj
+[201/234] Building C object crypto/CMakeFiles/crypto.dir/x509/x_exten.c.obj
+[202/234] Building C object crypto/CMakeFiles/crypto.dir/x509/v3_purp.c.obj
+[203/234] Building C object crypto/CMakeFiles/crypto.dir/x509/x_crl.c.obj
+/mnt/short-term/openzfs-qualification-20261024.aGFlVF7T/build-workspace.98Zx7n6B/build-aros/crypto-input.97AxCjOW/source/crypto/x509/x_crl.c:342:1: warning: missing initializer for field 'sr_SpinLock' of 'struct SemaphoreRequest' [-Wmissing-field-initializers]
+  342 | static CRYPTO_MUTEX g_crl_sort_lock = CRYPTO_MUTEX_INIT;
+      | ^~~~~~
+In file included from /run/media/terminills/Codex/show-consolidation-01a16962/sdk-prerequisite-audit/nightly-20261023/iso-Developer/include/pthread.h:162,
+                 from /mnt/short-term/openzfs-official-sdk-audit.xi9RkF3r/publication/aros/engine/crypto-pthread-limits.h:11,
+                 from <command-line>:
+/run/media/terminills/Codex/show-consolidation-01a16962/sdk-prerequisite-audit/nightly-20261023/iso-Developer/include/exec/semaphores.h:43:33: note: 'sr_SpinLock' declared here
+   43 |     spinlock_t                  sr_SpinLock;
+      |                                 ^~~~~~~~~~~
+[204/234] Building C object crypto/CMakeFiles/crypto.dir/x509/x_sig.c.obj
+[205/234] Building C object crypto/CMakeFiles/crypto.dir/x509/x_req.c.obj
+[206/234] Building C object crypto/CMakeFiles/crypto.dir/x509/x_pubkey.c.obj
+[207/234] Building C object crypto/CMakeFiles/crypto.dir/x509/x_name.c.obj
+[208/234] Building C object crypto/CMakeFiles/crypto.dir/x509/x_spki.c.obj
+[209/234] Building C object crypto/CMakeFiles/crypto.dir/x509/x_all.c.obj
+[210/234] Building C object crypto/CMakeFiles/crypto.dir/x509/x_val.c.obj
+[211/234] Building C object crypto/CMakeFiles/crypto.dir/x509/x_x509a.c.obj
+[212/234] Building C object crypto/CMakeFiles/crypto.dir/x509/x509_d2.c.obj
+[213/234] Building C object crypto/CMakeFiles/crypto.dir/x509/x509_def.c.obj
+[214/234] Building C object crypto/CMakeFiles/crypto.dir/x509/x509_att.c.obj
+[215/234] Building C object crypto/CMakeFiles/crypto.dir/x509/x509_cmp.c.obj
+[216/234] Building C object crypto/CMakeFiles/crypto.dir/x509/x_x509.c.obj
+/mnt/short-term/openzfs-qualification-20261024.aGFlVF7T/build-workspace.98Zx7n6B/build-aros/crypto-input.97AxCjOW/source/crypto/x509/x_x509.c:74:1: warning: missing initializer for field 'sr_SpinLock' of 'struct SemaphoreRequest' [-Wmissing-field-initializers]
+   74 | static CRYPTO_EX_DATA_CLASS g_ex_data_class = CRYPTO_EX_DATA_CLASS_INIT;
+      | ^~~~~~
+In file included from /run/media/terminills/Codex/show-consolidation-01a16962/sdk-prerequisite-audit/nightly-20261023/iso-Developer/include/pthread.h:162,
+                 from /mnt/short-term/openzfs-official-sdk-audit.xi9RkF3r/publication/aros/engine/crypto-pthread-limits.h:11,
+                 from <command-line>:
+/run/media/terminills/Codex/show-consolidation-01a16962/sdk-prerequisite-audit/nightly-20261023/iso-Developer/include/exec/semaphores.h:43:33: note: 'sr_SpinLock' declared here
+   43 |     spinlock_t                  sr_SpinLock;
+      |                                 ^~~~~~~~~~~
+[217/234] Building C object crypto/CMakeFiles/crypto.dir/x509/x509_ext.c.obj
+[218/234] Building C object crypto/CMakeFiles/crypto.dir/x509/x509_obj.c.obj
+[219/234] Building C object crypto/CMakeFiles/crypto.dir/x509/v3_utl.c.obj
+[220/234] Building C object crypto/CMakeFiles/crypto.dir/x509/x509_txt.c.obj
+[221/234] Building C object crypto/CMakeFiles/crypto.dir/x509/x509_trs.c.obj
+[222/234] Building C object crypto/CMakeFiles/crypto.dir/x509/x509_set.c.obj
+[223/234] Building C object crypto/CMakeFiles/crypto.dir/x509/x509_req.c.obj
+[224/234] Building C object crypto/CMakeFiles/crypto.dir/x509/x509_lu.c.obj
+[225/234] Building C object crypto/CMakeFiles/crypto.dir/x509/x509.c.obj
+[226/234] Building C object crypto/CMakeFiles/crypto.dir/x509/x509_v3.c.obj
+[227/234] Building C object crypto/CMakeFiles/crypto.dir/x509/x509cset.c.obj
+[228/234] Building C object crypto/CMakeFiles/crypto.dir/x509/x509rset.c.obj
+[229/234] Building C object crypto/CMakeFiles/crypto.dir/x509/x509spki.c.obj
+[230/234] Building C object crypto/CMakeFiles/crypto.dir/x509/x509_vpm.c.obj
+[231/234] Building C object crypto/CMakeFiles/crypto.dir/x509/x509name.c.obj
+[232/234] Building C object crypto/CMakeFiles/crypto.dir/curve25519/curve25519.c.obj
+[233/234] Building C object crypto/CMakeFiles/crypto.dir/x509/x509_vfy.c.obj
+/mnt/short-term/openzfs-qualification-20261024.aGFlVF7T/build-workspace.98Zx7n6B/build-aros/crypto-input.97AxCjOW/source/crypto/x509/x509_vfy.c:74:5: warning: missing initializer for field 'sr_SpinLock' of 'struct SemaphoreRequest' [-Wmissing-field-initializers]
+   74 |     CRYPTO_EX_DATA_CLASS_INIT_WITH_APP_DATA;
+      |     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In file included from /run/media/terminills/Codex/show-consolidation-01a16962/sdk-prerequisite-audit/nightly-20261023/iso-Developer/include/pthread.h:162,
+                 from /mnt/short-term/openzfs-official-sdk-audit.xi9RkF3r/publication/aros/engine/crypto-pthread-limits.h:11,
+                 from <command-line>:
+/run/media/terminills/Codex/show-consolidation-01a16962/sdk-prerequisite-audit/nightly-20261023/iso-Developer/include/exec/semaphores.h:43:33: note: 'sr_SpinLock' declared here
+   43 |     spinlock_t                  sr_SpinLock;
+      |                                 ^~~~~~~~~~~
+[234/234] Linking C static library crypto/libcrypto.a

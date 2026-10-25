@@ -1,0 +1,70 @@
+0000000000000000 0x0000000000000000 | 000 | AROS64 - The AROS Research OS
+0000000000000000 0x0000000000000000 | 000 | 64-bit SMP build. Compiled Oct 23 2026
+00000000f1388c58 0x0000000000000000 | 000 | ACPI: RSDP 0x00000000000F52E0 000014 (v00 BOCHS )
+00000000f1b0a689 0x0000000000000000 | 000 | ACPI: RSDT 0x000000007FFE25BF 000034 (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+00000000f250f8d2 0x0000000000000000 | 000 | ACPI: FACP 0x000000007FFE243B 000074 (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+00000000f2f2ceff 0x0000000000000000 | 000 | ACPI: DSDT 0x000000007FFE0040 0023FB (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+00000000f392f56f 0x0000000000000000 | 000 | ACPI: FACS 0x000000007FFE0000 000040
+00000000f3faf782 0x0000000000000000 | 000 | ACPI: APIC 0x000000007FFE24AF 0000B0 (v03 BOCHS  BXPC     00000001 BXPC 00000001)
+00000000f49c3bb0 0x0000000000000000 | 000 | ACPI: HPET 0x000000007FFE255F 000038 (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+00000000f53cba4f 0x0000000000000000 | 000 | ACPI: WAET 0x000000007FFE2597 000028 (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+00000000f5dc33e5 0x0000000000000000 | 000 | [HPET] 2 units total
+00000000f6884ae0 0x00000000013cd7d0 | 000 | ACPI: 1 ACPI AML tables successfully acquired and loaded
+00000000f729060b 0x00000000013ab960 | 000 | [Kernel:ACPI-IOAPIC] Registering IO-APIC #1 [ID=000] @ 00000000fec00000 [GSI = 0]
+00000000f7c9ca96 0x00000000013ab960 | 000 | [Kernel:ACPI] System Total APICs: 8, 8 usable
+00000000f870af32 0x00000000013ab960 | 000 | [Kernel:APIC-IA32] MSI Interrupts Allocatable
+00000000f8e7599d 0x00000000013ab960 | 000 | [Kernel:APIC-IA32]     start = 16
+00000000f94aadd6 0x00000000013ab960 | 000 | [Kernel:APIC-IA32]     total = 198
+000000011905c336 0x00000000013d6990 | 001 | [Kernel:APIC-IA32.001] core_APIC_Calibrate: TSC freq inherited from BSP (2495965 kHz) [hypervisor]
+000000011a2200d6 0x00000000013d6990 | 001 | [Kernel:APIC-IA32.001] core_APIC_Calibrate: LAPIC timer freq inherited from BSP (1000486880 Hz) [hypervisor]
+000000011ce58dbf 0x00000000013d6fd0 | 002 | [Kernel:APIC-IA32.002] core_APIC_Calibrate: TSC freq inherited from BSP (2495965 kHz) [hypervisor]
+000000011e8f7149 0x00000000013d6fd0 | 002 | [Kernel:APIC-IA32.002] core_APIC_Calibrate: LAPIC timer freq inherited from BSP (1000486880 Hz) [hypervisor]
+0000000121ecfbf9 0x00000000013d7d70 | 003 | [Kernel:APIC-IA32.003] core_APIC_Calibrate: TSC freq inherited from BSP (2495965 kHz) [hypervisor]
+000000012384ea8a 0x00000000013d7d70 | 003 | [Kernel:APIC-IA32.003] core_APIC_Calibrate: LAPIC timer freq inherited from BSP (1000486880 Hz) [hypervisor]
+0000000126d1f6dd 0x0000000001491be0 | 004 | [Kernel:APIC-IA32.004] core_APIC_Calibrate: TSC freq inherited from BSP (2495965 kHz) [hypervisor]
+00000001287a2b27 0x0000000001491be0 | 004 | [Kernel:APIC-IA32.004] core_APIC_Calibrate: LAPIC timer freq inherited from BSP (1000486880 Hz) [hypervisor]
+000000012bd13b58 0x00000000014cc850 | 005 | [Kernel:APIC-IA32.005] core_APIC_Calibrate: TSC freq inherited from BSP (2495965 kHz) [hypervisor]
+000000012da0a0d6 0x00000000014cc850 | 005 | [Kernel:APIC-IA32.005] core_APIC_Calibrate: LAPIC timer freq inherited from BSP (1000486880 Hz) [hypervisor]
+00000001313ead7d 0x00000000015074c0 | 006 | [Kernel:APIC-IA32.006] core_APIC_Calibrate: TSC freq inherited from BSP (2495965 kHz) [hypervisor]
+0000000133199ce3 0x00000000015074c0 | 006 | [Kernel:APIC-IA32.006] core_APIC_Calibrate: LAPIC timer freq inherited from BSP (1000486880 Hz) [hypervisor]
+0000000136a2318b 0x0000000001542130 | 007 | [Kernel:APIC-IA32.007] core_APIC_Calibrate: TSC freq inherited from BSP (2495965 kHz) [hypervisor]
+0000000138762d41 0x0000000001542130 | 007 | [Kernel:APIC-IA32.007] core_APIC_Calibrate: LAPIC timer freq inherited from BSP (1000486880 Hz) [hypervisor]
+000000013b03794c 0x00000000013ab960 | 000 | [PCIPC:Driver] PCIPC_InitClass: No ACPI MCFG table
+nvpair PASS nvlist_alloc(&pool,NV_UNIQUE_NAME,0)==0
+nvpair PASS nvlist_alloc(&leaf,NV_UNIQUE_NAME,0)==0
+nvpair PASS nvlist_add_string(leaf,"path","Work:disk files/vdev0")==0
+nvpair PASS nvlist_add_uint64(leaf,"guid",UINT64_C(0xfedcba9876543210))==0
+nvpair PASS nvlist_add_nvlist(pool,"vdev",leaf)==0
+nvpair PASS nvlist_add_uint64_array(pool,"stats",stats,3)==0
+nvpair PASS nvlist_add_string_array(pool,"names",names,3)==0
+nvpair PASS nvlist_add_nvlist_array(pool,"children",children,2)==0
+nvpair PASS nvlist_add_boolean_value(pool,"readonly",B_TRUE)==0
+nvpair PASS nvlist_pack(pool,&packed,&bytes,NV_ENCODE_XDR,0)==0
+nvpair PASS bytes>0
+nvpair PASS nvlist_unpack(packed,bytes,&decoded,0)==0
+nvpair PASS nvlist_lookup_uint64_array(decoded,"stats",&values,&count)==0
+nvpair PASS values&&count==3&&!memcmp(values,stats,sizeof(stats))
+nvpair PASS nvlist_lookup_string_array(decoded,"names",&strings,&count)==0
+nvpair PASS strings&&count==3&&!strcmp(strings[0],names[0])&& !strcmp(strings[1],names[1])&&!strcmp(strings[2],names[2])
+nvpair PASS nvlist_lookup_nvlist_array(decoded,"children",&nodes,&count)==0
+nvpair PASS nodes&&count==2
+nvpair PASS nvlist_lookup_uint64(nodes[i],"guid",&number)==0
+nvpair PASS number==UINT64_C(0xfedcba9876543210)
+nvpair PASS nvlist_lookup_uint64(nodes[i],"guid",&number)==0
+nvpair PASS number==UINT64_C(0xfedcba9876543210)
+nvpair PASS nvlist_lookup_boolean_value(decoded,"readonly",&readonly)==0
+nvpair PASS readonly==B_TRUE
+nvpair PASS nvlist_lookup_nvlist(decoded,"vdev",&got)==0
+nvpair PASS nvlist_lookup_string(got,"path",&path)==0
+nvpair PASS path && !strcmp(path,"Work:disk files/vdev0")
+nvpair PASS nvlist_lookup_uint64(got,"guid",&number)==0
+nvpair PASS number==UINT64_C(0xfedcba9876543210)
+nvpair PASS f!=NULL
+nvpair PASS fwrite(packed,1,bytes,f)==bytes
+nvpair PASS fclose(f)==0
+nvpair PASS truncated_rejected
+RESULT native nvpair XDR PASS
+RESULT official nvpair shell PASS
+RESULT native PBKDF2 known answers PASS
+RESULT official PBKDF2 shell PASS
+RESULT official dependencies audit DONE

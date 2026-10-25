@@ -1,0 +1,3 @@
+compiler=/home/terminills/Documents/GitHub/aros-adt-crosstools/x86_64-aros-gcc
+sdk=/run/media/terminills/Codex/show-consolidation-01a16962/sdk-prerequisite-audit/nightly-20261023/iso-Developer
+tirpc=/home/terminills/Documents/GitHub/openzfs-aros/build-aros/libtirpc-1.3.7

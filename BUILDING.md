@@ -166,7 +166,9 @@ set, compiles every listed function with the selected SDK, and uses the
 compiler-selected archiver. It records compiler identity, input paths, source,
 object and archive hashes without installing into the SDK. Keep its reported
 archive and header directory together. `AROS_ARTIFACT_ROOT` can select a
-separate mounted filesystem; the common 100-GiB reserve guard applies.
+mounted filesystem separate from the system filesystem. The source checkout
+may already reside on that external filesystem. The common 100-GiB reserve
+guard checks the system filesystem, default output and chosen destination.
 
 Fresh 35-source pthread build `pthread-consistent.6ujRL4nB` was linked into
 shared engine `shared-engine.RDWvxF8a`. Hosted run

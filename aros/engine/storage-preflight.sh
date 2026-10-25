@@ -2,14 +2,24 @@
 # Source before allocating test artifacts. Reserve is not a test size estimate.
 oz_artifact_root()
 {
-    local default=$1 external=${2:-} destination=$1
+    local default=$1 external=${2:-} destination=$1 system_device destination_device
     if [[ -n $external ]]; then
         destination=$(realpath -e "$external") || return 1
         [[ -d $destination && -w $destination ]] || return 1
-        if [[ $(stat -c %d "$destination") == $(stat -c %d "$default") ]]; then
-            echo 'External artifact root must reside on a separate mounted filesystem' >&2
+        system_device=$(stat -c %d /) || return 1
+        destination_device=$(stat -c %d "$destination") || return 1
+        if [[ ! $system_device =~ ^[0-9]+$ || ! $destination_device =~ ^[0-9]+$ ]]; then
+            echo 'Cannot verify artifact filesystem identity' >&2
             return 1
         fi
+        # A checkout may itself live on the external filesystem. Compare to
+        # the system filesystem, not the checkout: an unmounted destination
+        # must still fail closed instead of allocating on the system disk.
+        if [[ $destination_device == "$system_device" ]]; then
+            echo 'External artifact root must reside outside the system filesystem' >&2
+            return 1
+        fi
+        oz_storage_preflight / || return 1
     fi
     oz_storage_preflight "$default" || return 1
     oz_storage_preflight "$destination" || return 1
