@@ -1,0 +1,30 @@
+xorriso 1.5.6 : RockRidge filesystem manipulator, libburnia project.
+
+xorriso : NOTE : Loading ISO image tree from LBA 0
+xorriso : UPDATE :   28262 nodes read in 1 seconds
+xorriso : NOTE : Detected El-Torito boot information which currently is set to be discarded
+Drive current: -indev '/run/media/terminills/Codex/show-consolidation-01a16962/sdk-prerequisite-audit/nightly-20261023/pristine.iso'
+Media current: stdio file, overwriteable
+Media status : is written , is appendable
+Boot record  : El Torito , MBR protective-msdos-label grub2-mbr cyl-align-off GPT APM
+Media summary: 1 session, 315252 data blocks,  616m data, 29.2g free
+Volume id    : 'AROS Live CD'
+Drive current: -outdev '/mnt/short-term/openzfs-official-sdk-audit.xi9RkF3r/audit-bios.iso'
+Media current: stdio file, overwriteable
+Media status : is blank
+Media summary: 0 sessions, 0 data blocks, 0 data,  596g free
+xorriso : UPDATE :       1 files added in 1 seconds
+Added to ISO image: file '/boot/grub/grub.cfg'='/mnt/short-term/openzfs-official-sdk-audit.xi9RkF3r/grub.cfg'
+xorriso : UPDATE :       1 files added in 1 seconds
+Added to ISO image: file '/S/Startup-Sequence'='/mnt/short-term/openzfs-official-sdk-audit.xi9RkF3r/Startup-Sequence'
+xorriso : UPDATE :       1 files added in 1 seconds
+Added to ISO image: file '/C/OpenZFSErrnoTest'='/mnt/short-term/openzfs-official-sdk-audit.xi9RkF3r/official-serial/OpenZFSErrnoTest'
+xorriso : UPDATE :       1 files added in 1 seconds
+Added to ISO image: file '/C/PipeStandard'='/mnt/short-term/openzfs-official-sdk-audit.xi9RkF3r/PipeStandard'
+xorriso : UPDATE : Writing:       9952s    3.3%   fifo  55%  buf  50%
+xorriso : UPDATE : Writing:     138574s   45.4%   fifo   0%  buf  50%  211.1xD 
+xorriso : UPDATE : Writing:     275136s   90.1%   fifo   0%  buf  50%  201.7xD 
+ISO image produced: 305191 sectors
+Written to medium : 305344 sectors at LBA 32
+Writing to '/mnt/short-term/openzfs-official-sdk-audit.xi9RkF3r/audit-bios.iso' completed successfully.
+

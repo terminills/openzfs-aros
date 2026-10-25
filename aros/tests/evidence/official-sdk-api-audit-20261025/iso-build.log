@@ -1,0 +1,36 @@
+xorriso 1.5.6 : RockRidge filesystem manipulator, libburnia project.
+
+xorriso : NOTE : Loading ISO image tree from LBA 0
+xorriso : UPDATE :   28262 nodes read in 1 seconds
+xorriso : NOTE : Detected El-Torito boot information which currently is set to be discarded
+Drive current: -indev '/run/media/terminills/Codex/show-consolidation-01a16962/sdk-prerequisite-audit/nightly-20261023/pristine.iso'
+Media current: stdio file, overwriteable
+Media status : is written , is appendable
+Boot record  : El Torito , MBR protective-msdos-label grub2-mbr cyl-align-off GPT APM
+Media summary: 1 session, 315252 data blocks,  616m data, 29.2g free
+Volume id    : 'AROS Live CD'
+Drive current: -outdev '/mnt/short-term/openzfs-official-sdk-audit.xi9RkF3r/audit.iso'
+Media current: stdio file, overwriteable
+Media status : is blank
+Media summary: 0 sessions, 0 data blocks, 0 data,  596g free
+xorriso : WARNING : -volid text problematic as automatic mount point name
+xorriso : WARNING : -volid text does not comply to ISO 9660 / ECMA 119 rules
+xorriso : NOTE : Replayed 23 boot related commands
+xorriso : UPDATE :       1 files added in 1 seconds
+Added to ISO image: file '/boot/grub/grub.cfg'='/mnt/short-term/openzfs-official-sdk-audit.xi9RkF3r/grub.cfg'
+xorriso : UPDATE :       1 files added in 1 seconds
+Added to ISO image: file '/efi/BOOT/grub/grub.cfg'='/mnt/short-term/openzfs-official-sdk-audit.xi9RkF3r/grub.cfg'
+xorriso : UPDATE :       1 files added in 1 seconds
+Added to ISO image: file '/S/Startup-Sequence'='/mnt/short-term/openzfs-official-sdk-audit.xi9RkF3r/Startup-Sequence'
+xorriso : UPDATE :       1 files added in 1 seconds
+Added to ISO image: file '/C/OpenZFSErrnoTest'='/mnt/short-term/openzfs-official-sdk-audit.xi9RkF3r/official-serial/OpenZFSErrnoTest'
+xorriso : UPDATE :       1 files added in 1 seconds
+Added to ISO image: file '/C/PipeStandard'='/mnt/short-term/openzfs-official-sdk-audit.xi9RkF3r/PipeStandard'
+xorriso : NOTE : Copying to System Area: 32768 bytes from file '--interval:imported_iso:0s-15s:zero_mbrpt,zero_gpt,zero_apm:/run/media/terminills/Codex/show-consolidation-01a16962/sdk-prerequisite-audit/nightly-20261023/pristine.iso'
+libisofs: FAILURE : Program error: GPT partitions 1 and 2 overlap by 80 blocks
+libisofs: FAILURE : Cannot set up GPT
+libisofs: FAILURE : Image write error
+libisofs: NOTE :  > Caused by: Overlapping GPT entries requested
+libburn : FAILURE : Premature end of input encountered. Missing: 634912768 bytes
+xorriso : FAILURE : libburn indicates failure with writing.
+xorriso : NOTE : -return_with SORRY 32 triggered by problem severity FAILURE

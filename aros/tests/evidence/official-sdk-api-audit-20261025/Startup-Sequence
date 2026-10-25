@@ -1,0 +1,22 @@
+FailAt 21
+Stack 262144
+MakeDir RAM:T RAM:ENV
+Assign T: RAM:T
+Assign ENV: RAM:ENV
+Mount DEVS:DOSDrivers/PIPE
+Mount DEVS:DOSDrivers/SER
+Dir >NIL: PIPE:
+Echo "RESULT official SDK audit START" >SER:
+C:OpenZFSErrnoTest >NIL:
+If WARN
+  Echo "RESULT official SDK errno exit FAIL" >SER:
+Else
+  Echo "RESULT official SDK errno exit PASS" >SER:
+EndIf
+C:PipeStandard >NIL:
+If WARN
+  Echo "RESULT official SDK pipe exit FAIL" >SER:
+Else
+  Echo "RESULT official SDK pipe exit PASS" >SER:
+EndIf
+Echo "RESULT official SDK audit DONE" >SER:

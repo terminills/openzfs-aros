@@ -1,0 +1,31 @@
+xorriso 1.5.6 : RockRidge filesystem manipulator, libburnia project.
+
+xorriso : NOTE : Loading ISO image tree from LBA 0
+libburn : SORRY : Read start address 315251s larger than number of readable blocks 305376
+libisofs: NOTE : Found Protective MBR with size range larger than the medium capacity
+xorriso : UPDATE :   28264 nodes read in 1 seconds
+xorriso : NOTE : Detected El-Torito boot information which currently is set to be discarded
+Drive current: -indev '/mnt/short-term/openzfs-official-sdk-audit.xi9RkF3r/audit-bios.iso'
+Media current: stdio file, overwriteable
+Media status : is written , is appendable
+Boot record  : El Torito , MBR protective-msdos-label cyl-align-off GPT APM
+Media summary: 1 session, 305191 data blocks,  596m data,  596g free
+Volume id    : 'AROS Live CD'
+xorriso : NOTE : Tolerated problem event of severity 'SORRY'
+Drive current: -outdev '/mnt/short-term/openzfs-official-sdk-audit.xi9RkF3r/audit-mounted.iso'
+Media current: stdio file, overwriteable
+Media status : is blank
+Media summary: 0 sessions, 0 data blocks, 0 data,  596g free
+xorriso : UPDATE :       1 files added in 1 seconds
+Added to ISO image: file '/S/Startup-Sequence'='/mnt/short-term/openzfs-official-sdk-audit.xi9RkF3r/Startup-Sequence'
+xorriso : UPDATE : Writing:       8192s    2.7%   fifo 100%  buf  50%
+xorriso : UPDATE : Writing:      65536s   21.5%   fifo 100%  buf  50%   94.1xD 
+xorriso : UPDATE : Writing:     122880s   40.2%   fifo 100%  buf  50%   84.6xD 
+xorriso : UPDATE : Writing:     172032s   56.3%   fifo 100%  buf  50%   72.6xD 
+xorriso : UPDATE : Writing:     229376s   75.1%   fifo 100%  buf  50%   84.7xD 
+xorriso : UPDATE : Writing:     303104s   99.3%   fifo 100%  buf  50%  108.9xD 
+ISO image produced: 305191 sectors
+Written to medium : 305344 sectors at LBA 32
+Writing to '/mnt/short-term/openzfs-official-sdk-audit.xi9RkF3r/audit-mounted.iso' completed successfully.
+
+xorriso : NOTE : -return_with SORRY 32 triggered by problem severity SORRY
