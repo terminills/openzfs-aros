@@ -958,6 +958,7 @@ if [[ $native_discovery == 1 ]];then
     rg -q '^Public native destroyed reuse PASS same-extent=1 no-force=1 old-payload-absent=1 new-write=1 destroyed=1' "$run/serial-results.log"
     rg -q '^Public native corrupt reuse PASS labels=4 create-denied=4 full-extent-unchanged=4 restored=4' "$run/serial-results.log"
     rg -q '^Public native conflicting reuse PASS labels=4 create-denied=4 full-extent-unchanged=4 restored=4' "$run/serial-results.log"
+    rg -q '^Public native conflicting label offsets PASS same-position=4' "$run/serial-results.log"
     rg -q '^Public native conflicting restore PASS recreate=1 exact-data=1 destroyed=1' "$run/serial-results.log"
     rg -q '^Public native discovery coexistence PASS separate-partitions=1 neighbor-online=1 neighbor-property=1 cleanup=1' "$run/serial-results.log"
     rg -q '^Public native discovery data PASS handler-write=1 readonly-import-read=1 readonly-write-denied=1 writable-import-read=1 cleanup=1' "$run/serial-results.log"
@@ -974,6 +975,7 @@ if [[ -n $cli_dir ]];then
     rg -q '^Public key change authorization PASS no-grant-denied=1 load-only-denied=1 private-file-denied=1 explicit-grant=1 revoke-denied=1 properties-preserved=1 root-restored=1' "$run/serial-results.log"
     rg -q '^Public file destroyed reuse PASS cli=1 manager-api=1 old-payload-absent=2 exact-read=3 exported-refused=2 cleanup=1' "$run/serial-results.log"
     rg -q '^Public file label denial PASS corrupt=4 conflicting-member=4 checksum=4 manager-denied=12 forced-cli-denied=12 whole-members-unchanged=12 restored=12' "$run/serial-results.log"
+    rg -q '^Public file conflicting label offsets PASS same-position=4' "$run/serial-results.log"
     rg -q '^Public destroyed changes CLI PASS attach=1 replace=1 add=1 active-force-refused=3 exported-force-refused=3 exact-read=5 cleanup=1' "$run/serial-results.log"
     reuse_finish=cleanup
     if [[ $persistent == 1 ]];then reuse_finish=retained;fi

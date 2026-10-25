@@ -239,6 +239,14 @@ results, not a fresh qualification of this public snapshot.
   File-backed QEMU tests also verify refusal by both entry points for each
   corrupt or conflicting member label, unchanged complete members after
   refusal, and successful recreation after restoring the original labels.
+  Coverage correction (2026-10-24): earlier conflicting-label fixtures copied
+  the donor's first label to every position, so positions 1–3 could be rejected
+  by the offset checksum before the identity check. The corrected file and
+  native fixtures copy each donor label to its corresponding position. Fresh
+  eight-CPU QEMU run `public-service-run.YjUPhqzi` passed all four positions in
+  both lanes, including refusal, unchanged backing data and restoration.
+  Package qualification now requires explicit same-position markers; old logs
+  do not prove this stronger coverage. Production admission policy is unchanged.
 - TRIM/discard is not implemented for AROS file or native-device backings;
   requests report unsupported rather than claiming successful discard.
 - This does not provide an NFS/SMB client or server for browsing a remote ZFS

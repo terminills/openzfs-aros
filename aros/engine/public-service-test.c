@@ -1768,11 +1768,13 @@ static int file_reuse_label_denials(void)
         int closed=Close(file);file=0;FCHECK(closed);
     }
     for(unsigned conflict=0;conflict<3;conflict++){
-        /* The other destroyed mirror member has a different member GUID. */
-        if(conflict)memcpy(replacement,before[1]+16UL*1024,label_bytes);
         for(unsigned label=0;label<4;label++){
             damaged=label*256UL*1024+(label<2?0:extent-4UL*256*1024)+16UL*1024;
             memcpy(saved,before[0]+damaged,label_bytes);
+            /* Use the donor's SAME label position: the checksum verifier is
+             * offset-bound. Copying label zero here would test a bad checksum
+             * instead of a conflicting member identity for labels 1..3. */
+            if(conflict==1)memcpy(replacement,before[1]+damaged,label_bytes);
             if(conflict==2){memcpy(replacement,saved,label_bytes);replacement[label_bytes-1]^=1;}
             memcpy(before[0]+damaged,replacement,label_bytes);
             file=Open((CONST_STRPTR)"RAM:OZFileReuse/disk0",MODE_READWRITE);FCHECK(file);
@@ -1812,6 +1814,7 @@ done:
     for(unsigned i=0;i<2;i++)if(before[i])FreeVec(before[i]);
     if(check)FreeVec(check);if(saved)FreeVec(saved);if(replacement)FreeVec(replacement);
     if(!error)note("Public file label denial PASS corrupt=4 conflicting-member=4 checksum=4 manager-denied=12 forced-cli-denied=12 whole-members-unchanged=12 restored=12\n");
+    if(!error)note("Public file conflicting label offsets PASS same-position=4\n");
     return error;
 #undef FCHECK
 }
@@ -2077,17 +2080,18 @@ static int native_reuse_corrupt_labels(const char *create_command,int conflict)
         io->io_Command=CMD_READ;io->io_Data=before+offset;io->io_Length=chunk;io->io_Offset=base+offset;
         LCHECK(!DoIO((struct IORequest *)io)&&io->io_Actual==chunk);
     }
-    if(conflict){
-        /* Neighbor was explicitly destroyed by this test. Its valid nvlist
-         * names a different pool/member, not arbitrary manufactured fields. */
-        io->io_Command=CMD_READ;io->io_Data=replacement;io->io_Length=label_bytes;io->io_Offset=139265UL*512+16UL*1024;
-        LCHECK(!DoIO((struct IORequest *)io)&&io->io_Actual==label_bytes);
-    }
     /* On-disk vdev labels are 256KiB; their nvlist follows 16KiB of pads.
      * Break each copy separately: three valid destroyed labels must not be
      * sufficient for destructive reuse when the fourth is undecodable. */
     for(unsigned label=0;label<4;label++){
         damaged=label*256UL*1024+(label<2?0:extent-4UL*256*1024)+16UL*1024;
+        if(conflict){
+            /* The destroyed neighbor's same-position label has a valid
+             * offset checksum but a different pool/member identity. */
+            io->io_Command=CMD_READ;io->io_Data=replacement;io->io_Length=label_bytes;
+            io->io_Offset=139265UL*512+damaged;
+            LCHECK(!DoIO((struct IORequest *)io)&&io->io_Actual==label_bytes);
+        }
         memcpy(saved,before+damaged,label_bytes);memcpy(before+damaged,replacement,label_bytes);changed=1;
         io->io_Command=CMD_WRITE;io->io_Data=before+damaged;io->io_Length=label_bytes;io->io_Offset=base+damaged;
         LCHECK(!DoIO((struct IORequest *)io)&&io->io_Actual==label_bytes);
@@ -2113,6 +2117,7 @@ done:
     if(!error)note(conflict?
         "Public native conflicting reuse PASS labels=4 create-denied=4 full-extent-unchanged=4 restored=4\n":
         "Public native corrupt reuse PASS labels=4 create-denied=4 full-extent-unchanged=4 restored=4\n");
+    if(!error&&conflict)note("Public native conflicting label offsets PASS same-position=4\n");
     return error;
 #undef LCHECK
 }
