@@ -1,0 +1,14 @@
+FailAt 21
+Stack 1048576
+MakeDir RAM:T RAM:ENV RAM:ENVARC
+Assign T: RAM:T
+Assign ENV: RAM:ENV
+Assign ENVARC: RAM:ENVARC
+Mount DEVS:DOSDrivers/SER
+C:OpenZFSPreferencesTest >NIL:
+If WARN
+  Echo "RESULT official settings shell FAIL" >SER:
+Else
+  Echo "RESULT official settings shell PASS" >SER:
+EndIf
+Echo "RESULT official settings audit DONE" >SER:

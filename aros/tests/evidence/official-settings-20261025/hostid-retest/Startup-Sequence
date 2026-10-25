@@ -1,0 +1,14 @@
+FailAt 21
+Stack 1048576
+MakeDir RAM:T RAM:ENV RAM:ENVARC
+Assign T: RAM:T
+Assign ENV: RAM:ENV
+Assign ENVARC: RAM:ENVARC
+Mount DEVS:DOSDrivers/SER
+C:HostIdentityTest >NIL:
+If WARN
+  Echo "RESULT official host identity shell FAIL" >SER:
+Else
+  Echo "RESULT official host identity shell PASS" >SER:
+EndIf
+Echo "RESULT official host identity audit DONE" >SER:
