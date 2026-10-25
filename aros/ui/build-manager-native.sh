@@ -30,6 +30,6 @@ sha256sum "$pthread" "$pthread_include/pthread.h" aros/ui/api.c aros/ui/api.h \
     aros/ui/preferences.c aros/ui/preferences-file.c aros/ui/preferences.h aros/ui/pool-wizard.h aros/ui/encrypted-create.h \
     aros/ui/startup-settings.c aros/ui/startup-settings-file.c aros/ui/startup-settings.h aros/ui/startup-editor.h aros/ui/settings-file.h \
     aros/ui/hostid-settings.c aros/ui/hostid-settings.h aros/engine/hostid-record.c aros/engine/hostid-record.h \
-    aros/ui/target-abi.c "$output.target-abi.s" "$output.sdk.sha256" \
+    aros/ui/simple-pools.h aros/ui/target-abi.c "$output.target-abi.s" "$output.sdk.sha256" \
     "$output" >"$output.inputs.sha256"
 sha256sum -c "$output.sdk.sha256" >"$output.sdk-after-check.log"
