@@ -15,6 +15,21 @@ import sys
 import tempfile
 
 
+def localize_libdefs(include):
+    """Use the retained ABI header, never the generating build's absolute path."""
+    if not (include / 'posixc_libdefs.h').is_file():
+        raise ValueError('Missing retained posixc ABI definitions')
+    (include / 'posixc_deflibdefs.h').write_text(
+        '#define LC_LIBDEFS_FILE "posixc_libdefs.h"\n')
+
+
+def check_private_dependencies(snapshot, build):
+    recipe = json.loads((snapshot / 'rebuild.json').read_text())
+    for name in recipe['external_inputs']:
+        if Path(name).resolve().is_relative_to(build.resolve()):
+            raise ValueError(f'Unretained private build dependency: {name}')
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--build', type=Path, required=True)
@@ -37,6 +52,7 @@ def main():
     shutil.copytree(build / 'source/arch/x86_64-all/posixc', source / 'arch')
     shutil.copytree(build / 'platform-include', out / 'platform-include')
     shutil.copytree(gen / 'include', out / 'generated/include')
+    localize_libdefs(out / 'generated/include')
     shutil.copytree(build / 'include/aros', out / 'generated/include/aros')
     for path in gen.glob('*.c'):
         shutil.copy2(path, out / 'generated' / path.name)
@@ -112,6 +128,7 @@ def main():
                     '-Wl,--end-group', '-o', str(out / 'posixc.library')])
     subprocess.run([sys.executable, str(recorder), 'seal', str(out),
                     'posixc.library', 'posixc.map'], cwd=out, check=True)
+    check_private_dependencies(out, build)
     print(f'PASS retained posixc candidate: {out}', flush=True)
 
 
