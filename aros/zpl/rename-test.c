@@ -129,6 +129,34 @@ static int missing_exchange(znode_t *source, znode_t *target, znode_t *tree)
         zap_contains(ZTOZSB(target)->z_os,target->z_id,"absent-exchange")!=ENOENT)) error=EIO;
     return error;
 }
+static int cross_exchange(znode_t *left, char *first, znode_t *right,
+    char *second, znode_t *a, znode_t *b)
+{
+    uint64_t ls=left->z_size, rs=right->z_size;
+    uint64_t ll=left->z_links, rl=right->z_links;
+    uint64_t al=a->z_links, bl=b->z_links;
+    int delta=(S_ISDIR(b->z_mode)?1:0)-(S_ISDIR(a->z_mode)?1:0);
+    int error=0;
+    for (unsigned i=0;i<2 && !error;i++) {
+        error=RENAME(left,first,right,second,RENAME_EXCHANGE);
+        znode_t *found=NULL;
+        if (!error) error=child(left,first,&found);
+        if (!error && found!=(i?a:b)) error=EIO;
+        if (found) oz_znode_rele(found);
+        found=NULL;
+        if (!error) error=child(right,second,&found);
+        if (!error && found!=(i?b:a)) error=EIO;
+        if (found) oz_znode_rele(found);
+        uint64_t ap=0,bp=0;
+        if (!error) error=sa_lookup(a->z_sa_hdl,SA_ZPL_PARENT(ZTOZSB(a)),&ap,8);
+        if (!error) error=sa_lookup(b->z_sa_hdl,SA_ZPL_PARENT(ZTOZSB(b)),&bp,8);
+        if (!error && (ap!=(i?left:right)->z_id || bp!=(i?right:left)->z_id ||
+            left->z_size!=ls || right->z_size!=rs ||
+            left->z_links!=ll+(i?0:delta) || right->z_links!=rl-(i?0:delta) ||
+            a->z_links!=al || b->z_links!=bl)) error=EIO;
+    }
+    return error;
+}
 static void *exchange_names(void *arg)
 {
     struct exchange_worker *w = arg;
@@ -224,6 +252,8 @@ int oz_rename_test(zfsvfs_t *fs, boolean_t write)
         if (!error) error = replace_empty(left,right);
         if (!error) error = directory(left,"tree",&tree);
         if (!error) error = directory(tree,"branch",&branch);
+        if (!error && (RENAME(left,"tree",tree,"branch",RENAME_EXCHANGE)!=EINVAL ||
+            RENAME(tree,"branch",left,"tree",RENAME_EXCHANGE)!=EINVAL)) error=EIO;
         if (!error) error = missing_exchange(left,left,tree);
         if (!error) error = missing_exchange(left,right,tree);
         if (!error) {
@@ -253,8 +283,15 @@ int oz_rename_test(zfsvfs_t *fs, boolean_t write)
         if (!error) error = directory(left,"empty",&empty);
         /* Failed replacement must restore the source name and link counts. */
         if (!error && RENAME(left,"empty",right,"tree",0) != ENOTEMPTY) error = EIO;
-        if (!error && (RENAME(left,"empty",right,"tree",RENAME_EXCHANGE) != ENOTSUP ||
-            RENAME(left,"a",right,"tree",0) != EISDIR ||
+        if (!error) error = exchange_race(left,"empty",right,"tree");
+        if (!error) error = cross_exchange(left,"empty",right,"tree",empty,tree);
+        if (!error) error = exchange_race(left,"a",right,"tree");
+        if (!error) error = cross_exchange(left,"a",right,"tree",b,tree);
+        if (!error) {
+            const char *proof="Native cross-parent directory exchange PASS directories=1 mixed=1 cycles-denied=2 opposing-swaps=128 restored=1\n";
+            for (const char *p=proof; *p; p++) RawPutChar(*p);
+        }
+        if (!error && (RENAME(left,"a",right,"tree",0) != EISDIR ||
             RENAME(left,"empty",right,"moved",0) != ENOTDIR)) error = EIO;
         if (!error) error = zil_commit(fs->z_log,0);
     } else if (!error && RENAME(left,"a",right,"x",0) != EROFS) error = EIO;

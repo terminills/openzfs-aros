@@ -31,12 +31,14 @@ void oz_mount_refs_init(zfsvfs_t *fs)
 {
     fs->z_native_refs = 0;
     mutex_init(&fs->z_native_ref_lock, NULL, MUTEX_DEFAULT, NULL);
+    mutex_init(&fs->z_rename_lock, NULL, MUTEX_DEFAULT, NULL);
 }
 
 void oz_mount_refs_fini(zfsvfs_t *fs)
 {
     ASSERT0(fs->z_native_refs);
     mutex_destroy(&fs->z_native_ref_lock);
+    mutex_destroy(&fs->z_rename_lock);
 }
 
 int oz_mount_publish(zfsvfs_t *fs)

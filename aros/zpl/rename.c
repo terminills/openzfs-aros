@@ -132,6 +132,40 @@ zfs_rename_lock(znode_t *szp, znode_t *tdzp, znode_t *sdzp, zfs_zlock_t **zlpp)
  * Timestamps:
  *	sdzp,tdzp - ctime|mtime updated
  */
+/* With all cross-parent moves serialized, existing ancestry edges cannot
+ * change during this walk. Same-parent renames do not change those edges;
+ * mkdir adds a new leaf and rmdir can only remove an empty directory. The
+ * locked source/target names keep both exchanged objects linked throughout.
+ * Avoid taking the union of two parent-lock chains: their shared ancestors
+ * would otherwise recursively acquire non-recursive native rwlocks. */
+static int
+exchange_ancestry(znode_t *moved, znode_t *parent)
+{
+	zfsvfs_t *fs = ZTOZSB(moved);
+	ASSERT(MUTEX_HELD(&fs->z_rename_lock));
+	uint64_t id = parent->z_id;
+	while (id != fs->z_root) {
+		if (id == moved->z_id) return (SET_ERROR(EINVAL));
+		znode_t *node = NULL;
+		int error = zfs_zget(fs, id, &node);
+		if (error) return (error);
+		uint64_t next;
+		error = sa_lookup(node->z_sa_hdl, SA_ZPL_PARENT(fs), &next, sizeof (next));
+		zrele(node);
+		if (error) return (error);
+		if (next == id) return (SET_ERROR(EIO));
+		id = next;
+	}
+	return (id == moved->z_id ? SET_ERROR(EINVAL) : 0);
+}
+
+static void
+rename_exit(zfsvfs_t *fs, znode_t *source, znode_t *target)
+{
+	if (source != target) mutex_exit(&fs->z_rename_lock);
+	zfs_exit(fs, FTAG);
+}
+
 static int
 rename_impl(znode_t *sdzp, char *snm, znode_t *tdzp, char *tnm,
     cred_t *cr, int flags, uint64_t rflags, vattr_t *wo_vap, zidmap_t *mnt_ns,
@@ -185,15 +219,16 @@ rename_impl(znode_t *sdzp, char *snm, znode_t *tdzp, char *tnm,
 
 	if ((error = zfs_enter_verify_zp(zfsvfs, sdzp, FTAG)) != 0)
 		return (error);
+	if (sdzp != tdzp) mutex_enter(&zfsvfs->z_rename_lock);
 	zilog = zfsvfs->z_log;
 	if (zfs_is_readonly(zfsvfs) || !zilog) {
 		error = zfs_is_readonly(zfsvfs) ? EROFS : ENOTSUP;
-		zfs_exit(zfsvfs, FTAG);
+		rename_exit(zfsvfs, sdzp, tdzp);
 		return (error);
 	}
 
 	if ((error = zfs_verify_zp(tdzp)) != 0) {
-		zfs_exit(zfsvfs, FTAG);
+		rename_exit(zfsvfs, sdzp, tdzp);
 		return (error);
 	}
 
@@ -202,13 +237,13 @@ rename_impl(znode_t *sdzp, char *snm, znode_t *tdzp, char *tnm,
 	 * super blocks.
 	 */
 	if (ZTOZSB(tdzp) != ZTOZSB(sdzp) || tdzp->z_is_ctldir) {
-		zfs_exit(zfsvfs, FTAG);
+		rename_exit(zfsvfs, sdzp, tdzp);
 		return (SET_ERROR(EXDEV));
 	}
 
 	if (zfsvfs->z_utf8 && u8_validate(tnm,
 	    strlen(tnm), NULL, U8_VALIDATE_ENTIRE, &error) < 0) {
-		zfs_exit(zfsvfs, FTAG);
+		rename_exit(zfsvfs, sdzp, tdzp);
 		return (SET_ERROR(EILSEQ));
 	}
 
@@ -226,7 +261,7 @@ top:
 	 * See the comment in zfs_link() for why this is considered bad.
 	 */
 	if ((tdzp->z_pflags & ZFS_XATTR) != (sdzp->z_pflags & ZFS_XATTR)) {
-		zfs_exit(zfsvfs, FTAG);
+		rename_exit(zfsvfs, sdzp, tdzp);
 		return (SET_ERROR(EINVAL));
 	}
 
@@ -269,7 +304,7 @@ top:
 					if (rflags & RENAME_NOREPLACE) error = EEXIST;
 				}
 			}
-			zfs_exit(zfsvfs, FTAG);
+			rename_exit(zfsvfs, sdzp, tdzp);
 			return (error);
 		}
 		/*
@@ -341,7 +376,7 @@ top:
 
 		if (strcmp(snm, "..") == 0)
 			serr = EINVAL;
-		zfs_exit(zfsvfs, FTAG);
+		rename_exit(zfsvfs, sdzp, tdzp);
 		return (serr);
 	}
 	if (terr) {
@@ -353,7 +388,7 @@ top:
 
 		if (strcmp(tnm, "..") == 0)
 			terr = EINVAL;
-		zfs_exit(zfsvfs, FTAG);
+		rename_exit(zfsvfs, sdzp, tdzp);
 		return (terr);
 	}
 	if (guard) {
@@ -376,6 +411,12 @@ top:
 	 */
 	if (tdzp->z_pflags & ZFS_PROJINHERIT &&
 	    tdzp->z_projid != szp->z_projid) {
+		error = SET_ERROR(EXDEV);
+		goto out;
+	}
+	if ((rflags & RENAME_EXCHANGE) && tzp &&
+	    (sdzp->z_pflags & ZFS_PROJINHERIT) &&
+	    sdzp->z_projid != tzp->z_projid) {
 		error = SET_ERROR(EXDEV);
 		goto out;
 	}
@@ -408,16 +449,14 @@ top:
 		goto out;
 	}
 
-	/* Siblings keep the same parent during exchange. Their existing name
-	 * locks serialize both entries and no ancestry edge changes. Cross-parent
-	 * directory exchange still needs a native two-tree ancestry contract. */
-	if ((rflags & RENAME_EXCHANGE) && sdzp != tdzp &&
-	    (S_ISDIR(szp->z_mode) || (tzp && S_ISDIR(tzp->z_mode)))) {
-		error = ENOTSUP;
-		goto out;
+	if ((rflags & RENAME_EXCHANGE) && sdzp != tdzp) {
+		if (S_ISDIR(szp->z_mode) &&
+		    (error = exchange_ancestry(szp, tdzp))) goto out;
+		if (S_ISDIR(tzp->z_mode) &&
+		    (error = exchange_ancestry(tzp, sdzp))) goto out;
 	}
 	if (S_ISDIR(szp->z_mode) &&
-	    !((rflags & RENAME_EXCHANGE) && sdzp == tdzp)) {
+	    !(rflags & RENAME_EXCHANGE)) {
 		/*
 		 * Check to make sure rename is valid.
 		 * Can't do a move like this: /usr/a/b to /usr/a/b/c/d
@@ -538,7 +577,7 @@ top:
 		zrele(szp);
 		if (tzp)
 			zrele(tzp);
-		zfs_exit(zfsvfs, FTAG);
+		rename_exit(zfsvfs, sdzp, tdzp);
 		return (error);
 	}
 
@@ -673,7 +712,7 @@ out:
 	if (error == 0 && zfsvfs->z_os->os_sync == ZFS_SYNC_ALWAYS)
 		error = zil_commit(zilog, 0);
 
-	zfs_exit(zfsvfs, FTAG);
+	rename_exit(zfsvfs, sdzp, tdzp);
 	return (error);
 
 	/*

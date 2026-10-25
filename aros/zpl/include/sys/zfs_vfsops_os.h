@@ -55,6 +55,9 @@ typedef struct zfsvfs {
     size_t z_native_refs;
     boolean_t z_use_hold;
     uint64_t z_cache_walkers;
+    /* Cross-parent namespace moves: teardown read -> rename -> dirent.
+     * Native replacement for the host VFS ancestry serialization contract. */
+    kmutex_t z_rename_lock;
 } zfsvfs_t;
 
 #define ZFS_TEARDOWN_INIT(fs) rrm_init(&(fs)->z_teardown_lock, B_FALSE)
