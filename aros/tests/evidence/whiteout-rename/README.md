@@ -35,3 +35,23 @@ boot observed no replay needed and retained both. Independent zdb reported no
 leaks; original crash, partial recovery and baseline hashes stayed unchanged.
 The retained `crash/` evidence qualifies this controlled record sequence, not
 arbitrary faults or physical-device durability.
+
+## Existing destination and cross-parent replacement
+
+`af1f213` adds a distinct retained fixture: a source file in one directory
+replaces a target in another, while a separate hardlink preserves the old
+target. NOREPLACE first returns EEXIST without changing either link count or
+payload. Whiteout replacement then preserves the source's identity and bytes,
+leaves the zero-device character marker at the old name, decrements the old
+target to one link and keeps its original data accessible through the alias.
+Parent identities, directory sizes and link counts are checked explicitly.
+
+Eight-CPU run `qemu-run.7nMBMXt3` passes writer, cold healthy, both single-member
+read-only imports and writable reopen. The replacement fixture is checked in
+the writer and three read-only imports. Independent original/reopened zdb
+checks report No leaks; hashes of all four inspected partition images remain
+unchanged. Evidence is retained in `replacement/`.
+
+This extends clean-export/cold-import qualification, not abrupt-crash replay
+of destination replacement. The earlier interrupted-replay test covers a
+non-replacing whiteout. Production code was unchanged for this added test.
