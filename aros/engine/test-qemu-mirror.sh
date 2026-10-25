@@ -12,6 +12,10 @@ repo=$(cd -- "$(dirname -- "$0")/../.." && pwd)
 cd "$repo"
 base=${AROS_TEST_ISO:-/opt/aros-workspace/aros-amiwest-nightly-release/distfiles/aros-smp-pc-x86_64.iso}
 qemu=${AROS_TEST_QEMU:-qemu-system-x86_64}
+cpus=${AROS_TEST_CPUS:-2}
+[[ $cpus =~ ^[1-8]$ ]] || exit 2
+zlib=${AROS_TEST_ZLIB_LIBRARY:-$repo/build-aros/hosted/Libs/z1.library}
+test -r "$zlib"
 disk_aio=${AROS_TEST_DISK_AIO:-default}
 case "$disk_aio" in
     default) aio_option= ;;
@@ -117,18 +121,12 @@ fi
 if [[ $async_config_test == 1 ]];then
     strings "$binary_dir/OpenZFSQEMUPoolTest" | rg -F 'Native suspended async config tests=' >/dev/null
 fi
-artifact_root="$repo/build-aros"
-if [[ -n ${AROS_TEST_ARTIFACT_ROOT:-} ]];then
-    artifact_root=$(realpath -e "$AROS_TEST_ARTIFACT_ROOT")
-    [[ -d $artifact_root && -w $artifact_root ]]
-    [[ $(stat -c %d "$artifact_root") != $(stat -c %d "$repo/build-aros") ]] || {
-        echo 'External artifact root must reside on a separate mounted filesystem' >&2;exit 2;
-    }
-fi
 source "$repo/aros/engine/storage-preflight.sh"
-oz_storage_preflight "$artifact_root"
+artifact_root=$(oz_artifact_root "$repo/build-aros" "${AROS_TEST_ARTIFACT_ROOT:-}")
 run=$(mktemp -d "$artifact_root/qemu-run.XXXXXXXX")
 echo "Evidence: $run"
+printf '%s\n' "$cpus" >"$run/cpus.txt"
+sha256sum "$zlib" >"$run/zlib-input.sha256"
 if ((aux_flush_test));then
     python3 aros/engine/pool-partition-fixture.py create "$run/aux.raw" --table gpt >"$run/aux-layout.log" 2>&1
     python3 aros/engine/pool-partition-fixture.py outside "$run/aux.raw" >"$run/aux-outside-before.txt"
@@ -200,7 +198,7 @@ pack() {
     fi
     xorriso -indev "$base" -outdev "$output" \
         -map aros/engine/grub-qemu-test.cfg /boot/grub/grub.cfg \
-        -map build-aros/hosted/Libs/z1.library /Libs/z1.library "${security_args[@]}" "${dos_args[@]}" "${ata_args[@]}" "${posix_args[@]}" "${partition_args[@]}" "$@" \
+        -map "$zlib" /Libs/z1.library "${security_args[@]}" "${dos_args[@]}" "${ata_args[@]}" "${posix_args[@]}" "${partition_args[@]}" "$@" \
         -boot_image any discard -boot_image grub bin_path=/boot/grub/i386-pc/eltorito.img \
         -boot_image grub boot_info_table=on -boot_image grub grub2_boot_info=on
 }
@@ -212,7 +210,7 @@ boot() {
     fi
     if [[ $disk0 != missing ]]; then drive_args+=(-drive "file=$disk0,format=$format,if=ide,index=0$aio_option"); fi
     if [[ $disk1 != missing ]]; then drive_args+=(-drive "file=$disk1,format=$format,if=ide,index=1$aio_option"); fi
-    "$qemu" -name "openzfs-$phase-$$" -machine pc,accel=kvm -cpu host -smp 2 -m 2048 \
+    "$qemu" -name "openzfs-$phase-$$" -machine pc,accel=kvm -cpu host -smp "$cpus" -m 2048 \
         -drive "file=$iso,media=cdrom,if=ide,index=2,readonly=on" \
         "${drive_args[@]}" \
         -vga std -display none -nic none -boot d -no-reboot -no-shutdown \
