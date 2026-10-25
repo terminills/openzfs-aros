@@ -1,0 +1,16 @@
+FailAt 20
+MakeDir RAM:T RAM:ENV
+Assign T: RAM:T
+Assign ENV: RAM:ENV
+Stack 1048576
+C:OpenZFSRuntimeCheck --errno-serial >NIL:
+If WARN
+  Quit 20
+EndIf
+Run >T:service-first.log C:OpenZFSServiceNative
+C:OpenZFSPublicServiceTest
+Run >T:service-second.log C:OpenZFSServiceNative
+C:OpenZFSPublicServiceTest
+C:OpenZFSPublicServiceTest STARTUP
+C:OpenZFSPublicServiceTest STORAGE
+EndCLI
