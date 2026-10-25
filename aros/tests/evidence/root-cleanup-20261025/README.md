@@ -17,3 +17,11 @@ Both cleanup commands exited zero. Root free space increased from about
 from approximately 521 GiB to 484 GiB. Exact filesystem measurements are in
 the df logs. This is a first bounded cleanup, not complete deduplication of
 all historical test sets or build trees.
+
+Follow-up: removed 103 direct intermediate `.o` files (4.72 GiB allocated)
+from `source-engine.P2gN7Bsv`, retaining its final executables and source/build
+records. No recursive object purge or SDK cleanup was performed. Each object
+was checked for an active holder before hashing and again before removal.
+The command exited zero; root free space then measured approximately 129 GiB.
+Exact paths and hashes are in `removed-objects.*`. These intermediates must
+be rebuilt before any old incremental build depending on them can resume.
