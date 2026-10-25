@@ -5,11 +5,21 @@ Experimental development snapshot; not production-qualified storage software.
 ## Current local package (2026-10-25)
 
 **Runtime ABI boundary:** this archive is qualified against the recorded
-alpha18c5/private platform, not the newer stdc interface that places memory-pool
-inheritance at vector 527 and errno at 528. Do not install these old consumers
+alpha18c5/private platform, not the custom integration stdc interface that places
+memory-pool inheritance at vector 527 and errno at 528. Inheritance at 527 is
+present in current upstream source; errno at 528 is a local extension, not an
+official nightly SDK contract. The pristine published 20261023 nightly SDK
+still uses a link-library errno accessor and exposes neither of these vectors.
+Its source commit has not been established. Do not install these old consumers
 with that runtime. A fresh matched SDK/dependency/application rebuild and
 new-baseline QEMU tests are required. `fb61d32` adds an errno accessor/POSIX
 writer probe, verified only on the established baseline so far.
+
+The standalone `aros/cli/errno-native-test.c` emits serial BEGIN, three case
+results, and a final PASS/FAIL marker without opening storage. It is intended
+for the official/custom caller-runtime compatibility matrix. A clean compile
+or a matched custom-SDK run does not prove compatibility with official callers;
+both cross-runtime directions require isolated native tests.
 
 `mmake-bundle.7ospuo7d.tar.xz` includes the corrected snapshot-local POSIX ABI
 header, retained FAT/DOS/POSIX sources and current qualified engine/Manager.
