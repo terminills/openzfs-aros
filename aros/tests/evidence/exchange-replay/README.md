@@ -25,6 +25,15 @@ needed and the same payloads. Independent host `zdb -bcc` reported no leaks.
 This run retries partial replay in one recovery VM; a restart between partial
 replay and retry is a separate test, not established by this result.
 
+That separate two-CPU run, `crash-run.nhslAvlZ`, also passed. After the initial
+power cut, the partial recovery VM persisted its successful namespace replay
+prefix and failed at the injected SETATTR callback. It was then killed without
+export. A new VM observed replay still needed and recovered both exchanged
+contents without swapping them a second time. The final verification boot
+needed no replay and retained the expected contents. Original crash, partial
+recovery and baseline image hashes remained unchanged; independent zdb reported
+no leaks. See `partial-reboot/` for these results.
+
 Logs and input hashes are retained in `dispatch/` and `crash/`. Full artifacts
 are under `/mnt/short-term/openzfs-qualification-20261024.aGFlVF7T`.
 The builds reuse upstream object inputs and selected patched AROS libraries.
