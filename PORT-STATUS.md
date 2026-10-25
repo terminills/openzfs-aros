@@ -210,6 +210,14 @@ results, not a fresh qualification of this public snapshot.
 
 - A compatible patched AROS runtime is required; stock-nightly compatibility is
   not established for every component.
+  Current large-ATA evidence: alpha18c5 with the selected DOS/posixc prerequisites
+  but baseline ATA rejects READ CAPACITY(16). Fresh eight-CPU 50 TiB sparse
+  runs `capacity-run.OwtdsHQK` and diagnostic `capacity-run.vdSy0a9R` fail at
+  device open, before high-LBA reads. The latter reports native error 20,
+  SCSI status 2, no command/data completion and sense 5/0x24/0. This is not a
+  successful capacity or pool test. `aros/engine/ata-capacity.patch` supplies
+  the missing command path; a current private-overlay comparison is still
+  required. Captures are in `aros/tests/evidence/current-ata-capacity`.
 - Physical storage flush, disconnect, and abrupt power-loss behavior require
   hardware qualification. Virtual-disk tests do not establish these guarantees.
 - Not every upstream feature or topology has end-to-end AROS validation.
