@@ -8,6 +8,14 @@ sdk_flags=()
 test_flags=()
 if [[ ${AROS_FULL_DISPATCHER:-0} == 1 ]];then test_flags+=(-DOZ_NATIVE_DISPATCHER);fi
 if [[ -n ${AROS_SDK:-} ]];then sdk_flags=(--sysroot="$AROS_SDK" -B"$AROS_SDK/lib/");fi
+if [[ ${AROS_PTHREAD_BACKEND:-private} == sdk ]]; then
+    [[ -z ${AROS_PRIVATE_PTHREAD:-} ]]
+    [[ ${AROS_PTHREAD_INCLUDE:-} == "${AROS_SDK:?}/include" ]]
+    pthread_archive="$AROS_SDK/lib/libpthread.a"
+else
+    pthread_archive=${AROS_PRIVATE_PTHREAD:?private pthread archive required}
+fi
+[[ -f $pthread_archive ]]
 # Requires the verified full engine and nvpair object builds. Diagnostic static
 # packaging only; the production shared engine and DOS handler are separate work.
 bash aros/engine/link-engine-test.sh aros/ui/service.c
@@ -19,7 +27,11 @@ cp "${AROS_ENGINE_OBJECT_DIR:-build-aros/engine}/engine-metadata.h" \
     -o "$output_dir/OpenZFSWriteTest"
 "$cc" "${sdk_flags[@]}" -Wall -Wextra -O2 aros/ui/api.c aros/engine/mount-test.c \
     -o "$output_dir/OpenZFSMountTest"
-bash aros/ui/build-manager-native.sh "$output_dir/OpenZFSManagerNative"
+if [[ ${AROS_PTHREAD_BACKEND:-private} == sdk ]]; then
+    env -u AROS_PTHREAD_INCLUDE bash aros/ui/build-manager-native.sh "$output_dir/OpenZFSManagerNative"
+else
+    bash aros/ui/build-manager-native.sh "$output_dir/OpenZFSManagerNative"
+fi
 test_objects=()
 if [[ -n ${AROS_PUBLIC_INIT_OBJECT:-} ]];then
     test_flags+=(-DOZ_TEST_UPSTREAM_INIT)
@@ -43,7 +55,7 @@ if [[ ${AROS_FULL_DISPATCHER:-0} == 1 ]];then
         "$output_dir/client/lib_libzfs_core_libzfs_core.c.o"
         "$output_dir/client/lib_libnvpair_libnvpair.c.o"
         "${AROS_NVPAIR_ARCHIVE:-build-aros/libnvpair-adt-consistent.a}"
-        "${AROS_PRIVATE_PTHREAD:-build-aros/pthread-consistent.s3r1CHla/libpthread.a}")
+        "$pthread_archive")
 fi
 # Keep the standalone acceptance client aligned with
 # OPENZFS_PUBLIC_TEST_FILES in mmakefile.src: its current fixtures exercise
@@ -56,7 +68,7 @@ fi
     aros/ui/startup-settings.c aros/ui/startup-settings-file.c \
     aros/ui/preferences.c aros/ui/preferences-file.c aros/engine/hostid-record.c \
     aros/cli/version.c aros/engine/public-service-test.c \
-    "${test_objects[@]}" "${AROS_PRIVATE_PTHREAD:?private pthread archive required}" \
+    "${test_objects[@]}" "$pthread_archive" \
     -liffparse -o "$output_dir/OpenZFSPublicServiceTest"
 printf 'service_test_modes=%s\nfull_dispatcher=%s\nstatus_trace=%s\n' \
     "${AROS_SERVICE_TEST_MODES:-0}" "${AROS_FULL_DISPATCHER:-0}" "${AROS_STATUS_TRACE:-0}" >"$output_dir/service-build-options.txt"

@@ -1,0 +1,178 @@
+In function 'zvol_set_volmode_impl',
+    inlined from 'zvol_task_cb' at /mnt/short-term/openzfs-official-sdk-audit.xi9RkF3r/publication/module/zfs/zvol.c:1962:3:
+/mnt/short-term/openzfs-official-sdk-audit.xi9RkF3r/publication/module/zfs/zvol.c:1936:9: warning: 'error' may be used uninitialized [-Wmaybe-uninitialized]
+ 1936 |         zvol_task_update_status(task, 1, error == 0, error);
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/mnt/short-term/openzfs-official-sdk-audit.xi9RkF3r/publication/module/zfs/zvol.c: In function 'zvol_task_cb':
+/mnt/short-term/openzfs-official-sdk-audit.xi9RkF3r/publication/module/zfs/zvol.c:1888:13: note: 'error' was declared here
+ 1888 |         int error;
+      |             ^~~~~
+In function 'zvol_rename_minors_impl',
+    inlined from 'zvol_task_cb' at /mnt/short-term/openzfs-official-sdk-audit.xi9RkF3r/publication/module/zfs/zvol.c:1956:3:
+/mnt/short-term/openzfs-official-sdk-audit.xi9RkF3r/publication/module/zfs/zvol.c:1824:20: warning: 'error' may be used uninitialized [-Wmaybe-uninitialized]
+ 1824 |                 if (error) {
+      |                    ^
+/mnt/short-term/openzfs-official-sdk-audit.xi9RkF3r/publication/module/zfs/zvol.c: In function 'zvol_task_cb':
+/mnt/short-term/openzfs-official-sdk-audit.xi9RkF3r/publication/module/zfs/zvol.c:1794:46: note: 'error' was declared here
+ 1794 |         int total = 0, done = 0, last_error, error, oldnamelen;
+      |                                              ^~~~~
+In function 'zvol_task_update_status',
+    inlined from 'zvol_task_update_status' at /mnt/short-term/openzfs-official-sdk-audit.xi9RkF3r/publication/module/zfs/zvol.c:1488:1,
+    inlined from 'zvol_rename_minors_impl' at /mnt/short-term/openzfs-official-sdk-audit.xi9RkF3r/publication/module/zfs/zvol.c:1834:2,
+    inlined from 'zvol_task_cb' at /mnt/short-term/openzfs-official-sdk-audit.xi9RkF3r/publication/module/zfs/zvol.c:1956:3:
+/mnt/short-term/openzfs-official-sdk-audit.xi9RkF3r/publication/module/zfs/zvol.c:1496:20: warning: 'last_error' may be used uninitialized [-Wmaybe-uninitialized]
+ 1496 |                 if (error)
+      |                    ^
+/mnt/short-term/openzfs-official-sdk-audit.xi9RkF3r/publication/module/zfs/zvol.c: In function 'zvol_task_cb':
+/mnt/short-term/openzfs-official-sdk-audit.xi9RkF3r/publication/module/zfs/zvol.c:1794:34: note: 'last_error' was declared here
+ 1794 |         int total = 0, done = 0, last_error, error, oldnamelen;
+      |                                  ^~~~~~~~~~
+In function 'zvol_task_update_status',
+    inlined from 'zvol_task_update_status' at /mnt/short-term/openzfs-official-sdk-audit.xi9RkF3r/publication/module/zfs/zvol.c:1488:1,
+    inlined from 'zvol_create_minors_impl' at /mnt/short-term/openzfs-official-sdk-audit.xi9RkF3r/publication/module/zfs/zvol.c:1629:2,
+    inlined from 'zvol_task_cb' at /mnt/short-term/openzfs-official-sdk-audit.xi9RkF3r/publication/module/zfs/zvol.c:1950:3:
+/mnt/short-term/openzfs-official-sdk-audit.xi9RkF3r/publication/module/zfs/zvol.c:1496:20: warning: 'last_error' may be used uninitialized [-Wmaybe-uninitialized]
+ 1496 |                 if (error)
+      |                    ^
+/mnt/short-term/openzfs-official-sdk-audit.xi9RkF3r/publication/module/zfs/zvol.c: In function 'zvol_task_cb':
+/mnt/short-term/openzfs-official-sdk-audit.xi9RkF3r/publication/module/zfs/zvol.c:1553:34: note: 'last_error' was declared here
+ 1553 |         int total = 0, done = 0, last_error, error;
+      |                                  ^~~~~~~~~~
+/mnt/short-term/openzfs-official-sdk-audit.xi9RkF3r/publication/lib/libzpool/taskq.c: In function 'taskq_thread':
+/mnt/short-term/openzfs-official-sdk-audit.xi9RkF3r/publication/lib/libzpool/taskq.c:326:1: warning: 'noreturn' function does return
+  326 | }
+      | ^
+/mnt/short-term/openzfs-official-sdk-audit.xi9RkF3r/publication/module/zfs/dmu_send.c: In function 'send_traverse_thread':
+/mnt/short-term/openzfs-official-sdk-audit.xi9RkF3r/publication/module/zfs/dmu_send.c:1235:1: warning: 'noreturn' function does return
+ 1235 | }
+      | ^
+/mnt/short-term/openzfs-official-sdk-audit.xi9RkF3r/publication/module/zfs/dmu_send.c: In function 'redact_list_thread':
+/mnt/short-term/openzfs-official-sdk-audit.xi9RkF3r/publication/module/zfs/dmu_send.c:1329:1: warning: 'noreturn' function does return
+ 1329 | }
+      | ^
+/mnt/short-term/openzfs-official-sdk-audit.xi9RkF3r/publication/module/zfs/dmu_send.c: In function 'send_merge_thread':
+/mnt/short-term/openzfs-official-sdk-audit.xi9RkF3r/publication/module/zfs/dmu_send.c:1573:1: warning: 'noreturn' function does return
+ 1573 | }
+      | ^
+/mnt/short-term/openzfs-official-sdk-audit.xi9RkF3r/publication/module/zfs/dmu_send.c: In function 'send_reader_thread':
+/mnt/short-term/openzfs-official-sdk-audit.xi9RkF3r/publication/module/zfs/dmu_send.c:1931:1: warning: 'noreturn' function does return
+ 1931 | }
+      | ^
+/mnt/short-term/openzfs-official-sdk-audit.xi9RkF3r/publication/module/zfs/spa.c: In function 'spa_async_thread':
+/mnt/short-term/openzfs-official-sdk-audit.xi9RkF3r/publication/module/zfs/spa.c:10100:1: warning: 'noreturn' function does return
+10100 | }
+      | ^
+/mnt/short-term/openzfs-official-sdk-audit.xi9RkF3r/publication/module/zfs/zfs_vnops.c: In function 'zfs_write':
+/mnt/short-term/openzfs-official-sdk-audit.xi9RkF3r/publication/module/zfs/zfs_vnops.c:845:45: warning: pointer targets in passing argument 5 of 'zfs_uiocopy' differ in signedness [-Wpointer-sign]
+  845 |                             UIO_WRITE, uio, &nbytes))) {
+      |                                             ^~~~~~~
+      |                                             |
+      |                                             ssize_t * {aka long int *}
+In file included from /mnt/short-term/openzfs-official-sdk-audit.xi9RkF3r/publication/include/sys/zfs_context.h:116,
+                 from /mnt/short-term/openzfs-official-sdk-audit.xi9RkF3r/publication/aros/zpl/context.h:7,
+                 from <command-line>:
+/mnt/short-term/openzfs-official-sdk-audit.xi9RkF3r/publication/lib/libspl/include/sys/uio.h:96:60: note: expected 'size_t *' {aka 'long unsigned int *'} but argument is of type 'ssize_t *' {aka 'long int *'}
+   96 | int zfs_uiocopy(void *, size_t, zfs_uio_rw_t, zfs_uio_t *, size_t *);
+      |                                                            ^~~~~~~~
+/mnt/short-term/openzfs-official-sdk-audit.xi9RkF3r/publication/module/zfs/zfs_replay.c: In function 'zfs_replay_create':
+/mnt/short-term/openzfs-official-sdk-audit.xi9RkF3r/publication/module/zfs/zfs_replay.c:581:22: warning: pointer targets in assignment from 'uint8_t *' {aka 'unsigned char *'} to 'char *' differ in signedness [-Wpointer-sign]
+  581 |                 name = &lrc->lr_data[0];
+      |                      ^
+/mnt/short-term/openzfs-official-sdk-audit.xi9RkF3r/publication/module/zfs/zfs_replay.c:582:22: warning: pointer targets in assignment from 'uint8_t *' {aka 'unsigned char *'} to 'char *' differ in signedness [-Wpointer-sign]
+  582 |                 link = &lrc->lr_data[strlen(name) + 1];
+      |                      ^
+/mnt/short-term/openzfs-official-sdk-audit.xi9RkF3r/publication/module/zfs/zfs_replay.c: In function 'zfs_replay_link':
+/mnt/short-term/openzfs-official-sdk-audit.xi9RkF3r/publication/module/zfs/zfs_replay.c:652:22: warning: pointer targets in initialization of 'char *' from 'uint8_t *' {aka 'unsigned char *'} differ in signedness [-Wpointer-sign]
+  652 |         char *name = &lr->lr_data[0];   /* name follows lr_link_t */
+      |                      ^
+/mnt/short-term/openzfs-official-sdk-audit.xi9RkF3r/publication/module/zfs/zfs_replay.c: In function 'zfs_replay_write':
+/mnt/short-term/openzfs-official-sdk-audit.xi9RkF3r/publication/module/zfs/zfs_replay.c:818:22: warning: pointer targets in initialization of 'char *' from 'uint8_t *' {aka 'unsigned char *'} differ in signedness [-Wpointer-sign]
+  818 |         char *data = &lr->lr_data[0];   /* data follows lr_write_t */
+      |                      ^
+/mnt/short-term/openzfs-official-sdk-audit.xi9RkF3r/publication/module/zfs/zfs_replay.c: In function 'zfs_replay_setsaxattr':
+/mnt/short-term/openzfs-official-sdk-audit.xi9RkF3r/publication/module/zfs/zfs_replay.c:1063:23: warning: pointer targets in assignment from 'uint8_t *' {aka 'unsigned char *'} to 'char *' differ in signedness [-Wpointer-sign]
+ 1063 |                 value = &lr->lr_data[strlen(name) + 1];
+      |                       ^
+In file included from /mnt/short-term/openzfs-official-sdk-audit.xi9RkF3r/publication/aros/zpl/acl-core.c:87:
+/mnt/short-term/openzfs-official-sdk-audit.xi9RkF3r/publication/aros/zpl/../../module/os/linux/zfs/zfs_acl.c:874:1: warning: 'zfs_v4_to_unix' defined but not used [-Wunused-function]
+  874 | zfs_v4_to_unix(uint32_t access_mask, int *unmapped)
+      | ^~~~~~~~~~~~~~
+/mnt/short-term/openzfs-official-sdk-audit.xi9RkF3r/publication/aros/engine/management.c: In function 'mount_dataset_mode_existing':
+/mnt/short-term/openzfs-official-sdk-audit.xi9RkF3r/publication/aros/engine/management.c:1574:41: warning: comparison is always false due to limited range of data type [-Wtype-limits]
+ 1574 |     if(mount_count>=INT_MAX||mount_count>=SIZE_MAX/sizeof(*mounts)-1)return ENOMEM;
+      |                                         ^~
+/mnt/short-term/openzfs-official-sdk-audit.xi9RkF3r/publication/aros/engine/management.c: In function 'dataset_row':
+/mnt/short-term/openzfs-official-sdk-audit.xi9RkF3r/publication/aros/engine/management.c:1685:67: warning: 'snprintf' output may be truncated before the last format character [-Wformat-truncation=]
+ 1685 |     if(mounted>=0)snprintf(r->state,sizeof(r->state),"%s mount %s:",
+      |                                                                   ^
+/mnt/short-term/openzfs-official-sdk-audit.xi9RkF3r/publication/aros/engine/management.c:1685:19: note: 'snprintf' output between 17 and 49 bytes into a destination of size 48
+ 1685 |     if(mounted>=0)snprintf(r->state,sizeof(r->state),"%s mount %s:",
+      |                   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ 1686 |         oz_zpl_readonly(mounts[mounted].fs)?"read-only":"writable",mounts[mounted].name);
+      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/mnt/short-term/openzfs-official-sdk-audit.xi9RkF3r/publication/lib/libefi/rdwr_efi.c: In function 'efi_use_whole_disk':
+/mnt/short-term/openzfs-official-sdk-audit.xi9RkF3r/publication/lib/libefi/rdwr_efi.c:1393:1: warning: label 'out' defined but not used [-Wunused-label]
+ 1393 | out:
+      | ^~~
+/mnt/short-term/openzfs-official-sdk-audit.xi9RkF3r/publication/aros/platform/storage-inventory.c: In function 'inventory_bus':
+/mnt/short-term/openzfs-official-sdk-audit.xi9RkF3r/publication/aros/platform/storage-inventory.c:71:33: warning: cast between incompatible function types from 'BOOL (*)(struct Hook *, OOP_Object *, void *)' {aka 'short int (*)(struct Hook *, unsigned int *, void *)'} to 'IPTR (*)(void)' {aka 'long unsigned int (*)(void)'} [-Wcast-function-type]
+   71 |     struct Hook child={.h_Entry=(HOOKFUNC)inventory_unit,.h_Data=ctx};
+      |                                 ^
+/mnt/short-term/openzfs-official-sdk-audit.xi9RkF3r/publication/aros/platform/storage-inventory.c: In function 'inventory_controller':
+/mnt/short-term/openzfs-official-sdk-audit.xi9RkF3r/publication/aros/platform/storage-inventory.c:84:33: warning: cast between incompatible function types from 'BOOL (*)(struct Hook *, OOP_Object *, void *)' {aka 'short int (*)(struct Hook *, unsigned int *, void *)'} to 'IPTR (*)(void)' {aka 'long unsigned int (*)(void)'} [-Wcast-function-type]
+   84 |     struct Hook child={.h_Entry=(HOOKFUNC)inventory_bus,.h_Data=ctx};
+      |                                 ^
+/mnt/short-term/openzfs-official-sdk-audit.xi9RkF3r/publication/aros/platform/storage-inventory.c: In function 'oz_storage_inventory_native':
+/mnt/short-term/openzfs-official-sdk-audit.xi9RkF3r/publication/aros/platform/storage-inventory.c:92:29: warning: pointer targets in passing argument 1 of '__inline_Exec_OpenLibrary' differ in signedness [-Wpointer-sign]
+   92 |     struct Library *OOPBase=OpenLibrary("oop.library",0);
+      |                             ^~~~~~~~~~~
+      |                             |
+      |                             char *
+In file included from /run/media/terminills/Codex/show-consolidation-01a16962/sdk-prerequisite-audit/nightly-20261023/iso-Developer/include/proto/exec.h:44,
+                 from /mnt/short-term/openzfs-official-sdk-audit.xi9RkF3r/publication/aros/platform/storage-inventory.c:3:
+/run/media/terminills/Codex/show-consolidation-01a16962/sdk-prerequisite-audit/nightly-20261023/iso-Developer/include/inline/exec.h:1303:71: note: expected 'CONST_STRPTR' {aka 'const unsigned char *'} but argument is of type 'char *'
+ 1303 | static inline struct Library * __inline_Exec_OpenLibrary(CONST_STRPTR __arg1, ULONG __arg2, APTR __SysBase)
+      |                                                          ~~~~~~~~~~~~~^~~~~~
+/mnt/short-term/openzfs-official-sdk-audit.xi9RkF3r/publication/aros/platform/storage-inventory.c:95:15: warning: pointer targets in passing argument 1 of '__inline_OOP_OOP_ObtainAttrBase' differ in signedness [-Wpointer-sign]
+   95 |     ctx.attrs=OOP_ObtainAttrBase(IID_Hidd_StorageUnit);
+      |               ^~~~~~~~~~~~~~~~~~
+      |               |
+      |               char *
+In file included from /run/media/terminills/Codex/show-consolidation-01a16962/sdk-prerequisite-audit/nightly-20261023/iso-Developer/include/proto/oop.h:40,
+                 from /mnt/short-term/openzfs-official-sdk-audit.xi9RkF3r/publication/aros/platform/storage-inventory.c:4:
+/run/media/terminills/Codex/show-consolidation-01a16962/sdk-prerequisite-audit/nightly-20261023/iso-Developer/include/inline/oop.h:54:73: note: expected 'CONST_STRPTR' {aka 'const unsigned char *'} but argument is of type 'char *'
+   54 | static inline OOP_AttrBase __inline_OOP_OOP_ObtainAttrBase(CONST_STRPTR __arg1, APTR __OOPBase)
+      |                                                            ~~~~~~~~~~~~~^~~~~~
+/mnt/short-term/openzfs-official-sdk-audit.xi9RkF3r/publication/aros/platform/storage-inventory.c:100:27: warning: pointer targets in passing argument 2 of '__inline_OOP_OOP_NewObject' differ in signedness [-Wpointer-sign]
+  100 |     if(!ctx.error&&!(root=OOP_NewObject(NULL,CLID_Hidd_Storage,NULL)))ctx.error=ENODEV;
+      |                           ^~~~~~~~~~~~~
+      |                           |
+      |                           char *
+/run/media/terminills/Codex/show-consolidation-01a16962/sdk-prerequisite-audit/nightly-20261023/iso-Developer/include/inline/oop.h:29:88: note: expected 'CONST_STRPTR' {aka 'const unsigned char *'} but argument is of type 'char *'
+   29 | static inline APTR __inline_OOP_OOP_NewObject(struct OOP_IClass * __arg1, CONST_STRPTR __arg2, struct TagItem * __arg3, APTR __OOPBase)
+      |                                                                           ~~~~~~~~~~~~~^~~~~~
+/mnt/short-term/openzfs-official-sdk-audit.xi9RkF3r/publication/aros/platform/storage-inventory.c:102:36: warning: cast between incompatible function types from 'BOOL (*)(struct Hook *, OOP_Object *, void *)' {aka 'short int (*)(struct Hook *, unsigned int *, void *)'} to 'IPTR (*)(void)' {aka 'long unsigned int (*)(void)'} [-Wcast-function-type]
+  102 |         struct Hook hook={.h_Entry=(HOOKFUNC)inventory_controller,.h_Data=&ctx};
+      |                                    ^
+/mnt/short-term/openzfs-official-sdk-audit.xi9RkF3r/publication/aros/platform/storage-inventory.c:107:22: warning: pointer targets in passing argument 1 of '__inline_OOP_OOP_ReleaseAttrBase' differ in signedness [-Wpointer-sign]
+  107 |     free(ctx.result);OOP_ReleaseAttrBase(IID_Hidd_StorageUnit);CloseLibrary(OOPBase);
+      |                      ^~~~~~~~~~~~~~~~~~~
+      |                      |
+      |                      char *
+/run/media/terminills/Codex/show-consolidation-01a16962/sdk-prerequisite-audit/nightly-20261023/iso-Developer/include/inline/oop.h:100:66: note: expected 'CONST_STRPTR' {aka 'const unsigned char *'} but argument is of type 'char *'
+  100 | static inline void __inline_OOP_OOP_ReleaseAttrBase(CONST_STRPTR __arg1, APTR __OOPBase)
+      |                                                     ~~~~~~~~~~~~~^~~~~~
+/mnt/short-term/openzfs-official-sdk-audit.xi9RkF3r/publication/aros/engine/cache-policy.c: In function 'oz_cache_policy_start':
+/mnt/short-term/openzfs-official-sdk-audit.xi9RkF3r/publication/aros/engine/cache-policy.c:74:23: warning: pointer targets in passing argument 1 of 'strlen' differ in signedness [-Wpointer-sign]
+   74 |         size_t length=AROS_BSTR_strlen(dl->dol_Name);
+      |                       ^~~~~~~~~~~~~~~~
+      |                       |
+      |                       UBYTE * {aka unsigned char *}
+In file included from /run/media/terminills/Codex/show-consolidation-01a16962/sdk-prerequisite-audit/nightly-20261023/iso-Developer/include/aros/posixc/string.h:12,
+                 from /mnt/short-term/openzfs-official-sdk-audit.xi9RkF3r/publication/lib/libspl/include/string.h:31,
+                 from /mnt/short-term/openzfs-official-sdk-audit.xi9RkF3r/publication/aros/engine/cache-policy.c:5:
+/run/media/terminills/Codex/show-consolidation-01a16962/sdk-prerequisite-audit/nightly-20261023/iso-Developer/include/aros/stdc/string.h:54:29: note: expected 'const char *' but argument is of type 'UBYTE *' {aka 'unsigned char *'}
+   54 | size_t strlen (const char * str);
+      |                ~~~~~~~~~~~~~^~~
+There are undefined symbols in '/mnt/short-term/openzfs-official-deps.fVjvrmGW/source-engine.ry8mBCM8/service/OpenZFSServiceNative':
+                 U pwrite

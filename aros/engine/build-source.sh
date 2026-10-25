@@ -4,14 +4,31 @@ set -euo pipefail
 repo=$(cd -- "$(dirname -- "$0")/../.." && pwd)
 cd "$repo"
 : "${AROS_SDK:?explicit ABI-matched AROS SDK required}"
-: "${AROS_PRIVATE_PTHREAD:?complete private pthread archive required}"
-: "${AROS_PTHREAD_INCLUDE:?matching private pthread headers required}"
-cmp "$(dirname "$AROS_PRIVATE_PTHREAD")/source/pthread.h" "$AROS_PTHREAD_INCLUDE/pthread.h"
+case ${AROS_PTHREAD_BACKEND:-private} in
+    sdk)
+        if [[ -n ${AROS_PRIVATE_PTHREAD:-}${AROS_PTHREAD_INCLUDE:-} ]]; then
+            echo 'SDK pthread mode cannot be combined with private pthread inputs' >&2
+            exit 1
+        fi
+        pthread_archive="$AROS_SDK/lib/libpthread.a"
+        export AROS_PTHREAD_INCLUDE="$AROS_SDK/include"
+        [[ -f $pthread_archive && -f $AROS_PTHREAD_INCLUDE/pthread.h ]]
+        ;;
+    private)
+        : "${AROS_PRIVATE_PTHREAD:?complete private pthread archive required}"
+        : "${AROS_PTHREAD_INCLUDE:?matching private pthread headers required}"
+        cmp "$(dirname "$AROS_PRIVATE_PTHREAD")/source/pthread.h" "$AROS_PTHREAD_INCLUDE/pthread.h"
+        pthread_archive=$AROS_PRIVATE_PTHREAD
+        ;;
+    *) echo 'Unsupported pthread backend' >&2; exit 1 ;;
+esac
 source "$repo/aros/engine/storage-preflight.sh"
 artifact_root=$(oz_artifact_root "$repo/build-aros" "${AROS_ARTIFACT_ROOT:-}")
 run=$(mktemp -d "$artifact_root/source-engine.XXXXXXXX")
 echo "Evidence: $run"
 mkdir "$run/engine" "$run/include" "$run/logs"
+sha256sum "$pthread_archive" "$AROS_PTHREAD_INCLUDE/pthread.h" > "$run/pthread-inputs.sha256"
+printf 'pthread_backend=%s\n' "${AROS_PTHREAD_BACKEND:-private}" > "$run/pthread-backend.txt"
 if [[ -z ${AROS_NVPAIR_ARCHIVE:-} ]];then
     export AROS_NVPAIR_ARCHIVE="$run/nvpair/libnvpair.a"
     AROS_NVPAIR_OUTPUT_DIR="$run/nvpair" AROS_NVPAIR_OBJECT_DIR="$run/nvpair/objects" \
@@ -50,5 +67,6 @@ done <"$run/sources.txt"
 [[ $failed == 0 ]]
 bash aros/engine/build-management.sh >"$run/link.log" 2>&1
 sha256sum "$run/service/OpenZFSServiceNative" "$run/service/OpenZFSManagerNative" \
-    "$AROS_PRIVATE_PTHREAD" "$AROS_NVPAIR_ARCHIVE" >"$run/binaries.sha256"
+    "$pthread_archive" "$AROS_NVPAIR_ARCHIVE" >"$run/binaries.sha256"
+sha256sum -c "$run/pthread-inputs.sha256" > "$run/pthread-after-check.log"
 echo "PASS fresh-source engine and Manager build: $run"

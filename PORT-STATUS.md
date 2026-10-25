@@ -43,10 +43,16 @@ tests against the pristine published 20261023 SDK and runtime:
 - Ordinary inherited-environment command capture passes 112 sequential and
   896 concurrent cases, including exact per-caller tokens, error status,
   bounded output rejection, thread joins and temporary-file cleanup.
+- Source-built nvpair/XDR and BoringSSL pass their selected native nvlist and
+  PBKDF2 tests. A subsequent fresh full-engine build compiles all 248 upstream
+  sources but fails service linking on `pwrite`, which the published SDK does
+  not provide. This is a failed build, not a newly qualified engine.
 
 Evidence is under `aros/tests/evidence/official-sdk-api-audit-20261025`,
 `official-environment-matrix-20261025`, `official-manager-startup-20261025`,
 `official-runtime-worker-20261025`, and `official-inherited-capture-20261025`.
+Dependency and failed engine-build evidence is in `official-dependencies-20261025`
+and `official-engine-build-20261025`.
 These are isolated software tests, not new engine/pool, general SMP, or
 physical-device qualification. Shared-runtime compatibility repairs remain a
 separate prerequisite before rebuilding and qualifying the complete engine

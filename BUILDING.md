@@ -170,6 +170,16 @@ mounted filesystem separate from the system filesystem. The source checkout
 may already reside on that external filesystem. The common 100-GiB reserve
 guard checks the system filesystem, default output and chosen destination.
 
+`aros/engine/build-source.sh` also accepts `AROS_PTHREAD_BACKEND=sdk` for a
+fresh build using the explicitly selected SDK's `lib/libpthread.a` and headers.
+Leave `AROS_PRIVATE_PTHREAD` and `AROS_PTHREAD_INCLUDE` unset in that mode;
+mixed inputs are rejected. The default `private` mode still requires the
+matching private archive/header snapshot. Neither mode proves target-runtime
+compatibility. In the pristine 20261023 SDK audit, all 248 upstream engine
+sources compiled, but service linking failed because the SDK lacks `pwrite`.
+See `aros/tests/evidence/official-engine-build-20261025`; no runnable engine
+or native-pool qualification resulted from that failed build.
+
 Fresh 35-source pthread build `pthread-consistent.6ujRL4nB` was linked into
 shared engine `shared-engine.RDWvxF8a`. Hosted run
 `hosted-security-test.KzxOl3nq` passed the selected CLI replication/rollback,
