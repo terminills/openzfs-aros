@@ -393,6 +393,12 @@ int main(int argc,char **argv)
     int identity_result=oz_packet_cred_test();
     report("Native security packet identity conversion/capture=%d\n",identity_result);
     if(identity_result){kernel_fini();return 20;}
+    /* This disposable diagnostic creates datasets directly, outside the
+     * authenticated service dispatcher. Give only this fixture phase an
+     * explicit credential scope; production must still reject absent CRED. */
+    struct oz_cred_scope *fixture_scope=NULL;
+    int fixture_error=oz_cred_push(kcred,&fixture_scope);
+    if(fixture_error){kernel_fini();return 20;}
     /* Keep the historical fixture dataset name used by shared DOS tests;
      * topology is determined by the vdev config, never by that name. */
     report("spa_create layout=%s members=%u\n",layout,count);int rc=spa_create("qemu_mirror",root,props,NULL,NULL);
@@ -425,6 +431,7 @@ int main(int argc,char **argv)
         }
         free(packed);
     }
+    VERIFY0(oz_cred_pop(fixture_scope));
     kernel_fini();
     if(!rc && !exported)rc=EIO;
     if(!rc) {
