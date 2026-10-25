@@ -1863,9 +1863,8 @@ sources cannot incorrectly succeed, and NOREPLACE rejects an existing target.
 Exchange also requires source-directory add permission for the incoming
 object's type (ADD_SUBDIRECTORY for a directory, ADD_FILE otherwise).
 
-Whiteout requests and cross-parent directory exchange are explicitly ENOTSUP.
-The latter still needs native reverse-ancestry/two-tree admission previously
-provided outside this upstream routine. Same-parent directory exchange is
+Whiteout requests remain explicitly ENOTSUP. Cross-parent directory exchange
+now uses native two-tree admission described below. Same-parent exchange is
 implemented: both names are locked and both objects retain their parent, so
 no ancestry edge changes. The native diagnostic swaps two sibling directories
 (one nonempty) and a file/directory pair, checks exact identities, stored
@@ -1888,7 +1887,28 @@ read-only hash checks passed. This exercises competing sibling-name locks;
 it does not qualify cross-parent directory exchange or exhaustive scheduling.
 Casefold/Unicode variants and injected low-space rollback remain unverified.
 These internal operations assume authorized resolution of parent paths;
-public DOS mutation dispatch is still unfinished.
+the exchange flag is not exposed as a new DOS packet or Manager command.
+
+Cross-parent exchange run `qemu-run.AuXVK2zG` passes all five phases with
+all three diagnostic binaries rebuilt from c6e8ce4. Cross-parent renames
+take a mount-private mutex after the teardown read hold and before name
+locks. Same-parent renames do not take it because they cannot change ancestry
+edges. Directory exchange checks each proposed parent chain while all other
+cross-parent moves are excluded, avoiding duplicate locking of shared
+ancestors. The two name locks protect the exchanged entries; mkdir adds
+new objects and rmdir cannot remove a nonempty ancestor. Ordinary moves
+retain their existing parent-lock walk under the same outer mutex. The
+reverse project-inheritance restriction is checked for exchange too.
+
+Native tests reject both directions of an ancestor/descendant exchange,
+perform 128 opposing cross-parent directory/directory and mixed swaps, and
+verify object identity, both stored parents and parent/object link counts
+after each sequential swap and restoration. The original sibling tests
+also remain enabled. Independent host zdb checks find no leaks in both
+original and reopened pools; hash checks show those inspections did not
+modify the images. Evidence is in `aros/tests/evidence/cross-parent-exchange`.
+This does not establish exhaustive scheduling, malformed ancestry recovery,
+injected failure at every transaction stage or physical-device durability.
 
 The fixture persists a renamed directory tree and distinct file contents
 across cold imports. It checks cross-directory moves, NOREPLACE, replacement

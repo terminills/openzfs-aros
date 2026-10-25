@@ -260,7 +260,9 @@ results, not a fresh qualification of this public snapshot.
 - Internal ZPL same-parent directory exchange now passes native tests for two
   sibling directories and mixed file/directory swaps, including identities,
   parents, link counts and restoration before cold imports. Cross-parent
-  directory exchange and whiteout remain unsupported. Evidence and limitations
+  directory exchange also passes the eight-CPU diagnostic matrix, with a
+  mount-private cross-parent rename mutex and both ancestry checks. Whiteout
+  remains unsupported. Evidence and limitations
   are recorded in `aros/zpl/README.md` and `aros/tests/evidence/sibling-exchange`.
 - Physical storage flush, disconnect, and abrupt power-loss behavior require
   hardware qualification. Virtual-disk tests do not establish these guarantees.
