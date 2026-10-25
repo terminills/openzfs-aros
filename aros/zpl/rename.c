@@ -400,6 +400,13 @@ top:
 	    (tzp && S_ISDIR(tzp->z_mode)) ? ACE_ADD_SUBDIRECTORY : ACE_ADD_FILE,
 	    0, B_FALSE, cr, mnt_ns)))
 		goto out;
+	/* An exchange cannot create its destination. Check before ancestry and
+	 * unsupported cross-parent directory handling so a missing name reports
+	 * ENOENT without taking parent locks or changing either namespace. */
+	if ((rflags & RENAME_EXCHANGE) && !tzp) {
+		error = SET_ERROR(ENOENT);
+		goto out;
+	}
 
 	/* Siblings keep the same parent during exchange. Their existing name
 	 * locks serialize both entries and no ancestry edge changes. Cross-parent
@@ -448,10 +455,6 @@ top:
 			error = 0;
 			goto out;
 		}
-	} else if (rflags & RENAME_EXCHANGE) {
-		/* Target must exist for RENAME_EXCHANGE. */
-		error = SET_ERROR(ENOENT);
-		goto out;
 	}
 
 	/* Set up inode creation for RENAME_WHITEOUT. */

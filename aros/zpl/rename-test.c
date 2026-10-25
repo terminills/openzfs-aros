@@ -112,6 +112,23 @@ static int sibling_exchange(znode_t *parent, const char *first,
     }
     return error;
 }
+static int missing_exchange(znode_t *source, znode_t *target, znode_t *tree)
+{
+    uint64_t ssize=source->z_size, slinks=source->z_links;
+    uint64_t tsize=target->z_size, tlinks=target->z_links;
+    uint64_t parent=0;
+    int error=RENAME(source,"tree",target,"absent-exchange",RENAME_EXCHANGE);
+    if (error!=ENOENT) return EIO;
+    znode_t *found=NULL;
+    error=child(source,"tree",&found);
+    if (!error && found!=tree) error=EIO;
+    if (found) oz_znode_rele(found);
+    if (!error) error=sa_lookup(tree->z_sa_hdl,SA_ZPL_PARENT(ZTOZSB(tree)),&parent,8);
+    if (!error && (parent!=source->z_id || source->z_size!=ssize ||
+        source->z_links!=slinks || target->z_size!=tsize || target->z_links!=tlinks ||
+        zap_contains(ZTOZSB(target)->z_os,target->z_id,"absent-exchange")!=ENOENT)) error=EIO;
+    return error;
+}
 static void *exchange_names(void *arg)
 {
     struct exchange_worker *w = arg;
@@ -207,6 +224,12 @@ int oz_rename_test(zfsvfs_t *fs, boolean_t write)
         if (!error) error = replace_empty(left,right);
         if (!error) error = directory(left,"tree",&tree);
         if (!error) error = directory(tree,"branch",&branch);
+        if (!error) error = missing_exchange(left,left,tree);
+        if (!error) error = missing_exchange(left,right,tree);
+        if (!error) {
+            const char *proof="Native missing directory exchange PASS same-parent=1 cross-parent=1 unchanged=1\n";
+            for (const char *p=proof; *p; p++) RawPutChar(*p);
+        }
         if (!error) error = directory(left,"sibling",&empty);
         if (!error) error = exchange_race(left,"tree",left,"sibling");
         if (!error) error = sibling_exchange(left,"tree","sibling",tree,empty);
