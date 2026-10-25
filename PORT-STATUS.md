@@ -251,6 +251,17 @@ results, not a fresh qualification of this public snapshot.
   mirror lifecycle. This supplements raw-capacity qualification with actual
   pool/handler operations; it does not add physical-device evidence. Captures
   are in `ata-capacity-boundaries/full-source-service`.
+  Those capacity-only overlays do not qualify flush durability: the selected
+  ATA source still acknowledged CMD_UPDATE without sending a cache flush.
+  The explicit `--full-source --flush` build includes the existing flush
+  companion. Eight-CPU five-boot mirror run `qemu-run.x15GhcXn` passes with
+  this overlay, including 24 flush commands per virtual disk during writable
+  reopen, unchanged read-only images, and independent zdb leak checks.
+- Internal ZPL same-parent directory exchange now passes native tests for two
+  sibling directories and mixed file/directory swaps, including identities,
+  parents, link counts and restoration before cold imports. Cross-parent
+  directory exchange and whiteout remain unsupported. Evidence and limitations
+  are recorded in `aros/zpl/README.md` and `aros/tests/evidence/sibling-exchange`.
 - Physical storage flush, disconnect, and abrupt power-loss behavior require
   hardware qualification. Virtual-disk tests do not establish these guarantees.
 - Not every upstream feature or topology has end-to-end AROS validation.
