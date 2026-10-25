@@ -2,7 +2,18 @@
 
 Experimental development snapshot; not production-qualified storage software.
 
-## Current local package (2026-10-24)
+## Current local package (2026-10-25)
+
+`mmake-bundle.7ospuo7d.tar.xz` includes the corrected snapshot-local POSIX ABI
+header, retained FAT/DOS/POSIX sources and current qualified engine/Manager.
+Its SHA256 is `cad7e06486e17c8760b22af1fd9791fcf61df78940d633b693584ef987535846`.
+Matching eight-CPU GUI/Wanderer, persistent recovery and encrypted-root runs
+pass the staging gates. Extracted checksums and extracted POSIX source replay
+pass. See `aros/tests/evidence/posix-local-abi`. Other platform modules and
+complete SDK/toolchain sources remain public-binary-release gates; this is a
+local development archive, not a production or public binary release.
+
+## Previous local packages
 
 The local `mmake-bundle.jvc1mxmr.tar.xz` adds a pinned DOS source/catalog snapshot,
 upstream licenses, recorded compiler commands and exact-byte replay. Direct

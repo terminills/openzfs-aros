@@ -51,3 +51,23 @@ including all required root properties, locked imports, mount refusal, key
 reload, exact data and conflicting-label cases. The staging encrypted-root
 gate and selected-runtime hash check pass. This is separate from the earlier
 native-cold test, whose markers alone do not satisfy that gate.
+
+## Extracted development archive
+
+`mmake-bundle.7ospuo7d.tar.xz` is 16,694,288 bytes, SHA256
+`cad7e06486e17c8760b22af1fd9791fcf61df78940d633b693584ef987535846`.
+It lives in the external artifact directory above; no public binary release
+has been published. Extraction `posix-package-unpack.jYWD6Q8Z` passes every
+SHA256SUMS entry. Its retained POSIX sources replay byte-identically in
+`fat-replay.t_5yxx0i`.
+
+`public-service-run.TrnlCCfJ` tests the extracted service, engine, CLI, handler,
+device, helper, companions and FAT/DOS/POSIX runtime inputs. It passes the
+persistent healthy/degraded/restored cases, startup archive restore, writable
+release, unchanged-member checks and independent zdb. The archive-engine view
+uses symlinks to the extracted library/launcher with selected build options;
+the acceptance client and base ISO/ATA package remain test prerequisites,
+not archive application payload. Runtime input hashes retain exact paths.
+
+This is a staged combination of qualified components, not a fresh full-tree
+or SDK build. Other boot-module and toolchain source-release gates remain.
