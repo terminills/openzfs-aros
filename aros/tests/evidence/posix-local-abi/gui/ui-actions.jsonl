@@ -1,0 +1,12 @@
+{"time": 1792924338.9915178, "action": "capture", "args": ["manager-current.png"]}
+{"time": 1792924431.2581925, "action": "click", "args": ["291", "175", "1280", "800"]}
+{"time": 1792924431.5309157, "action": "click", "args": ["875", "185", "1280", "800"]}
+{"time": 1792924431.6835594, "action": "capture", "args": ["manager-pools.png"]}
+{"time": 1792924535.4380789, "action": "click", "args": ["310", "192", "1280", "800"]}
+{"time": 1792924535.5880008, "action": "capture", "args": ["manager-selection.png"]}
+{"time": 1792924658.3136277, "action": "click", "args": ["337", "200", "1280", "800"]}
+{"time": 1792924658.5864723, "action": "click", "args": ["875", "207", "1280", "800"]}
+{"time": 1792924658.737548, "action": "capture", "args": ["manager-pools-verified.png"]}
+{"time": 1792924762.2332337, "action": "click", "args": ["875", "226", "1280", "800"]}
+{"time": 1792924762.3783798, "action": "capture", "args": ["manager-pools-result.png"]}
+{"time": 1792924861.613567, "action": "click", "args": ["296", "143", "1280", "800"]}

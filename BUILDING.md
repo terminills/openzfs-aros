@@ -1135,7 +1135,7 @@ snapshot replay helper supports assembly inputs and regenerates all 305
 objects; no cached objects are copied. Linker-generated absolute object
 filenames are avoided by discarding nonessential local symbols.
 
-The 2026-10-24 candidate `posix-source.krrt6d62` rebuilt byte-identically in
+The historical 2026-10-24 candidate `posix-source.krrt6d62` rebuilt byte-identically in
 `fat-replay.yyjps394` and passed the isolated eight-CPU native-partition storage
 suite in `public-service-run.3dp5tTRR`. Its SHA-256 is
 `32a510b850fc85c322d71b902bb6ca497945ef17e3269a6bfe2cf9a254feede8`.
@@ -1147,6 +1147,17 @@ and both host zdb checks). GUI qualification passed in `native-gui-run.gO1uDSRB`
 byte-identical replayed module. The SDK/toolchain remains external; this does not close provenance
 for every platform boot module. Evidence is under
 `aros/tests/evidence/posix-source-package`.
+
+The 2026-10-25 audit found that candidate's generated `LC_LIBDEFS_FILE` still
+referenced the private build directory. Its replay was therefore not independent
+of that header, despite matching output bytes. It is now rejected by staging.
+`build-posix-snapshot.py` makes the ABI include snapshot-local and rejects
+recorded dependencies under the private build. Candidate `posix-source.oxlli56c`
+and fresh replay `fat-replay.xuc5c11y` match byte-for-byte; the eight-CPU native
+cold regression `public-service-run.IqJwuyxv` passes. See
+`aros/tests/evidence/posix-local-abi` for hashes and qualification boundaries.
+Do not combine old GUI or persistent acceptance with this changed binary:
+staging requires matching binary hashes in every selected run.
 
 Native destroyed-member changes can be tested with `AROS_TEST_NATIVE_CHANGES`
 set to `1` (CLI attach/replace), `2` (Manager API attach/replace), `3` (CLI add),

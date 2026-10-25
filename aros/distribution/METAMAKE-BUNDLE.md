@@ -49,6 +49,9 @@ python3 Sources/PosixC/rebuild-fat-snapshot.py Sources/PosixC --output-parent /p
 The matching SDK/toolchain is still required. Package staging binds this
 snapshot to the exact posixc binary used in GUI, cold-boot and encrypted-root
 qualification; it is not a source closure for all platform modules.
+The generated ABI include must resolve inside the retained snapshot. Older
+snapshots forwarding to an absolute private build path are rejected, even if
+that path happens to remain available on the packaging machine.
 
 `Sources/DOS/` similarly retains the pinned DOS source/catalog revisions,
 generated sources and headers, execute-policy patch and upstream license
@@ -62,8 +65,8 @@ python3 Sources/DOS/rebuild-fat-snapshot.py Sources/DOS --output-parent /path/on
 It rebuilds `dos.library`, not every other member of the boot package. The
 snapshot's selected boot package is hash-bound to native qualification;
 repacking changes only the DOS member and preserves the other module bytes
-and order. These FAT/DOS snapshots are not a complete corresponding-source
-package for posixc, other boot modules, the SDK or toolchain. Those remain
+and order. The FAT/DOS/PosixC snapshots do not provide corresponding sources
+for the other boot modules, the SDK or toolchain. Those remain
 public-binary-release gates.
 
 Metadata/qualification.json identifies the exact selected inputs and evidence.

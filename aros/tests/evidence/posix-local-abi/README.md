@@ -26,3 +26,22 @@ The 2 POSIX snapshot, 6 generic snapshot and 11 staging host tests passed.
 SDK/toolchain inputs remain external hash-bound prerequisites. This is not a
 full SDK source rebuild, physical hardware qualification or full-port completion.
 No DUT or user hosted session was used.
+
+## Persistent and desktop qualification
+
+`public-service-run.C69WOMvl` passed persistent healthy/degraded/restored cold
+imports, trusted ENVARC startup restore, exact DOS reads, unchanged members,
+and writable recursive snapshot release followed by independent zdb checks.
+The staging companion, changed-pool and optional-release acceptance functions
+all pass on this run. The initial `public-service-run.YVDxBTDJ` invocation was
+rejected before boot for combining persistent and native-partition fixtures;
+its log is retained rather than counted as a runtime test.
+
+`native-gui-run.EzUsTnYs` used the same runtime and production engine with the
+current Simple-view Manager. The screenshot shows `public_mirror ONLINE` and
+files in Wanderer. Normal Manager close was followed by the harness's exact
+post-UI data read and final storage PASS. UI action coordinates and result logs
+are retained in `gui/`; this was a private QEMU, not the user's hosted session.
+
+These tests qualify inputs for staging; they are not themselves a newly built
+or archive-extracted distribution bundle.
