@@ -351,6 +351,9 @@ int oz_zpl_rename_as(struct oz_zpl *fs,uint64_t from,const char *oldname,uint64_
 int oz_zpl_exchange_as(struct oz_zpl *fs,uint64_t from,const char *oldname,uint64_t to,
     const char *newname,cred_t *cr)
 {return fs?oz_read_mount_exchange(fs->native,from,oldname,to,newname,cr):EINVAL;}
+int oz_zpl_whiteout_as(struct oz_zpl *fs,uint64_t from,const char *oldname,uint64_t to,
+    const char *newname,cred_t *cr)
+{return fs?oz_read_mount_whiteout(fs->native,from,oldname,to,newname,cr):EINVAL;}
 int oz_zpl_resize_as(struct oz_zpl *fs,uint64_t object,uint64_t size,cred_t *cr)
 {return fs?oz_read_mount_resize(fs->native,object,size,cr):EINVAL;}
 int oz_zpl_link_as(struct oz_zpl *fs,uint64_t parent,uint64_t object,const char *name,cred_t *cr)

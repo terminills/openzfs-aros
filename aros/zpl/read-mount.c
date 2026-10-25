@@ -794,8 +794,9 @@ static int mount_rename(struct oz_read_mount *mount,uint64_t source,const char *
     znode_t *from=NULL,*to=NULL;
     int error=zfs_zget(&mount->fs,source,&from);
     if (!error) error=zfs_zget(&mount->fs,target,&to);
+    vattr_t whiteout={.va_mask=ATTR_MODE,.va_mode=S_IFCHR,.va_rdev=0};
     if (!error) error=zfs_rename(from,(char *)oldname,to,(char *)newname,
-        cr,0,flags,NULL,NULL);
+        cr,0,flags,(flags & RENAME_WHITEOUT)?&whiteout:NULL,NULL);
     if (to) oz_znode_rele(to);
     if (from) oz_znode_rele(from);
     if (!error) error=oz_read_mount_sync(mount);
@@ -809,6 +810,10 @@ int oz_read_mount_rename(struct oz_read_mount *mount,uint64_t source,const char 
 int oz_read_mount_exchange(struct oz_read_mount *mount,uint64_t source,const char *oldname,
     uint64_t target,const char *newname,cred_t *cr)
 {return mount_rename(mount,source,oldname,target,newname,cr,RENAME_EXCHANGE);}
+
+int oz_read_mount_whiteout(struct oz_read_mount *mount,uint64_t source,const char *oldname,
+    uint64_t target,const char *newname,cred_t *cr)
+{return mount_rename(mount,source,oldname,target,newname,cr,RENAME_WHITEOUT|RENAME_NOREPLACE);}
 
 int oz_read_mount_replace(struct oz_read_mount *mount,uint64_t parent,
     const char *source,const char *target,const struct oz_zpl_info *fresh,
