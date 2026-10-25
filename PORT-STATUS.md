@@ -236,6 +236,14 @@ results, not a fresh qualification of this public snapshot.
   Cases cover malformed CDBs, service action, PMI/LBA, direction, null/short
   buffers, zero/short/oversized allocations and output guards. Failed and
   passing captures are retained in `aros/tests/evidence/ata-capacity-boundaries`.
+  The optional `build-ata-capacity-overlay.py --full-source` mode subsequently
+  rebuilt all 16 driver objects, including module entry objects, without
+  consuming old `.o` files. Overlay `ata-capacity.tuxzwxmw` passed the same
+  ten boundary cases, 50 TiB reads and 3 TiB GPT enumeration in fresh eight-CPU
+  QEMU run `capacity-run.hk6pisWP`, with capacity diagnostics disabled and
+  unchanged disk hashes. Evidence is in the `full-source` subdirectory of
+  `ata-capacity-boundaries`. Selected generated AROS sources/headers and SDK
+  libraries remain prerequisites; this is not a standalone AROS source build.
 - Physical storage flush, disconnect, and abrupt power-loss behavior require
   hardware qualification. Virtual-disk tests do not establish these guarantees.
 - Not every upstream feature or topology has end-to-end AROS validation.
