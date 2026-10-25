@@ -1,0 +1,19 @@
+{"time": 1792934672.1582623, "action": "capture", "args": ["trim-initial.png"]}
+{"time": 1792934772.7375886, "action": "click", "args": ["460", "158", "1280", "800"]}
+{"time": 1792934772.8934097, "action": "capture", "args": ["trim-advanced.png"]}
+{"time": 1792934873.8297033, "action": "click", "args": ["435", "156", "1280", "800"]}
+{"time": 1792934873.9771402, "action": "capture", "args": ["trim-mode.png"]}
+{"time": 1792934980.5943644, "action": "click", "args": ["278", "186", "1280", "800"]}
+{"time": 1792934980.7186441, "action": "capture", "args": ["trim-pools.png"]}
+{"time": 1792935089.7767234, "action": "click", "args": ["300", "184", "1280", "800"]}
+{"time": 1792935089.935087, "action": "capture", "args": ["trim-pools2.png"]}
+{"time": 1792935201.7331932, "action": "click", "args": ["330", "207", "1280", "800"]}
+{"time": 1792935202.0071537, "action": "click", "args": ["784", "207", "1280", "800"]}
+{"time": 1792935204.3455575, "action": "type", "args": ["public_mirror"]}
+{"time": 1792935204.616965, "action": "click", "args": ["864", "299", "1280", "800"]}
+{"time": 1792935204.7756662, "action": "capture", "args": ["trim-status.png"]}
+{"time": 1792935336.6589468, "action": "click", "args": ["864", "291", "1280", "800"]}
+{"time": 1792935336.8058314, "action": "capture", "args": ["trim-status2.png"]}
+{"time": 1792935821.6696122, "action": "click", "args": ["114", "87", "1280", "800"]}
+{"time": 1792935821.941438, "action": "click", "args": ["291", "143", "1280", "800"]}
+{"time": 1792935822.0442474, "action": "capture", "args": ["cleanup-close.png"]}
