@@ -1,0 +1,9 @@
+/mnt/short-term/openzfs-qualification-20261024.aGFlVF7T/qemu-run.Mn8ut5H3/disk0.raw: OK
+/mnt/short-term/openzfs-qualification-20261024.aGFlVF7T/qemu-run.Mn8ut5H3/disk1.raw: OK
+Evidence: /mnt/short-term/openzfs-qualification-20261024.aGFlVF7T/crash-run.1kwfpXkV
+aros/engine/test-qemu-crash.sh: line 189: 4046021 Killed                     "$qemu" "${trace_options[@]}" -name "openzfs-crash-$phase-$$" -machine pc,accel=kvm -cpu host -smp 2 -m 2048 -drive "file=$run/$phase.iso,media=cdrom,if=ide,index=2,readonly=on" -drive "file=$run/${prefix}0.raw,format=raw,if=ide,index=0$aio_option" -drive "file=$run/${prefix}1.raw,format=raw,if=ide,index=1$aio_option" "${slog_drive[@]}" -vga std -display none -nic none -boot d -no-reboot -no-shutdown -serial "file:$run/$phase-serial.log" -monitor "unix:$run/$phase.monitor,server=on,wait=off" > "$run/$phase-qemu.log" 2>&1
+/mnt/short-term/openzfs-qualification-20261024.aGFlVF7T/crash-run.1kwfpXkV/crash0.raw: OK
+/mnt/short-term/openzfs-qualification-20261024.aGFlVF7T/crash-run.1kwfpXkV/crash1.raw: OK
+/mnt/short-term/openzfs-qualification-20261024.aGFlVF7T/qemu-run.Mn8ut5H3/disk0.raw: OK
+/mnt/short-term/openzfs-qualification-20261024.aGFlVF7T/qemu-run.Mn8ut5H3/disk1.raw: OK
+PASS: committed intent-log bytes recovered after private VM power loss. Evidence: /mnt/short-term/openzfs-qualification-20261024.aGFlVF7T/crash-run.1kwfpXkV
