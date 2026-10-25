@@ -1,0 +1,1 @@
+test: aros/zpl/rename-lock-test.c:30: rw_tryenter: Assertion `!lock->held' failed.
