@@ -1,0 +1,53 @@
+Evidence: /mnt/short-term/openzfs-qualification-20261024.aGFlVF7T/qemu-run.x15GhcXn
+RESULT native import replacing admission PASS case=0
+RESULT native unfinished replacement recovery PASS engine-restart=1 errno=0
+RESULT legacy disk matrix PASS create=1 versions=1-4 error=0 permissions=1
+RESULT native special-file metadata PASS version=1 write=1 enumerated=5 error=0
+RESULT native special-file metadata PASS version=2 write=1 enumerated=5 error=0
+RESULT native special-file metadata PASS version=3 write=1 enumerated=5 error=0
+RESULT native special-file metadata PASS version=4 write=1 enumerated=5 error=0
+RESULT native special-file metadata PASS version=5 write=1 enumerated=5 error=0
+DOS handler upstream dataset counters result=0
+DOS handler upstream dataset counters result=0
+DOS handler Open/Read/Seek/Close repeated 3 times, missing file and readonly checks=0
+RESULT QEMU native two-device mirror PASS
+Formatting '/mnt/short-term/openzfs-qualification-20261024.aGFlVF7T/qemu-run.x15GhcXn/read0.qcow2', fmt=qcow2 cluster_size=65536 extended_l2=off compression_type=zlib size=536870912 backing_file=/mnt/short-term/openzfs-qualification-20261024.aGFlVF7T/qemu-run.x15GhcXn/disk0.raw backing_fmt=raw lazy_refcounts=off refcount_bits=16
+Formatting '/mnt/short-term/openzfs-qualification-20261024.aGFlVF7T/qemu-run.x15GhcXn/read1.qcow2', fmt=qcow2 cluster_size=65536 extended_l2=off compression_type=zlib size=536870912 backing_file=/mnt/short-term/openzfs-qualification-20261024.aGFlVF7T/qemu-run.x15GhcXn/disk1.raw backing_fmt=raw lazy_refcounts=off refcount_bits=16
+RESULT legacy disk matrix PASS create=0 versions=1-4 error=0 permissions=1
+RESULT native special-file metadata PASS version=1 write=0 enumerated=5 error=0
+RESULT native special-file metadata PASS version=2 write=0 enumerated=5 error=0
+RESULT native special-file metadata PASS version=3 write=0 enumerated=5 error=0
+RESULT native special-file metadata PASS version=4 write=0 enumerated=5 error=0
+RESULT native special-file metadata PASS version=5 write=0 enumerated=5 error=0
+DOS handler upstream dataset counters result=0
+DOS handler upstream dataset counters result=0
+cold DOS handler repeated file tests=0
+RESULT cold-boot QEMU two-drive pool through AROS handler PASS
+Formatting '/mnt/short-term/openzfs-qualification-20261024.aGFlVF7T/qemu-run.x15GhcXn/survivor0.qcow2', fmt=qcow2 cluster_size=65536 extended_l2=off compression_type=zlib size=536870912 backing_file=/mnt/short-term/openzfs-qualification-20261024.aGFlVF7T/qemu-run.x15GhcXn/disk0.raw backing_fmt=raw lazy_refcounts=off refcount_bits=16
+RESULT legacy disk matrix PASS create=0 versions=1-4 error=0 permissions=1
+RESULT native special-file metadata PASS version=1 write=0 enumerated=5 error=0
+RESULT native special-file metadata PASS version=2 write=0 enumerated=5 error=0
+RESULT native special-file metadata PASS version=3 write=0 enumerated=5 error=0
+RESULT native special-file metadata PASS version=4 write=0 enumerated=5 error=0
+RESULT native special-file metadata PASS version=5 write=0 enumerated=5 error=0
+DOS handler upstream dataset counters result=0
+DOS handler upstream dataset counters result=0
+cold DOS handler repeated file tests=0
+RESULT cold-boot QEMU degraded mirror through AROS handler PASS
+Formatting '/mnt/short-term/openzfs-qualification-20261024.aGFlVF7T/qemu-run.x15GhcXn/survivor1.qcow2', fmt=qcow2 cluster_size=65536 extended_l2=off compression_type=zlib size=536870912 backing_file=/mnt/short-term/openzfs-qualification-20261024.aGFlVF7T/qemu-run.x15GhcXn/disk1.raw backing_fmt=raw lazy_refcounts=off refcount_bits=16
+Formatting '/mnt/short-term/openzfs-qualification-20261024.aGFlVF7T/qemu-run.x15GhcXn/blank-nonmember.qcow2', fmt=qcow2 cluster_size=65536 extended_l2=off compression_type=zlib size=268435456 lazy_refcounts=off refcount_bits=16
+RESULT legacy disk matrix PASS create=0 versions=1-4 error=0 permissions=1
+RESULT native special-file metadata PASS version=1 write=0 enumerated=5 error=0
+RESULT native special-file metadata PASS version=2 write=0 enumerated=5 error=0
+RESULT native special-file metadata PASS version=3 write=0 enumerated=5 error=0
+RESULT native special-file metadata PASS version=4 write=0 enumerated=5 error=0
+RESULT native special-file metadata PASS version=5 write=0 enumerated=5 error=0
+DOS handler upstream dataset counters result=0
+DOS handler upstream dataset counters result=0
+cold DOS handler repeated file tests=0
+RESULT cold-boot QEMU degraded mirror through AROS handler PASS
+Formatting '/mnt/short-term/openzfs-qualification-20261024.aGFlVF7T/qemu-run.x15GhcXn/writer0.qcow2', fmt=qcow2 cluster_size=65536 extended_l2=off compression_type=zlib size=536870912 backing_file=/mnt/short-term/openzfs-qualification-20261024.aGFlVF7T/qemu-run.x15GhcXn/disk0.raw backing_fmt=raw lazy_refcounts=off refcount_bits=16
+Formatting '/mnt/short-term/openzfs-qualification-20261024.aGFlVF7T/qemu-run.x15GhcXn/writer1.qcow2', fmt=qcow2 cluster_size=65536 extended_l2=off compression_type=zlib size=536870912 backing_file=/mnt/short-term/openzfs-qualification-20261024.aGFlVF7T/qemu-run.x15GhcXn/disk1.raw backing_fmt=raw lazy_refcounts=off refcount_bits=16
+/mnt/short-term/openzfs-qualification-20261024.aGFlVF7T/qemu-run.x15GhcXn/disk0.raw: OK
+/mnt/short-term/openzfs-qualification-20261024.aGFlVF7T/qemu-run.x15GhcXn/disk1.raw: OK
+PASS: native mirror, DOS access, cold readonly/survivors with zero writes, cold writable reopen on COW disks. Evidence: /mnt/short-term/openzfs-qualification-20261024.aGFlVF7T/qemu-run.x15GhcXn

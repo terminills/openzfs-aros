@@ -1,0 +1,132 @@
+[bootstrap:multiboot2] smartfb: using VBE mode 0x417a (1280x800x32, fb=0xFD000000)
+[bootstrap:multiboot2] smartfb: KRN_FBAddr=0x00000000FD000000
+0000000000000000 0x0000000000000000 | 000 | AROS64 - The AROS Research OS
+0000000000000000 0x0000000000000000 | 000 | 64-bit SMP build. Compiled Oct 21 2026
+0000000000000000 0x0000000000000000 | 000 | [Kernel] Local APIC: x2APIC
+000000010f488e91 0x0000000000000000 | 000 | ACPI: RSDP 0x00000000000F52E0 000014 (v00 BOCHS )
+000000010fc370de 0x0000000000000000 | 000 | ACPI: RSDT 0x000000007FFE25BF 000034 (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+000000011063845c 0x0000000000000000 | 000 | ACPI: FACP 0x000000007FFE243B 000074 (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+000000011103cd2c 0x0000000000000000 | 000 | ACPI: DSDT 0x000000007FFE0040 0023FB (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+0000000111a43f96 0x0000000000000000 | 000 | ACPI: FACS 0x000000007FFE0000 000040
+00000001120ac9fa 0x0000000000000000 | 000 | ACPI: APIC 0x000000007FFE24AF 0000B0 (v03 BOCHS  BXPC     00000001 BXPC 00000001)
+0000000112aaab78 0x0000000000000000 | 000 | ACPI: HPET 0x000000007FFE255F 000038 (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+00000001134a1749 0x0000000000000000 | 000 | ACPI: WAET 0x000000007FFE2597 000028 (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+0000000113ea1131 0x0000000000000000 | 000 | [HPET] 2 units total
+0000000114a68e83 0x00000000013d33f0 | 000 | ACPI: 1 ACPI AML tables successfully acquired and loaded
+0000000115505599 0x00000000013b1500 | 000 | [Kernel:ACPI-IOAPIC] Registering IO-APIC #1 [ID=000] @ 00000000fec00000 [GSI = 0]
+0000000115f1126d 0x00000000013b1500 | 000 | [Kernel:ACPI] System Total APICs: 8, 8 usable
+00000001169f9c75 0x00000000013b1500 | 000 | [Kernel:APIC-IA32] MSI Interrupts Allocatable
+000000011713b079 0x00000000013b1500 | 000 | [Kernel:APIC-IA32]     start = 16
+0000000117770d95 0x00000000013b1500 | 000 | [Kernel:APIC-IA32]     total = 198
+0000000135a04070 0x00000000013b1500 | 000 | [Kernel:APIC-IA32] Heartbeat timer: TSC deadline
+0000000137a24d05 0x00000000013dd250 | 001 | [Kernel:APIC-IA32.001] core_APIC_Calibrate: TSC freq inherited from BSP (2496008 kHz) [hypervisor]
+0000000139392657 0x00000000013dd250 | 001 | [Kernel:APIC-IA32.001] core_APIC_Calibrate: LAPIC timer freq inherited from BSP (1000511780 Hz) [hypervisor]
+000000013c7a7bef 0x00000000013dd890 | 002 | [Kernel:APIC-IA32.002] core_APIC_Calibrate: TSC freq inherited from BSP (2496008 kHz) [hypervisor]
+000000013e107afe 0x00000000013dd890 | 002 | [Kernel:APIC-IA32.002] core_APIC_Calibrate: LAPIC timer freq inherited from BSP (1000511780 Hz) [hypervisor]
+00000001414ea574 0x000000000145d880 | 003 | [Kernel:APIC-IA32.003] core_APIC_Calibrate: TSC freq inherited from BSP (2496008 kHz) [hypervisor]
+0000000142e3d9ae 0x000000000145d880 | 003 | [Kernel:APIC-IA32.003] core_APIC_Calibrate: LAPIC timer freq inherited from BSP (1000511780 Hz) [hypervisor]
+0000000146237228 0x00000000014984d0 | 004 | [Kernel:APIC-IA32.004] core_APIC_Calibrate: TSC freq inherited from BSP (2496008 kHz) [hypervisor]
+0000000147b52c3f 0x00000000014984d0 | 004 | [Kernel:APIC-IA32.004] core_APIC_Calibrate: LAPIC timer freq inherited from BSP (1000511780 Hz) [hypervisor]
+000000014af67250 0x00000000014d3180 | 005 | [Kernel:APIC-IA32.005] core_APIC_Calibrate: TSC freq inherited from BSP (2496008 kHz) [hypervisor]
+000000014c8b04b9 0x00000000014d3180 | 005 | [Kernel:APIC-IA32.005] core_APIC_Calibrate: LAPIC timer freq inherited from BSP (1000511780 Hz) [hypervisor]
+000000014fc56944 0x000000000150de30 | 006 | [Kernel:APIC-IA32.006] core_APIC_Calibrate: TSC freq inherited from BSP (2496008 kHz) [hypervisor]
+000000015158ce9a 0x000000000150de30 | 006 | [Kernel:APIC-IA32.006] core_APIC_Calibrate: LAPIC timer freq inherited from BSP (1000511780 Hz) [hypervisor]
+000000015494691b 0x0000000001548ae0 | 007 | [Kernel:APIC-IA32.007] core_APIC_Calibrate: TSC freq inherited from BSP (2496008 kHz) [hypervisor]
+0000000156266e4b 0x0000000001548ae0 | 007 | [Kernel:APIC-IA32.007] core_APIC_Calibrate: LAPIC timer freq inherited from BSP (1000511780 Hz) [hypervisor]
+000000015883f85c 0x00000000013b1500 | 000 | [PCIPC:Driver] PCIPC_InitClass: No ACPI MCFG table
+000000015c87cc62 0x00000000013b1500 | 000 | [Timer] clock: PIT (no invariant TSC)
+00000002ac20d439 0x00000000017a2f00 | 000 | [ATI] Init
+00000002ac694796 0x00000000017a2f00 | 000 | [ATI] No supported cards found
+00000002c63ed1e5 0x000000000179b280 | 000 | [HW] HW__HW__AddDriver: Failed to instantiate Driver Object
+Cold boot OpenZFS native mirror import starting
+cold spa_import=0
+cold pool health=6 expected=6
+Legacy permissions version=1 operation=public-read result=0 count=35
+Legacy permissions version=1 operation=write-access result=30 count=0
+Legacy permissions version=1 operation=private-read result=13 count=35
+Legacy permissions version=2 operation=public-read result=0 count=35
+Legacy permissions version=2 operation=write-access result=30 count=0
+Legacy permissions version=2 operation=private-read result=13 count=35
+Legacy permissions version=3 operation=public-read result=0 count=35
+Legacy permissions version=3 operation=write-access result=30 count=0
+Legacy permissions version=3 operation=private-read result=13 count=35
+Legacy permissions version=4 operation=public-read result=0 count=35
+Legacy permissions version=4 operation=write-access result=30 count=0
+Legacy permissions version=4 operation=private-read result=13 count=35
+RESULT legacy disk matrix PASS create=0 versions=1-4 error=0 permissions=1
+Special DOS client stage=3 seen=31 error=0 ioerr=0
+RESULT native special-file metadata PASS version=1 write=0 enumerated=5 error=0
+Special DOS client stage=3 seen=31 error=0 ioerr=0
+RESULT native special-file metadata PASS version=2 write=0 enumerated=5 error=0
+Special DOS client stage=3 seen=31 error=0 ioerr=0
+RESULT native special-file metadata PASS version=3 write=0 enumerated=5 error=0
+Special DOS client stage=3 seen=31 error=0 ioerr=0
+RESULT native special-file metadata PASS version=4 write=0 enumerated=5 error=0
+Special DOS client stage=3 seen=31 error=0 ioerr=0
+RESULT native special-file metadata PASS version=5 write=0 enumerated=5 error=0
+cold upstream direct UIO read/compare=0
+cold native SA persisted atime=0
+Native mount policy callbacks write=0 result=0
+Native directory shared/exclusive lifetime=0
+Native hardlink/remove/relink write=0 result=0
+Native upstream mknode write=0 result=0
+Native upstream mkdir/rollback write=0 result=0
+Native upstream symlink/readlink write=0 result=0
+Native ZPL hole/truncate/extend write=0 result=0
+Native upstream create/open/truncate write=0 result=0
+Native upstream xattr directory/file write=0 result=0
+Native upstream rmdir/unlinked/xattr cleanup write=0 result=0
+Native upstream unlink/open-file/symlink write=0 result=0
+Native upstream rename/move/replace/exchange write=0 result=0
+Native upstream setattr/owner/mode/times write=0 result=0
+Native protection xattr persistence write=0 result=0
+cold upstream vnode written bytes/size=0
+Native foreign mount close write=0 errno=11 result=0
+Native DOS SetProtection readonly=1 result=0
+Native DOS SetFileDate readonly=1 result=0
+Native DOS owner property restoration readonly=1 result=0
+Native writable mount lifecycle write=0 result=0
+Native DOS sparse64 write=0 result=0
+Native DOS SetOwner write=0 result=0
+Native DOS SetComment write=0 result=0
+Native DOS hardlink write=0 result=0
+Native DOS symlink paths/loops write=0 result=0
+Native DOS symlink cross-volume/bounds write=0 result=0
+Native DOS symlink target authorization write=0 result=0
+Native DOS content write=0 result=0
+Native DOS resize write=0 result=0
+Native DOS create defaults write=0 result=0
+Native DOS mkdir write=0 result=0
+Native DOS delete/reclaim write=0 result=0
+Native DOS rename/move write=0 result=0
+Native DOS replacement/exclusive write=0 result=0
+cold ZPL open=0
+DOS volume collision result=0 rejected=1 foreign-preserved=1 retry=1
+DOS same-drain dynamic lock visibility=0
+Native mount ACL traversal/read bridge=0
+Native MuFS capability queries authenticated=0 result=0
+Native DOS exclusive lock conflicts=0
+Native DOS filehandle lock conversion/metadata=0
+Native DOS ChangeMode upgrade/downgrade=0
+Native DOS ExAll hooks/invalid packets=0
+Native DOS ExAll levels/continuation/filter=0
+Native MuFS retained endpoints/remount authenticated=0 result=0
+DOS lock/enumeration/relative-open tests stage=6 result=0
+DOS handler upstream dataset counters result=0
+Native mount ACL traversal/read bridge=0
+Native MuFS capability queries authenticated=1 result=0
+Native DOS exclusive lock conflicts=0
+Native DOS filehandle lock conversion/metadata=0
+Native DOS ChangeMode upgrade/downgrade=0
+Native DOS ExAll hooks/invalid packets=0
+Native DOS ExAll levels/continuation/filter=0
+Native MuFS capability queries authenticated=1 result=0
+Native MuFS retained endpoints/remount authenticated=1 result=0
+DOS lock/enumeration/relative-open tests stage=6 result=0
+DOS handler upstream dataset counters result=0
+DOS startup entry adoption rollback/read/retirement result=0
+Authenticated DOS handler ACL/logout/lifetime=0
+Authenticated DOS restricted file/directory ACL=0
+cold DOS handler repeated file tests=0
+RESULT cold-boot QEMU degraded mirror through AROS handler PASS
+00000003eef7cd07 0x0000000005d11190 | 000 | [CrashReporter] server '' autosend 0

@@ -1860,12 +1860,27 @@ Native admission validates names, credentials, mount identity, flags,
 readonly/log state and target name length. Same-name requests explicitly
 look up the source because the Linux VFS no longer does that for us; absent
 sources cannot incorrectly succeed, and NOREPLACE rejects an existing target.
-File exchange also requires source-directory add permission.
+Exchange also requires source-directory add permission for the incoming
+object's type (ADD_SUBDIRECTORY for a directory, ADD_FILE otherwise).
 
-Whiteout requests and directory exchange are explicitly ENOTSUP. The latter
-still needs native reverse-ancestry/two-tree admission previously provided
-outside this upstream routine. Their retained upstream implementation is not
-advertised as working. Normal directory moves and file exchanges are tested.
+Whiteout requests and cross-parent directory exchange are explicitly ENOTSUP.
+The latter still needs native reverse-ancestry/two-tree admission previously
+provided outside this upstream routine. Same-parent directory exchange is
+implemented: both names are locked and both objects retain their parent, so
+no ancestry edge changes. The native diagnostic swaps two sibling directories
+(one nonempty) and a file/directory pair, checks exact identities, stored
+parents, sizes and link counts, and swaps each pair back before cold checks.
+This is an internal ZPL operation, not a new DOS packet or Manager command.
+Normal directory moves and file exchanges are also tested.
+Eight-CPU QEMU run `qemu-run.x15GhcXn` passed the new sibling exchanges and
+the complete writer, healthy cold reader, two single-survivor cold readers,
+and writable-reopen sequence. Read-only disks remained unchanged; the cold
+writer issued 24 flush commands to each virtual disk. The earlier
+`qemu-run.CUkXzc4M` passed guest operations but correctly failed the host
+flush check because its capacity-only ATA overlay retained a no-op UPDATE.
+The passing run uses the existing cache-flush companion, built from source
+with `build-ata-capacity-overlay.py --full-source --flush`. This establishes
+virtual-device command behavior, not physical stable-storage guarantees.
 Casefold/Unicode variants and injected low-space rollback remain unverified.
 These internal operations assume authorized resolution of parent paths;
 public DOS mutation dispatch is still unfinished.
