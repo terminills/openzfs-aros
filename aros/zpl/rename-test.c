@@ -69,17 +69,25 @@ int __wrap_sa_lookup(sa_handle_t *handle, sa_attr_type_t attr, void *buf,
     return __real_sa_lookup(handle,attr,buf,size);
 }
 static int ancestry_failure(znode_t *left, znode_t *right, znode_t *tree,
-    znode_t *fault_parent)
+    znode_t *fault_parent, int cycle)
 {
     uint64_t left_size=left->z_size, right_size=right->z_size;
     uint64_t left_links=left->z_links, right_links=right->z_links;
     lookup_fault_handle=fault_parent->z_sa_hdl;
     lookup_fault_attr=SA_ZPL_PARENT(ZTOZSB(fault_parent));
     lookup_fault_hits=0;
+    if (cycle) {
+        lookup_fault_handle=right->z_sa_hdl;
+        lookup_cycle_second=fault_parent->z_sa_hdl;
+        lookup_cycle_first_parent=fault_parent->z_id;
+        lookup_cycle_second_parent=right->z_id;
+    }
     __atomic_store_n(&lookup_fault_owner,FindTask(NULL),__ATOMIC_RELEASE);
     int error=RENAME(left,"tree",right,"tree",0);
     __atomic_store_n(&lookup_fault_owner,NULL,__ATOMIC_RELEASE);
-    if (error != EIO || lookup_fault_hits != 1) return EIO;
+    lookup_cycle_second=NULL;
+    if (error != EIO || (cycle ? lookup_fault_hits<2 || lookup_fault_hits>8 :
+        lookup_fault_hits != 1)) return EIO;
     znode_t *found=NULL;
     error=child(left,"tree",&found);
     if (!error && (found != tree || left->z_size != left_size ||
@@ -377,8 +385,13 @@ int oz_rename_test(zfsvfs_t *fs, boolean_t write)
             for (const char *p=proof; *p; p++) RawPutChar(*p);
         }
         if (!error && RENAME(left,"tree",branch,"cycle",0) != EINVAL) error = EIO;
-        if (!error) error = ancestry_failure(left,right,tree,right);
-        if (!error) error = ancestry_failure(left,right,tree,fixture);
+        if (!error) error = ancestry_failure(left,right,tree,right,0);
+        if (!error) error = ancestry_failure(left,right,tree,fixture,0);
+        if (!error) error = ancestry_failure(left,right,tree,fixture,1);
+        if (!error) {
+            const char *proof="Native ordinary rename corrupt ancestry PASS unchanged=1\n";
+            for (const char *p=proof; *p; p++) RawPutChar(*p);
+        }
         if (!error) error = RENAME(left,"tree",right,"tree",0);
         if (!error) {
             const char *proof="Native rename ancestry SA failure/retry result=0\n";

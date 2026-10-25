@@ -43,7 +43,7 @@ static int sa_lookup(void *handle, int attr, uint64_t *out, size_t size)
     *out=((znode_t *)handle)->parent; return 0;
 }
 #include "rename-lock.inc"
-static void run(int failure, int expected)
+static void run(int failure, int cycle, int expected)
 {
     struct fs fs={.z_root=0};
     calls=0; fail_at=failure;
@@ -51,6 +51,7 @@ static void run(int failure, int expected)
         nodes[i]=(znode_t){.z_id=i,.parent=i ? i-1 : 0,.fs=&fs};
         nodes[i].z_sa_hdl=&nodes[i];
     }
+    if (cycle) nodes[1].parent=2;
     /* Move source 4 beneath destination 2, source parent 3. Walk 2->1->0. */
     zfs_zlock_t *locks=NULL;
     int error=zfs_rename_lock(&nodes[4],&nodes[2],&nodes[3],&locks);
@@ -64,9 +65,10 @@ static void run(int failure, int expected)
 }
 int main(void)
 {
-    run(0,0);
-    run(1,EIO);
-    run(2,EIO);
-    puts("PASS production rename ancestry: success, first/deep lookup errors, lock/reference cleanup");
+    run(0,0,0);
+    run(1,0,EIO);
+    run(2,0,EIO);
+    run(0,1,EIO);
+    puts("PASS production rename ancestry: success, first/deep lookup errors, corrupt cycle, lock/reference cleanup");
     return 0;
 }

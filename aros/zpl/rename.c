@@ -55,6 +55,13 @@ zfs_rename_lock(znode_t *szp, znode_t *tdzp, znode_t *sdzp, zfs_zlock_t **zlpp)
 	 * Later passes read-lock zp and compare to zp->z_parent.
 	 */
 	do {
+		/* A corrupt parent cycle can revisit a lock held by this walk.
+		 * Do not wait on ourselves (or depend on recursive read locks).
+		 * The caller owns cleanup of the complete accumulated chain. */
+		for (zfs_zlock_t *held = *zlpp; held; held = held->zl_next) {
+			if (held->zl_rwlock == rwlp)
+				return (SET_ERROR(EIO));
+		}
 		if (!rw_tryenter(rwlp, rw)) {
 			/*
 			 * Another thread is renaming in this path.
