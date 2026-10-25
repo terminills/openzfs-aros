@@ -61,6 +61,12 @@ shared=${AROS_TEST_SHARED_BUILD:-}
 cli_dir=${AROS_TEST_CLI_DIR:-}
 companions=${AROS_TEST_COMPANION_TOOLS:-0}
 [[ $companions == 0 || ( $companions == 1 && -n $cli_dir ) ]]
+require_errno=${AROS_TEST_REQUIRE_ERRNO:-0}
+[[ $require_errno == 0 || ( $require_errno == 1 && $companions == 1 ) ]]
+if [[ $require_errno == 1 ]] &&
+    ! strings "$cli_dir/OpenZFSRuntimeCheck" | grep -F -- '--errno-serial' >/dev/null;then
+    echo 'Selected RuntimeCheck lacks the required focused errno probe' >&2;exit 2
+fi
 missing_helper=${AROS_TEST_MISSING_EXEC_HELPER:-0}
 [[ $missing_helper == 0 || ( $missing_helper == 1 && $companions == 1 ) ]]
 handler=${AROS_TEST_HANDLER_BINARY:-}
@@ -436,6 +442,11 @@ if [[ -n $device ]];then
     extra_maps+=(-map "$run/OpenZFSDevice" /C/OpenZFSDevice
         -map aros/engine/public-service-test-only /openzfs-device-package-test)
 fi
+if [[ $require_errno == 1 ]];then
+    # FailAt 20 in both startup templates aborts on the probe's failure code.
+    # Keep this before service launch, not merely in the later companion test.
+    sed -i '/^Stack /a C:OpenZFSRuntimeCheck --errno-serial >NIL:\nIf WARN\n  Quit 20\nEndIf' "$run/Startup-Sequence"
+fi
 tar -czf "$run/aros-source.tar.gz" aros/engine aros/ui aros/zpl aros/cli aros/platform aros/device \
     module/zfs/zfs_onexit.c include/sys/zfs_onexit.h lib/libzutil/zutil_import.c include/libzutil.h
 git rev-parse HEAD >"$run/source.txt"
@@ -485,6 +496,7 @@ while :;do
         reaped=$(rg -c '^Public task-exit session reclamation PASS cycles=4 sessions=32' "$run/serial-results.log" || true)
         controls=$(rg -c '^Public native control descriptors PASS capacity=64 ownership=1 stale=1 session-cleanup=1' "$run/serial-results.log" || true)
         if [[ $count == 3 && $sessions == 2 && $reaped == 2 ]] &&
+           { [[ $require_errno == 0 ]] || rg -q '^RESULT pre-storage errno PASS' "$run/serial-results.log"; } &&
            { [[ -z $pbkdf2 ]] || rg -q '^RESULT native PBKDF2 known answers PASS' "$run/serial-results.log"; } &&
            { [[ -z $nvpair_test ]] || rg -q '^RESULT native nvpair XDR PASS' "$run/serial-results.log"; } &&
            { [[ ${AROS_TEST_REQUIRE_INVENTORY_WORKER:-0} != 1 ]] ||

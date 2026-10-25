@@ -4,9 +4,18 @@ Experimental development snapshot; not production-qualified storage software.
 
 ## Current local package (2026-10-25)
 
+**Runtime ABI boundary:** this archive is qualified against the recorded
+alpha18c5/private platform, not the newer stdc interface that places memory-pool
+inheritance at vector 527 and errno at 528. Do not install these old consumers
+with that runtime. A fresh matched SDK/dependency/application rebuild and
+new-baseline QEMU tests are required. `fb61d32` adds an errno accessor/POSIX
+writer probe, verified only on the established baseline so far.
+
 `mmake-bundle.7ospuo7d.tar.xz` includes the corrected snapshot-local POSIX ABI
 header, retained FAT/DOS/POSIX sources and current qualified engine/Manager.
 Its SHA256 is `cad7e06486e17c8760b22af1fd9791fcf61df78940d633b693584ef987535846`.
+Later local source changes, including dataset-used presentation and TRIM
+dispatch/error-path qualification, are not implicitly included in this archive.
 Matching eight-CPU GUI/Wanderer, persistent recovery and encrypted-root runs
 pass the staging gates. Extracted checksums and extracted POSIX source replay
 pass. See `aros/tests/evidence/posix-local-abi`. Other platform modules and

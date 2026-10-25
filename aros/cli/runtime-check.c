@@ -3,6 +3,7 @@
  * probes use RAM: and the process adapter's T: output capture. */
 #include "process.h"
 #include "errno-check.h"
+#include <aros/debug.h>
 #include <proto/exec.h>
 #include <proto/dos.h>
 #include <proto/security.h>
@@ -106,9 +107,11 @@ static int subprocess(void)
 }
 int main(int argc,char **argv)
 {
-    if(argc==2&&!strcmp(argv[1],"--errno-only")){
+    if(argc==2&&(!strcmp(argv[1],"--errno-only")||!strcmp(argv[1],"--errno-serial"))){
         int ok=oz_errno_check();
         puts(ok?"PASS errno accessor and POSIX writer":"FAIL errno accessor or POSIX writer");
+        if(!strcmp(argv[1],"--errno-serial"))
+            bug("RESULT pre-storage errno %s\n",ok?"PASS":"FAIL");
         return ok?0:20;
     }
     if(argc==2&&!strcmp(argv[1],"--exec-child")){
@@ -121,7 +124,7 @@ int main(int argc,char **argv)
             fputs("OpenZFS stderr probe\n",stderr)<0)return 20;
         return fflush(stdout)||fflush(stderr)?20:0;
     }
-    if(argc!=1){puts("Usage: OpenZFSRuntimeCheck [--errno-only]");return 20;}
+    if(argc!=1){puts("Usage: OpenZFSRuntimeCheck [--errno-only|--errno-serial]");return 20;}
     puts("OpenZFS runtime check (no pools or devices opened)");
     int ok=oz_errno_check();
     puts(ok?"PASS errno accessor and POSIX writer":"FAIL errno accessor or POSIX writer");

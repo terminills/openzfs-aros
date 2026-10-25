@@ -13,7 +13,7 @@ CPU = b"Public native CPU topology PASS"
 
 
 class ClientPreflight(unittest.TestCase):
-    def run_probe(self, payload, init="0", cpu="0"):
+    def run_probe(self, payload, init="0", cpu="0", runtime=None):
         with tempfile.TemporaryDirectory(prefix="oz-client-preflight-") as tmp:
             client = Path(tmp) / "client"
             client.write_bytes(payload)
@@ -29,6 +29,12 @@ class ClientPreflight(unittest.TestCase):
                        # Stop immediately after probe validation. No artifacts
                        # or QEMU may be created by this test.
                        AROS_TEST_COMPANION_TOOLS="2")
+            if runtime is not None:
+                (Path(tmp) / "OpenZFSRuntimeCheck").write_bytes(runtime)
+                env.update(AROS_TEST_COMPANION_TOOLS="1",
+                           AROS_TEST_CLI_DIR=tmp, AROS_TEST_REQUIRE_ERRNO="1",
+                           # Stop after errno validation, before artifact creation.
+                           AROS_TEST_MISSING_EXEC_HELPER="2")
             return subprocess.run(["bash", str(RUNNER)], env=env,
                                   capture_output=True, text=True, timeout=10)
 
@@ -41,6 +47,16 @@ class ClientPreflight(unittest.TestCase):
         result = self.run_probe(INIT, cpu="1")
         self.assertEqual(result.returncode, 2)
         self.assertIn("CPU-topology probe", result.stderr)
+
+    def test_missing_errno_probe(self):
+        result = self.run_probe(b"client", runtime=b"old RuntimeCheck")
+        self.assertEqual(result.returncode, 2)
+        self.assertIn("focused errno probe", result.stderr)
+
+    def test_errno_probe_present(self):
+        result = self.run_probe(b"client", runtime=b"--errno-serial\0")
+        self.assertEqual(result.returncode, 1)
+        self.assertEqual(result.stderr, "")
 
     def test_optional_probes_disabled(self):
         result = self.run_probe(b"no optional probes")
