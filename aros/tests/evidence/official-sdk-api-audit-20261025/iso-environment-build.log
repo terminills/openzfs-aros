@@ -1,0 +1,31 @@
+xorriso 1.5.6 : RockRidge filesystem manipulator, libburnia project.
+
+xorriso : NOTE : Loading ISO image tree from LBA 0
+xorriso : UPDATE :   28262 nodes read in 1 seconds
+xorriso : NOTE : Detected El-Torito boot information which currently is set to be discarded
+Drive current: -indev '/run/media/terminills/Codex/show-consolidation-01a16962/sdk-prerequisite-audit/nightly-20261023/pristine.iso'
+Media current: stdio file, overwriteable
+Media status : is written , is appendable
+Boot record  : El Torito , MBR protective-msdos-label grub2-mbr cyl-align-off GPT APM
+Media summary: 1 session, 315252 data blocks,  616m data, 26.8g free
+Volume id    : 'AROS Live CD'
+Drive current: -outdev '/mnt/short-term/openzfs-official-sdk-audit.xi9RkF3r/environment.iso'
+Media current: stdio file, overwriteable
+Media status : is blank
+Media summary: 0 sessions, 0 data blocks, 0 data,  595g free
+xorriso : UPDATE :       1 files added in 1 seconds
+Added to ISO image: file '/boot/grub/grub.cfg'='/mnt/short-term/openzfs-official-sdk-audit.xi9RkF3r/grub.cfg'
+xorriso : UPDATE :       1 files added in 1 seconds
+Added to ISO image: file '/S/Startup-Sequence'='/mnt/short-term/openzfs-official-sdk-audit.xi9RkF3r/Startup-Environment'
+xorriso : UPDATE :       1 files added in 1 seconds
+Added to ISO image: file '/C/OpenZFSEnvironmentStandardTest'='/mnt/short-term/openzfs-official-sdk-audit.xi9RkF3r/OpenZFSEnvironmentStandardTest'
+xorriso : UPDATE : Writing:       8363s    2.7%   fifo  99%  buf  50%
+xorriso : UPDATE : Writing:      32768s   10.7%   fifo 100%  buf  50%  180.2xD 
+xorriso : UPDATE : Writing:      98304s   32.2%   fifo 100%  buf  50%   96.8xD 
+xorriso : UPDATE : Writing:     147456s   48.3%   fifo 100%  buf  50%   80.6xD 
+xorriso : UPDATE : Writing:     204800s   67.1%   fifo 100%  buf  50%   84.6xD 
+xorriso : UPDATE : Writing:     262144s   85.9%   fifo 100%  buf  50%   84.7xD 
+ISO image produced: 305178 sectors
+Written to medium : 305344 sectors at LBA 32
+Writing to '/mnt/short-term/openzfs-official-sdk-audit.xi9RkF3r/environment.iso' completed successfully.
+
