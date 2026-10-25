@@ -1,0 +1,105 @@
+FailAt 21
+Stack 262144
+MakeDir RAM:T RAM:ENV
+Assign T: RAM:T
+Assign ENV: RAM:ENV
+Mount DEVS:DOSDrivers/SER
+Echo "fixture" >ENV:OZ_SDK_GLOBAL
+C:EnvironmentMatrixPlain ordinary >NIL:
+If WARN
+Echo "RESULT environment shell variant=Plain mode=ordinary exit=FAIL" >SER:
+Else
+Echo "RESULT environment shell variant=Plain mode=ordinary exit=PASS" >SER:
+EndIf
+C:EnvironmentMatrixPlain null >NIL:
+If WARN
+Echo "RESULT environment shell variant=Plain mode=null exit=FAIL" >SER:
+Else
+Echo "RESULT environment shell variant=Plain mode=null exit=PASS" >SER:
+EndIf
+C:EnvironmentMatrixPlain explicit >NIL:
+If WARN
+Echo "RESULT environment shell variant=Plain mode=explicit exit=FAIL" >SER:
+Else
+Echo "RESULT environment shell variant=Plain mode=explicit exit=PASS" >SER:
+EndIf
+C:EnvironmentMatrixPlain empty >NIL:
+If WARN
+Echo "RESULT environment shell variant=Plain mode=empty exit=FAIL" >SER:
+Else
+Echo "RESULT environment shell variant=Plain mode=empty exit=PASS" >SER:
+EndIf
+C:EnvironmentMatrixPlain nested >NIL:
+If WARN
+Echo "RESULT environment shell variant=Plain mode=nested exit=FAIL" >SER:
+Else
+Echo "RESULT environment shell variant=Plain mode=nested exit=PASS" >SER:
+EndIf
+C:EnvironmentMatrixPlain mutate >NIL:
+If WARN
+Echo "RESULT environment shell variant=Plain mode=mutate exit=FAIL" >SER:
+Else
+Echo "RESULT environment shell variant=Plain mode=mutate exit=PASS" >SER:
+EndIf
+C:EnvironmentMatrixPlain failed >NIL:
+If WARN
+Echo "RESULT environment shell variant=Plain mode=failed exit=FAIL" >SER:
+Else
+Echo "RESULT environment shell variant=Plain mode=failed exit=PASS" >SER:
+EndIf
+C:EnvironmentMatrixEnviron ordinary >NIL:
+If WARN
+Echo "RESULT environment shell variant=Environ mode=ordinary exit=FAIL" >SER:
+Else
+Echo "RESULT environment shell variant=Environ mode=ordinary exit=PASS" >SER:
+EndIf
+C:EnvironmentMatrixEnviron null >NIL:
+If WARN
+Echo "RESULT environment shell variant=Environ mode=null exit=FAIL" >SER:
+Else
+Echo "RESULT environment shell variant=Environ mode=null exit=PASS" >SER:
+EndIf
+C:EnvironmentMatrixEnviron explicit >NIL:
+If WARN
+Echo "RESULT environment shell variant=Environ mode=explicit exit=FAIL" >SER:
+Else
+Echo "RESULT environment shell variant=Environ mode=explicit exit=PASS" >SER:
+EndIf
+C:EnvironmentMatrixEnviron empty >NIL:
+If WARN
+Echo "RESULT environment shell variant=Environ mode=empty exit=FAIL" >SER:
+Else
+Echo "RESULT environment shell variant=Environ mode=empty exit=PASS" >SER:
+EndIf
+C:EnvironmentMatrixEnviron nested >NIL:
+If WARN
+Echo "RESULT environment shell variant=Environ mode=nested exit=FAIL" >SER:
+Else
+Echo "RESULT environment shell variant=Environ mode=nested exit=PASS" >SER:
+EndIf
+C:EnvironmentMatrixEnviron mutate >NIL:
+If WARN
+Echo "RESULT environment shell variant=Environ mode=mutate exit=FAIL" >SER:
+Else
+Echo "RESULT environment shell variant=Environ mode=mutate exit=PASS" >SER:
+EndIf
+C:EnvironmentMatrixEnviron failed >NIL:
+If WARN
+Echo "RESULT environment shell variant=Environ mode=failed exit=FAIL" >SER:
+Else
+Echo "RESULT environment shell variant=Environ mode=failed exit=PASS" >SER:
+EndIf
+C:EnvironmentMatrixEnviron alias >NIL:
+If WARN
+Echo "RESULT environment shell variant=Environ mode=alias exit=FAIL" >SER:
+Else
+Echo "RESULT environment shell variant=Environ mode=alias exit=PASS" >SER:
+EndIf
+C:EnvironmentMatrixEnviron replace >NIL:
+If WARN
+Echo "RESULT environment shell variant=Environ mode=replace exit=FAIL" >SER:
+Else
+Echo "RESULT environment shell variant=Environ mode=replace exit=PASS" >SER:
+EndIf
+Delete ENV:OZ_SDK_GLOBAL
+Echo "RESULT environment matrix DONE cases=16" >SER:

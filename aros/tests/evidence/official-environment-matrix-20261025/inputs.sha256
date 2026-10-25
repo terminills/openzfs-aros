@@ -1,0 +1,5 @@
+72e49a952d904f1ebe951c4190871afa3562841a9013c9a928a153e1e2143b03  aros/cli/environment-matrix-test.c
+bc6262babc7677b2a8d07a591f48b4751313810994790a7978e4f022651ff443  aros/cli/environment-matrix-startup.py
+ac772b640a0bbc744bbdbf67636e6085a7e1ab4b3bedd12804d87a6803ebad57  aros/cli/verify-environment-matrix.py
+b2d1cc7eef2fd8bf66c9772479b9f27789c6cba1e2599add626a247cd52f4acd  /mnt/short-term/openzfs-env-matrix.cJJ5YNnS/EnvironmentMatrixPlain
+bc485c2790a0be1b018d4033ad73a2a8f56c3d5ee65f502b9b31b73dc31b256f  /mnt/short-term/openzfs-env-matrix.cJJ5YNnS/EnvironmentMatrixEnviron

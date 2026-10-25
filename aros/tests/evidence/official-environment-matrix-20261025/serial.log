@@ -1,0 +1,87 @@
+0000000000000000 0x0000000000000000 | 000 | AROS64 - The AROS Research OS
+0000000000000000 0x0000000000000000 | 000 | 64-bit SMP build. Compiled Oct 23 2026
+000000009476eae6 0x0000000000000000 | 000 | ACPI: RSDP 0x00000000000F52E0 000014 (v00 BOCHS )
+0000000094ea4991 0x0000000000000000 | 000 | ACPI: RSDT 0x000000007FFE238A 000034 (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+000000009583e4b6 0x0000000000000000 | 000 | ACPI: FACP 0x000000007FFE2236 000074 (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+00000000961e6766 0x0000000000000000 | 000 | ACPI: DSDT 0x000000007FFE0040 0021F6 (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+0000000096b92337 0x0000000000000000 | 000 | ACPI: FACS 0x000000007FFE0000 000040
+00000000971bee09 0x0000000000000000 | 000 | ACPI: APIC 0x000000007FFE22AA 000080 (v03 BOCHS  BXPC     00000001 BXPC 00000001)
+0000000097b5e351 0x0000000000000000 | 000 | ACPI: HPET 0x000000007FFE232A 000038 (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+00000000984ed5e8 0x0000000000000000 | 000 | ACPI: WAET 0x000000007FFE2362 000028 (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+0000000098eac0f2 0x0000000000000000 | 000 | [HPET] 2 units total
+000000009988a830 0x00000000013cd7d0 | 000 | ACPI: 1 ACPI AML tables successfully acquired and loaded
+000000009a2460a4 0x00000000013ab960 | 000 | [Kernel:ACPI-IOAPIC] Registering IO-APIC #1 [ID=000] @ 00000000fec00000 [GSI = 0]
+000000009abe4d22 0x00000000013ab960 | 000 | [Kernel:ACPI] System Total APICs: 2, 2 usable
+000000009b5e4a75 0x00000000013ab960 | 000 | [Kernel:APIC-IA32] MSI Interrupts Allocatable
+000000009bced78b 0x00000000013ab960 | 000 | [Kernel:APIC-IA32]     start = 16
+000000009c2d8c45 0x00000000013ab960 | 000 | [Kernel:APIC-IA32]     total = 198
+00000000bc1c086f 0x00000000013ce2f0 | 001 | [Kernel:APIC-IA32.001] core_APIC_Calibrate: TSC freq inherited from BSP (2496065 kHz) [hypervisor]
+00000000cd3aaa70 0x00000000013ab960 | 000 | [PCIPC:Driver] PCIPC_InitClass: No ACPI MCFG table
+0000000189442656 0x00000000015ec770 | 000 | RESULT OpenZFS environment matrix FAIL mode=ordinary environ=0
+RESULT environment shell variant=Plain mode=ordinary exit=FAIL
+000000018bada124 0x00000000015ec770 | 000 | RESULT OpenZFS environment matrix BEGIN mode=null environ=0
+000000018c75dd7e 0x00000000015ec770 | 000 | RESULT OpenZFS environment matrix scope mode=null environ=0 value=1 parent=1 global=0
+000000018d12c84b 0x00000000015ec770 | 000 | RESULT OpenZFS environment matrix FAIL mode=null environ=0
+RESULT environment shell variant=Plain mode=null exit=FAIL
+000000018e80f5e5 0x00000000015ec770 | 000 | RESULT OpenZFS environment matrix BEGIN mode=explicit environ=0
+000000018f4d9ac3 0x00000000015ec770 | 000 | RESULT OpenZFS environment matrix scope mode=explicit environ=0 value=1 parent=1 global=0
+000000018feefd50 0x00000000015ec770 | 000 | RESULT OpenZFS environment matrix FAIL mode=explicit environ=0
+RESULT environment shell variant=Plain mode=explicit exit=FAIL
+00000001914ebf37 0x00000000015ec770 | 000 | RESULT OpenZFS environment matrix BEGIN mode=empty environ=0
+0000000192194b76 0x00000000015ec770 | 000 | RESULT OpenZFS environment matrix scope mode=empty environ=0 value=1 parent=1 global=0
+0000000192b9e1b7 0x00000000015ec770 | 000 | RESULT OpenZFS environment matrix FAIL mode=empty environ=0
+RESULT environment shell variant=Plain mode=empty exit=FAIL
+00000001941369c5 0x00000000015ec770 | 000 | RESULT OpenZFS environment matrix BEGIN mode=nested environ=0
+0000000194dc4903 0x00000000015ec770 | 000 | RESULT OpenZFS environment matrix scope mode=nested environ=0 value=1 parent=1 global=0
+00000001957b48b9 0x00000000015ec770 | 000 | RESULT OpenZFS environment matrix nested-first=0 environ=0
+00000001964cff3f 0x00000000015ec770 | 000 | RESULT OpenZFS environment matrix scope mode=nested-final environ=0 value=1 parent=1 global=0
+0000000196f3dac6 0x00000000015ec770 | 000 | RESULT OpenZFS environment matrix FAIL mode=nested-final environ=0
+RESULT environment shell variant=Plain mode=nested exit=FAIL
+0000000198580883 0x00000000015ec770 | 000 | RESULT OpenZFS environment matrix BEGIN mode=mutate environ=0
+0000000199229170 0x00000000015ec770 | 000 | RESULT OpenZFS environment matrix scope mode=mutate environ=0 value=1 parent=1 global=0
+0000000199cc35a9 0x00000000015ec770 | 000 | RESULT OpenZFS environment matrix mutations environ=0 local-coherent=1 override=1 unset-hidden=0
+000000019a7653db 0x00000000015ec770 | 000 | RESULT OpenZFS environment matrix FAIL mode=mutate environ=0
+RESULT environment shell variant=Plain mode=mutate exit=FAIL
+000000019bd1d28c 0x00000000015ec770 | 000 | RESULT OpenZFS environment matrix BEGIN mode=failed environ=0
+000000019c70768f 0x00000000015ec770 | 000 | RESULT OpenZFS environment matrix failed-exec result=-1 errno=2 intact=0 environ=0
+000000019d09c281 0x00000000015ec770 | 000 | RESULT OpenZFS environment matrix FAIL mode=failed environ=0
+RESULT environment shell variant=Plain mode=failed exit=FAIL
+000000019e852128 0x00000000015ec770 | 000 | RESULT OpenZFS environment matrix FAIL mode=ordinary environ=1
+RESULT environment shell variant=Environ mode=ordinary exit=FAIL
+000000019fe9f692 0x00000000015ec770 | 000 | RESULT OpenZFS environment matrix BEGIN mode=null environ=1
+00000001a0b04c66 0x00000000015ec770 | 000 | RESULT OpenZFS environment matrix scope mode=null environ=1 value=1 parent=1 global=0
+00000001a14cf52f 0x00000000015ec770 | 000 | RESULT OpenZFS environment matrix FAIL mode=null environ=1
+RESULT environment shell variant=Environ mode=null exit=FAIL
+00000001a2a804be 0x00000000015ec770 | 000 | RESULT OpenZFS environment matrix BEGIN mode=explicit environ=1
+00000001a3730740 0x00000000015ec770 | 000 | RESULT OpenZFS environment matrix scope mode=explicit environ=1 value=1 parent=1 global=0
+00000001a414ac35 0x00000000015ec770 | 000 | RESULT OpenZFS environment matrix FAIL mode=explicit environ=1
+RESULT environment shell variant=Environ mode=explicit exit=FAIL
+00000001a577e80d 0x00000000015ec770 | 000 | RESULT OpenZFS environment matrix BEGIN mode=empty environ=1
+00000001a64256ce 0x00000000015ec770 | 000 | RESULT OpenZFS environment matrix scope mode=empty environ=1 value=1 parent=1 global=0
+00000001a6e03141 0x00000000015ec770 | 000 | RESULT OpenZFS environment matrix FAIL mode=empty environ=1
+RESULT environment shell variant=Environ mode=empty exit=FAIL
+00000001a83c3f67 0x00000000015ec770 | 000 | RESULT OpenZFS environment matrix BEGIN mode=nested environ=1
+00000001a9057670 0x00000000015ec770 | 000 | RESULT OpenZFS environment matrix scope mode=nested environ=1 value=1 parent=1 global=0
+00000001a9a4d337 0x00000000015ec770 | 000 | RESULT OpenZFS environment matrix nested-first=0 environ=1
+00000001aa72e9e8 0x00000000015ec770 | 000 | RESULT OpenZFS environment matrix scope mode=nested-final environ=1 value=1 parent=1 global=0
+00000001ab1a5a5c 0x00000000015ec770 | 000 | RESULT OpenZFS environment matrix FAIL mode=nested-final environ=1
+RESULT environment shell variant=Environ mode=nested exit=FAIL
+00000001ac805cf2 0x00000000015ec770 | 000 | RESULT OpenZFS environment matrix BEGIN mode=mutate environ=1
+00000001ad4d591e 0x00000000015ec770 | 000 | RESULT OpenZFS environment matrix scope mode=mutate environ=1 value=1 parent=1 global=0
+00000001adf72147 0x00000000015ec770 | 000 | RESULT OpenZFS environment matrix mutations environ=1 local-coherent=1 override=1 unset-hidden=0
+00000001aea08dbd 0x00000000015ec770 | 000 | RESULT OpenZFS environment matrix FAIL mode=mutate environ=1
+RESULT environment shell variant=Environ mode=mutate exit=FAIL
+00000001affea0c8 0x00000000015ec770 | 000 | RESULT OpenZFS environment matrix BEGIN mode=failed environ=1
+00000001b08b56da 0x00000000015ec770 | 000 | RESULT OpenZFS environment matrix failed-exec result=-1 errno=2 intact=0 environ=1
+00000001b1246f0a 0x00000000015ec770 | 000 | RESULT OpenZFS environment matrix FAIL mode=failed environ=1
+RESULT environment shell variant=Environ mode=failed exit=FAIL
+00000001b28570ab 0x00000000015ec770 | 000 | RESULT OpenZFS environment matrix BEGIN mode=alias environ=1
+00000001b34ce75d 0x00000000015ec770 | 000 | RESULT OpenZFS environment matrix scope mode=alias environ=1 value=1 parent=1 global=0
+00000001b3edc5b0 0x00000000015ec770 | 000 | RESULT OpenZFS environment matrix FAIL mode=alias environ=1
+RESULT environment shell variant=Environ mode=alias exit=FAIL
+00000001b54aa8d3 0x00000000015ec770 | 000 | RESULT OpenZFS environment matrix BEGIN mode=replace environ=1
+00000001b614efbc 0x00000000015ec770 | 000 | RESULT OpenZFS environment matrix scope mode=replace environ=1 value=1 parent=1 global=0
+00000001b6b7dfa6 0x00000000015ec770 | 000 | RESULT OpenZFS environment matrix replacement observed=0
+00000001b7322af9 0x00000000015ec770 | 000 | RESULT OpenZFS environment matrix FAIL mode=replace environ=1
+RESULT environment shell variant=Environ mode=replace exit=FAIL
+RESULT environment matrix DONE cases=16

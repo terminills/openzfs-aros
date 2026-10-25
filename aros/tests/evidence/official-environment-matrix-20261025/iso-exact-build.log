@@ -1,0 +1,28 @@
+xorriso 1.5.6 : RockRidge filesystem manipulator, libburnia project.
+
+xorriso : NOTE : Loading ISO image tree from LBA 0
+xorriso : UPDATE :   28264 nodes read in 1 seconds
+xorriso : NOTE : Detected El-Torito boot information which currently is set to be discarded
+Drive current: -indev '/mnt/short-term/openzfs-env-matrix.cJJ5YNnS/test.iso'
+Media current: stdio file, overwriteable
+Media status : is written , is appendable
+Boot record  : El Torito
+Media summary: 1 session, 305200 data blocks,  596m data,  595g free
+Volume id    : 'AROS Live CD'
+Drive current: -outdev '/mnt/short-term/openzfs-env-matrix.cJJ5YNnS/exact.iso'
+Media current: stdio file, overwriteable
+Media status : is blank
+Media summary: 0 sessions, 0 data blocks, 0 data,  595g free
+xorriso : UPDATE :       1 files added in 1 seconds
+Added to ISO image: file '/S/Startup-Sequence'='/mnt/short-term/openzfs-env-matrix.cJJ5YNnS/Startup-Exact'
+xorriso : NOTE : Copying to System Area: 1 bytes from file '/dev/zero'
+xorriso : UPDATE : Writing:       9904s    3.2%   fifo  99%  buf  50%
+xorriso : UPDATE : Writing:      55024s   18.0%   fifo 100%  buf  50%  166.6xD 
+xorriso : UPDATE : Writing:     122880s   40.2%   fifo 100%  buf  50%  100.2xD 
+xorriso : UPDATE : Writing:     180224s   59.0%   fifo 100%  buf  50%   84.7xD 
+xorriso : UPDATE : Writing:     239422s   78.4%   fifo 100%  buf  50%   87.4xD 
+xorriso : UPDATE : Writing:     297580s   97.4%   fifo  99%  buf  50%   85.8xD 
+ISO image produced: 305200 sectors
+Written to medium : 305376 sectors at LBA 32
+Writing to '/mnt/short-term/openzfs-env-matrix.cJJ5YNnS/exact.iso' completed successfully.
+

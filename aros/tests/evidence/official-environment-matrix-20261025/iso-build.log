@@ -1,0 +1,34 @@
+xorriso 1.5.6 : RockRidge filesystem manipulator, libburnia project.
+
+xorriso : NOTE : Loading ISO image tree from LBA 0
+xorriso : UPDATE :   28262 nodes read in 1 seconds
+xorriso : NOTE : Detected El-Torito boot information which currently is set to be discarded
+Drive current: -indev '/run/media/terminills/Codex/show-consolidation-01a16962/sdk-prerequisite-audit/nightly-20261023/pristine.iso'
+Media current: stdio file, overwriteable
+Media status : is written , is appendable
+Boot record  : El Torito , MBR protective-msdos-label grub2-mbr cyl-align-off GPT APM
+Media summary: 1 session, 315252 data blocks,  616m data, 26.8g free
+Volume id    : 'AROS Live CD'
+Drive current: -outdev '/mnt/short-term/openzfs-env-matrix.cJJ5YNnS/test.iso'
+Media current: stdio file, overwriteable
+Media status : is blank
+Media summary: 0 sessions, 0 data blocks, 0 data,  596g free
+xorriso : UPDATE :       1 files added in 1 seconds
+Added to ISO image: file '/boot/grub/grub.cfg'='/mnt/short-term/openzfs-official-sdk-audit.xi9RkF3r/grub.cfg'
+xorriso : UPDATE :       1 files added in 1 seconds
+Added to ISO image: file '/S/Startup-Sequence'='/mnt/short-term/openzfs-env-matrix.cJJ5YNnS/Startup-Sequence'
+xorriso : UPDATE :       1 files added in 1 seconds
+Added to ISO image: file '/C/EnvironmentMatrixPlain'='/mnt/short-term/openzfs-env-matrix.cJJ5YNnS/EnvironmentMatrixPlain'
+xorriso : UPDATE :       1 files added in 1 seconds
+Added to ISO image: file '/C/EnvironmentMatrixEnviron'='/mnt/short-term/openzfs-env-matrix.cJJ5YNnS/EnvironmentMatrixEnviron'
+xorriso : NOTE : Copying to System Area: 1 bytes from file '/dev/zero'
+xorriso : UPDATE : Writing:       9634s    3.2%   fifo  99%  buf  50%
+xorriso : UPDATE : Writing:      69344s   22.7%   fifo  99%  buf  50%  126.0xD 
+xorriso : UPDATE : Writing:     122880s   40.2%   fifo 100%  buf  50%   79.1xD 
+xorriso : UPDATE : Writing:     180224s   59.0%   fifo 100%  buf  50%   84.6xD 
+xorriso : UPDATE : Writing:     245760s   80.5%   fifo 100%  buf  50%   96.7xD 
+xorriso : UPDATE : Writing:     303104s   99.3%   fifo 100%  buf  50%   84.7xD 
+ISO image produced: 305200 sectors
+Written to medium : 305376 sectors at LBA 32
+Writing to '/mnt/short-term/openzfs-env-matrix.cJJ5YNnS/test.iso' completed successfully.
+
