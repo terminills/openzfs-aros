@@ -20,5 +20,18 @@ Logs and hashes are retained here; complete external artifacts are under
 This qualifies internal ZPL whiteout metadata, not union/overlay filesystem
 semantics, a new DOS packet, arbitrary special-device I/O, or physical media.
 This run does not qualify pending whiteout log replay after abrupt loss.
-The separate crash test added in `838981d` is intended to cover that boundary.
+The separate crash test added in `838981d` covers that boundary below.
 Builds reuse upstream objects and selected patched AROS runtime prerequisites.
+
+## Interrupted replay
+
+Two-CPU `crash-run.91PtI73q` passed staging, partial recovery, restarted recovery
+and final verification. Whiteout and exchange operations were committed to ZIL
+after TXG persistence was frozen. The private VM was killed without export;
+the next VM ran real replay callbacks before an injected SETATTR error. It too
+was killed without export. A new recovery VM observed replay needed and
+recovered the zero-length character marker and exact moved payload. The final
+boot observed no replay needed and retained both. Independent zdb reported no
+leaks; original crash, partial recovery and baseline hashes stayed unchanged.
+The retained `crash/` evidence qualifies this controlled record sequence, not
+arbitrary faults or physical-device durability.

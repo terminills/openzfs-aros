@@ -261,8 +261,7 @@ results, not a fresh qualification of this public snapshot.
   sibling directories and mixed file/directory swaps, including identities,
   parents, link counts and restoration before cold imports. Cross-parent
   directory exchange also passes the eight-CPU diagnostic matrix, with a
-  mount-private cross-parent rename mutex and both ancestry checks. Whiteout
-  remains unsupported. Evidence and limitations
+  mount-private cross-parent rename mutex and both ancestry checks. Evidence and limitations
   are recorded in `aros/zpl/README.md` and `aros/tests/evidence/sibling-exchange`.
   Exchange intent-log replay is now enabled on AROS, correcting a Linux-only
   upstream callback guard that clean-export tests did not exercise. Native
@@ -273,6 +272,10 @@ results, not a fresh qualification of this public snapshot.
   physical power-loss qualification. Ordinary rename and exchange also reject
   tested malformed parent cycles; see `ordinary-rename-cycle` and
   `exchange-ancestry-errors` in the same evidence directory.
+  Internal whiteout rename now validates native attributes and passes cold
+  marker/payload checks plus interrupted ZIL replay in isolated QEMU. See
+  `aros/tests/evidence/whiteout-rename`. This does not add overlay filesystem
+  semantics, a DOS whiteout command, or arbitrary special-device I/O.
 - Physical storage flush, disconnect, and abrupt power-loss behavior require
   hardware qualification. Virtual-disk tests do not establish these guarantees.
 - Not every upstream feature or topology has end-to-end AROS validation.
