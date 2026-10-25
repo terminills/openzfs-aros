@@ -17,12 +17,17 @@ class EvidenceTests(unittest.TestCase):
             root = pathlib.Path(directory)
             names = ['source/LICENSE', 'rebuild-fat-snapshot.py', 'provenance.json',
                      'posixc.library', 'source/compiler/crt/posixc/posixc.conf',
+                     'generated/include/posixc_libdefs.h',
+                     'generated/include/posixc_deflibdefs.h',
                      'source/arch/siglongjmp.s', 'source/arch/sigsetjmp.s',
                      'source/arch/vfork.s', 'source/arch/vfork_longjmp.s']
             for name in names:
                 path = root / name
                 path.parent.mkdir(parents=True, exist_ok=True)
                 path.write_text(name)
+            header = root / 'generated/include/posixc_deflibdefs.h'
+            local = '#define LC_LIBDEFS_FILE "posixc_libdefs.h"\n'
+            header.write_text(local)
             (root / 'rebuild.json').write_text(json.dumps({'format': 1,
                 'artifact': 'posixc.library', 'expected_binary': stage.digest(root / 'posixc.library')}))
             names.append('rebuild.json')
@@ -31,6 +36,12 @@ class EvidenceTests(unittest.TestCase):
                     stage.digest(root / name) + '  ' + name + '\n' for name in names))
             manifest()
             stage.require_posix_snapshot(root, root / 'posixc.library')
+            header.write_text('#define LC_LIBDEFS_FILE "/private/posixc_libdefs.h"\n')
+            manifest()
+            with self.assertRaisesRegex(ValueError, 'snapshot-local'):
+                stage.require_posix_snapshot(root, root / 'posixc.library')
+            header.write_text(local)
+            manifest()
             (root / 'different.library').write_text('different')
             with self.assertRaises(ValueError):
                 stage.require_posix_snapshot(root, root / 'different.library')

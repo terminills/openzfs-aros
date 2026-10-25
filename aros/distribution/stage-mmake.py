@@ -68,10 +68,14 @@ def require_posix_snapshot(snapshot, binary):
     required = {pathlib.Path(name) for name in (
         "rebuild.json", "rebuild-fat-snapshot.py", "source/LICENSE",
         "provenance.json", "posixc.library", "source/compiler/crt/posixc/posixc.conf",
+        "generated/include/posixc_libdefs.h", "generated/include/posixc_deflibdefs.h",
         "source/arch/siglongjmp.s", "source/arch/sigsetjmp.s",
         "source/arch/vfork.s", "source/arch/vfork_longjmp.s")}
     if not required.issubset(paths):
         raise ValueError("Incomplete posixc source snapshot")
+    if (snapshot / 'generated/include/posixc_deflibdefs.h').read_text().strip() != (
+            '#define LC_LIBDEFS_FILE "posixc_libdefs.h"'):
+        raise ValueError("posixc ABI include is not snapshot-local")
     recipe = json.loads((snapshot / "rebuild.json").read_text())
     if (recipe.get("format") != 1 or recipe.get("artifact") != "posixc.library"
             or recipe.get("expected_binary") != digest(binary)
