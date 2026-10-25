@@ -1,0 +1,4 @@
+service_test_modes=0
+full_dispatcher=1
+shared_engine=1
+status_trace=0

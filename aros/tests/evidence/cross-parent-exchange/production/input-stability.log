@@ -1,0 +1,6 @@
+/mnt/short-term/openzfs-qualification-20261024.aGFlVF7T/sibling-production.liEWQyre/full-engine.o: OK
+/mnt/short-term/openzfs-qualification-20261024.aGFlVF7T/source-engine.KNH9Dct2/nvpair/libnvpair.a: OK
+/mnt/short-term/openzfs-qualification-20261024.aGFlVF7T/build-workspace.98Zx7n6B/build-aros/pthread-consistent.ARVzbA2v/libpthread.a: OK
+/mnt/short-term/openzfs-qualification-20261024.aGFlVF7T/build-workspace.98Zx7n6B/build-aros/crypto-source.bC1xHzNG/build/crypto/libcrypto.a: OK
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/lib/libz1.a: OK
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/linux-x86_64/tools/genmodule: OK
