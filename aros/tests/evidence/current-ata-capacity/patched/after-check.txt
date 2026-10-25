@@ -1,0 +1,2 @@
+/mnt/short-term/openzfs-qualification-20261024.aGFlVF7T/capacity-run.TKRL5E1R/disk.qcow2: OK
+/mnt/short-term/openzfs-qualification-20261024.aGFlVF7T/capacity-run.TKRL5E1R/gpt.qcow2: OK

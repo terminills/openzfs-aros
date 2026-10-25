@@ -1,0 +1,12 @@
+75dda72ba581f1d190bf06683821ca9970ffb7cb66cfa019e8e835546a575c44  /mnt/short-term/openzfs-qualification-20261024.aGFlVF7T/capacity-run.TKRL5E1R/capacity-test.c
+a2cbfc57182368785df6289d8e26534fc0e68f80041b7dc11456e5b9cd2c1aaf  /mnt/short-term/openzfs-qualification-20261024.aGFlVF7T/capacity-run.TKRL5E1R/device-io.c
+2f92a9e77e5f9f5faae49f8fe6e956ecc25f17c7ff92f3744702fb1872ebd132  /mnt/short-term/openzfs-qualification-20261024.aGFlVF7T/capacity-run.TKRL5E1R/partitions.c
+1f6aba0a8182d75324aff2e332d1de047c1ace59f18981ea58f3fbaba0dc41c3  /mnt/short-term/openzfs-qualification-20261024.aGFlVF7T/capacity-run.TKRL5E1R/device-io.h
+6b37f2236887811ce9e21674d384ae88b0b96f74598ab84d10a1c6edefa34304  /mnt/short-term/openzfs-qualification-20261024.aGFlVF7T/capacity-run.TKRL5E1R/partitions.h
+4768b3c618964c9ff0faec0eea0b901c98d9b203cffcb4b4eefc6c3fb2420c9b  /mnt/short-term/openzfs-qualification-20261024.aGFlVF7T/capacity-run.TKRL5E1R/OpenZFSDeviceRangeTest
+1c4be7ab1eb1250a9cef03798dc39b52a1436207ce314bf645f533e09faab3f0  /home/terminills/Documents/GitHub/openzfs-aros-public/build-aros/pthread-consistent.ARVzbA2v/libpthread.a
+bd96e71a622515a2084e86109ca32600f13f055f3cc4ed16505b4309db1e820b  /home/terminills/Documents/GitHub/openzfs-aros-public/build-aros/pthread-consistent.ARVzbA2v/source/pthread.h
+bbc9776d6a5cf0a8ce7c26010e297e9e7a02980714750955053a38d89eca0e27  /home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/distfiles/aros-smp-pc-x86_64-20261022-alpha18c5.iso
+0a6d8c05a0bc33142f6d2f1ac0363f93771edf936b583ccdc3872ec0f37175b9  /mnt/short-term/openzfs-qualification-20261024.aGFlVF7T/fat-replay.k72bijo1/aros-base.pkg.xz
+32a510b850fc85c322d71b902bb6ca497945ef17e3269a6bfe2cf9a254feede8  /mnt/short-term/openzfs-qualification-20261024.aGFlVF7T/fat-replay.yyjps394/posixc.library
+d3838339978209fa467259f0cc577b61352660d8013c94f0b9513b15a1f03f1d  /mnt/short-term/openzfs-qualification-20261024.aGFlVF7T/ata-capacity.xe_howx1/aros-bsp.pkg.xz

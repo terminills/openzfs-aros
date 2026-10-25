@@ -216,8 +216,16 @@ results, not a fresh qualification of this public snapshot.
   device open, before high-LBA reads. The latter reports native error 20,
   SCSI status 2, no command/data completion and sense 5/0x24/0. This is not a
   successful capacity or pool test. `aros/engine/ata-capacity.patch` supplies
-  the missing command path; a current private-overlay comparison is still
-  required. Captures are in `aros/tests/evidence/current-ata-capacity`.
+  the missing command path. Private comparison overlay `ata-capacity.xe_howx1`
+  changes only ATA in the baseline BSP package (other module bytes/order
+  verified). Fresh eight-CPU runs `capacity-run.TKRL5E1R` (diagnostic) and
+  `capacity-run.N3W6Tayv` (capacity diagnostics disabled) both pass: 50 TiB
+  geometry, marked final-sector read, bounded subrange read, out-of-range and
+  read-only-write denial, and separate 3 TiB high-LBA GPT enumeration. Both
+  qcow2 overlays remain byte-identical. This is device-access qualification,
+  not a 50 TiB pool test or hardware qualification. Captures are in
+  `aros/tests/evidence/current-ata-capacity`. The private builder uses the
+  selected build's remaining ATA objects, not a clean full-driver rebuild.
 - Physical storage flush, disconnect, and abrupt power-loss behavior require
   hardware qualification. Virtual-disk tests do not establish these guarantees.
 - Not every upstream feature or topology has end-to-end AROS validation.
