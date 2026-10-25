@@ -119,6 +119,33 @@ done:
     if(initialized)libzfs_core_fini();
     nvlist_free(props);nvlist_free(snaps);nvlist_free(result);return error;
 }
+static int upstream_bootenv(const char *pool)
+{
+    int error=0,initialized=0,changed=0;
+    nvlist_t *saved=NULL,*written=fnvlist_alloc(),*readback=NULL,*invalid=fnvlist_alloc();
+    TEST(!libzfs_core_init());initialized=1;
+    TEST(!lzc_get_bootenv(pool,&saved));
+    /* VB_NVLIST is upstream's version 1, not an AROS private format. */
+    fnvlist_add_uint64(written,"version",1);
+    fnvlist_add_string(written,"aros-test","upstream-label-roundtrip");
+    TEST(!lzc_set_bootenv(pool,written));changed=1;
+    TEST(!lzc_get_bootenv(pool,&readback));
+    const char *value=NULL;
+    TEST(!nvlist_lookup_string(readback,"aros-test",&value));
+    TEST(!strcmp(value,"upstream-label-roundtrip"));
+    nvlist_free(readback);readback=NULL;
+    /* A missing mandatory version must not replace the accepted label. */
+    TEST(lzc_set_bootenv(pool,invalid)!=0);
+    TEST(!lzc_get_bootenv(pool,&readback));
+    TEST(!nvlist_lookup_string(readback,"aros-test",&value));
+    TEST(!strcmp(value,"upstream-label-roundtrip"));
+done:
+    if(changed&&saved){int rc=lzc_set_bootenv(pool,saved);if(rc&&!error)error=rc;}
+    if(initialized)libzfs_core_fini();
+    nvlist_free(saved);nvlist_free(written);nvlist_free(readback);nvlist_free(invalid);
+    if(!error){const char *p="Public upstream bootenv PASS get=1 set=1 invalid-preserved=1 restored=1\n";while(*p)RawPutChar(*p++);}
+    return error;
+}
 static int upstream_core_commands(const char *pool)
 {
     int error=0,initialized=0;LONG cleanup=-1;
@@ -307,6 +334,7 @@ int oz_public_ioctl_test(const char *pool)
     TEST(!snapshot_commands(pool,&ticket,fd));
     TEST(!denied_snapshot(pool,&ticket,fd));
     TEST(!upstream_core_commands(pool));
+    TEST(!upstream_bootenv(pool));
     TEST(!upstream_core_datasets(pool));
     TEST(!oz_control_close(OZ_ADMISSION_PORT,&ticket,fd));
     prepare(w,&ticket,fd,pool,capacity);fd=-1;

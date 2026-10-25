@@ -63,6 +63,8 @@ static int execute(void *storage,size_t length,const struct oz_packet_security *
     boolean_t pruning=w->command==ZFS_IOC_DDT_PRUNE;
     boolean_t initializing=w->command==ZFS_IOC_POOL_INITIALIZE;
     boolean_t trimming=w->command==ZFS_IOC_POOL_TRIM;
+    boolean_t bootenv_set=w->command==ZFS_IOC_SET_BOOTENV;
+    boolean_t bootenv=bootenv_set||w->command==ZFS_IOC_GET_BOOTENV;
     boolean_t program=w->command==ZFS_IOC_CHANNEL_PROGRAM;
     boolean_t redacting=w->command==ZFS_IOC_REDACT;
     boolean_t events_next=w->command==ZFS_IOC_EVENTS_NEXT;
@@ -71,7 +73,7 @@ static int execute(void *storage,size_t length,const struct oz_packet_security *
     boolean_t events=events_next||events_seek||events_clear;
     boolean_t waiting=streamfd==-2&&
         (w->command==ZFS_IOC_WAIT||w->command==ZFS_IOC_WAIT_FS);
-    boolean_t modern=vdevprops||history_log||initializing||trimming||redacting||program||pruning||waiting||prefetch||temporary||diff||sending||receiving||w->command==ZFS_IOC_SNAPSHOT||w->command==ZFS_IOC_DESTROY_SNAPS||
+    boolean_t modern=bootenv||vdevprops||history_log||initializing||trimming||redacting||program||pruning||waiting||prefetch||temporary||diff||sending||receiving||w->command==ZFS_IOC_SNAPSHOT||w->command==ZFS_IOC_DESTROY_SNAPS||
         w->command==ZFS_IOC_HOLD||w->command==ZFS_IOC_GET_HOLDS||w->command==ZFS_IOC_RELEASE||
         w->command==ZFS_IOC_CREATE||w->command==ZFS_IOC_CLONE||w->command==ZFS_IOC_ROLLBACK||
         w->command==ZFS_IOC_DESTROY||w->command==ZFS_IOC_SNAPSHOT_LIST_NEXT||
@@ -170,6 +172,13 @@ static int execute(void *storage,size_t length,const struct oz_packet_security *
      * Admitting this ioctl does not advertise physical discard support. */
     if(trimming&&(!w->src_size||w->history_size||command.zc_cookie||
         command.zc_guid||command.zc_obj||command.zc_flags||
+        command.zc_history_offset||command.zc_cleanup_fd||
+        command.zc_value[0]||command.zc_string[0]))return EINVAL;
+    /* Pool boot-environment nvlists use upstream label storage, schema and
+     * config privilege checks. No bootloader installation or raw paths are
+     * accepted here. SET retains upstream readonly/suspended-pool guards. */
+    if(bootenv&&((bootenv_set&&!w->src_size)||w->history_size||
+        command.zc_cookie||command.zc_guid||command.zc_obj||command.zc_flags||
         command.zc_history_offset||command.zc_cleanup_fd||
         command.zc_value[0]||command.zc_string[0]))return EINVAL;
     /* Crypto operations take a bounded packed nvlist, with secret material
