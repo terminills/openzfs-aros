@@ -17,3 +17,7 @@ awk '/^typedef struct zfs_zlock / { copy=1 }
     }' aros/zpl/rename.c > "$run/rename-lock.inc"
 ${CC:-cc} -std=c11 -Wall -Wextra -Werror -I"$run" aros/zpl/rename-lock-test.c -o "$run/test"
 "$run/test" 2>&1 | tee "$run/result.log"
+awk '/^exchange_ancestry\(/ { print "static int"; copy=1 }
+    copy { print; if ($0 == "}") exit }' aros/zpl/rename.c > "$run/exchange-ancestry.inc"
+${CC:-cc} -std=c11 -Wall -Wextra -Werror -I"$run" aros/zpl/exchange-ancestry-test.c -o "$run/exchange-test"
+"$run/exchange-test" 2>&1 | tee "$run/exchange-result.log"

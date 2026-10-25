@@ -47,13 +47,23 @@ static struct Task *lookup_fault_owner;
 static sa_handle_t *lookup_fault_handle;
 static sa_attr_type_t lookup_fault_attr;
 static unsigned lookup_fault_hits;
+static sa_handle_t *lookup_cycle_second;
+static uint64_t lookup_cycle_first_parent, lookup_cycle_second_parent;
 int __real_sa_lookup(sa_handle_t *, sa_attr_type_t, void *, uint32_t);
 int __wrap_sa_lookup(sa_handle_t *handle, sa_attr_type_t attr, void *buf,
     uint32_t size)
 {
     if (__atomic_load_n(&lookup_fault_owner, __ATOMIC_ACQUIRE) == FindTask(NULL) &&
-        handle == lookup_fault_handle && attr == lookup_fault_attr) {
+        (handle == lookup_fault_handle ||
+         (lookup_cycle_second && handle == lookup_cycle_second)) && attr == lookup_fault_attr) {
         lookup_fault_hits++;
+        if (lookup_cycle_second) {
+            if (size!=sizeof(uint64_t)) return EIO;
+            uint64_t value=handle==lookup_fault_handle ?
+                lookup_cycle_first_parent : lookup_cycle_second_parent;
+            memcpy(buf,&value,sizeof(value));
+            return 0;
+        }
         return EIO;
     }
     return __real_sa_lookup(handle,attr,buf,size);
@@ -155,6 +165,37 @@ static int cross_exchange(znode_t *left, char *first, znode_t *right,
             left->z_links!=ll+(i?0:delta) || right->z_links!=rl-(i?0:delta) ||
             a->z_links!=al || b->z_links!=bl)) error=EIO;
     }
+    return error;
+}
+static int exchange_ancestry_failure(znode_t *left, znode_t *right,
+    znode_t *empty, znode_t *tree, znode_t *ancestor, unsigned mode)
+{
+    uint64_t ls=left->z_size, rs=right->z_size;
+    uint64_t ll=left->z_links, rl=right->z_links;
+    lookup_fault_handle=(mode==1?left:right)->z_sa_hdl;
+    lookup_fault_attr=SA_ZPL_PARENT(ZTOZSB(left));
+    lookup_fault_hits=0;
+    if (mode==2) {
+        lookup_cycle_second=ancestor->z_sa_hdl;
+        lookup_cycle_first_parent=ancestor->z_id;
+        lookup_cycle_second_parent=right->z_id;
+    }
+    __atomic_store_n(&lookup_fault_owner,FindTask(NULL),__ATOMIC_RELEASE);
+    int error=RENAME(left,"empty",right,"tree",RENAME_EXCHANGE);
+    __atomic_store_n(&lookup_fault_owner,NULL,__ATOMIC_RELEASE);
+    lookup_cycle_second=NULL;
+    if (error!=EIO || (mode==2 ? lookup_fault_hits<2 || lookup_fault_hits>8 :
+        lookup_fault_hits!=1)) return EIO;
+    znode_t *found=NULL;
+    error=child(left,"empty",&found);
+    if (!error && found!=empty) error=EIO;
+    if (found) oz_znode_rele(found);
+    found=NULL;
+    if (!error) error=child(right,"tree",&found);
+    if (!error && found!=tree) error=EIO;
+    if (found) oz_znode_rele(found);
+    if (!error && (left->z_size!=ls || right->z_size!=rs ||
+        left->z_links!=ll || right->z_links!=rl)) error=EIO;
     return error;
 }
 static void *exchange_names(void *arg)
@@ -346,6 +387,12 @@ int oz_rename_test(zfsvfs_t *fs, boolean_t write)
         if (!error) error = directory(left,"empty",&empty);
         /* Failed replacement must restore the source name and link counts. */
         if (!error && RENAME(left,"empty",right,"tree",0) != ENOTEMPTY) error = EIO;
+        for (unsigned mode=0;mode<3 && !error;mode++)
+            error=exchange_ancestry_failure(left,right,empty,tree,fixture,mode);
+        if (!error) {
+            const char *proof="Native exchange ancestry failure PASS forward=1 reverse=1 corrupt-cycle=1 unchanged=1\n";
+            for (const char *p=proof;*p;p++) RawPutChar(*p);
+        }
         if (!error) error = exchange_race(left,"empty",right,"tree");
         if (!error) error = cross_exchange(left,"empty",right,"tree",empty,tree);
         if (!error) error = exchange_race(left,"a",right,"tree");

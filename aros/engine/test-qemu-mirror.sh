@@ -396,6 +396,7 @@ rg -a -q '^Native persistent directory exchange write=1 directories=1 mixed=1 pa
 rg -a -q '^Native sibling directory exchange PASS directories=1 mixed=1 restored=1 opposing-swaps=128' "$run/create-completion-checked.log"
 rg -a -q '^Native missing directory exchange PASS same-parent=1 cross-parent=1 unchanged=1' "$run/create-completion-checked.log"
 rg -a -q '^Native cross-parent directory exchange PASS directories=1 mixed=1 cycles-denied=2 opposing-swaps=128 restored=1' "$run/create-completion-checked.log"
+rg -a -q '^Native exchange ancestry failure PASS forward=1 reverse=1 corrupt-cycle=1 unchanged=1' "$run/create-completion-checked.log"
 rg -a -q '^Native rename ancestry SA failure/retry result=0' "$run/create-completion-checked.log"
 rg -a -q '^Native upstream setattr/owner/mode/times write=1 result=0' "$run/create-completion-checked.log"
 rg -a -q '^Native protection xattr persistence write=1 result=0' "$run/create-completion-checked.log"

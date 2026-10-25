@@ -144,6 +144,9 @@ exchange_ancestry(znode_t *moved, znode_t *parent)
 	zfsvfs_t *fs = ZTOZSB(moved);
 	ASSERT(MUTEX_HELD(&fs->z_rename_lock));
 	uint64_t id = parent->z_id;
+	/* Brent-style cycle detection: one SA lookup per visited edge and
+	 * constant memory, with no arbitrary maximum valid directory depth. */
+	uint64_t checkpoint = id, power = 1, distance = 0;
 	while (id != fs->z_root) {
 		if (id == moved->z_id) return (SET_ERROR(EINVAL));
 		znode_t *node = NULL;
@@ -153,7 +156,12 @@ exchange_ancestry(znode_t *moved, znode_t *parent)
 		error = sa_lookup(node->z_sa_hdl, SA_ZPL_PARENT(fs), &next, sizeof (next));
 		zrele(node);
 		if (error) return (error);
-		if (next == id) return (SET_ERROR(EIO));
+		if (next == checkpoint) return (SET_ERROR(EIO));
+		if (++distance == power) {
+			checkpoint = next;
+			distance = 0;
+			if (power <= UINT64_MAX / 2) power *= 2;
+		}
 		id = next;
 	}
 	return (id == moved->z_id ? SET_ERROR(EINVAL) : 0);
