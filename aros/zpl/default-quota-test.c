@@ -668,10 +668,14 @@ static int temporary_holds(const char *dataset)
     char missing[128]; snprintf(missing,sizeof(missing),"%s/absent",dataset);
     CHECK(zfsvfs_create_hold(missing, &fs) == ENOENT && !fs ? 0 : EIO);
     char wrong[128]; snprintf(wrong,sizeof(wrong),"%s/wrongtype",dataset);
-    CHECK(dmu_objset_create(wrong, DMU_OST_OTHER, 0, NULL, NULL, NULL));
+    struct oz_cred_scope *scope=NULL;CHECK(oz_cred_push(kcred,&scope));
+    int created=dmu_objset_create(wrong, DMU_OST_OTHER, 0, NULL, NULL, NULL);
+    CHECK(oz_cred_pop(scope));CHECK(created);
     CHECK(zfsvfs_create_hold(wrong, &fs) == EINVAL && !fs ? 0 : EIO);
     char empty[128]; snprintf(empty,sizeof(empty),"%s/nozpl",dataset);
-    CHECK(dmu_objset_create(empty, DMU_OST_ZFS, 0, NULL, NULL, NULL));
+    CHECK(oz_cred_push(kcred,&scope));
+    created=dmu_objset_create(empty, DMU_OST_ZFS, 0, NULL, NULL, NULL);
+    CHECK(oz_cred_pop(scope));CHECK(created);
     CHECK(zfsvfs_create_hold(empty, &fs) != 0 && !fs ? 0 : EIO);
     for(unsigned i=0;i<16;i++) {
         CHECK(zfsvfs_create_hold(dataset, &fs));
@@ -1084,7 +1088,9 @@ static int project_attributes_test(const char *pool, int write)
         PROJECT_STEP("enable features");
         int result=spa_prop_set(spa,features);fnvlist_free(features);spa_close(spa,FTAG);CHECK(result);
         PROJECT_STEP("create fixture");
-        CHECK(oz_zpl_fixture_create(dataset));
+        struct oz_cred_scope *scope=NULL;CHECK(oz_cred_push(kcred,&scope));
+        int created=oz_zpl_fixture_create(dataset);
+        CHECK(oz_cred_pop(scope));CHECK(created);
     }
     struct oz_zpl *mount=NULL;
     PROJECT_STEP("open mount");
