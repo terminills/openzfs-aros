@@ -41,6 +41,42 @@ static int tag_check(znode_t *file, unsigned char tag)
     return (error);
 }
 #define RENAME(s,n,t,m,f) zfs_rename(s,n,t,m,kcred,0,f,NULL,NULL)
+extern zil_replay_func_t *const zfs_replay_vector[TX_MAX_TYPE];
+/* Exercise the real replay dispatch, including swapped-endian record headers.
+ * This is record dispatch qualification, not an abrupt-crash recovery test. */
+static int replay_exchange(znode_t *left, znode_t *right)
+{
+    znode_t *a=NULL, *b=NULL;
+    int error=child(left,"a",&a);
+    if (!error) error=child(right,"moved",&b);
+    size_t size=sizeof(lr_rename_t)+sizeof("a")+sizeof("moved");
+    lr_rename_t *record=kmem_zalloc(size,KM_SLEEP);
+    for (unsigned swapped=0; swapped<2 && !error; swapped++) {
+        record->lr_rename.lr_common.lrc_txtype=TX_RENAME_EXCHANGE;
+        record->lr_rename.lr_common.lrc_reclen=size;
+        record->lr_rename.lr_sdoid=left->z_id;
+        record->lr_rename.lr_tdoid=right->z_id;
+        memcpy(record->lr_data,"a\0moved",sizeof("a\0moved"));
+        if (swapped) byteswap_uint64_array(record,sizeof(*record));
+        error=zfs_replay_vector[TX_RENAME_EXCHANGE](ZTOZSB(left),record,swapped);
+        znode_t *found=NULL;
+        if (!error) error=child(left,"a",&found);
+        if (!error && found!=(swapped?a:b)) error=EIO;
+        if (found) oz_znode_rele(found);
+        found=NULL;
+        if (!error) error=child(right,"moved",&found);
+        if (!error && found!=(swapped?b:a)) error=EIO;
+        if (found) oz_znode_rele(found);
+    }
+    kmem_free(record,size);
+    if (a) oz_znode_rele(a);
+    if (b) oz_znode_rele(b);
+    if (!error) {
+        const char *proof="Native exchange replay dispatch PASS native=1 byteswap=1 restored=1\n";
+        for (const char *p=proof;*p;p++) RawPutChar(*p);
+    }
+    return error;
+}
 /* Linked only into the private QEMU diagnostics. Publish the owner last;
  * unrelated upstream worker tasks always call the real SA implementation. */
 static struct Task *lookup_fault_owner;
@@ -361,6 +397,7 @@ int oz_rename_test(zfsvfs_t *fs, boolean_t write)
         if (!error) error = tagged_file(left,"a",0xc3,&c);
         if (!error) error = RENAME(left,"a",right,"moved",RENAME_EXCHANGE);
         if (!error) error = exchange_race(left,"a",right,"moved");
+        if (!error) error = replay_exchange(left,right);
         if (!error) error = replace_empty(left,right);
         if (!error) error = directory(left,"tree",&tree);
         if (!error) error = directory(tree,"branch",&branch);

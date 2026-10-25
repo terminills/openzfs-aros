@@ -399,6 +399,7 @@ rg -a -q '^Native cross-parent directory exchange PASS directories=1 mixed=1 cyc
 rg -a -q '^Native exchange ancestry failure PASS forward=1 reverse=1 corrupt-cycle=1 unchanged=1' "$run/create-completion-checked.log"
 rg -a -q '^Native rename ancestry SA failure/retry result=0' "$run/create-completion-checked.log"
 rg -a -q '^Native ordinary rename corrupt ancestry PASS unchanged=1' "$run/create-completion-checked.log"
+rg -a -q '^Native exchange replay dispatch PASS native=1 byteswap=1 restored=1' "$run/create-completion-checked.log"
 rg -a -q '^Native upstream setattr/owner/mode/times write=1 result=0' "$run/create-completion-checked.log"
 rg -a -q '^Native protection xattr persistence write=1 result=0' "$run/create-completion-checked.log"
 rg -a -q '^Native writable mount lifecycle write=1 result=0' "$run/create-completion-checked.log"
