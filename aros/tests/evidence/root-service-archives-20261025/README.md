@@ -33,3 +33,20 @@ passed for all 172 distinct archives named in that snapshot. Results are in
 `verification-prefix.log`; the verification command exited zero. Later records
 are not covered by this second check until a subsequent verification is run.
 The archival process itself also verifies every archive before each deletion.
+
+## Completed pass
+
+The resumed fast-compression pass exited zero. Including the first 24 copies
+archived before the compression-setting change, the final manifest records
+881 loose copies removed, 280 unique executable archives, and 41383436288
+allocated bytes reclaimed from root (38.54 GiB). Archives occupy approximately
+3.5 GiB on the separate artifact filesystem. Final root free space measured
+167 GiB; this is a filesystem observation, not attribution of all concurrent
+space changes to this task.
+
+`verification-final.jsonl` is the complete manifest. Independent decompression
+and SHA256 verification passed for all 280 unique archives, with exit zero;
+see `verification-final.log`. `archive-files.sha256` additionally hashes the
+compressed archive bytes themselves. Original final build outputs, source,
+logs, screenshots and all RAID images were preserved. This completes the
+scoped service-copy archival pass, not cleanup of every old build artifact.
