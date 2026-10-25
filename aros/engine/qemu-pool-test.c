@@ -407,7 +407,11 @@ int main(int argc,char **argv)
     if(!rc){rc=data(&object,1);report("DMU write=%d object=%llu\n",rc,(unsigned long long)object);}
     if(!rc){rc=oz_zpl_fixture_create("qemu_mirror/files");report("ZPL fixture creation=%d\n",rc);}
     if(!rc){rc=cache_pressure_test();report("Native cache pressure files=320 readonly-passes=3 tests=%d\n",rc);}
+    VERIFY0(oz_cred_pop(fixture_scope));fixture_scope=NULL;
+    /* Delegation verifies absent identity and captures independent packet
+     * callers. Never run those assertions in the fixture's root scope. */
     if(!rc){rc=oz_delegation_test();report("Native upstream dataset delegation policy=%d\n",rc);}
+    if(!rc)rc=oz_cred_push(kcred,&fixture_scope);
     if(!rc){rc=oz_atime_persistence_test(B_TRUE);report("Native SA atime flush/persistence=%d\n",rc);}
     if(!rc){rc=oz_write_persistence_test(B_TRUE);report("Native upstream vnode write/fsync/append=%d\n",rc);}
     if(!rc)rc=oz_mount_lifecycle_test(B_TRUE);
@@ -431,7 +435,7 @@ int main(int argc,char **argv)
         }
         free(packed);
     }
-    VERIFY0(oz_cred_pop(fixture_scope));
+    if(fixture_scope)VERIFY0(oz_cred_pop(fixture_scope));
     kernel_fini();
     if(!rc && !exported)rc=EIO;
     if(!rc) {
