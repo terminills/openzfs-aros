@@ -2123,7 +2123,8 @@ static int storage_file_reuse(void)
     RCHECK(!pool_root_payload("public_file_reuse",0,0));
     RCHECK(!cli_command("C:zpool export public_file_reuse"));
     RCHECK(storage_request(5,"public_file_refused",NULL,NULL)!=0);
-    RCHECK(cli_command("C:zpool create -f -o cachefile=none -O mountpoint=none public_file_refused mirror /RAM/OZFileReuse/disk0 /RAM/OZFileReuse/disk1")!=0);
+    /* Exported reuse now requires explicit force, tested separately below. */
+    RCHECK(cli_command("C:zpool create -o cachefile=none -O mountpoint=none public_file_refused mirror /RAM/OZFileReuse/disk0 /RAM/OZFileReuse/disk1")!=0);
     RCHECK(!storage_request(7,"public_file_reuse",NULL,"readonly=off"));
     RCHECK(!pool_root_payload("public_file_reuse",0,0));
     RCHECK(!cli_command("C:zpool destroy public_file_reuse"));
@@ -2179,6 +2180,12 @@ static int storage_force_create(void)
     FCHECK(!pool_root_payload("public_force_source",0,0));
     FCHECK(!cli_command("C:zpool export public_force_source"));
     note("Public force-create prerequisites PASS active-refused=1 no-force-refused=1 source-payload-preserved=2\n");
+    stage="readonly-active-refusal";
+    FCHECK(!cli_command("C:zpool import -N -o cachefile=none -o readonly=on -d /RAM/OZForceCreate/disk0 -d /RAM/OZForceCreate/disk1 public_force_source"));
+    FCHECK(cli_command("C:zpool create -f -o cachefile=none -O mountpoint=none public_force_new mirror /RAM/OZForceCreate/disk0 /RAM/OZForceCreate/disk1")!=0);
+    FCHECK(!pool_root_payload("public_force_source",0,1));
+    FCHECK(!cli_command("C:zpool export public_force_source"));
+    note("Public force-create readonly-active refusal PASS payload-preserved=1\n");
     stage="exported-force-create";
     FCHECK(!cli_command("C:zpool create -f -o cachefile=none -O mountpoint=none public_force_new mirror /RAM/OZForceCreate/disk0 /RAM/OZForceCreate/disk1"));
     stage="new-pool-data";

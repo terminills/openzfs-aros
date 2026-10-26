@@ -2,6 +2,7 @@
 #ifndef OZ_IMPORT_PLATFORM_H
 #define OZ_IMPORT_PLATFORM_H
 #include <libzutil.h>
+#include "../cli/create-intent.h"
 #define OZ_IMPORT_ADMISSION "org.aros:import-admission"
 #define OZ_IMPORT_PATHS "paths"
 /* Caller-owned, stable canonical (realpath) explicit scan paths. This bounds label-derived config
@@ -22,6 +23,7 @@ int oz_cli_tryimport_end(void *);
 int oz_cli_import_begin(const char *,uint64_t,void *,size_t *,const void *,size_t,cred_t *,const struct oz_packet_security *,void **);
 int oz_cli_import_end(void *,int);
 int oz_cli_create_begin(const char *,const void *,size_t,const void *,size_t,cred_t *,const struct oz_packet_security *,void **);
+int oz_cli_create_request(const char *,void *,size_t *,const void *,size_t,cred_t *,const struct oz_packet_security *,void **);
 /* Caller retains checked file identity/access locks; reads only. */
 int oz_destroyed_file_backing(int,uint64_t);
 int oz_cli_add_begin(const char *,const void *,size_t,cred_t *,const struct oz_packet_security *,void **);

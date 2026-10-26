@@ -81,6 +81,9 @@
 #include "zfs_valstr.h"
 
 #include "statcommon.h"
+#ifdef __AROS__
+#include "../../aros/cli/create-intent.h"
+#endif
 
 libzfs_handle_t *g_zfs;
 
@@ -2288,6 +2291,13 @@ zpool_do_create(int argc, char **argv)
 		}
 
 		ret = 1;
+#ifdef __AROS__
+		/* Preserve explicit -f across the native service boundary. The
+		 * service strips this transient key before upstream pool creation. */
+		if (force && nvlist_add_boolean_value(nvroot,
+		    OZ_CREATE_FORCE, B_TRUE) != 0)
+			goto errout;
+#endif
 		if (zpool_create(g_zfs, poolname,
 		    nvroot, props, fsprops) == 0) {
 			zfs_handle_t *pool = zfs_open(g_zfs,

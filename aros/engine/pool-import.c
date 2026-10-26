@@ -523,13 +523,14 @@ static int destroyed_label_checksum(vdev_phys_t *label,uint64_t offset)
 /* New pool members may reuse an explicitly destroyed member. Require every label to
  * agree under the retained native reservation or checked file identity lock,
  * rather than trusting client preflight or accepting arbitrary nonzero media.
- * This is not force-create or an override for active/exported members. */
-static int destroyed_backing(struct oz_device *device,int fd,uint64_t bytes)
+ * Explicit force-create also permits coherently exported members, but never
+ * members belonging to a pool in the live namespace. */
+static int destroyed_backing(struct oz_device *device,int fd,uint64_t bytes,int allow_exported)
 {
     uint64_t size=P2ALIGN_TYPED(bytes,sizeof(vdev_label_t),uint64_t);
     if(size<VDEV_LABELS*sizeof(vdev_label_t))return EINVAL;
     vdev_phys_t *label=malloc(sizeof(*label));if(!label)return ENOMEM;
-    uint64_t pool=0,member=0;int error=0;
+    uint64_t pool=0,member=0,first_state=0;int error=0;
     for(unsigned l=0;l<VDEV_LABELS&&!error;l++){
         uint64_t offset=l*sizeof(vdev_label_t)+(l<VDEV_LABELS/2?0:size-VDEV_LABELS*sizeof(vdev_label_t))+VDEV_SKIP_SIZE;
         if(device)error=oz_device_transfer(device,label,sizeof(*label),offset,0);
@@ -542,17 +543,26 @@ static int destroyed_backing(struct oz_device *device,int fd,uint64_t bytes)
         if(!error&&(nvlist_lookup_uint64(config,ZPOOL_CONFIG_POOL_STATE,&state)||
             nvlist_lookup_uint64(config,ZPOOL_CONFIG_POOL_GUID,&current_pool)||
             nvlist_lookup_uint64(config,ZPOOL_CONFIG_GUID,&current_member)||
-            state!=POOL_STATE_DESTROYED||!current_pool||!current_member))error=EEXIST;
-        if(!error&&l&&(pool!=current_pool||member!=current_member))error=EEXIST;
-        if(!error){pool=current_pool;member=current_member;}
+            (state!=POOL_STATE_DESTROYED&&(!allow_exported||state!=POOL_STATE_EXPORTED))||
+            !current_pool||!current_member))error=EEXIST;
+        if(!error&&l&&(pool!=current_pool||member!=current_member||first_state!=state))error=EEXIST;
+        if(!error){pool=current_pool;member=current_member;first_state=state;}
         nvlist_free(config);
+    }
+    if(!error&&allow_exported){
+        /* A readonly import can leave EXPORTED labels on its members. The
+         * live namespace, not the label state, decides whether it is in use.
+         * The service owner serializes admission and the ensuing create. */
+        spa_namespace_enter(FTAG);
+        if(spa_by_guid(pool,0)!=NULL)error=EBUSY;
+        spa_namespace_exit(FTAG);
     }
     free(label);return error;
 }
 int oz_destroyed_file_backing(int fd,uint64_t size)
 {
     if(fd<0)return EBADF;
-    return destroyed_backing(NULL,fd,size);
+    return destroyed_backing(NULL,fd,size,0);
 }
 static int blank_backing(struct imported_files *p,unsigned i,unsigned char *buffer,int reuse_destroyed)
 {
@@ -577,12 +587,12 @@ static int blank_backing(struct imported_files *p,unsigned i,unsigned char *buff
         for(size_t b=0;!error&&b<n;b++)if(buffer[b])error=EEXIST;
         offset+=n;
     }
-    if(error==EEXIST&&reuse_destroyed)error=destroyed_backing(device,fd,size);
+    if(error==EEXIST&&reuse_destroyed)error=destroyed_backing(device,fd,size,reuse_destroyed==2);
     if(fd>=0)close(fd);
     oz_device_close(device);return error;
 }
-int oz_cli_create_begin(const char *name,const void *bytes,size_t size,
-    const void *property_bytes,size_t property_size,cred_t *caller,const struct oz_packet_security *security,void **out)
+static int create_begin(const char *name,const void *bytes,size_t size,
+    const void *property_bytes,size_t property_size,cred_t *caller,const struct oz_packet_security *security,void **out,int force)
 {
     if(!security||oz_packet_security_cred(security)!=caller)return EACCES;
     *out=NULL;int error=secpolicy_zfs(caller);if(error)return error;
@@ -620,7 +630,7 @@ int oz_cli_create_begin(const char *name,const void *bytes,size_t size,
         p->count=count;strcpy(p->name,active_name);
         for(unsigned i=0;!error&&i<count;i++) {
             error=!strncmp(paths[i],"/AROS/",6)?pin_native(p,i,paths[i],0):pin_file(p,i,paths[i],security,0);
-            if(!error)error=blank_backing(p,i,buffer,1);
+            if(!error)error=blank_backing(p,i,buffer,force?2:1);
         }
     }
     if(!error){allowed.paths=p->paths;error=oz_import_config_check(&allowed,config);}
@@ -629,6 +639,31 @@ int oz_cli_create_begin(const char *name,const void *bytes,size_t size,
     free(buffer);nvlist_free(config);nvlist_free(root);nvlist_free(props);
     if(error){if(p)release(p);return error;}
     *out=p;return 0;
+}
+int oz_cli_create_begin(const char *name,const void *bytes,size_t size,
+    const void *properties,size_t property_size,cred_t *caller,const struct oz_packet_security *security,void **out)
+{
+    return create_begin(name,bytes,size,properties,property_size,caller,security,out,0);
+}
+int oz_cli_create_request(const char *name,void *bytes,size_t *size,
+    const void *properties,size_t property_size,cred_t *caller,const struct oz_packet_security *security,void **out)
+{
+    *out=NULL;
+    if(!security||oz_packet_security_cred(security)!=caller)return EACCES;
+    int error=secpolicy_zfs(caller);if(error)return error;
+    nvlist_t *root=NULL;boolean_t force=B_FALSE;
+    error=nvlist_unpack(bytes,*size,&root,0);
+    if(!error&&nvlist_exists(root,OZ_CREATE_FORCE)){
+        error=nvlist_lookup_boolean_value(root,OZ_CREATE_FORCE,&force);
+        if(!error)error=nvlist_remove_all(root,OZ_CREATE_FORCE);
+        if(!error){
+            char *packed=bytes;
+            error=nvlist_pack(root,&packed,size,NV_ENCODE_NATIVE,0);
+        }
+    }
+    nvlist_free(root);
+    if(!error)error=create_begin(name,bytes,*size,properties,property_size,caller,security,out,force);
+    return error;
 }
 struct cli_add_scope {
     struct imported_files *files;
