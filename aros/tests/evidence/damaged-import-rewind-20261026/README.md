@@ -44,3 +44,32 @@ fixture. Keep the normal native runner's explicit compiler/SDK, production
 service/library, handler and runtime inputs. The runner requires the two
 recovery cycles, exact data and unchanged image hashes; it does not accept
 the ordinary native-import completion message as a substitute.
+
+## Writable recovery and separate cold boot
+
+`native-import-run.44SZBNSS` repeats the two readonly preview/refusal cycles,
+then commits `import -FX` without readonly, writes and flushes
+`after-recovery`, and exports. Ordinary readonly import in the same guest
+reads both the original payload and the new exact string. Both member
+overlays change; the original corrupted fixture backings remain unchanged.
+
+The completed writer overlays are converted to new full raw images under
+`qemu-run.rewind-cold.9G7bvYAM`. Separate eight-CPU guest `A9D9oG7V` uses
+fresh overlays over those repaired images, performs **ordinary** readonly
+import (no rewind flags), and reads both exact files. Write refusal and
+export pass; both repaired backings and reader overlays remain unchanged.
+Independent host `zdb -e -bcc` of extracted repaired members returns zero
+and reports no leaks. The writer's in-process caches cannot supply this
+cold reader's data.
+
+Set `AROS_TEST_IMPORT_REWIND_MODE=commit` for the writer or `cold` for a
+separate reader of repaired full-disk images; default `preview` preserves
+the original readonly-only qualification. `replay-inputs.sh` records the
+exact private runtime inputs. The runner requires mode-specific assertions
+and verifies the correct changed/unchanged image policy.
+
+This extends the earlier readonly result to persistent writable recovery
+for this mirror fixture. It does not prove ordinary non-extreme `-F`, all
+topologies, interrupted recovery or physical durability. The Manager
+recovery workflow remains open. All three completed generated ISOs were
+hashed and pruned; logs, hashes, scripts and small overlays are retained.

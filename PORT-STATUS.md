@@ -386,8 +386,13 @@ selected dependencies, not a newly qualified official or bootstrap release.
   contents through the native DOS handler. Two cycles leave backing and
   overlay hashes unchanged. Host zdb independently rejects the latest state
   and verifies an older TXG with no leaks. See
-  `aros/tests/evidence/damaged-import-rewind-20261026`; this does not prove
-  writable recovery, cold persistence or physical durability.
+  `aros/tests/evidence/damaged-import-rewind-20261026`. The subsequent
+  writable `import -FX` test also passes: new DOS file flushed, exported,
+  then read alongside the original file by ordinary readonly import in a
+  separate eight-CPU guest. Host zdb verifies the repaired current state
+  with no leaks; cold backing/overlay hashes are unchanged. This is one
+  mirror/MOS-root corruption fixture, not all rewind modes, topologies,
+  interrupted recovery, the Manager recovery workflow or physical durability.
 - Not every upstream feature or topology has end-to-end AROS validation.
 - Native and file-backed pool creation accept blank extents or consistently labeled destroyed
   members (all four checksummed labels must agree on destroyed state and pool/member GUIDs).

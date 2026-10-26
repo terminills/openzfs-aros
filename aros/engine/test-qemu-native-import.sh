@@ -143,6 +143,9 @@ usb_inflight=${AROS_TEST_USB_INFLIGHT_WRITE:-0}
 usb_cli_clear=${AROS_TEST_USB_CLI_CLEAR:-0}
 import_rewind=${AROS_TEST_IMPORT_REWIND:-0}
 [[ $import_rewind == 0 || $import_rewind == 1 ]]
+import_rewind_mode=${AROS_TEST_IMPORT_REWIND_MODE:-preview}
+[[ $import_rewind_mode == preview || $import_rewind_mode == commit || $import_rewind_mode == cold ]]
+[[ $import_rewind == 1 || $import_rewind_mode == preview ]]
 if [[ $import_rewind == 1 ]];then
     [[ $native_bus == ide && $members == both && $layout == mirror && $writable == 0 && $gpt == 0 && $gui == 0 && -z ${AROS_TEST_WHOLE_CLI_LINK:-} ]]
     [[ -f ${AROS_TEST_CLI_DIR:?rewind test needs packaged CLI}/zpool ]]
@@ -382,6 +385,9 @@ if [[ $import_rewind == 1 ]];then
     sha256sum "$run/zpool" > "$run/rewind-cli.sha256"
     gui_maps+=(-map "$run/zpool" /C/zpool)
     gui_flags+=(-DOZ_NATIVE_IMPORT_REWIND)
+    if [[ $import_rewind_mode == commit ]];then gui_flags+=(-DOZ_NATIVE_IMPORT_REWIND_COMMIT);fi
+    if [[ $import_rewind_mode == cold ]];then gui_flags+=(-DOZ_NATIVE_IMPORT_REWIND_COLD);fi
+    printf '%s\n' "$import_rewind_mode" > "$run/rewind-mode.txt"
 fi
 if [[ $usb_cli_clear == 1 ]];then
     cp "$AROS_TEST_CLI_DIR/zpool" "$run/zpool"
@@ -1294,12 +1300,26 @@ printf 'quit\n' | socat - "UNIX-CONNECT:$run/monitor" >/dev/null
 wait "$pid"
 trap - EXIT
 if [[ $import_rewind == 1 ]];then
-    rg -q '^RESULT native damaged import rewind PASS cycles=2 ordinary-refused=2 absent-after-refusal=2 readonly-FX=2 exact-DOS=2 write-refused=2' "$run/serial.log"
+    if [[ $import_rewind_mode != cold ]];then
+        rg -q '^RESULT native damaged import rewind PASS cycles=2 ordinary-refused=2 absent-after-refusal=2 readonly-FX=2 exact-DOS=2 write-refused=2' "$run/serial.log"
+    fi
     rg -q '^RESULT native damaged rewind test PASS line=0' "$run/serial.log"
     [[ -s "$run/overlays.sha256" ]]
     sha256sum -c "$run/backing.sha256"
-    sha256sum -c "$run/overlays.sha256"
-    echo "PASS: native damaged-pool readonly extreme rewind, exact DOS and unchanged images: $run"
+    if [[ $import_rewind_mode == commit ]];then
+        rg -q '^RESULT native damaged rewind commit PASS writable-FX=1 new-file=1 flushed=1 exported=1' "$run/serial.log"
+        if sha256sum -c "$run/overlays.sha256" > "$run/rewind-overlay-change.log" 2>&1;then
+            echo 'FAIL: committed recovery did not change either overlay';exit 1
+        fi
+        rg -Fqx "$run/disk0.qcow2: FAILED" "$run/rewind-overlay-change.log"
+        rg -Fqx "$run/disk1.qcow2: FAILED" "$run/rewind-overlay-change.log"
+    else
+        sha256sum -c "$run/overlays.sha256"
+    fi
+    if [[ $import_rewind_mode != preview ]];then
+        rg -q '^RESULT native repaired pool readback PASS ordinary-import=1 original-file=1 post-recovery-file=1 readonly=1' "$run/serial.log"
+    fi
+    echo "PASS: native damaged-pool rewind mode=$import_rewind_mode, exact DOS and verified image policy: $run"
     exit 0
 fi
 if [[ $labelclear_only == 1 ]];then

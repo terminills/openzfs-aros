@@ -420,6 +420,7 @@ int main(void)
         ,TAG_DONE)==0);
     for(unsigned i=0;i<1500;i++){Forbid();int ready=FindPort((CONST_STRPTR)OZ_ADMISSION_PORT)!=NULL;Permit();if(ready)break;Delay(1);}
 #ifdef OZ_NATIVE_IMPORT_REWIND
+#ifndef OZ_NATIVE_IMPORT_REWIND_COLD
     for(unsigned cycle=0;cycle<2;cycle++) {
         /* Latest MOS root is deliberately damaged in BOTH disposable
          * members. An ordinary import must fail again after readonly
@@ -437,6 +438,34 @@ int main(void)
         CHECK(SystemTags((CONST_STRPTR)"C:zpool export qemu_mirror",TAG_DONE)==0);
     }
     note("RESULT native damaged import rewind PASS cycles=2 ordinary-refused=2 absent-after-refusal=2 readonly-FX=2 exact-DOS=2 write-refused=2");
+#endif
+#ifdef OZ_NATIVE_IMPORT_REWIND_COMMIT
+    CHECK(SystemTags((CONST_STRPTR)"C:zpool import -N -f -FX -o cachefile=none -d /AROS/ata.device/0/partition/0 -d /AROS/ata.device/1/partition/0 qemu_mirror",TAG_DONE)==0);
+    CHECK(!oz_mount_control(OZ_ADMISSION_PORT,"qemu_mirror/files","OZREWIND",OZ_MOUNT_ATTACH,0));
+    file=Open((CONST_STRPTR)"OZREWIND:after-recovery",MODE_NEWFILE);CHECK(file);
+    CHECK(Write(file,"committed-after-rewind",22)==22);CHECK(Flush(file));CHECK(Close(file));file=0;
+    CHECK(!oz_mount_control(OZ_ADMISSION_PORT,"qemu_mirror/files","",OZ_MOUNT_DETACH,0));
+    CHECK(SystemTags((CONST_STRPTR)"C:zpool export qemu_mirror",TAG_DONE)==0);
+    note("RESULT native damaged rewind commit PASS writable-FX=1 new-file=1 flushed=1 exported=1");
+#endif
+#if defined(OZ_NATIVE_IMPORT_REWIND_COMMIT) || defined(OZ_NATIVE_IMPORT_REWIND_COLD)
+    CHECK(SystemTags((CONST_STRPTR)"C:zpool import -N -f -o cachefile=none -o readonly=on -d /AROS/ata.device/0/partition/0 -d /AROS/ata.device/1/partition/0 qemu_mirror",TAG_DONE)==0);
+    CHECK(!oz_mount_control(OZ_ADMISSION_PORT,"qemu_mirror/files","OZREWIND",OZ_MOUNT_ATTACH,OZ_MOUNT_READONLY));
+    {
+        const char original[]="OpenZFS on AROS: real ZPL file on a two-device QEMU mirror.\n";
+        const char *names[]={"OZREWIND:hello.txt","OZREWIND:after-recovery"};
+        const char *expected[]={original,"committed-after-rewind"};
+        for(unsigned i=0;i<2;i++) {
+            char data[128];file=Open((CONST_STRPTR)names[i],MODE_OLDFILE);CHECK(file);
+            CHECK(Read(file,data,sizeof(data))==(LONG)strlen(expected[i]));
+            CHECK(!memcmp(data,expected[i],strlen(expected[i])));CHECK(Close(file));file=0;
+        }
+    }
+    file=Open((CONST_STRPTR)"OZREWIND:cold-must-not-write",MODE_NEWFILE);CHECK(!file&&IoErr()==ERROR_DISK_WRITE_PROTECTED);
+    CHECK(!oz_mount_control(OZ_ADMISSION_PORT,"qemu_mirror/files","",OZ_MOUNT_DETACH,0));
+    CHECK(SystemTags((CONST_STRPTR)"C:zpool export qemu_mirror",TAG_DONE)==0);
+    note("RESULT native repaired pool readback PASS ordinary-import=1 original-file=1 post-recovery-file=1 readonly=1");
+#endif
     goto done;
 #endif
 #ifdef OZ_NATIVE_LABELCLEAR_ONLY
