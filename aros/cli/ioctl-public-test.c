@@ -320,7 +320,7 @@ static int invoke_accounting_upgrade(const struct oz_ticket *ticket,LONG fd,cons
     if(!error)error=w->engine_error;
     free(w);return error;
 }
-static int denied_accounting_upgrade(const char *dataset,const struct oz_ticket *root_ticket,LONG root_fd)
+static int accounting_upgrade_access(const char *dataset,const struct oz_ticket *root_ticket,LONG root_fd,int allowed)
 {
     int error=0,switched=0,opened=0;LONG fd=-1;struct oz_ticket ticket={0};
     struct Library *secBase=OpenLibrary((CONST_STRPTR)SECURITYNAME,SECURITYVERSION);
@@ -334,13 +334,48 @@ static int denied_accounting_upgrade(const char *dataset,const struct oz_ticket 
     TEST(!oz_session_open(OZ_ADMISSION_PORT,&ticket));opened=1;
     TEST(!oz_control_open(OZ_ADMISSION_PORT,&ticket,&fd));
     int denied=invoke_accounting_upgrade(&ticket,fd,dataset);
-    TEST(denied==EPERM||denied==EACCES);
+    TEST(allowed ? denied==0 : (denied==EPERM||denied==EACCES));
 done:
     if(fd>0)(void)oz_control_close(OZ_ADMISSION_PORT,&ticket,fd);
     if(opened)(void)oz_session_close(OZ_ADMISSION_PORT,&ticket);
     if(switched){secLogoutA(quiet);if(secLoginA(root)!=secOWNER_SYSTEM)error=EACCES;}
     if(secBase)CloseLibrary(secBase);
-    if(!error){const char *p="Public accounting upgrade authorization PASS changed-user=1 own-session-denied=1\n";while(*p)RawPutChar(*p++);}
+    if(!error&&!allowed){const char *p="Public accounting upgrade authorization PASS changed-user=1 own-session-denied=1\n";while(*p)RawPutChar(*p++);}
+    return error;
+}
+static int accounting_upgrade_grant(const char *dataset,const struct oz_ticket *ticket,LONG fd,int revoke)
+{
+    nvlist_t *acl=fnvlist_alloc(),*permissions=fnvlist_alloc();
+    fnvlist_add_boolean(permissions,"version");
+    fnvlist_add_nvlist(acl,"ul$77",permissions);
+    size_t packed_size=0;
+    char *packed=fnvlist_pack(acl,&packed_size);
+    size_t size=sizeof(struct oz_ioctl_wire)+sizeof(zfs_cmd_t)+packed_size;
+    struct oz_ioctl_wire *w=calloc(1,size);
+    int error=ENOMEM;
+    if(w){
+        prepare(w,ticket,fd,dataset,0);
+        w->command=ZFS_IOC_SET_FSACL;w->src_size=packed_size;
+        zfs_cmd_t *command=(void *)(w+1);
+        command->zc_nvlist_src_size=packed_size;command->zc_perm_action=revoke;
+        memcpy(command+1,packed,packed_size);
+        error=oz_ioctl_request(OZ_ADMISSION_PORT,w,size);
+        if(!error)error=w->engine_error;
+    }
+    free(w);fnvlist_pack_free(packed,packed_size);
+    fnvlist_free(permissions);fnvlist_free(acl);return error;
+}
+static int delegated_accounting_upgrade(const char *dataset,const struct oz_ticket *ticket,LONG fd)
+{
+    int error=0,granted=0;
+    TEST(!accounting_upgrade_access(dataset,ticket,fd,0));
+    TEST(!accounting_upgrade_grant(dataset,ticket,fd,0));granted=1;
+    TEST(!accounting_upgrade_access(dataset,ticket,fd,1));
+    TEST(!accounting_upgrade_grant(dataset,ticket,fd,1));granted=0;
+    TEST(!accounting_upgrade_access(dataset,ticket,fd,0));
+    {const char *p="Public accounting upgrade delegation PASS denied=1 granted=1 revoked=1\n";while(*p)RawPutChar(*p++);}
+done:
+    if(granted){int cleanup=accounting_upgrade_grant(dataset,ticket,fd,1);if(!error)error=cleanup;}
     return error;
 }
 static int denied_bootenv(const char *pool,const struct oz_ticket *root_ticket,LONG root_fd)
@@ -500,7 +535,7 @@ int oz_public_ioctl_test(const char *pool)
     TEST(!upstream_core_datasets(pool));
     char accounting_dataset[256];
     snprintf(accounting_dataset,sizeof(accounting_dataset),"%s/files",pool);
-    TEST(!denied_accounting_upgrade(accounting_dataset,&ticket,fd));
+    TEST(!delegated_accounting_upgrade(accounting_dataset,&ticket,fd));
     TEST(!oz_public_accounting_upgrade_test(accounting_dataset,0));
     TEST(!oz_control_close(OZ_ADMISSION_PORT,&ticket,fd));
     prepare(w,&ticket,fd,pool,capacity);fd=-1;

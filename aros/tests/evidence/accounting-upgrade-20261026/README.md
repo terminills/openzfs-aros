@@ -43,5 +43,21 @@ pruned (4.56 GiB). This closes the tested mounted and privilege-denial cases,
 not legacy-format conversion, delegated permission success, hardware durability
 or official-nightly compatibility. The private runtime boundary above remains.
 
+## Delegated accounting upgrade
+
+Eight-vCPU run `public-service-run.zhX6rDR9` passed with a rebuilt client and
+the same recorded fresh-source service. The actual authenticated SET_FSACL
+transport grants only the upstream `version` permission to local user 77.
+The reader's fresh session is denied before grant, succeeds after grant,
+and is denied again after revocation. Reusing the privileged ticket as the
+reader remains denied throughout. Test cleanup restores root and revokes an
+outstanding grant if an assertion fails. The runner requires the delegation
+marker alongside the prior authority, mounted and readonly markers.
+
+The full RAM-backed mirror/DOS suite also passed; the runner exited zero and
+pruned the disposable ISO after recording its hash. Evidence is in
+`delegation/`. This verifies delegated authorization on current-format
+datasets, not conversion of legacy accounting metadata.
+
 Full build logs and objects remain under
 `/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/source-engine.sa4fWOFY`.

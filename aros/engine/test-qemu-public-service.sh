@@ -507,6 +507,7 @@ while :;do
         controls=$(rg -c '^Public native control descriptors PASS capacity=64 ownership=1 stale=1 session-cleanup=1' "$run/serial-results.log" || true)
         if [[ $count == 3 && $sessions == 2 && $reaped == 2 ]] &&
            { [[ ${AROS_TEST_REQUIRE_ACCOUNTING_UPGRADE:-0} != 1 ]] || {
+               rg -q '^Public accounting upgrade delegation PASS denied=1 granted=1 revoked=1' "$run/serial-results.log" &&
                rg -q '^Public accounting upgrade authorization PASS changed-user=1 own-session-denied=1' "$run/serial-results.log" &&
                rg -q '^Public accounting mounted upgrade PASS writable=1 repeat=1' "$run/serial-results.log" &&
                rg -q '^Public accounting upgrade PASS readonly=1 malformed=1 absent-gated=1' "$run/serial-results.log"; }; } &&
