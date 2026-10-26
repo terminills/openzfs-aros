@@ -18,3 +18,11 @@ Checks performed without launching QEMU:
 
 Logs retained alongside this report. Working artifacts:
 `/mnt/short-term/openzfs-runner-storage.9N9lHUVG`.
+
+Follow-up: a fresh private bootenv replay completed all guest assertions but
+the image-pruner returned 2 because it compared the external artifact device
+with the external checkout device. It now compares against `/`, matching the
+allocation guard. A dry run accepted the exact completed private run and
+listed its disposable ISO; a system-filesystem destination was still refused.
+No run eligibility, image selection, hash retention or active-file checks
+were relaxed.
