@@ -54,5 +54,14 @@ and subsequent checked pruning retain the ISO hash, logs and source provenance.
 An earlier attempt selected the wrong host package tool and never booted; its
 failure log is retained too. Neither failure has been erased or called a pass.
 
-Still required before promotion: bootenv cold persistence, explicit denial
-and read-only checks, and the complete repaired official runtime/SDK lane.
+Follow-up fresh run `public-service-run.eUH5a2Cg` passed with required bootenv
+markers and runner exit 0. A changed identity could not reuse a privileged
+ticket; a reader's own session could GET but not SET; the full record remained
+unchanged. After read-only reimport, privileged GET succeeded, SET returned
+EROFS, and complete record comparison proved no mutation. The runner now
+supports requiring all three bootenv markers before accepting a run.
+Its checked cleanup removed the disposable ISO and retained the hash/logs.
+
+Still required before promotion: bootenv cold persistence and the complete
+repaired official runtime/SDK lane. Private-runtime passing results do not
+establish current official-nightly compatibility.

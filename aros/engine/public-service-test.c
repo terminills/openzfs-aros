@@ -104,6 +104,7 @@ void oz_upstream_mount_cache_finish(void);
 #endif
 #ifdef OZ_NATIVE_DISPATCHER
 int oz_public_ioctl_test(const char *);
+int oz_public_bootenv_readonly_test(const char *);
 #endif
 static void child_exited(IPTR status,IPTR result){*(LONG *)result=(LONG)status;}
 static int present(const char *name){Forbid();int found=FindPort((CONST_STRPTR)name)!=NULL;Permit();return found;}
@@ -3198,6 +3199,9 @@ static int storage_test(int gui){
     STORAGE_CHECK(!oz_upstream_file_vdev_test(1,storage_directory));
 #endif
     STORAGE_CHECK(!storage_alias_request(7,2));
+#ifdef OZ_NATIVE_DISPATCHER
+    STORAGE_CHECK(!oz_public_bootenv_readonly_test("public_mirror"));
+#endif
 #ifdef OZ_TEST_UPSTREAM_INIT
     STORAGE_CHECK(!oz_upstream_file_vdev_test(2,storage_directory));
     STORAGE_CHECK(!oz_upstream_promotion_readonly_test(1));

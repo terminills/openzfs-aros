@@ -119,6 +119,29 @@ done:
     if(initialized)libzfs_core_fini();
     nvlist_free(props);nvlist_free(snaps);nvlist_free(result);return error;
 }
+static int same_nvlist(nvlist_t *a,nvlist_t *b)
+{
+    size_t as=0,bs=0;
+    char *ap=fnvlist_pack(a,&as),*bp=fnvlist_pack(b,&bs);
+    int same=as==bs&&!memcmp(ap,bp,as);
+    fnvlist_pack_free(ap,as);fnvlist_pack_free(bp,bs);return same;
+}
+int oz_public_bootenv_readonly_test(const char *pool)
+{
+    int error=0,initialized=0;
+    nvlist_t *before=NULL,*after=NULL,*input=fnvlist_alloc();
+    TEST(!libzfs_core_init());initialized=1;
+    TEST(!lzc_get_bootenv(pool,&before));
+    fnvlist_add_uint64(input,"version",1);
+    fnvlist_add_string(input,"aros-test","readonly-must-not-write");
+    TEST(lzc_set_bootenv(pool,input)==EROFS);
+    TEST(!lzc_get_bootenv(pool,&after));TEST(same_nvlist(before,after));
+done:
+    if(initialized)libzfs_core_fini();
+    nvlist_free(before);nvlist_free(after);nvlist_free(input);
+    if(!error){const char *p="Public upstream bootenv readonly PASS get=1 set-erofs=1 unchanged=1\n";while(*p)RawPutChar(*p++);}
+    return error;
+}
 static int upstream_bootenv(const char *pool)
 {
     int error=0,initialized=0,changed=0;
@@ -237,6 +260,42 @@ done:
     }
     return error;
 }
+static int denied_bootenv(const char *pool,const struct oz_ticket *root_ticket,LONG root_fd)
+{
+    int error=0,switched=0,opened=0;LONG fd=-1;struct oz_ticket ticket={0};
+    struct Library *secBase=OpenLibrary((CONST_STRPTR)SECURITYNAME,SECURITYVERSION);
+    struct TagItem quiet[]={{secT_Quiet,TRUE},{TAG_DONE,0}};
+    struct TagItem reader[]={{secT_UserID,(IPTR)"ozreader"},{secT_Password,(IPTR)""},{TAG_DONE,0}};
+    struct TagItem root[]={{secT_UserID,(IPTR)"oztestroot"},{secT_Password,(IPTR)""},{TAG_DONE,0}};
+    nvlist_t *empty=fnvlist_alloc(),*input=fnvlist_alloc(),*before=NULL,*result=NULL;
+    fnvlist_add_uint64(input,"version",1);
+    fnvlist_add_string(input,"aros-test","unprivileged-must-not-write");
+    TEST(secBase!=NULL);
+    TEST(!invoke_nvlist(root_ticket,root_fd,ZFS_IOC_GET_BOOTENV,pool,empty,&before));
+    secLogoutA(quiet);switched=1;
+    TEST(secLoginA(reader)==((77UL<<16)|88));
+    TEST(invoke_nvlist(root_ticket,root_fd,ZFS_IOC_SET_BOOTENV,pool,input,&result)==EACCES);
+    TEST(!oz_session_open(OZ_ADMISSION_PORT,&ticket));opened=1;
+    TEST(!oz_control_open(OZ_ADMISSION_PORT,&ticket,&fd));
+    int denied=invoke_nvlist(&ticket,fd,ZFS_IOC_SET_BOOTENV,pool,input,&result);
+    TEST(denied==EPERM||denied==EACCES);
+    nvlist_free(result);result=NULL;
+    TEST(!invoke_nvlist(&ticket,fd,ZFS_IOC_GET_BOOTENV,pool,empty,&result));
+    TEST(same_nvlist(before,result));
+done:
+    if(fd>0)(void)oz_control_close(OZ_ADMISSION_PORT,&ticket,fd);
+    if(opened)(void)oz_session_close(OZ_ADMISSION_PORT,&ticket);
+    if(switched){secLogoutA(quiet);if(secLoginA(root)!=secOWNER_SYSTEM)error=EACCES;}
+    if(!error){
+        nvlist_free(result);result=NULL;
+        error=invoke_nvlist(root_ticket,root_fd,ZFS_IOC_GET_BOOTENV,pool,empty,&result);
+        if(!error&&!same_nvlist(before,result))error=EIO;
+    }
+    if(secBase)CloseLibrary(secBase);
+    nvlist_free(empty);nvlist_free(input);nvlist_free(before);nvlist_free(result);
+    if(!error){const char *p="Public upstream bootenv authorization PASS changed-user=1 own-session-denied=1 reader-get=1 unchanged=1\n";while(*p)RawPutChar(*p++);}
+    return error;
+}
 static int snapshot_commands(const char *pool,const struct oz_ticket *ticket,LONG fd)
 {
     int error=0;LONG cleanup=-1;
@@ -352,6 +411,7 @@ int oz_public_ioctl_test(const char *pool)
     TEST(oz_ioctl_request(OZ_ADMISSION_PORT,w,length)==ENOTSUP);
     TEST(!snapshot_commands(pool,&ticket,fd));
     TEST(!denied_snapshot(pool,&ticket,fd));
+    TEST(!denied_bootenv(pool,&ticket,fd));
     TEST(!upstream_core_commands(pool));
     TEST(!upstream_bootenv(pool));
     TEST(!upstream_core_datasets(pool));

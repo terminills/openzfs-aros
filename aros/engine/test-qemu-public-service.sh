@@ -506,6 +506,10 @@ while :;do
         reaped=$(rg -c '^Public task-exit session reclamation PASS cycles=4 sessions=32' "$run/serial-results.log" || true)
         controls=$(rg -c '^Public native control descriptors PASS capacity=64 ownership=1 stale=1 session-cleanup=1' "$run/serial-results.log" || true)
         if [[ $count == 3 && $sessions == 2 && $reaped == 2 ]] &&
+           { [[ ${AROS_TEST_REQUIRE_BOOTENV:-0} != 1 ]] || {
+               rg -q '^Public upstream bootenv PASS get=1 set=1 invalid-preserved=1 restored=1' "$run/serial-results.log" &&
+               rg -q '^Public upstream bootenv authorization PASS changed-user=1 own-session-denied=1 reader-get=1 unchanged=1' "$run/serial-results.log" &&
+               rg -q '^Public upstream bootenv readonly PASS get=1 set-erofs=1 unchanged=1' "$run/serial-results.log"; }; } &&
            { [[ $require_errno == 0 ]] || rg -q '^RESULT pre-storage errno PASS' "$run/serial-results.log"; } &&
            { [[ -z $pbkdf2 ]] || rg -q '^RESULT native PBKDF2 known answers PASS' "$run/serial-results.log"; } &&
            { [[ -z $nvpair_test ]] || rg -q '^RESULT native nvpair XDR PASS' "$run/serial-results.log"; } &&
