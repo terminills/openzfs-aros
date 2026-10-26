@@ -162,3 +162,27 @@ Force create/add now have file and virtual-native-device runtime evidence
 through both interfaces. This does not close force attach/replace,
 potentially-active or arbitrary nonzero-media admission, physical failure
 qualification, or the remaining full-port requirements.
+
+## CLI force attach/replace and DOS alias lookup
+
+The initial run `public-service-run.ogJJTcex` failed to locate the existing
+member: `/RAM/...` did not match the canonical RAM Disk path stored in the
+pool. A GUID-based replay (`NBvxLcKg`) passed, isolating the path lookup
+problem from protected force admission. For native AROS file clients,
+absolute path mismatches now compare existing DOS canonical identities via
+Lock/NameFromLock. Native device names and missing-path literal matching
+are unchanged; this is not a general relative-path alias qualification.
+
+Fresh CLI compilation/link and the rebuilt acceptance client passed in
+`public-service-run.EWS7gGdC` with the normal `/RAM/...` command arguments.
+Attach and replace each refused active, readonly-imported, and no-force
+exported reuse, then accepted explicit exported reuse. Resilver completed,
+six ONLINE leaves were verified, and target data remained exact following
+readonly reimport. The complete storage suite and runner exited zero.
+Evidence and the initial failure are retained in
+`evidence/force-attach-alias-20261026`.
+
+This uses private CRT/pthread dependencies and an adapter rebuild over
+retained upstream engine objects. Manager and native-device force
+attach/replace, arbitrary nonzero-media force, official SDK qualification,
+and physical failure testing remain open; this is not full-port completion.

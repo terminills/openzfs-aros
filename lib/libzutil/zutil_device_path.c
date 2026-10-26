@@ -219,8 +219,25 @@ zfs_strcmp_pathname(const char *name, const char *cmp, int wholedisk)
 			return (ENOMEM);
 	}
 
-	if ((path_len != cmp_len) || strcmp(path_name, cmp_name))
+	if ((path_len != cmp_len) || strcmp(path_name, cmp_name)) {
+#ifdef OZ_NATIVE_LABEL_CLIENT
+		/* DOS assigns and volume names can identify the same existing
+		 * backing file. Compare real DOS identities via NameFromLock,
+		 * not lexical guesses or the CRT realpath walker. Keep missing
+		 * paths' literal matching and native device identities unchanged. */
+		if (!wholedisk && strncmp(name, "/AROS/", 6) != 0 &&
+		    strncmp(cmp, "/AROS/", 6) != 0) {
+			char *left = zfs_get_underlying_path(name);
+			char *right = zfs_get_underlying_path(cmp);
+			boolean_t same = left && right && strcmp(left, right) == 0;
+			free(left);
+			free(right);
+			if (same)
+				return (0);
+		}
+#endif
 		return (ENOENT);
+	}
 
 	return (0);
 }

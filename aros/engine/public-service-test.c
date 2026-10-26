@@ -1920,7 +1920,7 @@ done:
     return error;
 #undef FCHECK
 }
-static int reuse_change_guid(const char *suffix,char *guid,unsigned wanted_leaves)
+static int pool_change_guid(const char *pool,const char *suffix,char *guid,unsigned wanted_leaves)
 {
     /* File paths are canonicalized to DOS volume syntax by admission; each
      * fixture basename is unique. Native paths retain their full identity. */
@@ -1930,7 +1930,7 @@ static int reuse_change_guid(const char *suffix,char *guid,unsigned wanted_leave
     struct oz_client client;static struct oz_message request;
     if(!oz_client_open(&client))return ENOMEM;
     memset(&request,0,sizeof(request));request.operation=4;
-    strcpy(request.target,"public_reuse_target");
+    snprintf(request.target,sizeof(request.target),"%s",pool);
     int error=oz_submit(&client,&request)==OZ_OK?0:EIO;
     if(!error){
         struct oz_message *reply=NULL;while(!(reply=oz_poll(&client)))Delay(1);
@@ -1951,6 +1951,10 @@ static int reuse_change_guid(const char *suffix,char *guid,unsigned wanted_leave
         oz_message_free(reply);
     }
     oz_client_close(&client);return error;
+}
+static int reuse_change_guid(const char *suffix,char *guid,unsigned wanted_leaves)
+{
+    return pool_change_guid("public_reuse_target",suffix,guid,wanted_leaves);
 }
 static int reuse_change_request(int manager,unsigned op,const char *guid,
     const char *first,const char *second,int force)
@@ -2284,7 +2288,7 @@ static int storage_force_create(void)
     FCHECK(!pool_root_payload("public_force_target",0,1));
     FCHECK(!cli_command("C:zpool export public_force_target"));
     for(unsigned replacing=0;replacing<2;replacing++){
-        char path[80],command[768],change[512];
+        char path[80],command[768],change[512],guid[32];
         unsigned member=5+replacing;storage_member(path,sizeof(path),member);
         stage=replacing?"force-replace-fixture":"force-attach-fixture";
         file=Open((CONST_STRPTR)path,MODE_NEWFILE);FCHECK(file);
@@ -2293,6 +2297,9 @@ static int storage_force_create(void)
         snprintf(command,sizeof(command),"C:zpool create -o cachefile=none -O mountpoint=none public_attach_donor /RAM/OZForceCreate/disk%u",member);
         FCHECK(!cli_command(command));FCHECK(!pool_root_payload("public_attach_donor",1,0));
         FCHECK(!cli_command("C:zpool import -N -o cachefile=none -d /RAM/OZForceCreate public_force_target"));
+        FCHECK(!pool_change_guid("public_force_target","/disk2",guid,replacing?6:5));
+        /* Exercise DOS assign spelling against the canonical RAM Disk name
+         * stored in pool config; GUID inventory is checked independently. */
         snprintf(change,sizeof(change),"public_force_target /RAM/OZForceCreate/disk2 /RAM/OZForceCreate/disk%u",member);
         snprintf(command,sizeof(command),"C:zpool %s -f %s",replacing?"replace":"attach",change);
         stage=replacing?"force-replace-active":"force-attach-active";
@@ -2308,6 +2315,7 @@ static int storage_force_create(void)
         FCHECK(!cli_command(command));
         FCHECK(!cli_command("C:zpool wait -t resilver public_force_target"));
         if(replacing)FCHECK(!cli_command("C:zpool wait -t replace public_force_target"));
+        FCHECK(!pool_change_guid("public_force_target",path,guid,6));
         FCHECK(!pool_root_payload("public_force_target",0,0));
         FCHECK(!cli_result("C:zpool list -H -o health public_force_target >T:cli-package-output.txt","ONLINE"));
         FCHECK(!cli_command("C:zpool export public_force_target"));
