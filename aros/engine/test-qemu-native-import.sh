@@ -62,14 +62,14 @@ if [[ ${AROS_TEST_ZVOL_TRANSPORT:-0} == 1 && -z ${AROS_TEST_WHOLE_CLI_LINK:-} ]]
     exit 2
 fi
 runtime_profile=${AROS_TEST_RUNTIME_PROFILE:-private}
-[[ $runtime_profile == private || $runtime_profile == base || $runtime_profile == dos-only || $runtime_profile == posix-only || $runtime_profile == posix-pipe || $runtime_profile == posix-pipe-stdio || $runtime_profile == dos-posix-pipe-stdio ]]
+[[ $runtime_profile == private || $runtime_profile == base || $runtime_profile == dos-only || $runtime_profile == dos-posix || $runtime_profile == posix-only || $runtime_profile == posix-pipe || $runtime_profile == posix-pipe-stdio || $runtime_profile == dos-posix-pipe-stdio ]]
 if [[ $runtime_profile != private ]];then
     # This mode measures the selected ISO, not a silently repaired runtime.
     for override in AROS_TEST_DOS_OVERLAY AROS_TEST_ATA_OVERLAY AROS_TEST_POSIX_LIBRARY \
         AROS_TEST_PARTITION_LIBRARY AROS_TEST_FS_PACKAGE AROS_TEST_PIPE_POLICY_HANDLER \
         AROS_TEST_AFS_HANDLER AROS_TEST_FAT_HANDLER AROS_TEST_STDCIO_LIBRARY;do
-        if [[ ( $runtime_profile == dos-only || $runtime_profile == dos-posix-pipe-stdio ) && $override == AROS_TEST_DOS_OVERLAY ]];then continue;fi
-        if [[ ( $runtime_profile == posix-only || $runtime_profile == posix-pipe || $runtime_profile == posix-pipe-stdio || $runtime_profile == dos-posix-pipe-stdio ) && $override == AROS_TEST_POSIX_LIBRARY ]];then continue;fi
+        if [[ ( $runtime_profile == dos-only || $runtime_profile == dos-posix || $runtime_profile == dos-posix-pipe-stdio ) && $override == AROS_TEST_DOS_OVERLAY ]];then continue;fi
+        if [[ ( $runtime_profile == posix-only || $runtime_profile == dos-posix || $runtime_profile == posix-pipe || $runtime_profile == posix-pipe-stdio || $runtime_profile == dos-posix-pipe-stdio ) && $override == AROS_TEST_POSIX_LIBRARY ]];then continue;fi
         if [[ ( $runtime_profile == posix-pipe || $runtime_profile == posix-pipe-stdio || $runtime_profile == dos-posix-pipe-stdio ) && $override == AROS_TEST_PIPE_POLICY_HANDLER ]];then continue;fi
         if [[ ( $runtime_profile == posix-pipe-stdio || $runtime_profile == dos-posix-pipe-stdio ) && $override == AROS_TEST_STDCIO_LIBRARY ]];then continue;fi
         if [[ -n ${!override:-} ]];then
@@ -81,12 +81,16 @@ else
     ata=${AROS_TEST_ATA_OVERLAY:?private ATA required}
     posix=${AROS_TEST_POSIX_LIBRARY:?private POSIX required}
 fi
-if [[ $runtime_profile == dos-only || $runtime_profile == dos-posix-pipe-stdio ]];then dos=${AROS_TEST_DOS_OVERLAY:?private DOS required};fi
-if [[ $runtime_profile == posix-only || $runtime_profile == posix-pipe || $runtime_profile == posix-pipe-stdio || $runtime_profile == dos-posix-pipe-stdio ]];then posix=${AROS_TEST_POSIX_LIBRARY:?private POSIX required};fi
+if [[ $runtime_profile == dos-only || $runtime_profile == dos-posix || $runtime_profile == dos-posix-pipe-stdio ]];then dos=${AROS_TEST_DOS_OVERLAY:?private DOS required};fi
+if [[ $runtime_profile == posix-only || $runtime_profile == dos-posix || $runtime_profile == posix-pipe || $runtime_profile == posix-pipe-stdio || $runtime_profile == dos-posix-pipe-stdio ]];then posix=${AROS_TEST_POSIX_LIBRARY:?private POSIX required};fi
 if [[ $runtime_profile == posix-pipe || $runtime_profile == posix-pipe-stdio || $runtime_profile == dos-posix-pipe-stdio ]];then : "${AROS_TEST_PIPE_POLICY_HANDLER:?disconnect-policy pipe handler required}";fi
 if [[ $runtime_profile == posix-pipe-stdio || $runtime_profile == dos-posix-pipe-stdio ]];then : "${AROS_TEST_STDCIO_LIBRARY:?stdio ownership library required}";fi
-sdk=${AROS_SDK:-/opt/aros-workspace/aros-amiwest-nightly-release/bin/pc-x86_64-smp/AROS/Developer}
-base=${AROS_TEST_ISO:-/opt/aros-workspace/aros-amiwest-nightly-release/distfiles/aros-smp-pc-x86_64.iso}
+cc=${AROS_CC:?explicit AROS compiler required}
+sdk=${AROS_SDK:?explicit ABI-matched AROS SDK required}
+base=${AROS_TEST_ISO:?explicit AROS test ISO required}
+pthread=${AROS_PRIVATE_PTHREAD:?explicit ABI-matched pthread archive required}
+pthread_include=${AROS_PTHREAD_INCLUDE:?explicit matching pthread headers required}
+[[ -x $cc && -f $pthread && -f $pthread_include/pthread.h ]]
 partition=${AROS_TEST_PARTITION_LIBRARY:-${sdk%/Developer}/Libs/partition.library}
 qemu=${AROS_TEST_QEMU:-qemu-system-x86_64}
 accel=${AROS_TEST_ACCEL:-kvm}
@@ -136,6 +140,12 @@ usb_swap=${AROS_TEST_USB_SWAP_MEMBERS:-0}
 usb_rounds=${AROS_TEST_USB_RECOVERY_ROUNDS:-1}
 usb_created=${AROS_TEST_USB_CREATED_RECOVERY:-0}
 usb_inflight=${AROS_TEST_USB_INFLIGHT_WRITE:-0}
+usb_cli_clear=${AROS_TEST_USB_CLI_CLEAR:-0}
+[[ $usb_cli_clear == 0 || $usb_cli_clear == 1 ]]
+if [[ $usb_cli_clear == 1 ]];then
+    [[ $usb_all_lost_writable == 1 && -z ${AROS_TEST_WHOLE_CLI_LINK:-} ]]
+    [[ -f ${AROS_TEST_CLI_DIR:?CLI clear needs current packaged binaries}/zpool ]]
+fi
 [[ $usb_created == 0 || $usb_created == 1 ]]
 [[ $usb_inflight == 0 || $usb_inflight == 1 ]]
 if [[ $usb_created == 1 ]];then
@@ -345,6 +355,13 @@ fi
 git rev-parse HEAD >"$run/source-head.txt"
 git diff --binary >"$run/source.patch"
 cp "$0" aros/engine/native-import-test.c aros/engine/Startup-Native-Import "$run/"
+sha256sum "$cc" "$pthread" "$pthread_include/pthread.h" > "$run/client-toolchain.sha256"
+if [[ $usb_cli_clear == 1 ]];then
+    cp "$AROS_TEST_CLI_DIR/zpool" "$run/zpool"
+    sha256sum "$run/zpool" > "$run/clear-cli.sha256"
+    gui_maps+=(-map "$run/zpool" /C/zpool)
+    gui_flags+=(-DOZ_NATIVE_USB_CLI_CLEAR)
+fi
 if [[ $native_bus == usb ]];then
     cp aros/engine/Startup-Native-USB-Import "$run/Startup-Native-Import"
 fi
@@ -596,7 +613,7 @@ if [[ -n ${AROS_TEST_WHOLE_CLI_LINK:-} ]];then
         gui_maps+=(-map "$run/zvol-device/OpenZFSDevice" /C/OpenZFSDevice)
         if [[ ${AROS_TEST_ZVOL_DEVICE_CAPACITY:-0} == 1 ]];then
             cp aros/device/client-test.c "$run/"
-            /opt/aros-workspace/aros-adt-crosstools/x86_64-aros-gcc --sysroot="$sdk" -B"$sdk/lib/" -O2 -g -Wall -Wextra "$run/client-test.c" -o "$run/OpenZFSDeviceClientTest" >"$run/client-build.log" 2>&1
+            "$cc" --sysroot="$sdk" -B"$sdk/lib/" -O2 -g -Wall -Wextra "$run/client-test.c" -o "$run/OpenZFSDeviceClientTest" >"$run/client-build.log" 2>&1
             gui_maps+=(-map "$run/OpenZFSDeviceClientTest" /C/OpenZFSDeviceClientTest)
         fi
         if [[ -n ${AROS_TEST_AFS_HANDLER:-} ]];then
@@ -925,7 +942,7 @@ if [[ -n ${AROS_TEST_WHOLE_CLI_LINK:-} ]];then
         media_sources+=(aros/engine/device-io.c)
         cp aros/engine/device-io.c aros/engine/device-io.h "$run/"
     fi
-    /opt/aros-workspace/aros-adt-crosstools/x86_64-aros-gcc --sysroot="$sdk" -B"$sdk/lib/" \
+    "$cc" --sysroot="$sdk" -B"$sdk/lib/" \
         -O2 -D_GNU_SOURCE -D_FILE_OFFSET_BITS=64 -include aros/engine/config.h "${history_wire_flags[@]}" \
         -Iaros/cli/include -Ibuild-aros/include -Iaros/engine/include -Ilib/libspl/include \
         -Ilib/libspl/include/os/linux -Iinclude -Iinclude/os/linux/zfs \
@@ -934,7 +951,7 @@ if [[ -n ${AROS_TEST_WHOLE_CLI_LINK:-} ]];then
     sha256sum aros/cli/history-wire-test.c "$run/history-wire-test.o" >"$run/history-wire.sha256"
     received_objects=()
     if [[ ${AROS_TEST_ERROR_LOG:-0} == 1 ]];then
-        /opt/aros-workspace/aros-adt-crosstools/x86_64-aros-gcc --sysroot="$sdk" -B"$sdk/lib/" \
+        "$cc" --sysroot="$sdk" -B"$sdk/lib/" \
             -O2 -D_GNU_SOURCE -D_FILE_OFFSET_BITS=64 -include aros/engine/config.h \
             -Iaros/cli/include -Ibuild-aros/include -Iaros/engine/include -Ilib/libspl/include \
             -Ilib/libspl/include/os/linux -Iinclude -Iinclude/os/linux/zfs \
@@ -944,7 +961,7 @@ if [[ -n ${AROS_TEST_WHOLE_CLI_LINK:-} ]];then
         received_objects+=("$run/error-log-wire-test.o")
     fi
     if [[ ${AROS_TEST_RECEIVED_PROPERTIES:-0} == 1 ]];then
-        /opt/aros-workspace/aros-adt-crosstools/x86_64-aros-gcc --sysroot="$sdk" -B"$sdk/lib/" \
+        "$cc" --sysroot="$sdk" -B"$sdk/lib/" \
             -O2 -D_GNU_SOURCE -D_FILE_OFFSET_BITS=64 -include aros/engine/config.h \
             -Iaros/cli/include -Ibuild-aros/include -Iaros/engine/include -Ilib/libspl/include \
             -Ilib/libspl/include/os/linux -Iinclude -Iinclude/os/linux/zfs \
@@ -953,15 +970,15 @@ if [[ -n ${AROS_TEST_WHOLE_CLI_LINK:-} ]];then
         sha256sum aros/cli/received-wire-test.c "$run/received-wire-test.o" >"$run/received-wire.sha256"
         received_objects+=("$run/received-wire-test.o")
     fi
-    /opt/aros-workspace/aros-adt-crosstools/x86_64-aros-gcc --sysroot="$sdk" -B"$sdk/lib/" \
-        -Ibuild-aros/pthread-consistent.s3r1CHla/source -O2 -Wall -Wextra "${cli_flags[@]}" aros/cli/service-command-test.c "$run/history-wire-test.o" "${received_objects[@]}" aros/ui/project-worker.c aros/ui/iostat-rates-test.c aros/cli/process.c aros/cli/identity.c \
+    "$cc" --sysroot="$sdk" -B"$sdk/lib/" \
+        -I"$pthread_include" -O2 -Wall -Wextra "${cli_flags[@]}" aros/cli/service-command-test.c "$run/history-wire-test.o" "${received_objects[@]}" aros/ui/project-worker.c aros/ui/iostat-rates-test.c aros/cli/process.c aros/cli/identity.c \
         aros/cli/arguments.c aros/cli/output.c aros/ui/api.c aros/ui/admission-client.c "${media_sources[@]}" \
         aros/ui/startup-settings.c aros/ui/startup-settings-file.c aros/ui/preferences.c aros/ui/preferences-file.c -liffparse \
-        build-aros/pthread-consistent.s3r1CHla/libpthread.a -o "$run/OpenZFSServiceCommandTest" \
+        "$pthread" -o "$run/OpenZFSServiceCommandTest" \
         >"$run/service-command-build.log" 2>&1
     sha256sum "$run/zfs" "$run/zpool" "$run/OpenZFSServiceCommandTest" \
         aros/cli/service-command-test.c aros/cli/identity.c aros/cli/process.c aros/cli/arguments.c aros/cli/output.c \
-        aros/ui/api.c aros/ui/admission-client.c aros/ui/project-worker.c aros/ui/project-worker.h build-aros/pthread-consistent.s3r1CHla/source/pthread.h build-aros/pthread-consistent.s3r1CHla/libpthread.a \
+        aros/ui/api.c aros/ui/admission-client.c aros/ui/project-worker.c aros/ui/project-worker.h "$pthread_include/pthread.h" "$pthread" \
         >"$run/whole-cli.sha256"
     gui_flags+=(-DOZ_NATIVE_WHOLE_CLI)
     gui_maps+=(-map "$run/zfs" /C/zfs -map "$run/zpool" /C/zpool
@@ -982,7 +999,7 @@ if [[ $gpt == 3 ]];then
     gui_flags+=(-DOZ_NATIVE_GPT_CLI)
     for source in aros/cli/gpt.c aros/cli/gpt-test.c aros/cli/control-client.c aros/cli/stream-client.c aros/cli/stream-channel.c;do
         stem=${source//\//_}
-        /opt/aros-workspace/aros-adt-crosstools/x86_64-aros-gcc --sysroot="$sdk" -B"$sdk/lib/" \
+        "$cc" --sysroot="$sdk" -B"$sdk/lib/" \
             -O2 -D_GNU_SOURCE -D_FILE_OFFSET_BITS=64 -include aros/engine/config.h \
             -Iaros/cli/include -Ibuild-aros/include -Iaros/engine/include -Ilib/libspl/include \
             -Ilib/libspl/include/os/linux -Iinclude -Iinclude/os/linux/zfs \
@@ -994,7 +1011,7 @@ if [[ $gpt == 3 ]];then
         "$repo/build-aros/full-native-libzfs-init/client/lib_libzfs_core_libzfs_core.c.o"
         "$repo/build-aros/full-native-libzfs-init/client/lib_libnvpair_libnvpair.c.o"
         "$repo/build-aros/libnvpair-adt-consistent.a"
-        "$repo/build-aros/pthread-consistent.s3r1CHla/libpthread.a"
+        "$pthread"
         /opt/aros-workspace/chromium-aros/src/out/aros-chrome/obj/third_party/boringssl/libboringssl.a)
     sha256sum "${cli_objects[@]}" >"$run/cli-inputs.sha256"
 fi
@@ -1004,11 +1021,11 @@ case ${AROS_TEST_COMPLETION_FAIL:-0} in
     1) completion_flags+=(-DOZ_QEMU_COMPLETION_FAIL) ;;
     *) exit 2 ;;
 esac
-/opt/aros-workspace/aros-adt-crosstools/x86_64-aros-gcc --sysroot="$sdk" -B"$sdk/lib/" -O2 -Wall -Wextra \
-    -Ibuild-aros/pthread-consistent.s3r1CHla/source \
+"$cc" --sysroot="$sdk" -B"$sdk/lib/" -O2 -Wall -Wextra \
+    -I"$pthread_include" \
     "${completion_flags[@]}" "${gui_flags[@]}" aros/engine/native-import-test.c aros/ui/api.c aros/ui/admission-client.c \
     aros/ui/startup-import.c aros/ui/startup-settings.c aros/ui/startup-settings-file.c aros/ui/preferences.c aros/ui/preferences-file.c \
-    aros/ui/admission-worker.c "${inventory_objects[@]}" "${cli_objects[@]}" build-aros/pthread-consistent.s3r1CHla/libpthread.a \
+    aros/ui/admission-worker.c "${inventory_objects[@]}" "${cli_objects[@]}" "$pthread" \
     -liffparse -o "$run/OpenZFSNativeImportTest" >"$run/build.log" 2>&1
 if [[ $native_bus == usb ]];then
     echo "USB controller: $usb_controller"
@@ -1134,11 +1151,11 @@ if [[ -n ${AROS_TEST_ENGINE_LIBRARY:-} ]];then
     fi
 fi
 runtime_maps=()
-if [[ $runtime_profile == private || $runtime_profile == dos-only || $runtime_profile == dos-posix-pipe-stdio ]];then
+if [[ $runtime_profile == private || $runtime_profile == dos-only || $runtime_profile == dos-posix || $runtime_profile == dos-posix-pipe-stdio ]];then
     sha256sum "$dos/aros-base.pkg.xz" >>"$run/inputs.sha256"
     runtime_maps+=(-map "$dos/aros-base.pkg.xz" /boot/aros-base.pkg.xz)
 fi
-if [[ $runtime_profile == posix-only || $runtime_profile == posix-pipe || $runtime_profile == posix-pipe-stdio || $runtime_profile == dos-posix-pipe-stdio ]];then
+if [[ $runtime_profile == posix-only || $runtime_profile == dos-posix || $runtime_profile == posix-pipe || $runtime_profile == posix-pipe-stdio || $runtime_profile == dos-posix-pipe-stdio ]];then
     sha256sum "$posix" >>"$run/inputs.sha256"
     runtime_maps+=(-map "$posix" /Libs/posixc.library)
 fi
@@ -1334,12 +1351,18 @@ if [[ $usb_all_lost_writable == 1 && $usb_suspend_guard == 0 ]];then
     [[ $(rg -c '^RESULT native suspended clear invalid target PASS error=ENODEV suspended=1' "$run/serial.log") == "$usb_rounds" ]]
 fi
 if [[ $usb_swap == 1 ]];then
+    if [[ $usb_cli_clear == 1 ]];then
+        rg -q '^RESULT native CLI wrong-member clear PASS refused=1 suspended=1' "$run/serial.log"
+    fi
     rg -q 'RESULT native wrong-member readmission PASS clear=ESTALE suspended=1' "$run/serial.log"
     sha256sum -c "$run/swapped-before.sha256"
 elif [[ $usb_suspend_guard == 1 ]];then
     rg -q 'RESULT native suspended history PASS summary=EAGAIN raw=EAGAIN empty-errors=2 errno-detail=2 responsive=1' "$run/serial.log"
     rg -q 'RESULT native suspended export guard PASS export=EAGAIN destroy=EAGAIN responsive=1' "$run/serial.log"
 elif [[ $usb_all_lost_writable == 1 ]];then
+    if [[ $usb_cli_clear == 1 ]];then
+        [[ $(rg -c '^RESULT native CLI suspended clear PASS returned=0' "$run/serial.log") == "$usb_rounds" ]]
+    fi
     [[ $(rg -c '^RESULT native USB writable idle recovery PASS synced-before-loss=1 fresh-import=ONLINE' "$run/serial.log") == "$usb_rounds" ]]
 fi
 if [[ $usb_inflight == 1 ]];then

@@ -1,0 +1,82 @@
+[bootstrap:multiboot2] smartfb: using VBE mode 0x417a (1280x800x32, fb=0xFD000000)
+[bootstrap:multiboot2] smartfb: KRN_FBAddr=0x00000000FD000000
+0000000000000000 0x0000000000000000 | 000 | AROS64 - The AROS Research OS
+0000000000000000 0x0000000000000000 | 000 | 64-bit SMP build. Compiled Oct 21 2026
+0000000000000000 0x0000000000000000 | 000 | [Kernel] Local APIC: x2APIC
+00000000b68b55f9 0x0000000000000000 | 000 | ACPI: RSDP 0x00000000000F52E0 000014 (v00 BOCHS )
+00000000b705ec4c 0x0000000000000000 | 000 | ACPI: RSDT 0x000000007FFE25C5 000034 (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+00000000b7a659a2 0x0000000000000000 | 000 | ACPI: FACP 0x000000007FFE2441 000074 (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+00000000b8475dd9 0x0000000000000000 | 000 | ACPI: DSDT 0x000000007FFE0040 002401 (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+00000000b8e7dcdc 0x0000000000000000 | 000 | ACPI: FACS 0x000000007FFE0000 000040
+00000000b94e78a2 0x0000000000000000 | 000 | ACPI: APIC 0x000000007FFE24B5 0000B0 (v03 BOCHS  BXPC     00000001 BXPC 00000001)
+00000000b9ee1ef2 0x0000000000000000 | 000 | ACPI: HPET 0x000000007FFE2565 000038 (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+00000000ba8da9ea 0x0000000000000000 | 000 | ACPI: WAET 0x000000007FFE259D 000028 (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+00000000bb2def1d 0x0000000000000000 | 000 | [HPET] 2 units total
+00000000bbe9dc96 0x00000000013d2020 | 000 | ACPI: 1 ACPI AML tables successfully acquired and loaded
+00000000bc912965 0x00000000013b0130 | 000 | [Kernel:ACPI-IOAPIC] Registering IO-APIC #1 [ID=000] @ 00000000fec00000 [GSI = 0]
+00000000bd30bd8b 0x00000000013b0130 | 000 | [Kernel:ACPI] System Total APICs: 8, 8 usable
+00000000bddfcebb 0x00000000013b0130 | 000 | [Kernel:APIC-IA32] MSI Interrupts Allocatable
+00000000be584008 0x00000000013b0130 | 000 | [Kernel:APIC-IA32]     start = 16
+00000000bebc478d 0x00000000013b0130 | 000 | [Kernel:APIC-IA32]     total = 198
+00000000dce59b6a 0x00000000013b0130 | 000 | [Kernel:APIC-IA32] Heartbeat timer: TSC deadline
+00000000dee6fd96 0x00000000013dbe80 | 001 | [Kernel:APIC-IA32.001] core_APIC_Calibrate: TSC freq inherited from BSP (2496308 kHz) [hypervisor]
+00000000dfbb32af 0x00000000013dbe80 | 001 | [Kernel:APIC-IA32.001] core_APIC_Calibrate: LAPIC timer freq inherited from BSP (1000411260 Hz) [hypervisor]
+00000000e20eea33 0x00000000013dc4c0 | 002 | [Kernel:APIC-IA32.002] core_APIC_Calibrate: TSC freq inherited from BSP (2496308 kHz) [hypervisor]
+00000000e35511e7 0x00000000013dc4c0 | 002 | [Kernel:APIC-IA32.002] core_APIC_Calibrate: LAPIC timer freq inherited from BSP (1000411260 Hz) [hypervisor]
+00000000e63599db 0x000000000145c4b0 | 003 | [Kernel:APIC-IA32.003] core_APIC_Calibrate: TSC freq inherited from BSP (2496308 kHz) [hypervisor]
+00000000e6ee0ef3 0x000000000145c4b0 | 003 | [Kernel:APIC-IA32.003] core_APIC_Calibrate: LAPIC timer freq inherited from BSP (1000411260 Hz) [hypervisor]
+00000000e9487c3d 0x0000000001497100 | 004 | [Kernel:APIC-IA32.004] core_APIC_Calibrate: TSC freq inherited from BSP (2496308 kHz) [hypervisor]
+00000000eae3b4b3 0x0000000001497100 | 004 | [Kernel:APIC-IA32.004] core_APIC_Calibrate: LAPIC timer freq inherited from BSP (1000411260 Hz) [hypervisor]
+00000000ee21d038 0x00000000014d1db0 | 005 | [Kernel:APIC-IA32.005] core_APIC_Calibrate: TSC freq inherited from BSP (2496308 kHz) [hypervisor]
+00000000efc1a02b 0x00000000014d1db0 | 005 | [Kernel:APIC-IA32.005] core_APIC_Calibrate: LAPIC timer freq inherited from BSP (1000411260 Hz) [hypervisor]
+00000000f30d6dbe 0x000000000150ca60 | 006 | [Kernel:APIC-IA32.006] core_APIC_Calibrate: TSC freq inherited from BSP (2496308 kHz) [hypervisor]
+00000000f4acd06a 0x000000000150ca60 | 006 | [Kernel:APIC-IA32.006] core_APIC_Calibrate: LAPIC timer freq inherited from BSP (1000411260 Hz) [hypervisor]
+00000000f7f72fae 0x0000000001547710 | 007 | [Kernel:APIC-IA32.007] core_APIC_Calibrate: TSC freq inherited from BSP (2496308 kHz) [hypervisor]
+00000000f997bb9e 0x0000000001547710 | 007 | [Kernel:APIC-IA32.007] core_APIC_Calibrate: LAPIC timer freq inherited from BSP (1000411260 Hz) [hypervisor]
+00000000fc0427d7 0x00000000013b0130 | 000 | [PCIPC:Driver] PCIPC_InitClass: No ACPI MCFG table
+000000010036e317 0x00000000013b0130 | 000 | [Timer] clock: PIT (no invariant TSC)
+00000003c557385c 0x00000000018cbf20 | 000 | [ATI] Init
+00000003c59fd08a 0x00000000018cbf20 | 000 | [ATI] No supported cards found
+00000003dd1bc403 0x00000000018dad20 | 000 | [HW] HW__HW__AddDriver: Failed to instantiate Driver Object
+Writable startup denied: configured security.library and system task identity required.
+RESULT native service release startup PASS diagnostic-modes-refused=3 malformed-refused=2 unauthorized-writable-refused=1 no-ports=1
+Native authenticated admission ready
+OpenZFS management API 3 ready; engine initialized
+OpenZFS import failed stage=discovery errno=2
+Authenticated pool import returned errno=2
+OpenZFS import failed stage=discovery errno=2
+Authenticated pool import returned errno=2
+OpenZFS import failed stage=expected-guid errno=22
+Authenticated pool import returned errno=22
+Native request op=7 error=22
+Authenticated pool import returned errno=0
+Pool list exact filter case=0 status=0 rows=1 error=0
+Pool list exact filter case=1 status=0 rows=1 error=0
+Pool list exact filter case=2 status=0 rows=0 error=0
+Pool list exact filter case=3 status=0 rows=0 error=0
+Pool list exact filter case=4 status=0 rows=0 error=0
+ONLINE
+Authenticated pool export returned errno=0
+Authenticated pool import returned errno=1
+RESULT native trusted startup import PASS ordinary-caller=denied unsafe-file=denied protected-file=imported
+RESULT native startup authority PASS recovery-refused=1 ordinary-user-denied=1 root-import=1 duplicate-reported=1
+RESULT native saved-record import PASS disabled-skip=1 absent-service=1 authenticated-import=1
+RESULT native expected-GUID import PASS mismatch-refused=1 matching-import=1
+Pool list exact filter case=0 status=0 rows=1 error=0
+Pool list exact filter case=1 status=0 rows=1 error=0
+Pool list exact filter case=2 status=0 rows=0 error=0
+Pool list exact filter case=3 status=0 rows=0 error=0
+Pool list exact filter case=4 status=0 rows=0 error=0
+ONLINE
+Authenticated pool sync returned errno=0
+READY native USB member removal member=ozmember0
+UNAVAIL
+RESULT native USB total loss PASS health=UNAVAIL-or-SUSPENDED responsive=1
+READY native USB member reinsertion member=ozmember0
+RESULT native USB reinsertion readiness PASS partition-catalogs=2 readonly-probe=1
+SUSPENDED
+READY native USB writable explicit clear
+Authenticated pool/device clear (query health afterward) returned errno=19
+SUSPENDED
+RESULT native suspended clear invalid target PASS error=ENODEV suspended=1
+RESULT native pool import FAIL cycles=2 dos-read=1 writable-denied=1 line=763

@@ -9,6 +9,7 @@
 #include "../ui/admission-worker.h"
 #include "../ui/startup-import.h"
 #include "../ui/startup-settings.h"
+#include "../ui/settings-file.h"
 #include <proto/exec.h>
 #include <proto/dos.h>
 #include <proto/security.h>
@@ -629,7 +630,7 @@ int main(void)
             CHECK(oz_startup_import("OpenZFS.NoSuch.Test.Port",recorded_guid,&result)==ENOENT&&!result.imported);
             char env_path[96],transaction_path[104],previous_path[120];
             snprintf(env_path,sizeof(env_path),"ENV:OpenZFS-%016llx.prefs",(unsigned long long)recorded_guid);
-            snprintf(transaction_path,sizeof(transaction_path),"%s.txn",env_path);
+            CHECK(!oz_settings_transaction_path(env_path,transaction_path,sizeof(transaction_path)));
             snprintf(previous_path,sizeof(previous_path),"%s/previous",transaction_path);
             BPTR transaction=CreateDir((CONST_STRPTR)transaction_path);CHECK(transaction);UnLock(transaction);
             CHECK(Rename((CONST_STRPTR)env_path,(CONST_STRPTR)previous_path));
@@ -748,12 +749,22 @@ int main(void)
             CHECK(!health_expected("SUSPENDED"));
             note("RESULT native suspended clear invalid target PASS error=ENODEV suspended=1");
 #ifdef OZ_NATIVE_USB_SWAP_MEMBERS
+#ifdef OZ_NATIVE_USB_CLI_CLEAR
+            CHECK(SystemTags((CONST_STRPTR)"C:zpool clear qemu_mirror",TAG_DONE)>0);
+            CHECK(!health_expected("SUSPENDED"));
+            note("RESULT native CLI wrong-member clear PASS refused=1 suspended=1");
+#endif
             CHECK(!request(17,NULL,ESTALE));
             CHECK(!health_expected("SUSPENDED"));
             note("RESULT native wrong-member readmission PASS clear=ESTALE suspended=1");
             goto done;
 #endif
+#ifdef OZ_NATIVE_USB_CLI_CLEAR
+            CHECK(SystemTags((CONST_STRPTR)"C:zpool clear qemu_mirror",TAG_DONE)==0);
+            note("RESULT native CLI suspended clear PASS returned=0");
+#else
             CHECK(!request(17,NULL,0));
+#endif
             CHECK(!health_expected("ONLINE"));
 #ifdef OZ_NATIVE_USB_INFLIGHT_WRITE
             CHECK(!oz_mount_control(OZ_ADMISSION_PORT,"qemu_mirror/files","",OZ_MOUNT_DETACH,0));

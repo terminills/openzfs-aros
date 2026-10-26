@@ -1,0 +1,5 @@
+QEMU 10.1.94 monitor - type 'help' for more information
+(qemu) d[K[Dde[K[D[Ddev[K[D[D[Ddevi[K[D[D[D[Ddevic[K[D[D[D[D[Ddevice[K[D[D[D[D[D[Ddevice_[K[D[D[D[D[D[D[Ddevice_d[K[D[D[D[D[D[D[D[Ddevice_de[K[D[D[D[D[D[D[D[D[Ddevice_del[K[D[D[D[D[D[D[D[D[D[Ddevice_del [K[D[D[D[D[D[D[D[D[D[D[Ddevice_del o[K[D[D[D[D[D[D[D[D[D[D[D[Ddevice_del oz[K[D[D[D[D[D[D[D[D[D[D[D[D[Ddevice_del ozm[K[D[D[D[D[D[D[D[D[D[D[D[D[D[Ddevice_del ozme[K[D[D[D[D[D[D[D[D[D[D[D[D[D[D[Ddevice_del ozmem[K[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[Ddevice_del ozmemb[K[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[Ddevice_del ozmembe[K[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[Ddevice_del ozmember[K[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[D[Ddevice_del ozmember0[K
+(qemu) i[K[Din[K[D[Dinf[K[D[D[Dinfo[K[D[D[D[Dinfo [K[D[D[D[D[Dinfo u[K[D[D[D[D[D[Dinfo us[K[D[D[D[D[D[D[Dinfo usb[K
+  Device 0.2, Port 2, Speed 5000 Mb/s, Product QEMU USB MSD, ID: ozmember1
+(qemu) 
