@@ -7699,8 +7699,13 @@ zpool_do_attach_or_replace(int argc, char **argv, int replacing)
 		return (1);
 	}
 
-	ret = zpool_vdev_attach(zhp, old_disk, new_disk, nvroot, replacing,
-	    rebuild);
+#ifdef __AROS__
+	if (force && nvlist_add_boolean_value(nvroot, OZ_ATTACH_FORCE, B_TRUE) != 0)
+		ret = 1;
+	else
+#endif
+		ret = zpool_vdev_attach(zhp, old_disk, new_disk, nvroot, replacing,
+		    rebuild);
 
 	if (ret == 0 && wait) {
 		zpool_wait_activity_t activity = ZPOOL_WAIT_RESILVER;

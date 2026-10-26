@@ -66,7 +66,7 @@ static int pool_files_change(struct oz_message *m,cred_t *caller,
     }
     char why[128];
     boolean_t rebuild=(operation==1||operation==2)&&!strcmp(m->options,"rebuild=on");
-    boolean_t force=(!operation||operation==3)&&(m->flags&OZ_FORCE);
+    boolean_t force=(m->flags&OZ_FORCE)!=0;
     if(m->flags!=(OZ_CONFIRMED|(force?OZ_FORCE:0))||((!operation||operation==3)&&m->argument[0])||(operation&&m->options[0]&&!rebuild)||
         (operation==3?oz_validate_add_topology(&m->topology,why,sizeof(why)):
         oz_validate_topology(&m->topology,why,sizeof(why)))!=OZ_OK)return EINVAL;

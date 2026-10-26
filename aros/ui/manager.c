@@ -351,7 +351,7 @@ static void send_request(ULONG operation,int preview_only) {
         size_t n=strlen(text);
         snprintf(text+n,sizeof(text)-n,"\nDetaching removes this device from the pool and reduces redundancy.\nVerify the leaf GUID against pool.status before submitting.");
     }
-    if((m.operation==5||m.operation==9)&&(m.flags&OZ_FORCE)){
+    if((m.operation==5||m.operation==9||m.operation==11||m.operation==13)&&(m.flags&OZ_FORCE)){
         size_t n=strlen(text);
         snprintf(text+n,sizeof(text)-n,"\nForced use can overwrite exported pool members and destroy their data.\nVerify every member path and keep a backup before submitting.");
     }

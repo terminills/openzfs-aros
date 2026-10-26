@@ -32,6 +32,7 @@ int oz_cli_add_begin(const char *,const void *,size_t,cred_t *,const struct oz_p
 int oz_cli_add_force_begin(const char *,const void *,size_t,cred_t *,const struct oz_packet_security *,void **);
 int oz_cli_add_request(const char *,void *,size_t *,cred_t *,const struct oz_packet_security *,void **);
 int oz_cli_attach_begin(const char *,uint64_t,int,const void *,size_t,cred_t *,const struct oz_packet_security *,void **);
+int oz_cli_attach_request(const char *,uint64_t,int,void *,size_t *,cred_t *,const struct oz_packet_security *,void **);
 void oz_cli_add_end(void *,int);
 int oz_cli_split_begin(const char *,const char *,const void *,size_t,cred_t *,void **);
 int oz_cli_split_end(void *,int);

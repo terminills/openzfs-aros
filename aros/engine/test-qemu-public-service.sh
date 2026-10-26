@@ -1067,6 +1067,9 @@ if [[ $force_create == 1 ]];then
     rg -q '^Public force-create readonly-active refusal PASS payload-preserved=1' "$run/serial-results.log"
     rg -q '^Public force-add PASS no-force-refused=1 readonly-active-refused=1 exported-added=1 target-payload-retained=1 readonly-exact=1' "$run/serial-results.log"
     rg -q '^Public Manager force-add PASS confirmation-required=1 force-required=1 active-refused=1 readonly-active-refused=1 exported-added=1 target-payload-retained=1 readonly-exact=1' "$run/serial-results.log"
+    for change in attach replace;do
+        rg -q "^Public force-$change PASS active-refused=1 readonly-active-refused=1 no-force-refused=1 exported-reused=1 resilver=1 readonly-exact=1" "$run/serial-results.log"
+    done
     rg -q '^Public Manager force-create PASS confirmation-required=1 force-required=1 active-refused=1 readonly-active-refused=1 exported-replaced=1 old-payload-absent=1 readonly-exact=1' "$run/serial-results.log"
     if [[ $native_discovery == 1 && $native_cold == 0 && $all_native == 0 ]];then
         rg -q '^Public native force-create PASS active-refused=1 readonly-active-refused=1 exported-replaced=1 old-payload-absent=1 readonly-exact=1 cleanup=1' "$run/serial-results.log"

@@ -691,8 +691,8 @@ void oz_cli_add_end(void *scope,int error)
 }
 /* A distributed spare is an existing in-pool mapping, never a new backing
  * path. Keep this admission separate from blank external-member admission. */
-int oz_cli_attach_begin(const char *name,uint64_t target,int replacing,
-    const void *bytes,size_t size,cred_t *caller,const struct oz_packet_security *security,void **out)
+static int attach_begin(const char *name,uint64_t target,int replacing,
+    const void *bytes,size_t size,cred_t *caller,const struct oz_packet_security *security,void **out,int force)
 {
     if(!security||oz_packet_security_cred(security)!=caller)return EACCES;
     *out=NULL;
@@ -702,7 +702,7 @@ int oz_cli_attach_begin(const char *name,uint64_t target,int replacing,
     boolean_t synthetic=nvlist_lookup_nvlist_array(root,ZPOOL_CONFIG_CHILDREN,&children,&count)==0&&
         count==1&&nvlist_lookup_string(children[0],ZPOOL_CONFIG_TYPE,&type)==0&&
         !strcmp(type,VDEV_TYPE_DRAID_SPARE);
-    if(!synthetic){nvlist_free(root);return oz_cli_add_begin(name,bytes,size,caller,security,out);}
+    if(!synthetic){nvlist_free(root);return (force?oz_cli_add_force_begin:oz_cli_add_begin)(name,bytes,size,caller,security,out);}
     if(!replacing||!target||pool_namecheck(name,NULL,NULL))error=EINVAL;
     if(!error&&(!(spa_mode_global&SPA_MODE_WRITE)))error=EROFS;
     if(!error&&(nvlist_lookup_string(root,ZPOOL_CONFIG_TYPE,&type)||strcmp(type,VDEV_TYPE_ROOT)||
@@ -741,6 +741,28 @@ int oz_cli_attach_begin(const char *name,uint64_t target,int replacing,
         spa_close(spa,FTAG);
     }
     nvlist_free(root);return error;
+}
+int oz_cli_attach_begin(const char *name,uint64_t target,int replacing,
+    const void *bytes,size_t size,cred_t *caller,const struct oz_packet_security *security,void **out)
+{
+    return attach_begin(name,target,replacing,bytes,size,caller,security,out,0);
+}
+int oz_cli_attach_request(const char *name,uint64_t target,int replacing,
+    void *bytes,size_t *size,cred_t *caller,const struct oz_packet_security *security,void **out)
+{
+    *out=NULL;
+    if(!security||oz_packet_security_cred(security)!=caller)return EACCES;
+    int error=secpolicy_zfs(caller);if(error)return error;
+    nvlist_t *root=NULL;boolean_t force=B_FALSE;
+    error=nvlist_unpack(bytes,*size,&root,0);
+    if(!error&&nvlist_exists(root,OZ_ATTACH_FORCE)){
+        error=nvlist_lookup_boolean_value(root,OZ_ATTACH_FORCE,&force);
+        if(!error)error=nvlist_remove_all(root,OZ_ATTACH_FORCE);
+        if(!error){char *packed=bytes;error=nvlist_pack(root,&packed,size,NV_ENCODE_NATIVE,0);}
+    }
+    nvlist_free(root);
+    if(!error)error=attach_begin(name,target,replacing,bytes,*size,caller,security,out,force);
+    return error;
 }
 static int add_begin(const char *name,const void *bytes,size_t size,cred_t *caller,const struct oz_packet_security *security,void **out,int force)
 {
