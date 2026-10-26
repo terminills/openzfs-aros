@@ -105,6 +105,7 @@ void oz_upstream_mount_cache_finish(void);
 #ifdef OZ_NATIVE_DISPATCHER
 int oz_public_ioctl_test(const char *);
 int oz_public_bootenv_readonly_test(const char *);
+int oz_public_bootenv_persistence_test(const char *,int);
 #endif
 static void child_exited(IPTR status,IPTR result){*(LONG *)result=(LONG)status;}
 static int present(const char *name){Forbid();int found=FindPort((CONST_STRPTR)name)!=NULL;Permit();return found;}
@@ -2533,6 +2534,7 @@ static int storage_test(int gui){
     note("Public pool root payload PASS written=1 flushed=1 detached=1\n");
 #ifdef OZ_NATIVE_DISPATCHER
     STORAGE_CHECK(!oz_public_ioctl_test("public_mirror"));
+    if(native_file_fixture)STORAGE_CHECK(!oz_public_bootenv_persistence_test("public_mirror",1));
 #ifdef OZ_TEST_UPSTREAM_INIT
     STORAGE_CHECK(!oz_upstream_mount_test());
     STORAGE_CHECK(!oz_upstream_promotion_readonly_test(0));
@@ -3336,6 +3338,11 @@ static int storage_cold_once(void)
     int error=companion_import_test(0);
     if(error==ENOENT)error=storage_alias_request(7,1);
     if(error)return error;
+#ifdef OZ_NATIVE_DISPATCHER
+    error=oz_public_bootenv_persistence_test("public_mirror",0);
+    if(!error)error=oz_public_bootenv_readonly_test("public_mirror");
+    if(error)return error;
+#endif
     error=pool_root_payload("public_mirror",0,1);
     if(error)return error;
     note("Public cold pool root PASS exact-read=1 readonly-write-denied=1 detached=1\n");

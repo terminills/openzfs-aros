@@ -126,6 +126,32 @@ static int same_nvlist(nvlist_t *a,nvlist_t *b)
     int same=as==bs&&!memcmp(ap,bp,as);
     fnvlist_pack_free(ap,as);fnvlist_pack_free(bp,bs);return same;
 }
+int oz_public_bootenv_persistence_test(const char *pool,int write)
+{
+    int error=0,initialized=0;
+    nvlist_t *record=NULL,*input=fnvlist_alloc();
+    TEST(!libzfs_core_init());initialized=1;
+    if(write){
+        /* Dedicated disposable pool only: retain this marker for cold boot. */
+        fnvlist_add_uint64(input,"version",1);
+        fnvlist_add_string(input,"aros-cold-test","bootenv-persistent-v1");
+        TEST(!lzc_set_bootenv(pool,input));
+    }
+    TEST(!lzc_get_bootenv(pool,&record));
+    const char *value=NULL;uint64_t version=0;
+    TEST(!nvlist_lookup_uint64(record,"version",&version)&&version==1);
+    TEST(!nvlist_lookup_string(record,"aros-cold-test",&value));
+    TEST(!strcmp(value,"bootenv-persistent-v1"));
+done:
+    if(initialized)libzfs_core_fini();
+    nvlist_free(record);nvlist_free(input);
+    if(!error){
+        const char *p=write?"Public upstream bootenv persistence PASS write=1 readback=1\n":
+            "Public upstream bootenv persistence PASS cold=1 marker=1 version=1\n";
+        while(*p)RawPutChar(*p++);
+    }
+    return error;
+}
 int oz_public_bootenv_readonly_test(const char *pool)
 {
     int error=0,initialized=0;

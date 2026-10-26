@@ -653,6 +653,9 @@ if [[ $persistent == 1 ]];then
         sha256sum "$run/retired-disk0" >"$run/retired-disk0.sha256"
         mdel -i "$run/backing.raw" ::OZPublicPool/disk0
     fi
+    if [[ ${AROS_TEST_REQUIRE_BOOTENV:-0} == 1 ]];then
+        rg -q '^Public upstream bootenv persistence PASS write=1 readback=1' "$run/serial-results.log"
+    fi
     mkdir "$run/members-before" "$run/members-after"
     for ((member=0;member<members;member++));do
         suffix=;if [[ $replace == 1 && $member == 0 ]];then suffix=-new;fi
@@ -718,6 +721,8 @@ if [[ $persistent == 1 ]];then
                 fi
             fi
             if rg -q '^RESULT public service storage PASS' "$run/cold-results.log" &&
+                { [[ ${AROS_TEST_REQUIRE_BOOTENV:-0} != 1 ]] ||
+                  rg -q '^Public upstream bootenv persistence PASS cold=1 marker=1 version=1' "$run/cold-results.log"; } &&
                 rg -q "^Public cold degraded assign PASS missing=$missing exact=1 readonly=1 restored=1" "$run/cold-results.log";then break;fi
         fi
         if ! kill -0 "$pid" 2>/dev/null || ((SECONDS>=deadline));then echo "Cold timeout/exit: $run" >&2;exit 1;fi

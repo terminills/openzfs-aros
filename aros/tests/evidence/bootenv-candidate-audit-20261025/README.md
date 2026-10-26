@@ -62,6 +62,26 @@ EROFS, and complete record comparison proved no mutation. The runner now
 supports requiring all three bootenv markers before accepting a run.
 Its checked cleanup removed the disposable ISO and retained the hash/logs.
 
-Still required before promotion: bootenv cold persistence and the complete
-repaired official runtime/SDK lane. Private-runtime passing results do not
-establish current official-nightly compatibility.
+## Cold file-backed mirror
+
+Fresh run `public-service-run.twUgXXSR` wrote a dedicated test marker into
+the bootenv nvlist of a disposable file-backed mirror, verified read-back,
+and cleanly exported it. A separate QEMU boot verified the version and marker
+under healthy, one-member-missing, and restored read-only imports. Each import
+also rejected SET with EROFS and preserved the complete record.
+
+The surrounding DOS data checks passed. Whole member images before and after
+the cold guest were byte-identical. Independent host zdb checksum/block
+traversal reported `No leaks (block sum matches space maps exactly)` and its
+own before/after member hashes matched. Both guests used eight vCPUs; no
+physical media, user hosted session or DUT was touched. The configured FAT
+handler and host zdb hashes matched retained earlier test inputs.
+
+Runner exited 0 and checked pruning reclaimed 9.87 GiB of disposable images;
+logs, source provenance and the seven-image hash manifest remain. This proves
+bounded virtual-disk cold persistence, not abrupt hardware-power-loss safety.
+
+Still required before official qualification: the complete repaired official
+runtime/SDK lane. Private-runtime passing results do not establish current
+official-nightly compatibility. Broader topology and physical-media coverage
+remain outside this bootenv mirror test.
