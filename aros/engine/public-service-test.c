@@ -116,6 +116,7 @@ static int storage_reply_received;
 static int native_file_fixture;
 static int storage_replace,storage_replaced;
 static int storage_dspare;
+static int storage_dspare_cli;
 static int storage_sequential;
 static char storage_spare_name[160];
 static void storage_member(char *path,size_t size,unsigned member)
@@ -1330,13 +1331,22 @@ static int storage_spare_status(char *guid,size_t size,int active)
     }
     oz_client_close(&client);return error;
 }
+static int storage_spare_replace(const char *guid,int sequential)
+{
+    if(!storage_dspare_cli)
+        return storage_request(13,"public_mirror",guid,sequential?"rebuild=on":NULL);
+    char command[256];
+    snprintf(command,sizeof(command),"C:zpool replace -f %s public_mirror %s %s",
+        sequential?"-s":"",guid,storage_spare_name);
+    return cli_command(command)?EIO:0;
+}
 static int storage_spare_test(void)
 {
     char guid[32];int error=storage_spare_status(guid,sizeof(guid),0);
     if(!error){
         strcpy(storage_spare_name,"draid1-999-999");
-        int refused=storage_request(13,"public_mirror",guid,NULL);
-        if(!refused||!storage_reply_received)error=EIO;
+        int refused=storage_spare_replace(guid,0);
+        if(!refused||(!storage_dspare_cli&&!storage_reply_received))error=EIO;
         if(!error)error=storage_spare_status(guid,sizeof(guid),0);
         if(!error)note("Public dRAID spare refusal PASS absent=1 original-online=1 spare-available=1\n");
     }
@@ -1349,7 +1359,7 @@ static int storage_spare_test(void)
     if(!error&&cli_command("C:zpool sync public_mirror"))error=EIO;
     if(!error)error=storage_request(16,"public_mirror",guid,NULL);
     if(!error&&storage_sequential&&cli_command("C:zpool set feature@device_rebuild=enabled public_mirror"))error=EIO;
-    if(!error)error=storage_request(13,"public_mirror",guid,storage_sequential?"rebuild=on":NULL);
+    if(!error)error=storage_spare_replace(guid,storage_sequential);
     if(!error&&cli_command("C:zpool wait -t resilver public_mirror"))error=EIO;
     /* Upstream automatically starts the checksum scrub after the last
      * rebuild. Starting another races that scrub and can return EBUSY. */
@@ -1360,6 +1370,7 @@ static int storage_spare_test(void)
         Delay(50);
     }
     if(!error)note("Public dRAID spare PASS offline=1 inuse=1 finished=1 errors=0\n");
+    if(!error&&storage_dspare_cli)note("Public dRAID CLI spare PASS forced=1 absent-refused=1 live-inventory=1 replacement-complete=1\n");
     if(!error&&storage_sequential)note("Public sequential rebuild PASS complete=1 rebuilt-nonzero=1 errors=0 scrub-finished=1\n");
     return error;
 }
@@ -4016,6 +4027,8 @@ int main(int argc,char **argv){
         if(!native_file_fixture||storage_layout!=OZ_DRAID)return 20;
     }
     if(storage_sequential&&!storage_dspare)return 20;
+    marker=Lock((CONST_STRPTR)"SYS:openzfs-dspare-cli-test",SHARED_LOCK);
+    if(marker){UnLock(marker);storage_dspare_cli=1;if(!storage_dspare)return 20;}
     marker=Lock((CONST_STRPTR)"SYS:openzfs-replacement-test",SHARED_LOCK);
     if(marker){
         UnLock(marker);storage_replace=1;storage_replaced=cold;

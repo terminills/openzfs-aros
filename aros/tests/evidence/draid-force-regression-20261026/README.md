@@ -21,3 +21,21 @@ This uses the current adapter service over retained upstream engine objects,
 private CRT/pthread and a selected patched FAT handler. It does not establish
 official-SDK or hardware compatibility. The real CLI forced-spare path is a
 separate test, not implied by this Manager result.
+
+## Real CLI forced replacement
+
+`public-service-run.GptaCpsw` runs the same persistent suite with
+`AROS_TEST_DSPARE_CLI=1`, selecting real `zpool replace -f -s` for the valid
+distributed spare. It passed writer, cold recovery, rebuilt redundancy,
+host FAT integrity, unchanged member hashes and independent zdb (No leaks).
+The runner exited zero; successful media was hashed and pruned. Evidence
+is retained under `cli/`.
+
+The nonexistent spare returned -1 through SystemTags, which alone could
+also describe a shell/loader failure. Its captured upstream diagnostic
+explicitly says `no such device in pool`; original ONLINE and spare-available
+inventory was verified afterward. The runner now requires that diagnostic
+as well as the refusal marker. The added exact diagnostic gate was checked
+against this retained run after completion; no new VM execution is claimed
+for that host-side assertion addition. The synthetic-spare path therefore
+has real CLI force-intent coverage, separate from the typed Manager case.

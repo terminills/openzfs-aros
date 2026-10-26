@@ -121,6 +121,8 @@ replace=${AROS_TEST_REPLACE:-0}
 [[ $replace == 0 || ( $replace == 1 && $layout == mirror && $persistent == 1 && -n $cli_dir ) ]]
 dspare=${AROS_TEST_DSPARE:-0}
 [[ $dspare == 0 || ( $dspare == 1 && $layout == draid[123] && $persistent == 1 && -n $cli_dir ) ]]
+dspare_cli=${AROS_TEST_DSPARE_CLI:-0}
+[[ $dspare_cli == 0 || ( $dspare_cli == 1 && $dspare == 1 ) ]]
 sequential=${AROS_TEST_SEQUENTIAL:-0}
 [[ $sequential == 0 || ( $sequential == 1 && $dspare == 1 ) ]]
 [[ $startup_import == 0 || ( $layout == mirror && $replace == 0 && $dspare == 0 ) ]]
@@ -198,6 +200,9 @@ if [[ $replace == 1 ]];then
 fi
 if [[ $dspare == 1 ]];then
     extra_maps+=(-map aros/engine/public-service-test-only /openzfs-dspare-test)
+fi
+if [[ $dspare_cli == 1 ]];then
+    extra_maps+=(-map aros/engine/public-service-test-only /openzfs-dspare-cli-test)
 fi
 if [[ $sequential == 1 ]];then
     extra_maps+=(-map aros/engine/public-service-test-only /openzfs-sequential-test)
@@ -669,6 +674,12 @@ if [[ $persistent == 1 ]];then
     fi
     if [[ $dspare == 1 ]];then
         rg -q '^Public dRAID spare PASS offline=1 inuse=1 finished=1 errors=0' "$run/serial-results.log"
+    fi
+    if [[ $dspare_cli == 1 ]];then
+        rg -q '^Public dRAID CLI spare PASS forced=1 absent-refused=1 live-inventory=1 replacement-complete=1' "$run/serial-results.log"
+        # Nonzero SystemTags alone may be a loader/shell failure. Require
+        # the actual upstream absent-member diagnostic as well.
+        rg -q '^cannot replace [0-9]+ with draid1-999-999: no such device in pool' "$run/serial-results.log"
     fi
     if [[ $sequential == 1 ]];then
         rg -q '^Public sequential rebuild PASS complete=1 rebuilt-nonzero=1 errors=0 scrub-finished=1' "$run/serial-results.log"

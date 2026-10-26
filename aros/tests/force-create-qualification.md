@@ -253,3 +253,14 @@ records are retained in `evidence/force-change-visual-20261026`. Normal Manager
 close allowed the complete storage suite to finish; runner exit was zero.
 The add-specific ashift warning still lacks a fresh visual capture. This
 does not replace the separately recorded authenticated API mutation tests.
+
+## Distributed-spare regression
+
+Manager and real CLI `replace -f -s` dRAID1 spare replacement passed persistent
+eight-CPU QEMU writer and cold-recovery suites after the force-admission
+changes. Both include completed sequential reconstruction and scrub, original
+member absence, further degraded/rebuilt redundancy, readonly payload checks,
+unchanged member hashes and independent zdb validation. The initial old-FAT
+dependency failure was retained rather than bypassed; the successful runs
+use the previously qualified BPB-bound handler. See
+`evidence/draid-force-regression-20261026` for provenance and boundaries.
