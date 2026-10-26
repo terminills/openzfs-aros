@@ -2316,6 +2316,34 @@ static int storage_force_create(void)
         FCHECK(!cli_command(command));FCHECK(!pool_root_payload("public_attach_donor",1,0));
         FCHECK(!cli_command("C:zpool import -N -o cachefile=none -d /RAM/OZForceCreate public_force_target"));
         FCHECK(!pool_change_guid("public_force_target",manager?"/disk6":"/disk2",guid,5+manager+replacing));
+        if(iteration==0){
+            stage="relative-member-online";
+            BPTR directory=Lock((CONST_STRPTR)"RAM:OZForceCreate",SHARED_LOCK);
+            FCHECK(directory);
+            BPTR previous=CurrentDir(directory);
+            const char *members[]={"./disk2","././disk2","../OZForceCreate/disk2"};
+            LONG online=0;
+            for(unsigned i=0;i<3&&!online;i++){
+                snprintf(command,sizeof(command),"C:zpool online public_force_target %s",members[i]);
+                online=cli_command(command);
+            }
+            const char *invalid[]={"./disk5","./missing","./missing/../disk2","./disk2/../disk2"};
+            for(unsigned i=0;i<4&&!online;i++){
+                snprintf(command,sizeof(command),"C:zpool online public_force_target %s",invalid[i]);
+                if(!cli_command(command))online=1;
+                BPTR errors=Open((CONST_STRPTR)"T:public-cli-errors.log",MODE_OLDFILE);
+                char diagnostic[1024];LONG length=errors?Read(errors,diagnostic,sizeof(diagnostic)-1):-1;
+                if(errors)Close(errors);
+                if(length<0)online=1;
+                else{
+                    diagnostic[length]=0;
+                    if(!strstr(diagnostic,"couldn't find device")||!strstr(diagnostic,invalid[i]))online=1;
+                }
+            }
+            UnLock(CurrentDir(previous));
+            FCHECK(!online);
+            note("Public CLI relative member PASS online=3 nonmember-missing-nondir-refused=4 cwd-restored=1\n");
+        }
         /* Exercise DOS assign spelling against the canonical RAM Disk name
          * stored in pool config; GUID inventory is checked independently. */
         snprintf(change,sizeof(change),"public_force_target %s /RAM/OZForceCreate/disk%u",

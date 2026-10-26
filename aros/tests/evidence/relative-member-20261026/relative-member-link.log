@@ -1,0 +1,7 @@
+Evidence: /mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/cli-link.29cnkfv7
+PASS zfs link
+PASS zpool link
+PASS OpenZFSStartupMount link
+PASS OpenZFSStartup link
+PASS OpenZFSRuntimeCheck link
+PASS OpenZFSHostIdentity link

@@ -197,13 +197,14 @@ zfs_strcmp_pathname(const char *name, const char *cmp, int wholedisk)
 	char *dir, *tmp = NULL;
 
 #ifdef OZ_NATIVE_LABEL_CLIENT
-	/* An explicit DOS volume/assign is not a Linux device shortname.
-	 * Resolve both existing files through DOS before slash normalization,
-	 * which would otherwise turn RAM:foo into /RAM:foo. */
+	/* Explicit DOS volumes/assigns and relative paths are not Linux device
+	 * shortnames. Resolve existing files through DOS before that fallback.
+	 * Leave bare names to the established import-path search. */
 	const char *colon = strchr(name, ':');
 	const char *slash = strchr(name, '/');
-	if (!wholedisk && colon != NULL &&
-	    (slash == NULL || colon < slash)) {
+	if (!wholedisk && ((colon != NULL &&
+	    (slash == NULL || colon < slash)) ||
+	    (name[0] != '/' && slash != NULL))) {
 		char *left = zfs_get_underlying_path(name);
 		char *right = zfs_get_underlying_path(cmp);
 		boolean_t same = left && right && strcmp(left, right) == 0;
