@@ -374,12 +374,16 @@ static void send_request(ULONG operation,int preview_only) {
         snprintf(text+n,sizeof(text)-n,"\nSplits the explicitly selected leaves into a separate pool.\nSource redundancy is reduced. Unmount source datasets first.\nThe destination stays exported; import it separately using its exact files.");
     }
     if(m.operation==7) {
-        int ro,recover,rewind;
-        if(oz_parse_import_options(m.options,&ro,&recover,&rewind)&&rewind) {
+        struct oz_import_policy policy;
+        if(oz_parse_import_policy(m.options,&policy)&&(policy.checkpoint||policy.recovery)) {
             size_t n=strlen(text);
-            snprintf(text+n,sizeof(text)-n,"\n%s",ro?
+            const char *warning=policy.checkpoint?(policy.readonly?
                 "Read-only checkpoint view: later changes remain on disk.":
-                "WRITABLE CHECKPOINT REWIND PERMANENTLY DISCARDS ALL LATER POOL CHANGES.");
+                "WRITABLE CHECKPOINT REWIND PERMANENTLY DISCARDS ALL LATER POOL CHANGES."):
+                policy.readonly?"Read-only transaction recovery: inspect older data without committing recovery.":
+                "WRITABLE TRANSACTION RECOVERY MAY PERMANENTLY DISCARD RECENT POOL CHANGES.";
+            snprintf(text+n,sizeof(text)-n,"\n%s%s",warning,
+                policy.recovery==OZ_IMPORT_EXTREME?"\nExtreme recovery may expose an inconsistent state. Verify recovered data.":"");
         }
     }
     show_response(text);

@@ -830,8 +830,10 @@ int oz_pool_import_files(struct oz_message *m,cred_t *caller,const struct oz_pac
     char why[128];
     if(pool_namecheck(m->target,NULL,NULL)||m->flags!=OZ_CONFIRMED||m->argument[0]||
         oz_validate_import_files(&m->topology,why,sizeof(why))!=OZ_OK)return EINVAL;
-    int readonly,destroyed,rewind;UQUAD expected_guid;
-    if(!oz_parse_import_identity(m->options,&readonly,&destroyed,&rewind,&expected_guid))return EINVAL;
+    struct oz_import_policy policy;
+    if(!oz_parse_import_policy(m->options,&policy))return EINVAL;
+    int readonly=policy.readonly,destroyed=policy.destroyed,rewind=policy.checkpoint;
+    UQUAD expected_guid=policy.expected_guid;
     if(!readonly&&!(spa_mode_global&SPA_MODE_WRITE))return EROFS;
     spa_namespace_enter(FTAG);boolean_t exists=spa_lookup(m->target)!=NULL;
     spa_namespace_exit(FTAG);if(exists)return EEXIST;
@@ -873,6 +875,12 @@ int oz_pool_import_files(struct oz_message *m,cred_t *caller,const struct oz_pac
         stage="writable-lock-handoff";error=writable_handoff(p);if(error)goto done;
     }
     stage="spa-import";
+    if(policy.recovery!=OZ_IMPORT_CURRENT) {
+        nvlist_t *load=fnvlist_alloc();
+        fnvlist_add_uint32(load,ZPOOL_LOAD_REWIND_POLICY,ZPOOL_DO_REWIND|
+            (policy.recovery==OZ_IMPORT_EXTREME?ZPOOL_EXTREME_REWIND:0));
+        fnvlist_add_nvlist(config,ZPOOL_LOAD_POLICY,load);fnvlist_free(load);
+    }
     error=spa_import(m->target,config,props,rewind?ZFS_IMPORT_CHECKPOINT:0);
     if(!error){p->next=imports;imports=p;p=NULL;}
 done:

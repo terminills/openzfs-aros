@@ -261,6 +261,34 @@ static int request_paths(unsigned op,const char *options,int expected,unsigned f
 }
 static int request(unsigned op,const char *options,int expected)
 {return request_paths(op,options,expected,0,1);}
+#ifdef OZ_NATIVE_IMPORT_REWIND_MANAGER
+static int recovery_parser_test(void)
+{
+    static const struct {const char *text;int valid,mode,ro;} cases[]={
+        {"readonly=on;recovery=none",1,OZ_IMPORT_CURRENT,1},
+        {"readonly=on;recovery=safe",1,OZ_IMPORT_RECOVER,1},
+        {"readonly=off;recovery=extreme;guid=123456789abcdef0",1,OZ_IMPORT_EXTREME,0},
+        {"readonly=on;rewind=on;recovery=extreme",0,0,0},
+        {"readonly=on;recovery=safe;recovery=extreme",0,0,0},
+        {"readonly=on;recovery=unknown",0,0,0},
+        {"recovery=extreme",0,0,0},{"readonly=on;recovery=extreme;",0,0,0}
+    };
+    for(unsigned i=0;i<sizeof(cases)/sizeof(cases[0]);i++) {
+        struct oz_import_policy policy,before;
+        memset(&policy,0xa5,sizeof(policy));before=policy;
+        int valid=oz_parse_import_policy(cases[i].text,&policy);
+        if(valid!=cases[i].valid)return EINVAL;
+        if(!valid&&memcmp(&policy,&before,sizeof(policy)))return EINVAL;
+        if(valid&&(policy.readonly!=cases[i].ro||policy.recovery!=cases[i].mode))return EINVAL;
+        if(i==2&&policy.expected_guid!=0x123456789abcdef0ULL)return EINVAL;
+    }
+    int ro=-1,destroyed=-1,checkpoint=-1;UQUAD guid=~0ULL;
+    if(oz_parse_import_identity("readonly=on;recovery=extreme",&ro,&destroyed,&checkpoint,&guid)||
+        ro!=-1||destroyed!=-1||checkpoint!=-1||guid!=~0ULL)return EINVAL;
+    note("RESULT native recovery parser PASS modes=3 guid=1 malformed=5 unchanged=1 legacy-refused=1");
+    return 0;
+}
+#endif
 #ifdef OZ_NATIVE_USB_SUSPEND_GUARD
 static int suspended_history(unsigned raw)
 {
@@ -420,6 +448,18 @@ int main(void)
         ,TAG_DONE)==0);
     for(unsigned i=0;i<1500;i++){Forbid();int ready=FindPort((CONST_STRPTR)OZ_ADMISSION_PORT)!=NULL;Permit();if(ready)break;Delay(1);}
 #ifdef OZ_NATIVE_IMPORT_REWIND
+#ifdef OZ_NATIVE_IMPORT_REWIND_MANAGER
+    CHECK(!recovery_parser_test());
+    {
+        struct TagItem quiet[]={{secT_Quiet,TRUE},{TAG_DONE,0}};
+        struct TagItem reader[]={{secT_UserID,(IPTR)"ozreader"},{secT_Password,(IPTR)""},{TAG_DONE,0}};
+        secLogoutA(quiet);CHECK(secLoginA(reader)==((77UL<<16)|88));
+        int denied=request(7,"readonly=on;recovery=extreme",EPERM);
+        secLogoutA(quiet);CHECK(secLoginA(login)==secOWNER_SYSTEM);
+        CHECK(!denied);
+        note("RESULT native Manager recovery authorization PASS nonroot-denied=1 root-restored=1");
+    }
+#endif
 #ifndef OZ_NATIVE_IMPORT_REWIND_COLD
     for(unsigned cycle=0;cycle<2;cycle++) {
         /* Latest MOS root is deliberately damaged in BOTH disposable
@@ -427,7 +467,11 @@ int main(void)
          * recovery; otherwise a preview may have silently committed. */
         CHECK(SystemTags((CONST_STRPTR)"C:zpool import -N -f -o cachefile=none -o readonly=on -d /AROS/ata.device/0/partition/0 -d /AROS/ata.device/1/partition/0 qemu_mirror",TAG_DONE)>0);
         CHECK(SystemTags((CONST_STRPTR)"C:zpool list -H qemu_mirror",TAG_DONE)>0);
+#ifdef OZ_NATIVE_IMPORT_REWIND_MANAGER
+        CHECK(!request(7,"readonly=on;recovery=extreme",0));
+#else
         CHECK(SystemTags((CONST_STRPTR)"C:zpool import -N -f -FX -o cachefile=none -o readonly=on -d /AROS/ata.device/0/partition/0 -d /AROS/ata.device/1/partition/0 qemu_mirror",TAG_DONE)==0);
+#endif
         CHECK(!oz_mount_control(OZ_ADMISSION_PORT,"qemu_mirror/files","OZREWIND",OZ_MOUNT_ATTACH,OZ_MOUNT_READONLY));
         const char expected[]="OpenZFS on AROS: real ZPL file on a two-device QEMU mirror.\n";
         char data[128];file=Open((CONST_STRPTR)"OZREWIND:hello.txt",MODE_OLDFILE);CHECK(file);
@@ -440,7 +484,11 @@ int main(void)
     note("RESULT native damaged import rewind PASS cycles=2 ordinary-refused=2 absent-after-refusal=2 readonly-FX=2 exact-DOS=2 write-refused=2");
 #endif
 #ifdef OZ_NATIVE_IMPORT_REWIND_COMMIT
+#ifdef OZ_NATIVE_IMPORT_REWIND_MANAGER
+    CHECK(!request(7,"readonly=off;recovery=extreme",0));
+#else
     CHECK(SystemTags((CONST_STRPTR)"C:zpool import -N -f -FX -o cachefile=none -d /AROS/ata.device/0/partition/0 -d /AROS/ata.device/1/partition/0 qemu_mirror",TAG_DONE)==0);
+#endif
     CHECK(!oz_mount_control(OZ_ADMISSION_PORT,"qemu_mirror/files","OZREWIND",OZ_MOUNT_ATTACH,0));
     file=Open((CONST_STRPTR)"OZREWIND:after-recovery",MODE_NEWFILE);CHECK(file);
     CHECK(Write(file,"committed-after-rewind",22)==22);CHECK(Flush(file));CHECK(Close(file));file=0;
@@ -465,6 +513,9 @@ int main(void)
     CHECK(!oz_mount_control(OZ_ADMISSION_PORT,"qemu_mirror/files","",OZ_MOUNT_DETACH,0));
     CHECK(SystemTags((CONST_STRPTR)"C:zpool export qemu_mirror",TAG_DONE)==0);
     note("RESULT native repaired pool readback PASS ordinary-import=1 original-file=1 post-recovery-file=1 readonly=1");
+#endif
+#ifdef OZ_NATIVE_IMPORT_REWIND_MANAGER
+    note("RESULT native Manager recovery API PASS real-admission=1 upstream-rewind=1 exact-DOS=1");
 #endif
     goto done;
 #endif

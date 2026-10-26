@@ -175,7 +175,7 @@ int oz_admitted_capture(struct DosPacket *packet, struct MsgPort *service,
     memcpy(&job->request, (const void *)packet->dp_Arg1, sizeof(job->request));
     struct oz_message *m = &job->request;
     int key_file=m->operation==62||m->operation==64;
-    int import_readonly,import_destroyed,import_rewind;
+    struct oz_import_policy import_policy;
     if (oz_validate(m, m->detail, sizeof(m->detail)) != OZ_OK) error = EINVAL;
     else if(m->operation>=67&&m->operation<=69) {
         if(m->flags||m->options[0]||m->job_id)error=EINVAL;
@@ -213,7 +213,7 @@ int oz_admitted_capture(struct DosPacket *packet, struct MsgPort *service,
         !((m->operation==39||m->operation==42||m->operation==50||m->operation==55||m->operation==56)&&
             m->flags==(OZ_CONFIRMED|OZ_RECURSIVE)))) ||
         ((key_file||m->operation==60||m->operation==61||m->operation==21||m->operation==20||m->operation==14||m->operation==10||m->operation==11||m->operation==13||m->operation==12||m->operation==22||m->operation==32||m->operation==15||m->operation==16||m->operation==18||m->operation==39||m->operation==41||m->operation==42||m->operation==43||m->operation==51||m->operation==52||m->operation==55||m->operation==56)?!m->argument[0]:(m->operation!=37&&m->operation!=23&&m->operation!=17&&m->argument[0]!=0)) ||
-        ((m->operation==21||m->operation==20||m->operation==14)?!m->options[0]:m->operation==7?!oz_parse_import_options(m->options,&import_readonly,&import_destroyed,&import_rewind):
+        ((m->operation==21||m->operation==20||m->operation==14)?!m->options[0]:m->operation==7?!oz_parse_import_policy(m->options,&import_policy):
         /* The bound send adapter validates its complete option grammar before
          * opening output. Do not duplicate its former from-only grammar here. */
         (m->operation==60||m->operation==61||m->operation==37||m->operation==5||m->operation==15||m->operation==16)?0:m->operation==43?(strcmp(m->options,"readonly=on")&&strcmp(m->options,"readonly=off")):

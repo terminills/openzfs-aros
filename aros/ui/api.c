@@ -16,10 +16,11 @@ const struct oz_operation oz_operations[] = {
 #undef OZ_OP
 };
 const unsigned oz_operation_count=sizeof(oz_operations)/sizeof(oz_operations[0]);
-int oz_parse_import_identity(const char *options,int *readonly,int *destroyed,int *rewind,UQUAD *expected_guid)
+int oz_parse_import_policy(const char *options,struct oz_import_policy *out)
 {
     unsigned seen=0;int ro=0,recover=0,checkpoint=0;UQUAD guid=0;
-    if(!options||!readonly||!destroyed||!rewind||!expected_guid)return 0;
+    enum oz_import_recovery recovery=OZ_IMPORT_CURRENT;
+    if(!options||!out)return 0;
     for(const char *p=options;*p;) {
         const char *end=strchr(p,';');size_t n=end?(size_t)(end-p):strlen(p);
         unsigned field=0;int on=0;
@@ -29,6 +30,9 @@ int oz_parse_import_identity(const char *options,int *readonly,int *destroyed,in
         else if(n==13&&!memcmp(p,"destroyed=off",13))field=2;
         else if(n==9&&!memcmp(p,"rewind=on",9)){field=4;on=1;}
         else if(n==10&&!memcmp(p,"rewind=off",10))field=4;
+        else if(n==13&&!memcmp(p,"recovery=none",13)){field=16;recovery=OZ_IMPORT_CURRENT;}
+        else if(n==13&&!memcmp(p,"recovery=safe",13)){field=16;recovery=OZ_IMPORT_RECOVER;}
+        else if(n==16&&!memcmp(p,"recovery=extreme",16)){field=16;recovery=OZ_IMPORT_EXTREME;}
         else if(n==21&&!memcmp(p,"guid=",5)){
             field=8;guid=0;
             for(unsigned i=5;i<21;i++){
@@ -46,8 +50,20 @@ int oz_parse_import_identity(const char *options,int *readonly,int *destroyed,in
         if(!end)break;
         p=end+1;if(!*p)return 0;
     }
-    if(!(seen&1))return 0;
-    *readonly=ro;*destroyed=recover;*rewind=checkpoint;*expected_guid=guid;return 1;
+    if(!(seen&1)||(checkpoint&&recovery!=OZ_IMPORT_CURRENT))return 0;
+    struct oz_import_policy parsed={.readonly=ro,.destroyed=recover,
+        .checkpoint=checkpoint,.recovery=recovery,.expected_guid=guid};
+    *out=parsed;return 1;
+}
+int oz_parse_import_identity(const char *options,int *readonly,int *destroyed,int *rewind,UQUAD *expected_guid)
+{
+    struct oz_import_policy parsed;
+    /* Legacy callers cannot represent transaction recovery. Refuse it,
+     * rather than accepting the string then dropping its load policy. */
+    if(!readonly||!destroyed||!rewind||!expected_guid||
+        !oz_parse_import_policy(options,&parsed)||parsed.recovery!=OZ_IMPORT_CURRENT)return 0;
+    *readonly=parsed.readonly;*destroyed=parsed.destroyed;
+    *rewind=parsed.checkpoint;*expected_guid=parsed.expected_guid;return 1;
 }
 int oz_parse_import_options(const char *options,int *readonly,int *destroyed,int *rewind)
 {UQUAD guid;return oz_parse_import_identity(options,readonly,destroyed,rewind,&guid);}

@@ -144,6 +144,8 @@ usb_cli_clear=${AROS_TEST_USB_CLI_CLEAR:-0}
 import_rewind=${AROS_TEST_IMPORT_REWIND:-0}
 [[ $import_rewind == 0 || $import_rewind == 1 ]]
 import_rewind_mode=${AROS_TEST_IMPORT_REWIND_MODE:-preview}
+import_rewind_manager=${AROS_TEST_IMPORT_REWIND_MANAGER:-0}
+[[ $import_rewind_manager == 0 || ( $import_rewind_manager == 1 && $import_rewind == 1 && $import_rewind_mode != cold ) ]]
 [[ $import_rewind_mode == preview || $import_rewind_mode == commit || $import_rewind_mode == cold ]]
 [[ $import_rewind == 1 || $import_rewind_mode == preview ]]
 if [[ $import_rewind == 1 ]];then
@@ -385,6 +387,7 @@ if [[ $import_rewind == 1 ]];then
     sha256sum "$run/zpool" > "$run/rewind-cli.sha256"
     gui_maps+=(-map "$run/zpool" /C/zpool)
     gui_flags+=(-DOZ_NATIVE_IMPORT_REWIND)
+    if [[ $import_rewind_manager == 1 ]];then gui_flags+=(-DOZ_NATIVE_IMPORT_REWIND_MANAGER);fi
     if [[ $import_rewind_mode == commit ]];then gui_flags+=(-DOZ_NATIVE_IMPORT_REWIND_COMMIT);fi
     if [[ $import_rewind_mode == cold ]];then gui_flags+=(-DOZ_NATIVE_IMPORT_REWIND_COLD);fi
     printf '%s\n' "$import_rewind_mode" > "$run/rewind-mode.txt"
@@ -1304,6 +1307,11 @@ if [[ $import_rewind == 1 ]];then
         rg -q '^RESULT native damaged import rewind PASS cycles=2 ordinary-refused=2 absent-after-refusal=2 readonly-FX=2 exact-DOS=2 write-refused=2' "$run/serial.log"
     fi
     rg -q '^RESULT native damaged rewind test PASS line=0' "$run/serial.log"
+    if [[ $import_rewind_manager == 1 ]];then
+        rg -q '^RESULT native recovery parser PASS modes=3 guid=1 malformed=5 unchanged=1 legacy-refused=1' "$run/serial.log"
+        rg -q '^RESULT native Manager recovery authorization PASS nonroot-denied=1 root-restored=1' "$run/serial.log"
+        rg -q '^RESULT native Manager recovery API PASS real-admission=1 upstream-rewind=1 exact-DOS=1' "$run/serial.log"
+    fi
     [[ -s "$run/overlays.sha256" ]]
     sha256sum -c "$run/backing.sha256"
     if [[ $import_rewind_mode == commit ]];then

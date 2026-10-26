@@ -88,6 +88,15 @@ int oz_draid_geometry(const struct oz_vdev_group *, unsigned children,
 ULONG oz_validate_add_topology(const struct oz_topology *t, char *why, unsigned size);
 ULONG oz_validate_import_files(const struct oz_topology *t, char *why, unsigned size);
 /* Strict import options; readonly is mandatory, destroyed defaults off. */
+enum oz_import_recovery { OZ_IMPORT_CURRENT, OZ_IMPORT_RECOVER, OZ_IMPORT_EXTREME };
+struct oz_import_policy {
+    int readonly, destroyed, checkpoint;
+    enum oz_import_recovery recovery;
+    UQUAD expected_guid;
+};
+/* Transaction recovery and checkpoint rewind are mutually exclusive.
+ * Readonly recovery loads an older view without committing it. */
+int oz_parse_import_policy(const char *,struct oz_import_policy *);
 int oz_parse_import_options(const char *,int *readonly,int *destroyed,int *rewind);
 int oz_parse_import_identity(const char *,int *readonly,int *destroyed,int *rewind,UQUAD *expected_guid);
 int oz_client_open(struct oz_client *c);

@@ -11,6 +11,7 @@ static UQUAD draft_import_guid;
 static unsigned device_indices[OZ_MAX_DEVICES],device_visible;
 static const char *pool_roles[]={"data","log","cache","spare","special","dedup",NULL};
 static const char *pool_kinds[]={"stripe","mirror","raidz1","raidz2","raidz3","draid",NULL};
+static const char *pool_load_modes[]={"Current state","Checkpoint view","Recover recent transactions","Extreme transaction recovery",NULL};
 static int pool_number(Object *field,ULONG *out) {
     const char *s=string(field);unsigned n=0;
     if(!*s)return 0;
@@ -59,7 +60,7 @@ static Object *make_pool_window(void) {
             Child,poolrecovery=VGroup,
                 Child,HGroup,Child,poolreadonly=make_check(1),Child,Label2("Read-only import"),End,
                 Child,HGroup,Child,poolrecover=make_check(0),Child,Label2("Recover destroyed pool"),End,
-                Child,HGroup,Child,poolrewind=make_check(0),Child,Label2("Rewind to checkpoint"),End,
+                Child,HGroup,Child,Label2("Load mode"),Child,poolrewind=CycleObject,MUIA_Cycle_Entries,pool_load_modes,End,End,
             End,
             Child,HGroup,Child,poolpath=StringObject,StringFrame,MUIA_String_Columns,48,MUIA_String_MaxLen,256,End,
                 Child,deviceadd=SimpleButton("Add device"),Child,deviceremove=SimpleButton("Remove device"),End,
@@ -74,11 +75,10 @@ static void init_pool_notifications(void) {
     DoMethod(poolwin,MUIM_Notify,MUIA_Window_CloseRequest,TRUE,(IPTR)app,2,MUIM_Application_ReturnID,EV_LAYOUT_CLOSE);
 }
 static void open_pool_editor(void) {
-    int ro=1,recover=0,rewind=0;
-    UQUAD guid=0;
+    struct oz_import_policy policy={.readonly=1};
     draft_import=oz_operations[selected].id==7;
     if(draft_import&&string(options)[0]&&
-       !oz_parse_import_identity(string(options),&ro,&recover,&rewind,&guid)) {
+       !oz_parse_import_policy(string(options),&policy)) {
         set(status,MUIA_Text_Contents,"Invalid import options; correct Properties/options before editing paths");
         return;
     }
@@ -90,14 +90,14 @@ static void open_pool_editor(void) {
     set(poolshift,MUIA_Disabled,draft_import);set(groupadd,MUIA_Disabled,draft_import);
     set(poolgroups,MUIA_Disabled,draft_import);
     set(poolrecover,MUIA_Disabled,!draft_import);set(poolrecover,MUIA_Selected,FALSE);
-    set(poolrewind,MUIA_Disabled,!draft_import);set(poolrewind,MUIA_Selected,FALSE);
+    set(poolrewind,MUIA_Disabled,!draft_import);set(poolrewind,MUIA_Cycle_Active,0);
     set(poolrecovery,MUIA_ShowMe,draft_import);
     set(poolreadonly,MUIA_Selected,TRUE);
-    draft_import_guid=guid;
+    draft_import_guid=policy.expected_guid;
     if(draft_import) {
-        set(poolreadonly,MUIA_Selected,ro);
-        set(poolrecover,MUIA_Selected,recover);
-        set(poolrewind,MUIA_Selected,rewind);
+        set(poolreadonly,MUIA_Selected,policy.readonly);
+        set(poolrecover,MUIA_Selected,policy.destroyed);
+        set(poolrewind,MUIA_Cycle_Active,policy.checkpoint?1:policy.recovery?policy.recovery+1:0);
     }
     set(poolhint,MUIA_Text_Contents,draft_import?"List all member paths, including absent members.":"Select a group; add each device/file path separately (spaces preserved).");
     set(poolnote,MUIA_Text_Contents,draft_import?
@@ -136,7 +136,7 @@ static void pool_event(IPTR event) {
         i=value(pooldevices,MUIA_List_Active);if(i>=device_visible)break;i=device_indices[i];
         memmove(&draft_layout.devices[i],&draft_layout.devices[i+1],(draft_layout.device_count-i-1)*sizeof(draft_layout.devices[0]));
         memset(&draft_layout.devices[--draft_layout.device_count],0,sizeof(draft_layout.devices[0]));refresh_devices();break;
-    case EV_LAYOUT_CLEAR:memset(&draft_layout,0,sizeof(draft_layout));set(poolreadonly,MUIA_Selected,TRUE);set(poolrecover,MUIA_Selected,FALSE);set(poolrewind,MUIA_Selected,FALSE);refresh_groups();break;
+    case EV_LAYOUT_CLEAR:memset(&draft_layout,0,sizeof(draft_layout));set(poolreadonly,MUIA_Selected,TRUE);set(poolrecover,MUIA_Selected,FALSE);set(poolrewind,MUIA_Cycle_Active,0);refresh_groups();break;
     case EV_LAYOUT_APPLY:
         i=value(poolshift,MUIA_Cycle_Active);draft_layout.ashift=draft_import?0:i?i+8:0;
         if(!string(poolname)[0]){set(poolnote,MUIA_Text_Contents,"Pool name is required");break;}
@@ -149,7 +149,9 @@ static void pool_event(IPTR event) {
         if(draft_import)snprintf(opts,sizeof(opts),"readonly=%s%s%s",
             value(poolreadonly,MUIA_Selected)?"on":"off",
             value(poolrecover,MUIA_Selected)?";destroyed=on":"",
-            value(poolrewind,MUIA_Selected)?";rewind=on":"");
+            value(poolrewind,MUIA_Cycle_Active)==1?";rewind=on":
+            value(poolrewind,MUIA_Cycle_Active)==2?";recovery=safe":
+            value(poolrewind,MUIA_Cycle_Active)==3?";recovery=extreme":"");
         /* Changing paths/access mode must not drop the pool identity guard.
          * Clear layout clears members, not the expected pool identity. */
         if(draft_import&&draft_import_guid) {
