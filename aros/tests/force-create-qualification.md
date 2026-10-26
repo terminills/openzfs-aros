@@ -87,3 +87,18 @@ The Manager binary cross-build passed with an added overwrite warning in
 request review. The visual dialog has not yet been requalified; the result
 above exercises its authenticated API, not mouse-driven interaction.
 Arbitrary nonzero-media force and force add/attach/replace remain open.
+
+## Manager visual result
+
+Private PS/2 QEMU run `native-gui-run.G1sRAZ8x` displayed the rebuilt
+Manager's Advanced/Pools/create preview with Force selected. The captured
+preview explicitly says nothing was submitted and displays the exported-pool
+overwrite/data-loss warning and backup instruction. The preview used a
+nonexistent RAM path and was not submitted. This is UI rendering evidence,
+separate from the authenticated API write tests above.
+
+The Manager was closed normally through its close gadget. The acceptance
+client resumed, readonly reimport and DOS round trip passed, and the runner
+exited zero with `RESULT public service storage PASS`. Screenshot, QMP
+actions, serial results, hashes, and pruned-image record are retained in
+`evidence/manager-force-visual-20261026`.
