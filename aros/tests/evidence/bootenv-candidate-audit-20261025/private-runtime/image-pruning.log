@@ -1,0 +1,3 @@
+usage: prune-public-test-images.py [-h] [--apply] [--run RUN]
+                                   [--artifact-root ARTIFACT_ROOT]
+prune-public-test-images.py: error: external artifact root requires one run and a separate mounted filesystem

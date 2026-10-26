@@ -1,0 +1,140 @@
+[bootstrap:multiboot2] smartfb: using VBE mode 0x417a (1280x800x32, fb=0xFD000000)
+[bootstrap:multiboot2] smartfb: KRN_FBAddr=0x00000000FD000000
+0000000000000000 0x0000000000000000 | 000 | AROS64 - The AROS Research OS
+0000000000000000 0x0000000000000000 | 000 | 64-bit SMP build. Compiled Oct 21 2026
+0000000000000000 0x0000000000000000 | 000 | [Kernel] Local APIC: x2APIC
+00000000a9b647f3 0x0000000000000000 | 000 | ACPI: RSDP 0x00000000000F52E0 000014 (v00 BOCHS )
+00000000aa304b66 0x0000000000000000 | 000 | ACPI: RSDT 0x000000007FFE25C5 000034 (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+00000000aad4f8b9 0x0000000000000000 | 000 | ACPI: FACP 0x000000007FFE2441 000074 (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+00000000ab74c907 0x0000000000000000 | 000 | ACPI: DSDT 0x000000007FFE0040 002401 (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+00000000ac14224a 0x0000000000000000 | 000 | ACPI: FACS 0x000000007FFE0000 000040
+00000000ac7bf370 0x0000000000000000 | 000 | ACPI: APIC 0x000000007FFE24B5 0000B0 (v03 BOCHS  BXPC     00000001 BXPC 00000001)
+00000000ad1bdae3 0x0000000000000000 | 000 | ACPI: HPET 0x000000007FFE2565 000038 (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+00000000adbabc53 0x0000000000000000 | 000 | ACPI: WAET 0x000000007FFE259D 000028 (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+00000000ae60a8ca 0x0000000000000000 | 000 | [HPET] 2 units total
+00000000af17fef8 0x00000000013d2020 | 000 | ACPI: 1 ACPI AML tables successfully acquired and loaded
+00000000afbc8987 0x00000000013b0130 | 000 | [Kernel:ACPI-IOAPIC] Registering IO-APIC #1 [ID=000] @ 00000000fec00000 [GSI = 0]
+00000000b05c9e95 0x00000000013b0130 | 000 | [Kernel:ACPI] System Total APICs: 8, 8 usable
+00000000b10bf94e 0x00000000013b0130 | 000 | [Kernel:APIC-IA32] MSI Interrupts Allocatable
+00000000b1823401 0x00000000013b0130 | 000 | [Kernel:APIC-IA32]     start = 16
+00000000b2239af3 0x00000000013b0130 | 000 | [Kernel:APIC-IA32]     total = 198
+00000000d04ce318 0x00000000013b0130 | 000 | [Kernel:APIC-IA32] Heartbeat timer: TSC deadline
+00000000d254f961 0x00000000013dbe80 | 001 | [Kernel:APIC-IA32.001] core_APIC_Calibrate: TSC freq inherited from BSP (2496025 kHz) [hypervisor]
+00000000d3ed4648 0x00000000013dbe80 | 001 | [Kernel:APIC-IA32.001] core_APIC_Calibrate: LAPIC timer freq inherited from BSP (1000430110 Hz) [hypervisor]
+00000000d734a643 0x00000000013dc4c0 | 002 | [Kernel:APIC-IA32.002] core_APIC_Calibrate: TSC freq inherited from BSP (2496025 kHz) [hypervisor]
+00000000d8ce41ee 0x00000000013dc4c0 | 002 | [Kernel:APIC-IA32.002] core_APIC_Calibrate: LAPIC timer freq inherited from BSP (1000430110 Hz) [hypervisor]
+00000000dc0de50d 0x000000000145c4b0 | 003 | [Kernel:APIC-IA32.003] core_APIC_Calibrate: TSC freq inherited from BSP (2496025 kHz) [hypervisor]
+00000000ddac6fce 0x000000000145c4b0 | 003 | [Kernel:APIC-IA32.003] core_APIC_Calibrate: LAPIC timer freq inherited from BSP (1000430110 Hz) [hypervisor]
+00000000e0ea1079 0x0000000001497100 | 004 | [Kernel:APIC-IA32.004] core_APIC_Calibrate: TSC freq inherited from BSP (2496025 kHz) [hypervisor]
+00000000e2a12c95 0x0000000001497100 | 004 | [Kernel:APIC-IA32.004] core_APIC_Calibrate: LAPIC timer freq inherited from BSP (1000430110 Hz) [hypervisor]
+00000000e60abe91 0x00000000014d1db0 | 005 | [Kernel:APIC-IA32.005] core_APIC_Calibrate: TSC freq inherited from BSP (2496025 kHz) [hypervisor]
+00000000e7a5a1df 0x00000000014d1db0 | 005 | [Kernel:APIC-IA32.005] core_APIC_Calibrate: LAPIC timer freq inherited from BSP (1000430110 Hz) [hypervisor]
+00000000eae8fa9a 0x000000000150ca60 | 006 | [Kernel:APIC-IA32.006] core_APIC_Calibrate: TSC freq inherited from BSP (2496025 kHz) [hypervisor]
+00000000ec82a9cd 0x000000000150ca60 | 006 | [Kernel:APIC-IA32.006] core_APIC_Calibrate: LAPIC timer freq inherited from BSP (1000430110 Hz) [hypervisor]
+00000000efc1cad8 0x0000000001547710 | 007 | [Kernel:APIC-IA32.007] core_APIC_Calibrate: TSC freq inherited from BSP (2496025 kHz) [hypervisor]
+00000000f160eb1c 0x0000000001547710 | 007 | [Kernel:APIC-IA32.007] core_APIC_Calibrate: LAPIC timer freq inherited from BSP (1000430110 Hz) [hypervisor]
+00000000f3bed9dc 0x00000000013b0130 | 000 | [PCIPC:Driver] PCIPC_InitClass: No ACPI MCFG table
+00000000f7ab55cf 0x00000000013b0130 | 000 | [Timer] clock: PIT (no invariant TSC)
+0000000206b02b5d 0x0000000001814820 | 000 | [ATI] Init
+0000000206f9338e 0x0000000001814820 | 000 | [ATI] No supported cards found
+0000000221486426 0x000000000180cba0 | 000 | [HW] HW__HW__AddDriver: Failed to instantiate Driver Object
+Native authenticated admission ready
+OpenZFS management API 3 ready; engine initialized
+0000000258f43af3 0x00000000018626a0 | 000 | Public service op=1 status=0 engine=1 rows=0
+000000025eec7e34 0x00000000018626a0 | 000 | Public service op=2 status=0 engine=1 rows=0
+0000000264e47436 0x00000000018626a0 | 000 | Public service op=3 status=0 engine=1 rows=0
+000000026adc39e1 0x00000000018626a0 | 000 | Public mutation requires authenticated admission PASS
+OpenZFS service engine shutdown complete
+000000027cc39da2 0x00000000018626a0 | 000 | Public service test line=0
+RESULT public service lifecycle PASS
+Native authenticated admission ready
+OpenZFS management API 3 ready; engine initialized
+00000002a092131c 0x00000000018626a0 | 000 | Public service op=1 status=0 engine=1 rows=0
+00000002a68a48e3 0x00000000018626a0 | 000 | Public service op=2 status=0 engine=1 rows=0
+00000002ac82bf82 0x00000000018626a0 | 000 | Public service op=3 status=0 engine=1 rows=0
+00000002b27a1d45 0x00000000018626a0 | 000 | Public mutation requires authenticated admission PASS
+OpenZFS service engine shutdown complete
+00000002c4623d4e 0x00000000018626a0 | 000 | Public service test line=0
+RESULT public service lifecycle PASS
+Invalid startup mode. Default is read-only; WRITABLE requires an authorized system identity.
+Writable startup denied: configured security.library and system task identity required.
+00000002e1f04b2b 0x00000000018626a0 | 000 | Public startup invalid-mode and non-root denial PASS
+Native authenticated admission ready
+OpenZFS management API 3 ready; engine initialized
+00000002f45467a2 0x00000000018626a0 | 000 | Public service op=1 status=0 engine=1 rows=0
+00000002fa4c54c1 0x00000000018626a0 | 000 | Public service op=2 status=0 engine=1 rows=0
+0000000300444f8c 0x00000000018626a0 | 000 | Public service op=3 status=0 engine=1 rows=0
+Service remains resident: active client sessions or admitted operations.
+000000034de18ae3 0x00000000018626a0 | 000 | Public native control descriptors PASS capacity=64 ownership=1 stale=1 session-cleanup=1
+0000000356888df4 0x00000000018626a0 | 000 | Public task-exit session reclamation PASS cycles=4 sessions=32
+00000003571506e4 0x00000000018626a0 | 000 | Public authenticated sessions ownership, capacity, stale handles and shutdown guard PASS
+000000035d0cd478 0x00000000018626a0 | 000 | Public mutation requires authenticated admission PASS
+OpenZFS service engine shutdown complete
+000000037de11b19 0x00000000018626a0 | 000 | Public service test line=0
+RESULT public service lifecycle PASS
+Invalid startup mode. Default is read-only; WRITABLE requires an authorized system identity.
+Writable startup denied: configured security.library and system task identity required.
+000000043144b36e 0x00000000018626a0 | 000 | Public startup invalid-mode and non-root denial PASS
+Native authenticated admission ready
+OpenZFS management API 3 ready; engine initialized
+0000000445d53326 0x00000000018626a0 | 000 | Public service op=1 status=0 engine=1 rows=0
+000000044bcd6938 0x00000000018626a0 | 000 | Public service op=2 status=0 engine=1 rows=0
+0000000451c5232b 0x00000000018626a0 | 000 | Public service op=3 status=0 engine=1 rows=0
+Service remains resident: active client sessions or admitted operations.
+000000049f62d58d 0x00000000018626a0 | 000 | Public native control descriptors PASS capacity=64 ownership=1 stale=1 session-cleanup=1
+00000004a62d47d6 0x00000000018626a0 | 000 | Public task-exit session reclamation PASS cycles=4 sessions=32
+00000004a6b48dd1 0x00000000018626a0 | 000 | Public authenticated sessions ownership, capacity, stale handles and shutdown guard PASS
+00000004ab4a6587 0x00000000018626a0 | 000 | Public mutation requires authenticated admission PASS
+00000004abca995a 0x00000000018626a0 | 000 | Public fixture directory: AROS Live CD:
+00000005f96adf9d 0x00000000018626a0 | 000 | Public pool alias identity PASS duplicate-refused=1
+00000005f9ea0ee4 0x00000000018626a0 | 000 | Public native engine version value=zfs-2.4.4-1
+00000005fa5db6b4 0x00000000018626a0 | 000 | Public native engine version PASS query=1 upstream=1 bounds=1 missing=1
+00000005faf36574 0x00000000018626a0 | 000 | Public native supported tables PASS feature=1 properties=3 unknown=1 missing=1
+000000061dad8cc0 0x00000000018626a0 | 000 | Public storage op=5 status=0 Authenticated pool creation returned errno=0
+000000061e456ae0 0x00000000018626a0 | 000 | Public pool assign PASS op=5 kind=0 removed=1
+00000006297fc98c 0x00000000018626a0 | 000 | Public pool root payload PASS written=1 flushed=1 detached=1
+RESULT native event cursor PASS tiny-retry=1 seek-start-eid=1 seek-end-empty=1 bad-handle=1
+Public upstream snapshot ioctls PASS create=1 hold=1 onexit=1 release=1 destroy=1 schema=1
+Public upstream snapshot authorization PASS changed-user=1 own-session-denied=1 no-mutation=1
+Public upstream libzfs_core PASS snapshot=1 temporary-hold=1 destroy=1 reopen=1
+Public upstream bootenv PASS get=1 set=1 invalid-preserved=1 restored=1
+Public upstream enumeration PASS dataset=1 snapshot=1 properties=1 end=1 snapshot-growth=1
+Public upstream dataset ioctls PASS create=1 clone=1 rollback=1 volume=1 handler-ready=1
+Public upstream ioctl transport PASS stats=1 configs=1 resize=1 bounds=1 stale=1
+00000006770ddfbd 0x00000000018626a0 | 000 | Public native shares object PASS absent=1 unmounted=1 missing=1 invalid=1
+000000067a1cae2d 0x00000000018626a0 | 000 | Public storage op=41 status=0 Authenticated dataset property set returned errno=0
+000000067d67e1a6 0x00000000018626a0 | 000 | Public storage op=41 status=0 Authenticated dataset property set returned errno=0
+0000000680b8797e 0x00000000018626a0 | 000 | Public storage op=41 status=0 Authenticated dataset property set returned errno=0
+00000006840eaabc 0x00000000018626a0 | 000 | Public storage op=41 status=0 Authenticated dataset property set returned errno=0
+00000006875abb7f 0x00000000018626a0 | 000 | Public storage op=41 status=0 Authenticated dataset property set returned errno=0
+000000068aad1ed0 0x00000000018626a0 | 000 | Public storage op=41 status=0 Authenticated dataset property set returned errno=0
+000000068dfb4b52 0x00000000018626a0 | 000 | Public storage op=41 status=0 Authenticated dataset property set returned errno=0
+00000006914b6c51 0x00000000018626a0 | 000 | Public storage op=41 status=0 Authenticated dataset property set returned errno=0
+0000000694a60aaa 0x00000000018626a0 | 000 | Public storage op=41 status=0 Authenticated dataset property set returned errno=0
+0000000697f732a6 0x00000000018626a0 | 000 | Public storage op=41 status=0 Authenticated dataset property set returned errno=0
+000000069b44fa47 0x00000000018626a0 | 000 | Public storage op=41 status=0 Authenticated dataset property set returned errno=0
+000000069e926586 0x00000000018626a0 | 000 | Public storage op=41 status=0 Authenticated dataset property set returned errno=0
+000000069f32f4a6 0x00000000018626a0 | 000 | Public native mount policy PASS properties=4 transitions=8 missing=1 absent=1
+00000006ac2cc4ed 0x00000000018626a0 | 000 | Public sparse64 PASS write=1 boundary=4294967296 size=4294971392 holes=1 legacy-refused=1
+00000006c30594ba 0x00000000018626a0 | 000 | Public DOS links PASS write=1 hard=1 relative-soft=1 unlinked-source=1 dangling-refused=1
+00000006d315624f 0x00000000018626a0 | 000 | Metadata observed write=1 comment='OpenZFS native metadata' protection=50 size=8 date=17000/721/1234 DOS=0
+00000006d3e0d43e 0x00000000018626a0 | 000 | Public DOS metadata PASS write=1 comment=1 protection=1 timestamp=1 exact-data=1
+0000000719387555 0x00000000018626a0 | 000 | Public DOS notifications PASS absent-watch=1 create=1 wait-reply=1 coalesced=1 end=1 late-reply-reuse=3
+000000073cda65bd 0x00000000018626a0 | 000 | Public DOS signal notifications PASS initial=1 metadata=1 deletion=1 end=1
+000000073e2e17d9 0x00000000018626a0 | 000 | Public desktop directory PASS phase=post-sparse64 stage=exall exnext=1/6 exall=1/6 errno=0 doserr=232
+000000073f0226aa 0x00000000018626a0 | 000 | Public pool self-assign PASS deadlock-refused=1 responsive=1
+000000073fa976cb 0x00000000018626a0 | 000 | Public native root resolution PASS alias=1 file-rejected=1 unrelated=1 absent=1
+0000000740472277 0x00000000018626a0 | 000 | Public native path dataset PASS file=1 alias=1 unrelated=1 absent=1 bounds=1
+000000074141c173 0x00000000018626a0 | 000 | Public desktop detach phase=post-ui retries=0 errno=0
+0000000748587baa 0x00000000018626a0 | 000 | Public storage op=8 status=0 Authenticated pool export returned errno=0
+00000007584d553f 0x00000000018626a0 | 000 | Public storage op=7 status=0 Authenticated pool import returned errno=0
+0000000758e3e8e7 0x00000000018626a0 | 000 | Public pool assign PASS op=7 kind=2 removed=1
+000000075a886cdb 0x00000000018626a0 | 000 | Public desktop detach phase=readonly-reimport retries=0 errno=0
+000000075b107144 0x00000000018626a0 | 000 | Public native mount control PASS writable=1 readonly=1 busy=1 duplicate=1 absent=1 invalid=1
+000000075c7f9c62 0x00000000018626a0 | 000 | Public storage op=8 status=0 Authenticated pool export returned errno=0
+000000075d138bc5 0x00000000018626a0 | 000 | Public native mount snapshot PASS empty=1 writable=1 readonly=1 retired-absent=1 bounds=1
+000000075dbd6b13 0x00000000018626a0 | 000 | Public authenticated mirror, DOS write/read and readonly reimport PASS
+Service remains resident: mounted or retired DOS endpoints still require servicing.
+00000007a972b08b 0x00000000018626a0 | 000 | Public service retains retired DOS endpoints after export
+00000007a9f425f3 0x00000000018626a0 | 000 | Public service test line=0
+RESULT public service storage PASS
