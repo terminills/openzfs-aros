@@ -4393,6 +4393,13 @@ zpool_clear(zpool_handle_t *zhp, const char *path, nvlist_t *rewindnvl)
 		zcmd_expand_dst_nvlist(hdl, &zc);
 
 	if (!error || ((policy.zlp_rewind & ZPOOL_TRY_REWIND) &&
+#ifdef __AROS__
+	    /* The native transport may reject a recovery operation before SPA
+	     * examines the pool. That is not a successful rewind feasibility
+	     * check, and must reach the caller as an unsupported-operation error.
+	     */
+	    errno != ENOTSUP && errno != ENOSYS &&
+#endif
 	    errno != EPERM && errno != EACCES)) {
 		if (policy.zlp_rewind &
 		    (ZPOOL_DO_REWIND | ZPOOL_TRY_REWIND)) {
