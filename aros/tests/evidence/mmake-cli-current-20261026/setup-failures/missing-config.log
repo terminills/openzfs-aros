@@ -1,0 +1,2 @@
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/config/make.cfg:28: /mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/mmake-cli.riyXfem6/gen/config/target.cfg: No such file or directory
+make: *** No rule to make target '/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/mmake-cli.riyXfem6/gen/config/target.cfg'.  Stop.
