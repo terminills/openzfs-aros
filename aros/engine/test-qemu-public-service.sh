@@ -361,6 +361,14 @@ if [[ $persistent == 1 ]];then
         archive_cold_drives=(-drive "file=$run/startup-archive.raw,format=raw,if=ide,index=1")
     fi
 fi
+if [[ -n $shared ]];then
+    cp "$shared/OpenZFSLibraryTest" "$run/OpenZFSLibraryTest"
+    sha256sum "$run/OpenZFSLibraryTest" >"$run/library-test.sha256"
+    extra_maps+=(-map "$run/OpenZFSLibraryTest" /C/OpenZFSLibraryTest)
+    # Run before any resident service owns the module. A failing lifecycle
+    # check must not silently proceed to ordinary IPC/storage validation.
+    sed -i '/^Stack /a C:OpenZFSLibraryTest\nIf WARN\n  Quit 20\nEndIf' "$run/Startup-Sequence"
+fi
 if [[ -n $pbkdf2 ]];then
     cp "$pbkdf2" "$run/OpenZFSPBKDF2Test"
     sha256sum "$run/OpenZFSPBKDF2Test" >"$run/pbkdf2-input.sha256"
@@ -649,6 +657,11 @@ fi
 printf 'quit\n' | socat - "UNIX-CONNECT:$run/monitor" >/dev/null
 wait "$pid"
 trap - EXIT
+if [[ -n $shared ]];then
+    [[ $(rg -c '^RESULT shared engine lifecycle cycle=[1-8] PASS' "$run/serial-results.log") == 8 ]]
+    rg -q '^RESULT shared engine denied return PASS status=20 repeated=10 caller-exit=7' "$run/serial-results.log"
+    rg -q '^RESULT shared engine library lifecycle PASS invalid-mode=2 nested-open=1 foreign-refused=1 reload-other-task=1' "$run/serial-results.log"
+fi
 if [[ $persistent == 1 ]];then
     if [[ $startup_import == 1 ]];then
         rg -q '^Public startup import record PASS persisted-fixture=1 readonly=1 enabled=1' "$run/serial-results.log"
