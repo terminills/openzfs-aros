@@ -282,6 +282,17 @@ results, not a fresh qualification of this public snapshot.
 
 ## Remaining boundaries
 
+Current-source refresh (2026-10-26): all 248 upstream inventory units, service
+adapters and nvpair/XDR were rebuilt without old engine objects. Both the
+standalone service and actual shared library/launcher passed the file/native
+force suite in isolated eight-CPU QEMU. A fresh handler/device/client package
+also passed persistent dRAID repair and separate cold recovery, host FAT
+validation, unchanged member hashes and independent zdb checks. Shared runs
+now require eight library ownership/unload/reload cycles before storage tests.
+See `aros/tests/evidence/current-source-shared-20261026` for exact inputs and
+scope. The compiler/SDK, private pthread/crypto/CRT and OS overlays remain
+selected dependencies, not a newly qualified official or bootstrap release.
+
 - A compatible patched AROS runtime is required; stock-nightly compatibility is
   not established for every component.
   Current large-ATA evidence: alpha18c5 with the selected DOS/posixc prerequisites

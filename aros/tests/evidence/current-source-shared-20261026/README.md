@@ -25,3 +25,24 @@ These are eight-CPU isolated QEMU tests with selected DOS/CRT prerequisites,
 not physical storage or user-hosted-session tests. Build manifests and logs
 are under `build/`, and the two runtime records under `standalone/` and
 `shared-native/`. The full-port objective remains incomplete.
+
+## Fresh shared package components and persistent recovery
+
+`public-service-run.P0IWGgxV` additionally selected the freshly built
+acceptance client and nvpair test from `source-engine.phZ4CAdP`, a fresh
+standalone handler (`handler-build.jxfoSGcL`), and fresh OpenZFSDevice
+(`full-source-device`). The CLI remains the separately compiled current
+`cli-link.mkN7lloD` identified by its hashes. The first device build invocation
+omitted its required output directory and exited before compiling; the
+corrected explicit-directory build passed. No shared SDK was modified.
+
+With the real library/launcher, patched BPB-bound FAT handler and eight CPUs,
+writer and separate cold phases exited zero. Coverage includes nvpair/XDR,
+eight shared-library lifetime cycles, standalone-handler mount/read/readonly
+denial/detach, zvol-device geometry/I/O/reopen/eject/busy handling, CLI forced
+dRAID spare replacement, sequential rebuild and scrub, cold original-member
+absence and rebuilt redundancy, and exact data/readonly checks. Host FAT
+checks, unchanged member hashes and independent zdb (No leaks) passed.
+Evidence is in `shared-persistent/`; successful media was hashed and pruned.
+This updates current-source/runtime evidence without removing the external
+dependency, broader feature or physical-device qualification boundaries.
