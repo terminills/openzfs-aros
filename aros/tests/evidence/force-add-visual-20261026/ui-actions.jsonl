@@ -1,0 +1,42 @@
+{"time": 1793024718.5645995, "action": "capture", "args": ["initial.png"]}
+{"time": 1793024847.6441805, "action": "relative", "args": ["420", "134"]}
+{"time": 1793024848.8982303, "action": "press", "args": []}
+{"time": 1793024849.0553012, "action": "capture", "args": ["advanced.png"]}
+{"time": 1793024966.1168873, "action": "relative", "args": ["-155", "30"]}
+{"time": 1793024967.3654132, "action": "press", "args": []}
+{"time": 1793024967.5184631, "action": "capture", "args": ["pools.png"]}
+{"time": 1793025107.681975, "action": "relative", "args": ["40", "72"]}
+{"time": 1793025108.9323444, "action": "press", "args": []}
+{"time": 1793025108.9750345, "action": "relative", "args": ["445", "-49"]}
+{"time": 1793025110.2298532, "action": "press", "args": []}
+{"time": 1793025112.4078357, "action": "type", "args": ["preview_pool"]}
+{"time": 1793025112.6146111, "action": "key", "args": ["tab"]}
+{"time": 1793025115.9326837, "action": "type", "args": ["/RAM/preview-only"]}
+{"time": 1793025116.0857658, "action": "capture", "args": ["add-fields.png"]}
+{"time": 1793025272.9909153, "action": "key", "args": ["shift-right"]}
+{"time": 1793025273.3705971, "action": "key", "args": ["shift-backspace"]}
+{"time": 1793025273.4217012, "action": "relative", "args": ["60", "61"]}
+{"time": 1793025274.6797054, "action": "press", "args": []}
+{"time": 1793025274.7982347, "action": "capture", "args": ["builder.png"]}
+{"time": 1793025407.6277769, "action": "relative", "args": ["30", "-20"]}
+{"time": 1793025408.8736002, "action": "press", "args": []}
+{"time": 1793025408.914167, "action": "relative", "args": ["-340", "347"]}
+{"time": 1793025410.162, "action": "press", "args": []}
+{"time": 1793025413.4781175, "action": "type", "args": ["/RAM/preview-only"]}
+{"time": 1793025413.5261917, "action": "relative", "args": ["280", "0"]}
+{"time": 1793025414.7825296, "action": "press", "args": []}
+{"time": 1793025414.9019573, "action": "capture", "args": ["add-draft.png"]}
+{"time": 1793025414.9532816, "action": "relative", "args": ["-140", "31"]}
+{"time": 1793025416.2073245, "action": "press", "args": []}
+{"time": 1793025416.2516882, "action": "relative", "args": ["-21", "-340"]}
+{"time": 1793025417.5053382, "action": "press", "args": []}
+{"time": 1793025417.551224, "action": "relative", "args": ["11", "16"]}
+{"time": 1793025418.8023794, "action": "press", "args": []}
+{"time": 1793025418.9528077, "action": "capture", "args": ["force-add-preview.png"]}
+{"time": 1793025531.2479248, "action": "relative", "args": ["63", "-16"]}
+{"time": 1793025532.4985046, "action": "press", "args": []}
+{"time": 1793025532.5437229, "action": "relative", "args": ["-63", "16"]}
+{"time": 1793025533.7968583, "action": "press", "args": []}
+{"time": 1793025533.9132845, "action": "capture", "args": ["force-add-preview-final.png"]}
+{"time": 1793025533.9622397, "action": "relative", "args": ["-376", "-165"]}
+{"time": 1793025535.214369, "action": "press", "args": []}
