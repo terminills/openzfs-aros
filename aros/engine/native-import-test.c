@@ -12,12 +12,20 @@
 #include "../ui/settings-file.h"
 #include <proto/exec.h>
 #include <proto/dos.h>
+#include <dos/dostags.h>
 #include <proto/security.h>
 #include <libraries/security.h>
 #include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#ifdef OZ_NATIVE_IMPORT_REWIND_NORMAL
+#define OZ_REWIND_FLAG "F"
+#define OZ_REWIND_POLICY "safe"
+#else
+#define OZ_REWIND_FLAG "FX"
+#define OZ_REWIND_POLICY "extreme"
+#endif
 #ifdef OZ_NATIVE_USB_ALL_LOST_WRITABLE
 #include <libraries/poseidon.h>
 #include <proto/poseidon.h>
@@ -454,13 +462,31 @@ int main(void)
         struct TagItem quiet[]={{secT_Quiet,TRUE},{TAG_DONE,0}};
         struct TagItem reader[]={{secT_UserID,(IPTR)"ozreader"},{secT_Password,(IPTR)""},{TAG_DONE,0}};
         secLogoutA(quiet);CHECK(secLoginA(reader)==((77UL<<16)|88));
-        int denied=request(7,"readonly=on;recovery=extreme",EPERM);
+        int denied=request(7,"readonly=on;recovery=" OZ_REWIND_POLICY,EPERM);
         secLogoutA(quiet);CHECK(secLoginA(login)==secOWNER_SYSTEM);
         CHECK(!denied);
         note("RESULT native Manager recovery authorization PASS nonroot-denied=1 root-restored=1");
     }
 #endif
 #ifndef OZ_NATIVE_IMPORT_REWIND_COLD
+#ifdef OZ_NATIVE_IMPORT_REWIND_REFUSE_NORMAL
+    /* This fixture has latest txg 536, next surviving txg 520. Upstream
+     * normal recovery is bounded by TXG_DEFER_SIZE (2), so do not silently
+     * promote it to extreme recovery. The later readonly extreme cycles
+     * also verify that these refused imports did not commit repairs. */
+    CHECK(!request(7,"readonly=on;recovery=safe",ENXIO));
+    CHECK(SystemTags((CONST_STRPTR)"C:zpool list -H qemu_mirror",TAG_DONE)>0);
+    file=Open((CONST_STRPTR)"T:normal-recovery-error",MODE_NEWFILE);CHECK(file);
+    LONG normal_result=SystemTags((CONST_STRPTR)"C:zpool import -N -f -F -o cachefile=none -o readonly=on -d /AROS/ata.device/0/partition/0 -d /AROS/ata.device/1/partition/0 qemu_mirror",SYS_Error,file,TAG_DONE);
+    CHECK(Close(file));file=0;CHECK(normal_result>0);
+    file=Open((CONST_STRPTR)"T:normal-recovery-error",MODE_OLDFILE);CHECK(file);
+    char normal_error[1024];LONG normal_length=Read(file,normal_error,sizeof(normal_error)-1);
+    CHECK(normal_length>0);normal_error[normal_length]=0;
+    CHECK(Close(file));file=0;note(normal_error);
+    CHECK(strstr(normal_error,"cannot import")&&strstr(normal_error,"one or more devices is currently unavailable"));
+    CHECK(SystemTags((CONST_STRPTR)"C:zpool list -H qemu_mirror",TAG_DONE)>0);
+    note("RESULT native normal recovery boundary PASS Manager-ENXIO=1 CLI-refused=1 diagnostic=1 absent=2 no-extreme-fallback=1");
+#endif
     for(unsigned cycle=0;cycle<2;cycle++) {
         /* Latest MOS root is deliberately damaged in BOTH disposable
          * members. An ordinary import must fail again after readonly
@@ -468,9 +494,9 @@ int main(void)
         CHECK(SystemTags((CONST_STRPTR)"C:zpool import -N -f -o cachefile=none -o readonly=on -d /AROS/ata.device/0/partition/0 -d /AROS/ata.device/1/partition/0 qemu_mirror",TAG_DONE)>0);
         CHECK(SystemTags((CONST_STRPTR)"C:zpool list -H qemu_mirror",TAG_DONE)>0);
 #ifdef OZ_NATIVE_IMPORT_REWIND_MANAGER
-        CHECK(!request(7,"readonly=on;recovery=extreme",0));
+        CHECK(!request(7,"readonly=on;recovery=" OZ_REWIND_POLICY,0));
 #else
-        CHECK(SystemTags((CONST_STRPTR)"C:zpool import -N -f -FX -o cachefile=none -o readonly=on -d /AROS/ata.device/0/partition/0 -d /AROS/ata.device/1/partition/0 qemu_mirror",TAG_DONE)==0);
+        CHECK(SystemTags((CONST_STRPTR)"C:zpool import -N -f -" OZ_REWIND_FLAG " -o cachefile=none -o readonly=on -d /AROS/ata.device/0/partition/0 -d /AROS/ata.device/1/partition/0 qemu_mirror",TAG_DONE)==0);
 #endif
         CHECK(!oz_mount_control(OZ_ADMISSION_PORT,"qemu_mirror/files","OZREWIND",OZ_MOUNT_ATTACH,OZ_MOUNT_READONLY));
         const char expected[]="OpenZFS on AROS: real ZPL file on a two-device QEMU mirror.\n";
@@ -481,20 +507,20 @@ int main(void)
         CHECK(!oz_mount_control(OZ_ADMISSION_PORT,"qemu_mirror/files","",OZ_MOUNT_DETACH,0));
         CHECK(SystemTags((CONST_STRPTR)"C:zpool export qemu_mirror",TAG_DONE)==0);
     }
-    note("RESULT native damaged import rewind PASS cycles=2 ordinary-refused=2 absent-after-refusal=2 readonly-FX=2 exact-DOS=2 write-refused=2");
+    note("RESULT native damaged import rewind PASS cycles=2 ordinary-refused=2 absent-after-refusal=2 readonly-" OZ_REWIND_FLAG "=2 exact-DOS=2 write-refused=2");
 #endif
 #ifdef OZ_NATIVE_IMPORT_REWIND_COMMIT
 #ifdef OZ_NATIVE_IMPORT_REWIND_MANAGER
-    CHECK(!request(7,"readonly=off;recovery=extreme",0));
+    CHECK(!request(7,"readonly=off;recovery=" OZ_REWIND_POLICY,0));
 #else
-    CHECK(SystemTags((CONST_STRPTR)"C:zpool import -N -f -FX -o cachefile=none -d /AROS/ata.device/0/partition/0 -d /AROS/ata.device/1/partition/0 qemu_mirror",TAG_DONE)==0);
+    CHECK(SystemTags((CONST_STRPTR)"C:zpool import -N -f -" OZ_REWIND_FLAG " -o cachefile=none -d /AROS/ata.device/0/partition/0 -d /AROS/ata.device/1/partition/0 qemu_mirror",TAG_DONE)==0);
 #endif
     CHECK(!oz_mount_control(OZ_ADMISSION_PORT,"qemu_mirror/files","OZREWIND",OZ_MOUNT_ATTACH,0));
     file=Open((CONST_STRPTR)"OZREWIND:after-recovery",MODE_NEWFILE);CHECK(file);
     CHECK(Write(file,"committed-after-rewind",22)==22);CHECK(Flush(file));CHECK(Close(file));file=0;
     CHECK(!oz_mount_control(OZ_ADMISSION_PORT,"qemu_mirror/files","",OZ_MOUNT_DETACH,0));
     CHECK(SystemTags((CONST_STRPTR)"C:zpool export qemu_mirror",TAG_DONE)==0);
-    note("RESULT native damaged rewind commit PASS writable-FX=1 new-file=1 flushed=1 exported=1");
+    note("RESULT native damaged rewind commit PASS writable-" OZ_REWIND_FLAG "=1 new-file=1 flushed=1 exported=1");
 #endif
 #if defined(OZ_NATIVE_IMPORT_REWIND_COMMIT) || defined(OZ_NATIVE_IMPORT_REWIND_COLD)
     CHECK(SystemTags((CONST_STRPTR)"C:zpool import -N -f -o cachefile=none -o readonly=on -d /AROS/ata.device/0/partition/0 -d /AROS/ata.device/1/partition/0 qemu_mirror",TAG_DONE)==0);

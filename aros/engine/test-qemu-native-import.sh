@@ -145,6 +145,12 @@ import_rewind=${AROS_TEST_IMPORT_REWIND:-0}
 [[ $import_rewind == 0 || $import_rewind == 1 ]]
 import_rewind_mode=${AROS_TEST_IMPORT_REWIND_MODE:-preview}
 import_rewind_manager=${AROS_TEST_IMPORT_REWIND_MANAGER:-0}
+import_rewind_normal=${AROS_TEST_IMPORT_REWIND_NORMAL:-0}
+import_rewind_refuse_normal=${AROS_TEST_IMPORT_REWIND_REFUSE_NORMAL:-0}
+[[ $import_rewind_refuse_normal == 0 || ( $import_rewind_refuse_normal == 1 && $import_rewind == 1 && $import_rewind_mode != cold && $import_rewind_normal == 0 ) ]]
+[[ $import_rewind_normal == 0 || ( $import_rewind_normal == 1 && $import_rewind == 1 && $import_rewind_mode != cold ) ]]
+import_rewind_flag=FX
+if [[ $import_rewind_normal == 1 ]];then import_rewind_flag=F;fi
 [[ $import_rewind_manager == 0 || ( $import_rewind_manager == 1 && $import_rewind == 1 && $import_rewind_mode != cold ) ]]
 [[ $import_rewind_mode == preview || $import_rewind_mode == commit || $import_rewind_mode == cold ]]
 [[ $import_rewind == 1 || $import_rewind_mode == preview ]]
@@ -387,6 +393,8 @@ if [[ $import_rewind == 1 ]];then
     sha256sum "$run/zpool" > "$run/rewind-cli.sha256"
     gui_maps+=(-map "$run/zpool" /C/zpool)
     gui_flags+=(-DOZ_NATIVE_IMPORT_REWIND)
+    if [[ $import_rewind_normal == 1 ]];then gui_flags+=(-DOZ_NATIVE_IMPORT_REWIND_NORMAL);fi
+    if [[ $import_rewind_refuse_normal == 1 ]];then gui_flags+=(-DOZ_NATIVE_IMPORT_REWIND_REFUSE_NORMAL);fi
     if [[ $import_rewind_manager == 1 ]];then gui_flags+=(-DOZ_NATIVE_IMPORT_REWIND_MANAGER);fi
     if [[ $import_rewind_mode == commit ]];then gui_flags+=(-DOZ_NATIVE_IMPORT_REWIND_COMMIT);fi
     if [[ $import_rewind_mode == cold ]];then gui_flags+=(-DOZ_NATIVE_IMPORT_REWIND_COLD);fi
@@ -1303,8 +1311,11 @@ printf 'quit\n' | socat - "UNIX-CONNECT:$run/monitor" >/dev/null
 wait "$pid"
 trap - EXIT
 if [[ $import_rewind == 1 ]];then
+    if [[ $import_rewind_refuse_normal == 1 ]];then
+        rg -q '^RESULT native normal recovery boundary PASS Manager-ENXIO=1 CLI-refused=1 diagnostic=1 absent=2 no-extreme-fallback=1' "$run/serial.log"
+    fi
     if [[ $import_rewind_mode != cold ]];then
-        rg -q '^RESULT native damaged import rewind PASS cycles=2 ordinary-refused=2 absent-after-refusal=2 readonly-FX=2 exact-DOS=2 write-refused=2' "$run/serial.log"
+        rg -q "^RESULT native damaged import rewind PASS cycles=2 ordinary-refused=2 absent-after-refusal=2 readonly-${import_rewind_flag}=2 exact-DOS=2 write-refused=2" "$run/serial.log"
     fi
     rg -q '^RESULT native damaged rewind test PASS line=0' "$run/serial.log"
     if [[ $import_rewind_manager == 1 ]];then
@@ -1315,7 +1326,7 @@ if [[ $import_rewind == 1 ]];then
     [[ -s "$run/overlays.sha256" ]]
     sha256sum -c "$run/backing.sha256"
     if [[ $import_rewind_mode == commit ]];then
-        rg -q '^RESULT native damaged rewind commit PASS writable-FX=1 new-file=1 flushed=1 exported=1' "$run/serial.log"
+        rg -q "^RESULT native damaged rewind commit PASS writable-${import_rewind_flag}=1 new-file=1 flushed=1 exported=1" "$run/serial.log"
         if sha256sum -c "$run/overlays.sha256" > "$run/rewind-overlay-change.log" 2>&1;then
             echo 'FAIL: committed recovery did not change either overlay';exit 1
         fi
