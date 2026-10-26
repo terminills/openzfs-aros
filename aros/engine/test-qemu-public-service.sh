@@ -1,6 +1,12 @@
 #!/usr/bin/env bash
 set -euo pipefail
 repo=${AROS_TEST_SOURCE_ROOT:-$(cd -- "$(dirname -- "$0")/../.." && pwd)}
+pointer=${AROS_TEST_POINTER:-tablet}
+case "$pointer" in
+    tablet) pointer_args=(-device qemu-xhci -device usb-tablet) ;;
+    ps2) pointer_args=() ;;
+    *) echo 'AROS_TEST_POINTER must be tablet or ps2' >&2; exit 2 ;;
+esac
 if [[ ${AROS_TEST_RUNNER_SNAPSHOT:-} != "$0" ]];then
     # Bash reads a script incrementally. Execute a private snapshot so source
     # edits during a guest run cannot shift the shell's read offset mid-test.
@@ -464,6 +470,7 @@ git diff --binary >"$run/source.patch"
 sha256sum "$base" "$run/OpenZFSServiceNative" "$run/OpenZFSPublicServiceTest" \
     "${platform_inputs[@]}" "$posix" >"$run/inputs.sha256"
 printf '%s\n' "$base_platform" >"$run/base-platform.txt"
+printf '%s\n' "$pointer" >"$run/pointer.txt"
 if [[ -n $shared ]];then sha256sum "$shared/openzfs.library" >>"$run/inputs.sha256";fi
 xorriso -indev "$base" -outdev "$run/test.iso" \
     -map aros/engine/grub-qemu-test.cfg /boot/grub/grub.cfg \
@@ -482,7 +489,7 @@ xorriso -indev "$base" -outdev "$run/test.iso" \
     -drive "file=$run/test.iso,media=cdrom,if=ide,index=2,readonly=on" \
     "${extra_drives[@]}" \
     -vga std -display none -nic none -boot d -no-reboot -no-shutdown \
-    -device qemu-xhci -device usb-tablet -qmp "unix:$run/qmp.sock,server=on,wait=off" \
+    "${pointer_args[@]}" -qmp "unix:$run/qmp.sock,server=on,wait=off" \
     -serial "file:$run/serial.log" -monitor "unix:$run/monitor,server=on,wait=off" >"$run/qemu.log" 2>&1 &
 pid=$!
 capture_failure(){

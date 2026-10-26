@@ -1,0 +1,30 @@
+{"time": 1792994802.485925, "action": "capture", "args": ["start.png"]}
+{"time": 1792994864.319707, "action": "relative", "args": ["320", "175"]}
+{"time": 1792994865.4696863, "action": "capture", "args": ["moved.png"]}
+{"time": 1792994977.9715173, "action": "press", "args": []}
+{"time": 1792994979.0267994, "action": "relative", "args": ["580", "34"]}
+{"time": 1792994980.274881, "action": "press", "args": []}
+{"time": 1792994982.4318702, "action": "capture", "args": ["pool-results.png"]}
+{"time": 1792995088.9154549, "action": "relative", "args": ["-580", "-2"]}
+{"time": 1792995089.1585417, "action": "press", "args": []}
+{"time": 1792995090.2042131, "action": "relative", "args": ["580", "2"]}
+{"time": 1792995090.451729, "action": "press", "args": []}
+{"time": 1792995092.5917413, "action": "capture", "args": ["dataset-results.png"]}
+{"time": 1792995198.3526108, "action": "relative", "args": ["-100", "-22"]}
+{"time": 1792995198.5912566, "action": "press", "args": []}
+{"time": 1792995200.917653, "action": "type", "args": ["public_mirror"]}
+{"time": 1792995200.9654362, "action": "relative", "args": ["100", "22"]}
+{"time": 1792995201.2141614, "action": "press", "args": []}
+{"time": 1792995203.340046, "action": "capture", "args": ["datasets-populated.png"]}
+{"time": 1792995302.189881, "action": "relative", "args": ["-580", "-26"]}
+{"time": 1792995302.4365385, "action": "press", "args": []}
+{"time": 1792995303.4866617, "action": "relative", "args": ["580", "26"]}
+{"time": 1792995303.7320518, "action": "press", "args": []}
+{"time": 1792995305.8874164, "action": "capture", "args": ["pool-health.png"]}
+{"time": 1792995418.5800176, "action": "relative", "args": ["-646", "-92"]}
+{"time": 1792995418.8180888, "action": "press", "args": []}
+{"time": 1792995421.942553, "action": "capture", "args": ["closed.png"]}
+{"time": 1792995576.614543, "action": "relative", "args": ["-12", "0"]}
+{"time": 1792995577.8608556, "action": "press", "args": []}
+{"time": 1792995580.971064, "action": "capture", "args": ["after-close.png"]}
+{"time": 1792995657.0894198, "action": "quit", "args": []}
