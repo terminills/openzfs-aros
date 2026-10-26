@@ -456,6 +456,21 @@ int main(void)
         ,TAG_DONE)==0);
     for(unsigned i=0;i<1500;i++){Forbid();int ready=FindPort((CONST_STRPTR)OZ_ADMISSION_PORT)!=NULL;Permit();if(ready)break;Delay(1);}
 #ifdef OZ_NATIVE_IMPORT_REWIND
+#ifdef OZ_NATIVE_IMPORT_REWIND_SEED
+    /* Make adjacent dirty transaction roots on disposable good media.
+     * Deliberately leave the pool imported: the harness stops this private
+     * VM after completion instead of adding export-time transactions. */
+    CHECK(!request(7,"readonly=off",0));
+    CHECK(!oz_mount_control(OZ_ADMISSION_PORT,"qemu_mirror/files","OZSEED",OZ_MOUNT_ATTACH,0));
+    for(unsigned generation=0;generation<8;generation++) {
+        file=Open((CONST_STRPTR)"OZSEED:recovery-seed",MODE_NEWFILE);CHECK(file);
+        CHECK(Write(file,&generation,sizeof(generation))==sizeof(generation));
+        CHECK(Flush(file));CHECK(Close(file));file=0;
+        CHECK(SystemTags((CONST_STRPTR)"C:zpool sync qemu_mirror",TAG_DONE)==0);
+    }
+    note("RESULT native recovery seed PASS generations=8 sync=8 exported=0");
+    goto done;
+#endif
 #ifdef OZ_NATIVE_IMPORT_REWIND_MANAGER
     CHECK(!recovery_parser_test());
     {

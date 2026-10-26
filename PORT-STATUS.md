@@ -399,6 +399,12 @@ selected dependencies, not a newly qualified official or bootstrap release.
   Actual native Manager draft/preview tests verify mode selection, round-trip
   retention and distinct read-only/writable loss warnings; no GUI import was
   submitted. See `damaged-import-rewind-20261026/manager-api.md` for scope.
+  A separately prepared recent-root fixture now also passes non-extreme
+  recovery through both Manager API and actual `zpool import -F`, including
+  read-only previews, writable recovery and exact data in an ordinary-import
+  separate cold guest. The original fixture still refuses normal recovery;
+  it is not silently promoted to extreme mode. See `recent-normal.md` and
+  `normal-window.md` in the same evidence directory for the discriminator.
 - Not every upstream feature or topology has end-to-end AROS validation.
 - Native and file-backed pool creation accept blank extents or consistently labeled destroyed
   members (all four checksummed labels must agree on destroyed state and pool/member GUIDs).

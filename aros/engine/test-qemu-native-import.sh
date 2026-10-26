@@ -152,7 +152,10 @@ import_rewind_refuse_normal=${AROS_TEST_IMPORT_REWIND_REFUSE_NORMAL:-0}
 import_rewind_flag=FX
 if [[ $import_rewind_normal == 1 ]];then import_rewind_flag=F;fi
 [[ $import_rewind_manager == 0 || ( $import_rewind_manager == 1 && $import_rewind == 1 && $import_rewind_mode != cold ) ]]
-[[ $import_rewind_mode == preview || $import_rewind_mode == commit || $import_rewind_mode == cold ]]
+[[ $import_rewind_mode == preview || $import_rewind_mode == commit || $import_rewind_mode == cold || $import_rewind_mode == seed ]]
+if [[ $import_rewind_mode == seed ]];then
+    [[ $import_rewind_manager == 0 && $import_rewind_normal == 0 && $import_rewind_refuse_normal == 0 ]]
+fi
 [[ $import_rewind == 1 || $import_rewind_mode == preview ]]
 if [[ $import_rewind == 1 ]];then
     [[ $native_bus == ide && $members == both && $layout == mirror && $writable == 0 && $gpt == 0 && $gui == 0 && -z ${AROS_TEST_WHOLE_CLI_LINK:-} ]]
@@ -393,6 +396,7 @@ if [[ $import_rewind == 1 ]];then
     sha256sum "$run/zpool" > "$run/rewind-cli.sha256"
     gui_maps+=(-map "$run/zpool" /C/zpool)
     gui_flags+=(-DOZ_NATIVE_IMPORT_REWIND)
+    if [[ $import_rewind_mode == seed ]];then gui_flags+=(-DOZ_NATIVE_IMPORT_REWIND_SEED);fi
     if [[ $import_rewind_normal == 1 ]];then gui_flags+=(-DOZ_NATIVE_IMPORT_REWIND_NORMAL);fi
     if [[ $import_rewind_refuse_normal == 1 ]];then gui_flags+=(-DOZ_NATIVE_IMPORT_REWIND_REFUSE_NORMAL);fi
     if [[ $import_rewind_manager == 1 ]];then gui_flags+=(-DOZ_NATIVE_IMPORT_REWIND_MANAGER);fi
@@ -1311,6 +1315,18 @@ printf 'quit\n' | socat - "UNIX-CONNECT:$run/monitor" >/dev/null
 wait "$pid"
 trap - EXIT
 if [[ $import_rewind == 1 ]];then
+    if [[ $import_rewind_mode == seed ]];then
+        rg -q '^RESULT native recovery seed PASS generations=8 sync=8 exported=0' "$run/serial.log"
+        rg -q '^RESULT native damaged rewind test PASS line=0' "$run/serial.log"
+        sha256sum -c "$run/backing.sha256"
+        if sha256sum -c "$run/overlays.sha256" > "$run/seed-overlay-change.log" 2>&1;then
+            echo 'FAIL: recovery seed did not change either overlay';exit 1
+        fi
+        rg -Fqx "$run/disk0.qcow2: FAILED" "$run/seed-overlay-change.log"
+        rg -Fqx "$run/disk1.qcow2: FAILED" "$run/seed-overlay-change.log"
+        echo "PASS: native recovery seed created; not recovery qualification: $run"
+        exit 0
+    fi
     if [[ $import_rewind_refuse_normal == 1 ]];then
         rg -q '^RESULT native normal recovery boundary PASS Manager-ENXIO=1 CLI-refused=1 diagnostic=1 absent=2 no-extreme-fallback=1' "$run/serial.log"
     fi
