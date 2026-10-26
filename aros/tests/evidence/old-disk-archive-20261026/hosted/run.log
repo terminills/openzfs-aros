@@ -1,0 +1,5 @@
+cp: warning: behavior of -n is non-portable and may change in future; use --update=none instead
+{"files": 1, "reclaimed": 8589938688, "last": "/home/terminills/Documents/GitHub/openzfs-aros/build-aros/hosted-large-pools.D5fH0jgJ/OpenZFS-test-61b3abb9/disk0"}
+cp: warning: behavior of -n is non-portable and may change in future; use --update=none instead
+{"files": 2, "reclaimed": 9310195712, "last": "/home/terminills/Documents/GitHub/openzfs-aros/build-aros/hosted-large-pools.D5fH0jgJ/OpenZFS-test-61b3abb9/disk1"}
+{"done": true, "files": 2, "reclaimed": 9310195712}
