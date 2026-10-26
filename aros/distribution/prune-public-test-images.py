@@ -148,9 +148,9 @@ def main():
     args = parser.parse_args()
     if args.artifact_root:
         external = args.artifact_root.resolve(strict=True)
-        # The private build directory itself may be archived behind a symlink.
-        # Compare against the repository filesystem, not its relocated target.
-        if not args.run or not external.is_dir() or external.stat().st_dev == ROOT.parent.stat().st_dev:
+        # Both checkout and artifacts may reside on the external drive.
+        # Reject the system filesystem, not a valid colocated checkout.
+        if not args.run or not external.is_dir() or external.stat().st_dev == Path('/').stat().st_dev:
             parser.error("external artifact root requires one run and a separate mounted filesystem")
         ROOT = external
     if args.run and not re.fullmatch(r"(?:public-service|native-gui|preferences)-run\.[A-Za-z0-9]+", args.run):
