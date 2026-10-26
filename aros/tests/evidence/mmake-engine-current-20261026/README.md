@@ -26,6 +26,15 @@ DOS/relative path checks, resilver and exact read-only file round trip, with
 the full public-service storage PASS marker. Successful media were hashed
 and pruned. Serial logs and hashes are retained under runtime/.
 
-Persistent recovery testing is separate; no result is claimed here until
-its complete writer and cold-phase evidence has been inspected. No DUT or
-user-hosted session was accessed.
+Persistent run public-service-run.eEAuPfEq also exited zero with the same
+shared library and CLI. Real CLI forced dRAID spare replacement completed a
+sequential rebuild and scrub with zero reported errors. A separate cold boot
+passed healthy/degraded recovery, original-member absence, rebuilt redundancy,
+beyond-parity refusal and restoration, encrypted data and zvol/device reads.
+Both host FAT checks passed, full member hashes remained unchanged during
+cold verification, and independent zdb reported no leaks. Exact serial logs,
+hashes, host checks and successful-media pruning records are in persistent/.
+The handler/device and corrected FAT overlay were explicitly selected prior
+qualified binaries; their input hashes are retained. No DUT or user-hosted
+session was accessed. Physical durability and official-runtime qualification
+remain separate open requirements.
