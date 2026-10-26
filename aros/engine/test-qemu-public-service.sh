@@ -1065,6 +1065,7 @@ rg -q '^Public DOS links PASS write=1 hard=1 relative-soft=1 unlinked-source=1 d
 if [[ $force_create == 1 ]];then
     rg -q '^Public force-create PASS active-refused=1 no-force-refused=1 exported-replaced=1 old-payload-absent=1 readonly-exact=1 cleanup=1' "$run/serial-results.log"
     rg -q '^Public force-create readonly-active refusal PASS payload-preserved=1' "$run/serial-results.log"
+    rg -q '^Public Manager force-create PASS confirmation-required=1 force-required=1 active-refused=1 readonly-active-refused=1 exported-replaced=1 old-payload-absent=1 readonly-exact=1' "$run/serial-results.log"
     if [[ $native_discovery == 1 && $native_cold == 0 && $all_native == 0 ]];then
         rg -q '^Public native force-create PASS active-refused=1 readonly-active-refused=1 exported-replaced=1 old-payload-absent=1 readonly-exact=1 cleanup=1' "$run/serial-results.log"
     fi

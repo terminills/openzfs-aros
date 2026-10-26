@@ -66,7 +66,8 @@ static int pool_files_change(struct oz_message *m,cred_t *caller,
     }
     char why[128];
     boolean_t rebuild=(operation==1||operation==2)&&!strcmp(m->options,"rebuild=on");
-    if(m->flags!=OZ_CONFIRMED||((!operation||operation==3)&&m->argument[0])||(operation&&m->options[0]&&!rebuild)||
+    boolean_t force=!operation&&(m->flags&OZ_FORCE);
+    if(m->flags!=(OZ_CONFIRMED|(force?OZ_FORCE:0))||((!operation||operation==3)&&m->argument[0])||(operation&&m->options[0]&&!rebuild)||
         (operation==3?oz_validate_add_topology(&m->topology,why,sizeof(why)):
         oz_validate_topology(&m->topology,why,sizeof(why)))!=OZ_OK)return EINVAL;
     struct oz_topology *t=&m->topology;
@@ -160,7 +161,7 @@ static int pool_files_change(struct oz_message *m,cred_t *caller,
             for(size_t j=0;j<n;j++)if(buf[j]){error=EEXIST;break;}
             left-=n;
         }
-        if(error==EEXIST)error=oz_destroyed_file_backing(fd,st.st_size);
+        if(error==EEXIST)error=force?oz_exported_file_backing(fd,st.st_size):oz_destroyed_file_backing(fd,st.st_size);
         close(fd);
         if(error)break;
         leaves[i]=fnvlist_alloc();
@@ -227,14 +228,14 @@ static int pool_files_change(struct oz_message *m,cred_t *caller,
             if(error)goto done;
         }
     }
-    if(has_native) {
+    if(has_native||force) {
         char *packed_root=NULL,*packed_props=NULL;size_t root_size=0,props_size=0;
         void *reservation=NULL;
         error=nvlist_pack(root,&packed_root,&root_size,NV_ENCODE_NATIVE,0);
         if(!error)error=nvlist_pack(props,&packed_props,&props_size,NV_ENCODE_NATIVE,0);
         if(!error)error=operation?
             oz_cli_add_begin(m->target,packed_root,root_size,caller,security,&reservation):
-            oz_cli_create_begin(m->target,packed_root,root_size,packed_props,props_size,caller,security,&reservation);
+            (force?oz_cli_create_force_begin:oz_cli_create_begin)(m->target,packed_root,root_size,packed_props,props_size,caller,security,&reservation);
         if(!error)error=operation==3?spa_vdev_add(spa,root,B_TRUE):operation?
             spa_vdev_attach(spa,guid,root,operation==2,rebuild):spa_create(m->target,root,props,NULL,NULL);
         if(reservation) {

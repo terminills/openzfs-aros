@@ -26,6 +26,8 @@ int oz_cli_create_begin(const char *,const void *,size_t,const void *,size_t,cre
 int oz_cli_create_request(const char *,void *,size_t *,const void *,size_t,cred_t *,const struct oz_packet_security *,void **);
 /* Caller retains checked file identity/access locks; reads only. */
 int oz_destroyed_file_backing(int,uint64_t);
+int oz_exported_file_backing(int,uint64_t);
+int oz_cli_create_force_begin(const char *,const void *,size_t,const void *,size_t,cred_t *,const struct oz_packet_security *,void **);
 int oz_cli_add_begin(const char *,const void *,size_t,cred_t *,const struct oz_packet_security *,void **);
 int oz_cli_attach_begin(const char *,uint64_t,int,const void *,size_t,cred_t *,const struct oz_packet_security *,void **);
 void oz_cli_add_end(void *,int);

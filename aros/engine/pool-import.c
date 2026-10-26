@@ -564,6 +564,11 @@ int oz_destroyed_file_backing(int fd,uint64_t size)
     if(fd<0)return EBADF;
     return destroyed_backing(NULL,fd,size,0);
 }
+int oz_exported_file_backing(int fd,uint64_t size)
+{
+    if(fd<0)return EBADF;
+    return destroyed_backing(NULL,fd,size,1);
+}
 static int blank_backing(struct imported_files *p,unsigned i,unsigned char *buffer,int reuse_destroyed)
 {
     if(p->missing[i])return ENODEV;
@@ -664,6 +669,11 @@ int oz_cli_create_request(const char *name,void *bytes,size_t *size,
     nvlist_free(root);
     if(!error)error=create_begin(name,bytes,*size,properties,property_size,caller,security,out,force);
     return error;
+}
+int oz_cli_create_force_begin(const char *name,const void *bytes,size_t size,
+    const void *properties,size_t property_size,cred_t *caller,const struct oz_packet_security *security,void **out)
+{
+    return create_begin(name,bytes,size,properties,property_size,caller,security,out,1);
 }
 struct cli_add_scope {
     struct imported_files *files;
