@@ -518,6 +518,54 @@ static int creation_properties_test(const char *pool)
     while(*s)RawPutChar(*s++);
     return 0;
 }
+#ifdef OZ_NATIVE_DISPATCHER
+static int legacy_accounting_test(nvlist_t *root)
+{
+    /* Only the exclusive RAM mirror owned by this diskless test is reused.
+     * A low ZPL version on a modern pool is not a legacy accounting fixture. */
+    const char *pool="legacy_accounting",*dataset="legacy_accounting/files";
+    nvlist_t *options=fnvlist_alloc();
+    fnvlist_add_string(options,"cachefile","none");
+    fnvlist_add_uint64(options,"version",SPA_VERSION_USERSPACE-1);
+    struct oz_cred_scope *scope=NULL;CHECK(oz_cred_push(kcred,&scope));
+    CHECK(spa_create(pool,root,options,NULL,NULL));fnvlist_free(options);
+    CHECK(oz_zpl_dataset_create(dataset,kcred));
+    struct oz_zpl *mount=NULL;struct oz_zpl_info info;
+    const char payload[]="Data written before userspace accounting existed";
+    size_t written=0;
+    CHECK(oz_zpl_open_writable(dataset,&mount));
+    CHECK(oz_zpl_create_as(mount,oz_zpl_root(mount),"payload",0644,kcred,&info));
+    CHECK(oz_zpl_write_as(mount,info.object,0,payload,sizeof(payload),&written,kcred));
+    CHECK(written==sizeof(payload)?0:EIO);CHECK(oz_zpl_sync(mount));
+    zfsvfs_t *fs=NULL;CHECK(getzfsvfs(dataset,&fs));
+    CHECK(!dmu_objset_userused_enabled(fs->z_os)?0:EIO);
+    CHECK(!dmu_objset_userspace_present(fs->z_os)?0:EIO);
+    zfs_vfs_rele(fs);
+    spa_t *spa=NULL;CHECK(spa_open(pool,&spa,FTAG));
+    spa_upgrade(spa,SPA_VERSION_USERSPACE);
+    txg_wait_synced(spa->spa_dsl_pool,0);spa_close(spa,FTAG);
+    zfs_cmd_t *zc=calloc(1,sizeof(*zc));CHECK(zc?0:ENOMEM);
+    strlcpy(zc->zc_name,dataset,sizeof(zc->zc_name));
+    CHECK(zfsdev_ioctl_common(ZFS_IOC_USERSPACE_UPGRADE-ZFS_IOC_FIRST,zc,FKIOCTL));
+    free(zc);
+    CHECK(getzfsvfs(dataset,&fs));
+    CHECK(dmu_objset_userused_enabled(fs->z_os)?0:EIO);
+    CHECK(dmu_objset_userspace_present(fs->z_os)?0:EIO);
+    uint64_t bytes=0;CHECK(zfs_userspace_one(fs,ZFS_PROP_USERUSED,"",0,&bytes));
+    CHECK(bytes>0?0:EIO);zfs_vfs_rele(fs);
+    CHECK(oz_zpl_close(mount));CHECK(oz_zpl_open(dataset,&mount));
+    uint64_t object=0,size=0;char actual[sizeof(payload)];
+    CHECK(oz_zpl_lookup(mount,"payload",&object,&size));
+    CHECK(size==sizeof(payload)?0:EIO);
+    CHECK(oz_zpl_read(mount,object,0,actual,sizeof(actual)));
+    CHECK(memcmp(actual,payload,sizeof(actual))?EIO:0);
+    CHECK(oz_zpl_close(mount));CHECK(spa_destroy(pool));
+    CHECK(oz_cred_pop(scope));
+    const char *s="RESULT native legacy accounting PASS old-pool=1 mounted-conversion=1 user-bytes=1 data-preserved=1\n";
+    while(*s)RawPutChar(*s++);
+    return 0;
+}
+#endif
 static int legacy_versions_test(const char *pool)
 {
     for(uint64_t version=ZPL_VERSION_INITIAL;version<ZPL_VERSION_SA;version++) {
@@ -1465,6 +1513,9 @@ static int run(void)
     CHECK(oz_engine_start(1) ? 0 : EIO);
     CHECK(file_scope_test(dir));
     CHECK(session_files_test());
+#ifdef OZ_NATIVE_DISPATCHER
+    CHECK(legacy_accounting_test(root));
+#endif
     CHECK(spa_create(pool,root,options,NULL,NULL));
 #ifdef OZ_NATIVE_DISPATCHER
     CHECK(native_volume_test(pool));

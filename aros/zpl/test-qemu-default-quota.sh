@@ -10,7 +10,13 @@ ata=${AROS_TEST_ATA_OVERLAY:?private ATA overlay required}
 posix=${AROS_TEST_POSIX_LIBRARY:?private POSIX library required}
 zlib=${AROS_TEST_ZLIB_LIBRARY:-$repo/build-aros/hosted/Libs/z1.library}
 [[ -f $zlib ]]
-run=$(mktemp -d "$repo/build-aros/default-quota-run.XXXXXXXX")
+source "$repo/aros/engine/storage-preflight.sh"
+artifact_root=$(oz_artifact_root "$repo" "${AROS_TEST_ARTIFACT_ROOT:-}")
+if [[ -z ${AROS_TEST_ARTIFACT_ROOT:-} ]];then
+    artifact_root="$repo/build-aros"
+    mkdir -p "$artifact_root"
+fi
+run=$(mktemp -d "$artifact_root/default-quota-run.XXXXXXXX")
 echo "Evidence: $run"
 exec > >(tee "$run/runner.log") 2>&1
 cp "$binary" "$run/OpenZFSDefaultQuotaTest"
@@ -53,6 +59,7 @@ while :; do
            rg -q '^RESULT native session files PASS rounds=16 capacity=64 stale=1 retained=1 threads=16' "$run/serial-completion.log" &&
            { [[ ${AROS_TEST_REQUIRE_ZVOL:-0} != 1 ]] ||
              { rg -q '^RESULT native upstream create PASS properties=3 inherited=3 lookup=2' "$run/serial-completion.log" &&
+               rg -q '^RESULT native legacy accounting PASS old-pool=1 mounted-conversion=1 user-bytes=1 data-preserved=1' "$run/serial-completion.log" &&
                rg -q '^RESULT native zvol PASS write=1 reopen=1 readonly=1 resize=1 export-busy=1' "$run/serial-completion.log" &&
                rg -q '^RESULT native zvol lifecycle PASS rename=1 snapshot-readonly=1 recreate=1' "$run/serial-completion.log" &&
                rg -q '^RESULT native dispatcher runtime PASS cycles=80 upstream-stats=1 stopped-denial=1' "$run/serial-completion.log"; }; } &&
