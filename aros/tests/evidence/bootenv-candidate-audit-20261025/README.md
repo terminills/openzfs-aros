@@ -18,6 +18,11 @@ compile log is retained. There was no production header change.
 
 This does not qualify the service transport, permissions, persistent label
 write/read, or cold import. Those require a working engine/CLI runtime pair.
+The transport translation unit also compiled with the official SDK, SDK
+pthread headers, full dispatcher and ZPL context enabled; its compiler log
+is retained. The old private service's recorded task/port/DOS headers and
+autoinit archive still match, but those four hashes alone do not establish
+a complete compatible runtime/dependency pair for replay.
 Current official full-engine and CLI builds still lack pwrite/pipe2 platform
 prerequisites. Do not promote this candidate as a tested feature.
 
