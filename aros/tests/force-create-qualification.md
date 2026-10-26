@@ -216,3 +216,22 @@ Create/add/attach/replace now have exported-reuse evidence through both
 interfaces on file and virtual-native candidates. This does not qualify
 all-native topologies, physical devices, arbitrary nonzero-media force,
 potentially-active labels, or the official SDK/runtime dependency set.
+
+## Manager attach/replace visual review
+
+The fresh Manager review found stale operation help that still prohibited
+force. Help now describes explicit exported-member reuse and imported-member
+protection; add also documents the ashift exception. After rebuilding,
+`native-gui-run.F86QwByF` visibly showed both attach and replace previews with
+the selected GUID/path, Force=yes, the exported-member data-loss warning and
+"Preview only - nothing submitted". Inputs named a nonexistent preview pool
+and backing. No destructive UI request was submitted. An initial input landed
+in the GUID field and was rejected; keyboard focus and native string editing
+corrected it before the captured successful previews. No source workaround
+was needed for that input attempt.
+
+Screenshots, action log, binary/input hashes, serial results and image-pruning
+records are retained in `evidence/force-change-visual-20261026`. Normal Manager
+close allowed the complete storage suite to finish; runner exit was zero.
+The add-specific ashift warning still lacks a fresh visual capture. This
+does not replace the separately recorded authenticated API mutation tests.

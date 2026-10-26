@@ -1,5 +1,25 @@
 # OpenZFS management API 3 (AROS-native)
 
+## Explicit exported-member reuse (2026-10-26)
+
+Typed operations 5, 9, 11 and 13 (create/add/attach/replace) accept
+`OZ_CONFIRMED | OZ_FORCE` to reuse consistently labeled exported members.
+All four labels must have valid checksums and agree on pool/member identity
+and state. Imported pools, including readonly imports whose disk labels still
+say exported, remain protected by live namespace checks. Force does not admit
+arbitrary nonzero media or potentially-active labels. Root authority, topology
+validation, retained device reservations and exclusive-file requirements still
+apply. Add with force also permits differing ashift, matching upstream zpool.
+Attach/replace take the existing member GUID in `argument` and exactly one
+candidate in the typed topology; they do not take a shell command.
+
+Manager preview/review warns that reuse destroys old member data. Preview
+does not submit a request. CLI force intent is transient metadata removed
+before the upstream ioctl, not a persistent pool property. File-backed and
+virtual ATA candidate qualification, including refusal, resilver and readonly
+data checks, is documented in `../tests/force-create-qualification.md`.
+Historical no-force-only descriptions below predate this extension.
+
 ## Typed dRAID geometry
 
 Version 3 expands each typed vdev group with draid_parity (1-3), draid_data
