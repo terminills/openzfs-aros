@@ -17,6 +17,7 @@
 #include "iostat-rates.h"
 #include "iostat-refresh.h"
 #include "simple-pools.h"
+#include "simple-health.h"
 static struct oz_rate_history io_history;
 static struct oz_refresh io_refresh;
 static Object *auto_iostat;
@@ -808,6 +809,33 @@ int main(int argc,char **argv) {
                     reply->next_cursor?"More pools are available: choose Next page.":"");
                 show_response(summary);
                 /* Saving retains the exact detailed response, not this display summary. */
+                snprintf(response_text,sizeof(response_text),"%s\n",rendered);
+            }
+            if(simple_mode()&&reply->operation==4&&reply->status==OZ_OK){
+                static char summary[32768];
+                /* Keep upstream scan/checkpoint/removal diagnostics intact.
+                 * Simplify topology rows only; no health or error inference. */
+                snprintf(summary,sizeof(summary),"%s\n\n",reply->detail);
+                for(unsigned row=0;row<reply->row_count&&row<OZ_MAX_ROWS;row++){
+                    struct oz_row *r=&reply->rows[row];
+                    size_t used=strlen(summary);
+                    if(!strcmp(r->kind,"rebuild")||!strcmp(r->kind,"initialize")){
+                        /* Retain live-versus-stored progress provenance. */
+                        if(!strcmp(r->kind,"initialize")&&strstr(r->value,"stored-only=readonly counters=unavailable"))
+                            snprintf(summary+used,sizeof(summary)-used,
+                                "%.159s (%.23s): %.47s\n  %.255s\n  Runtime progress unavailable.\n",
+                                r->name,r->kind,r->state,r->value);
+                        else snprintf(summary+used,sizeof(summary)-used,
+                            "%.159s (%.23s): %.47s\n  %.255s\n  scanned/done=%llu estimated=%llu progress=%lu/1000\n",
+                            r->name,r->kind,r->state,r->value,(unsigned long long)r->used,
+                            (unsigned long long)r->total,(unsigned long)r->progress_permille);
+                    }else oz_simple_health_row(summary+used,sizeof(summary)-used,
+                        r->kind,r->name,r->state,r->value);
+                }
+                size_t used=strlen(summary);
+                snprintf(summary+used,sizeof(summary)-used,"\n%sFull details: Advanced or Save response.\n",
+                    reply->next_cursor?"More devices: choose Next page.\n":"");
+                show_response(summary);
                 snprintf(response_text,sizeof(response_text),"%s\n",rendered);
             }
             if(simple_mode()&&reply->operation==36&&reply->status==OZ_OK){
