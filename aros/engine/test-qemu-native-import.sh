@@ -154,6 +154,8 @@ import_rewind_manager=${AROS_TEST_IMPORT_REWIND_MANAGER:-0}
 import_rewind_cut=${AROS_TEST_IMPORT_REWIND_CUT:-0}
 [[ $import_rewind_cut == 0 || ( $import_rewind_cut == 1 && $import_rewind == 1 && $import_rewind_mode == commit ) ]]
 import_rewind_normal=${AROS_TEST_IMPORT_REWIND_NORMAL:-0}
+import_rewind_dryrun=${AROS_TEST_IMPORT_REWIND_DRYRUN:-0}
+[[ $import_rewind_dryrun == 0 || ( $import_rewind_dryrun == 1 && $import_rewind == 1 && $import_rewind_mode == preview ) ]]
 import_rewind_refuse_normal=${AROS_TEST_IMPORT_REWIND_REFUSE_NORMAL:-0}
 [[ $import_rewind_refuse_normal == 0 || ( $import_rewind_refuse_normal == 1 && $import_rewind == 1 && $import_rewind_mode != cold && $import_rewind_normal == 0 ) ]]
 [[ $import_rewind_normal == 0 || ( $import_rewind_normal == 1 && $import_rewind == 1 && $import_rewind_mode != cold ) ]]
@@ -406,6 +408,7 @@ if [[ $import_rewind == 1 ]];then
     gui_flags+=(-DOZ_NATIVE_IMPORT_REWIND)
     if [[ $import_rewind_mode == seed ]];then gui_flags+=(-DOZ_NATIVE_IMPORT_REWIND_SEED);fi
     if [[ $import_rewind_normal == 1 ]];then gui_flags+=(-DOZ_NATIVE_IMPORT_REWIND_NORMAL);fi
+    if [[ $import_rewind_dryrun == 1 ]];then gui_flags+=(-DOZ_NATIVE_IMPORT_REWIND_DRYRUN);fi
     if [[ $import_rewind_refuse_normal == 1 ]];then gui_flags+=(-DOZ_NATIVE_IMPORT_REWIND_REFUSE_NORMAL);fi
     if [[ $import_rewind_manager == 1 ]];then gui_flags+=(-DOZ_NATIVE_IMPORT_REWIND_MANAGER);fi
     if [[ $import_rewind_mode == commit ]];then gui_flags+=(-DOZ_NATIVE_IMPORT_REWIND_COMMIT);fi
@@ -1371,6 +1374,9 @@ if [[ $import_rewind == 1 ]];then
         echo "PASS: native recovery seed created; not recovery qualification: $run"
         exit 0
     fi
+    if [[ $import_rewind_dryrun == 1 ]];then
+        rg -q "^RESULT native recovery assessment PASS flag=n${import_rewind_flag} recoverable-report=1 pool-absent=1" "$run/serial.log"
+    fi
     if [[ $import_rewind_refuse_normal == 1 ]];then
         rg -q '^RESULT native normal recovery boundary PASS Manager-ENXIO=1 CLI-refused=1 diagnostic=1 absent=2 no-extreme-fallback=1' "$run/serial.log"
     fi
@@ -1392,6 +1398,17 @@ if [[ $import_rewind == 1 ]];then
         fi
         rg -Fqx "$run/disk0.qcow2: FAILED" "$run/rewind-overlay-change.log"
         rg -Fqx "$run/disk1.qcow2: FAILED" "$run/rewind-overlay-change.log"
+    elif [[ $import_rewind_dryrun == 1 ]];then
+        # A writable upstream vdev probe can rewrite identical label padding.
+        # Container hashes therefore do not prove changed guest disk content.
+        # Keep that diagnostic, but require exact equality of BOTH full disks;
+        # this is unchanged-content proof, not a claim of zero issued writes.
+        sha256sum -c "$run/overlays.sha256" > "$run/assessment-overlay-hashes.log" 2>&1 || true
+        for unit in 0 1;do
+            qemu-img compare -f qcow2 -F raw "$run/disk$unit.qcow2" "$fixture/disk$unit.raw" \
+                > "$run/assessment-disk$unit-compare.log" 2>&1
+            qemu-img map --output=json "$run/disk$unit.qcow2" > "$run/assessment-disk$unit-map.json"
+        done
     else
         sha256sum -c "$run/overlays.sha256"
     fi

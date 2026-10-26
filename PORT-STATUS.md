@@ -405,6 +405,11 @@ selected dependencies, not a newly qualified official or bootstrap release.
   separate cold guest. The original fixture still refuses normal recovery;
   it is not silently promoted to extreme mode. See `recent-normal.md` and
   `normal-window.md` in the same evidence directory for the discriminator.
+  Actual native CLI `zpool import -nF` and `-nFX` recovery assessments now
+  report recoverability without leaving a pool imported; both complete guest
+  disks remain byte-identical. Writable upstream device probes can rewrite
+  identical padding, so this is not zero-write-I/O proof. See
+  `aros/tests/evidence/damaged-import-rewind-20261026/assessment.md`.
   One interrupted writable-recovery boundary is now qualified: a host-side
   block-debug cut at member 0's flush boundary leaves changed guest-visible
   bytes before import returns. A new guest recovers those disks and a third

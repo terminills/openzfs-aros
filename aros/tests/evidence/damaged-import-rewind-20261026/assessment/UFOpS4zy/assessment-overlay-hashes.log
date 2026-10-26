@@ -1,0 +1,3 @@
+/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/native-import-run.UFOpS4zy/disk0.qcow2: FAILED
+/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/native-import-run.UFOpS4zy/disk1.qcow2: FAILED
+sha256sum: WARNING: 2 computed checksums did NOT match

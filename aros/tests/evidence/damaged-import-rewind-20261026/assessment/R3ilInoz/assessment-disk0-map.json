@@ -1,0 +1,11 @@
+[{ "start": 0, "length": 4096, "depth": 1, "present": true, "zero": false, "data": true, "compressed": false, "offset": 0},
+{ "start": 4096, "length": 2093056, "depth": 1, "present": true, "zero": true, "data": false, "compressed": false, "offset": 4096},
+{ "start": 2097152, "length": 262144, "depth": 1, "present": true, "zero": false, "data": true, "compressed": false, "offset": 2097152},
+{ "start": 2359296, "length": 65536, "depth": 0, "present": true, "zero": false, "data": true, "compressed": false, "offset": 327680},
+{ "start": 2424832, "length": 267583488, "depth": 1, "present": true, "zero": false, "data": true, "compressed": false, "offset": 2424832},
+{ "start": 270008320, "length": 65536, "depth": 0, "present": true, "zero": false, "data": true, "compressed": false, "offset": 393216},
+{ "start": 270073856, "length": 196608, "depth": 1, "present": true, "zero": false, "data": true, "compressed": false, "offset": 270073856},
+{ "start": 270270464, "length": 65536, "depth": 0, "present": true, "zero": false, "data": true, "compressed": false, "offset": 458752},
+{ "start": 270336000, "length": 200704, "depth": 1, "present": true, "zero": false, "data": true, "compressed": false, "offset": 270336000},
+{ "start": 270536704, "length": 266330112, "depth": 1, "present": true, "zero": true, "data": false, "compressed": false, "offset": 270536704},
+{ "start": 536866816, "length": 4096, "depth": 1, "present": true, "zero": false, "data": true, "compressed": false, "offset": 536866816}]

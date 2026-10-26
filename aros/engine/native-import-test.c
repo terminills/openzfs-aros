@@ -484,6 +484,20 @@ int main(void)
     }
 #endif
 #ifndef OZ_NATIVE_IMPORT_REWIND_COLD
+#ifdef OZ_NATIVE_IMPORT_REWIND_DRYRUN
+    /* Upstream reports a recoverable dry-run through load-info while
+     * returning failure: status alone cannot distinguish it from an error. */
+    file=Open((CONST_STRPTR)"T:recovery-assessment",MODE_NEWFILE);CHECK(file);
+    LONG assessment_result=SystemTags((CONST_STRPTR)"C:zpool import -N -f -n" OZ_REWIND_FLAG " -o cachefile=none -d /AROS/ata.device/0/partition/0 -d /AROS/ata.device/1/partition/0 qemu_mirror",SYS_Output,file,TAG_DONE);
+    CHECK(Close(file));file=0;CHECK(assessment_result>0);
+    file=Open((CONST_STRPTR)"T:recovery-assessment",MODE_OLDFILE);CHECK(file);
+    char assessment[2048];LONG assessment_length=Read(file,assessment,sizeof(assessment)-1);
+    CHECK(assessment_length>0);assessment[assessment_length]=0;
+    CHECK(Close(file));file=0;note(assessment);
+    CHECK(strstr(assessment,"Would be able to return qemu_mirror to its state as of"));
+    CHECK(SystemTags((CONST_STRPTR)"C:zpool list -H qemu_mirror",TAG_DONE)>0);
+    note("RESULT native recovery assessment PASS flag=n" OZ_REWIND_FLAG " recoverable-report=1 pool-absent=1");
+#endif
 #ifdef OZ_NATIVE_IMPORT_REWIND_REFUSE_NORMAL
     /* This fixture has latest txg 536, next surviving txg 520. Upstream
      * normal recovery is bounded by TXG_DEFER_SIZE (2), so do not silently
