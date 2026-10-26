@@ -68,3 +68,22 @@ An earlier launch stopped before QEMU because the default SDK path lacked
 partition.library. The successful retry explicitly selected the clean ADT
 SDK. This remains QEMU native-device API evidence, not physical hardware
 durability or controller qualification.
+
+## Confirmed Manager API result
+
+The initial typed-force test `public-service-run.HYfiw777` failed because
+authenticated admission did not yet permit create plus confirmed force.
+Its serial results are retained in the Manager evidence directory. Enabling
+that exact flag combination, while retaining credential and backing-member
+checks, allowed `public-service-run.hGXGYDIR` to exit zero.
+
+`Public Manager force-create PASS` verifies confirmation and force are both
+required, active and readonly-imported pools are refused, exported recreation
+succeeds, old data is absent, and new data survives readonly reimport. The
+complete storage suite also passed. Evidence and binary hashes are in
+`evidence/manager-force-create-20261026`.
+
+The Manager binary cross-build passed with an added overwrite warning in
+request review. The visual dialog has not yet been requalified; the result
+above exercises its authenticated API, not mouse-driven interaction.
+Arbitrary nonzero-media force and force add/attach/replace remain open.
