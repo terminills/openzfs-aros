@@ -314,22 +314,27 @@ static int storage_alias_request(unsigned op,unsigned kind)
     }
     return error;
 }
-static int pool_create_explicit(const char *name,const char *path,unsigned flags)
+static int pool_topology_explicit(unsigned operation,const char *name,const char *path,const char *second,unsigned flags)
 {
     static struct oz_message m,out;memset(&m,0,sizeof(m));
     m.magic=OZ_MAGIC;m.version=OZ_VERSION;m.msg.mn_Length=sizeof(m);
-    m.operation=5;m.flags=flags;snprintf(m.target,sizeof(m.target),"%s",name);
-    m.topology.device_count=1;m.topology.group_count=1;m.topology.ashift=12;
-    m.topology.groups[0].layout=OZ_STRIPE;
+    m.operation=operation;m.flags=flags;snprintf(m.target,sizeof(m.target),"%s",name);
+    m.topology.device_count=second?2:1;m.topology.group_count=1;m.topology.ashift=12;
+    m.topology.groups[0].layout=second?OZ_MIRROR:OZ_STRIPE;
     snprintf(m.topology.devices[0].path,sizeof(m.topology.devices[0].path),"%s",path);
+    if(second)snprintf(m.topology.devices[1].path,sizeof(m.topology.devices[1].path),"%s",second);
     struct oz_ticket ticket={0};int error=oz_admission_submit(OZ_ADMISSION_PORT,&m,&ticket);
     if(!error){do{error=oz_admission_query(OZ_ADMISSION_PORT,&ticket,&out);if(error==EAGAIN)Delay(1);}while(error==EAGAIN);}
     if(!error){
-        char line[256];snprintf(line,sizeof(line),"Public explicit create status=%lu %.170s\n",(unsigned long)out.status,out.detail);note(line);
+        char line[256];snprintf(line,sizeof(line),"Public explicit topology op=%u status=%lu %.170s\n",operation,(unsigned long)out.status,out.detail);note(line);
         if(out.status!=OZ_OK)error=EIO;
     }
     if(ticket.number){int released=oz_admission_release(OZ_ADMISSION_PORT,&ticket);if(!error)error=released;}
     return error;
+}
+static int pool_create_explicit(const char *name,const char *path,unsigned flags)
+{
+    return pool_topology_explicit(5,name,path,NULL,flags);
 }
 static int pool_file_refused(const char *first,const char *second,int expected)
 {
@@ -2250,6 +2255,37 @@ static int storage_force_create(void)
     FCHECK(!pool_root_payload("public_force_target",0,1));
     FCHECK(!cli_command("C:zpool export public_force_target"));
     note("Public force-add PASS no-force-refused=1 readonly-active-refused=1 exported-added=1 target-payload-retained=1 readonly-exact=1\n");
+    stage="manager-force-add-fixture";
+    for(unsigned i=3;i<5;i++){
+        char path[80];storage_member(path,sizeof(path),i);
+        file=Open((CONST_STRPTR)path,MODE_NEWFILE);FCHECK(file);
+        for(unsigned n=0;n<64;n++)FCHECK(Write(file,zeros,1024*1024)==1024*1024);
+        FCHECK(Flush(file));int closed=Close(file);file=0;FCHECK(closed);
+    }
+    const char *first="/RAM/OZForceCreate/disk3",*second="/RAM/OZForceCreate/disk4";
+    FCHECK(!cli_command("C:zpool import -N -o cachefile=none -d /RAM/OZForceCreate public_force_target"));
+    FCHECK(!cli_command("C:zpool create -o cachefile=none -O mountpoint=none public_add_donor mirror /RAM/OZForceCreate/disk3 /RAM/OZForceCreate/disk4"));
+    FCHECK(!pool_root_payload("public_add_donor",1,0));
+    stage="manager-force-add-active-refusal";
+    FCHECK(pool_topology_explicit(9,"public_force_target",first,second,OZ_CONFIRMED|OZ_FORCE)!=0);
+    FCHECK(!pool_root_payload("public_add_donor",0,0));
+    FCHECK(!cli_command("C:zpool export public_add_donor"));
+    FCHECK(!cli_command("C:zpool import -N -o cachefile=none -o readonly=on -d /RAM/OZForceCreate public_add_donor"));
+    FCHECK(pool_topology_explicit(9,"public_force_target",first,second,OZ_CONFIRMED|OZ_FORCE)!=0);
+    FCHECK(!pool_root_payload("public_add_donor",0,1));
+    FCHECK(!cli_command("C:zpool export public_add_donor"));
+    stage="manager-force-add-exported";
+    FCHECK(pool_topology_explicit(9,"public_force_target",first,second,OZ_FORCE)!=0);
+    FCHECK(pool_topology_explicit(9,"public_force_target",first,second,OZ_CONFIRMED)!=0);
+    FCHECK(!pool_topology_explicit(9,"public_force_target",first,second,OZ_CONFIRMED|OZ_FORCE));
+    FCHECK(!pool_root_payload("public_force_target",0,0));
+    FCHECK(!cli_command("C:zpool export public_force_target"));
+    FCHECK(!cli_command("C:zpool import -N -o cachefile=none -o readonly=on -d /RAM/OZForceCreate public_force_target"));
+    FCHECK(!pool_root_payload("public_force_target",0,1));
+    FCHECK(!cli_command("C:zpool export public_force_target"));
+    FCHECK(DeleteFile((CONST_STRPTR)"RAM:OZForceCreate/disk3"));
+    FCHECK(DeleteFile((CONST_STRPTR)"RAM:OZForceCreate/disk4"));
+    note("Public Manager force-add PASS confirmation-required=1 force-required=1 active-refused=1 readonly-active-refused=1 exported-added=1 target-payload-retained=1 readonly-exact=1\n");
     FCHECK(DeleteFile((CONST_STRPTR)"RAM:OZForceCreate/disk2"));
     FCHECK(DeleteFile((CONST_STRPTR)"RAM:OZForceCreate/disk0"));
     FCHECK(DeleteFile((CONST_STRPTR)"RAM:OZForceCreate/disk1"));

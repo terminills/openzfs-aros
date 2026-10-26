@@ -66,7 +66,7 @@ static int pool_files_change(struct oz_message *m,cred_t *caller,
     }
     char why[128];
     boolean_t rebuild=(operation==1||operation==2)&&!strcmp(m->options,"rebuild=on");
-    boolean_t force=!operation&&(m->flags&OZ_FORCE);
+    boolean_t force=(!operation||operation==3)&&(m->flags&OZ_FORCE);
     if(m->flags!=(OZ_CONFIRMED|(force?OZ_FORCE:0))||((!operation||operation==3)&&m->argument[0])||(operation&&m->options[0]&&!rebuild)||
         (operation==3?oz_validate_add_topology(&m->topology,why,sizeof(why)):
         oz_validate_topology(&m->topology,why,sizeof(why)))!=OZ_OK)return EINVAL;
@@ -222,7 +222,7 @@ static int pool_files_change(struct oz_message *m,cred_t *caller,
     fnvlist_add_nvlist_array(root,ZPOOL_CONFIG_CHILDREN,(const nvlist_t *const *)tops,nt);
     if(nc)fnvlist_add_nvlist_array(root,ZPOOL_CONFIG_L2CACHE,(const nvlist_t *const *)cache,nc);
     if(ns)fnvlist_add_nvlist_array(root,ZPOOL_CONFIG_SPARES,(const nvlist_t *const *)spares,ns);
-    if(operation&&!has_native) {
+    if(operation&&!has_native&&!force) {
         for(unsigned i=0;i<t->device_count;i++) {
             error=oz_vdev_policy_extend(spa_guid(spa),spa_name(spa),fnvlist_lookup_string(leaves[i],ZPOOL_CONFIG_PATH),&policy_added[i]);
             if(error)goto done;
@@ -234,7 +234,7 @@ static int pool_files_change(struct oz_message *m,cred_t *caller,
         error=nvlist_pack(root,&packed_root,&root_size,NV_ENCODE_NATIVE,0);
         if(!error)error=nvlist_pack(props,&packed_props,&props_size,NV_ENCODE_NATIVE,0);
         if(!error)error=operation?
-            oz_cli_add_begin(m->target,packed_root,root_size,caller,security,&reservation):
+            (force?oz_cli_add_force_begin:oz_cli_add_begin)(m->target,packed_root,root_size,caller,security,&reservation):
             (force?oz_cli_create_force_begin:oz_cli_create_begin)(m->target,packed_root,root_size,packed_props,props_size,caller,security,&reservation);
         if(!error)error=operation==3?spa_vdev_add(spa,root,B_TRUE):operation?
             spa_vdev_attach(spa,guid,root,operation==2,rebuild):spa_create(m->target,root,props,NULL,NULL);

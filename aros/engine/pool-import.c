@@ -797,6 +797,10 @@ int oz_cli_add_request(const char *name,void *bytes,size_t *size,cred_t *caller,
     if(!error)error=add_begin(name,bytes,*size,caller,security,out,force);
     return error;
 }
+int oz_cli_add_force_begin(const char *name,const void *bytes,size_t size,cred_t *caller,const struct oz_packet_security *security,void **out)
+{
+    return add_begin(name,bytes,size,caller,security,out,1);
+}
 int oz_pool_import_files(struct oz_message *m,cred_t *caller,const struct oz_packet_security *security)
 {
     if(!security||oz_packet_security_cred(security)!=caller)return EACCES;
