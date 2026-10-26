@@ -133,3 +133,18 @@ Serial results, inputs, and pruned-image records are in
 This qualifies CLI file-backed force-add. Native force-add, the typed Manager
 add path, force attach/replace, potentially-active labels, and arbitrary
 nonzero-media force remain unqualified or unimplemented.
+
+## Manager force-add result
+
+The first typed add run (`qf2oSc43`) reached upstream but returned
+ZFS_ERR_ASHIFT_MISMATCH (1050). The typed force path still passed true for
+spa_vdev_add's alignment check, unlike upstream zpool add -f. The corrected
+path passes false only for explicit force and retains all caller/member
+admission. The UI review warns that force permits differing ashift values.
+
+The corrected run `public-service-run.aZ3SYiLI` exited zero. The Manager API
+required confirmation and force, refused active and readonly-imported
+source members, added exported members, and preserved the target payload
+through readonly reimport. The full storage suite passed. Both the failure
+and passing evidence are in `evidence/manager-force-add-20261026`.
+The changed UI wording still needs a fresh visual run.
