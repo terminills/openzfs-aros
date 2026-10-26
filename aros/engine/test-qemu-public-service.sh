@@ -71,6 +71,11 @@ if [[ ${AROS_TEST_REQUIRE_CPU:-0} == 1 ]] &&
 fi
 shared=${AROS_TEST_SHARED_BUILD:-}
 cli_dir=${AROS_TEST_CLI_DIR:-}
+force_create=${AROS_TEST_FORCE_CREATE:-0}
+[[ $force_create == 0 || ( $force_create == 1 && -n $cli_dir ) ]]
+if [[ $force_create == 1 ]] && ! strings "$client" | grep -F 'Public force-create PASS' >/dev/null;then
+    echo 'Selected acceptance client lacks the required force-create probe' >&2;exit 2
+fi
 companions=${AROS_TEST_COMPANION_TOOLS:-0}
 [[ $companions == 0 || ( $companions == 1 && -n $cli_dir ) ]]
 require_errno=${AROS_TEST_REQUIRE_ERRNO:-0}
@@ -404,6 +409,9 @@ if [[ $gui == 1 ]];then
     if [[ $gui_health == 1 ]];then
         extra_maps+=(-map aros/engine/public-service-test-only /openzfs-gui-health-test)
     fi
+fi
+if [[ $force_create == 1 ]];then
+    extra_maps+=(-map aros/engine/public-service-test-only /openzfs-force-create-test)
 fi
 if [[ $partitions == 1 ]];then
     sdk=${AROS_SDK:-/opt/aros-workspace/aros-amiwest-nightly-release/bin/pc-x86_64-smp/AROS/Developer}
@@ -1054,6 +1062,9 @@ if [[ -n $cli_dir ]];then
     rg -q "^Public destroyed changes Manager PASS attach=1 replace=1 add=1 active-refused=3 exported-refused=3 exact-read=5 $reuse_finish=1" "$run/serial-results.log"
 fi
 rg -q '^Public DOS links PASS write=1 hard=1 relative-soft=1 unlinked-source=1 dangling-refused=1' "$run/serial-results.log"
+if [[ $force_create == 1 ]];then
+    rg -q '^Public force-create PASS active-refused=1 no-force-refused=1 exported-replaced=1 old-payload-absent=1 readonly-exact=1 cleanup=1' "$run/serial-results.log"
+fi
 if [[ $gui_health == 1 ]];then
     rg -q '^Public GUI health saved response PASS raw-topology=1 counters=1 scan=1 checkpoint=1 not-display-summary=1' "$run/serial-results.log"
 fi

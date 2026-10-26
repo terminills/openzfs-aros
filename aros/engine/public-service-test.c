@@ -2143,6 +2143,62 @@ done:
     return error;
 #undef RCHECK
 }
+/* Opt-in forward acceptance gate for upstream create -f semantics. Uses only
+ * freshly allocated RAM files; never consumes a caller-supplied device path. */
+static int storage_force_create(void)
+{
+    BPTR marker=Lock((CONST_STRPTR)"SYS:openzfs-force-create-test",SHARED_LOCK);
+    if(!marker)return 0;
+    UnLock(marker);
+    const char *saved_directory=storage_directory;
+    unsigned saved_members=storage_members,saved_layout=storage_layout;
+    int saved_replaced=storage_replaced,error=0;BPTR file=0;
+    void *zeros=AllocVec(1024*1024,MEMF_PUBLIC|MEMF_CLEAR);
+    storage_directory="RAM:OZForceCreate";storage_members=2;storage_layout=OZ_MIRROR;storage_replaced=0;
+    const char *stage="fixture";
+#define FCHECK(x) do{if(!(x)){error=EIO;goto done;}}while(0)
+    FCHECK(zeros);
+    /* CreateDir refuses a pre-existing fixture; no truncate/reuse fallback. */
+    BPTR directory=CreateDir((CONST_STRPTR)storage_directory);FCHECK(directory);UnLock(directory);
+    for(unsigned i=0;i<2;i++){
+        char path[80];storage_member(path,sizeof(path),i);
+        file=Open((CONST_STRPTR)path,MODE_NEWFILE);FCHECK(file);
+        for(unsigned n=0;n<64;n++)FCHECK(Write(file,zeros,1024*1024)==1024*1024);
+        FCHECK(Flush(file));int closed=Close(file);file=0;FCHECK(closed);
+    }
+    stage="source-create";
+    FCHECK(!cli_command("C:zpool create -o cachefile=none -O mountpoint=none public_force_source mirror /RAM/OZForceCreate/disk0 /RAM/OZForceCreate/disk1"));
+    FCHECK(!pool_root_payload("public_force_source",1,0));
+    stage="active-refusal";
+    FCHECK(cli_command("C:zpool create -f -o cachefile=none -O mountpoint=none public_force_new mirror /RAM/OZForceCreate/disk0 /RAM/OZForceCreate/disk1")!=0);
+    FCHECK(!pool_root_payload("public_force_source",0,0));
+    FCHECK(!cli_command("C:zpool export public_force_source"));
+    stage="no-force-refusal";
+    FCHECK(cli_command("C:zpool create -o cachefile=none -O mountpoint=none public_force_new mirror /RAM/OZForceCreate/disk0 /RAM/OZForceCreate/disk1")!=0);
+    FCHECK(!cli_command("C:zpool import -N -o cachefile=none -d /RAM/OZForceCreate/disk0 -d /RAM/OZForceCreate/disk1 public_force_source"));
+    FCHECK(!pool_root_payload("public_force_source",0,0));
+    FCHECK(!cli_command("C:zpool export public_force_source"));
+    note("Public force-create prerequisites PASS active-refused=1 no-force-refused=1 source-payload-preserved=2\n");
+    stage="exported-force-create";
+    FCHECK(!cli_command("C:zpool create -f -o cachefile=none -O mountpoint=none public_force_new mirror /RAM/OZForceCreate/disk0 /RAM/OZForceCreate/disk1"));
+    stage="new-pool-data";
+    FCHECK(pool_root_payload("public_force_new",0,0)==EIO);
+    FCHECK(!pool_root_payload("public_force_new",1,0));
+    FCHECK(!cli_command("C:zpool export public_force_new"));
+    FCHECK(!cli_command("C:zpool import -N -o cachefile=none -o readonly=on -d /RAM/OZForceCreate/disk0 -d /RAM/OZForceCreate/disk1 public_force_new"));
+    FCHECK(!pool_root_payload("public_force_new",0,1));
+    FCHECK(!cli_command("C:zpool export public_force_new"));
+    FCHECK(DeleteFile((CONST_STRPTR)"RAM:OZForceCreate/disk0"));
+    FCHECK(DeleteFile((CONST_STRPTR)"RAM:OZForceCreate/disk1"));
+    FCHECK(DeleteFile((CONST_STRPTR)"RAM:OZForceCreate"));
+done:
+    if(file)Close(file);if(zeros)FreeVec(zeros);
+    storage_directory=saved_directory;storage_members=saved_members;storage_layout=saved_layout;storage_replaced=saved_replaced;
+    if(error){char line[160];snprintf(line,sizeof(line),"Public force-create FAIL stage=%s errno=%d\n",stage,error);note(line);}
+    else note("Public force-create PASS active-refused=1 no-force-refused=1 exported-replaced=1 old-payload-absent=1 readonly-exact=1 cleanup=1\n");
+    return error;
+#undef FCHECK
+}
 static int native_reuse_corrupt_labels(const char *create_command,int conflict)
 {
     /* Only called after the private runner's exact 256MiB MBR geometry and
@@ -2550,6 +2606,7 @@ static int storage_test(int gui){
      * retains destroyed-pool labels, so discovery is not a blanking step. */
     STORAGE_CHECK(!storage_native_discovery());
     STORAGE_CHECK(!storage_file_reuse());
+    STORAGE_CHECK(!storage_force_create());
     char engine_version[128],small_version[1]={'x'};
     STORAGE_CHECK(!oz_engine_version_query(OZ_ADMISSION_PORT,engine_version,sizeof(engine_version)));
     STORAGE_CHECK(!strncmp(engine_version,"zfs-",4));
