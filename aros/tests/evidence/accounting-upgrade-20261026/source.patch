@@ -1,0 +1,91 @@
+diff --git a/aros/cli/ioctl-public-test.c b/aros/cli/ioctl-public-test.c
+index a3cc5d6..214684a 100644
+--- a/aros/cli/ioctl-public-test.c
++++ b/aros/cli/ioctl-public-test.c
+@@ -126,6 +126,29 @@ static int same_nvlist(nvlist_t *a,nvlist_t *b)
+     int same=as==bs&&!memcmp(ap,bp,as);
+     fnvlist_pack_free(ap,as);fnvlist_pack_free(bp,bs);return same;
+ }
++int oz_public_accounting_upgrade_test(const char *dataset,int readonly)
++{
++    int error=0;LONG fd=-1;zfs_cmd_t command={0};
++    fd=lzc_open_os();TEST(fd>0);
++    strlcpy(command.zc_name,dataset,sizeof(command.zc_name));
++    if(readonly){TEST(lzc_ioctl_fd_os(fd,ZFS_IOC_USERSPACE_UPGRADE,&command)==-1&&errno==EROFS);}
++    else {
++        TEST(!lzc_ioctl_fd_os(fd,ZFS_IOC_USERSPACE_UPGRADE,&command));
++        TEST(!lzc_ioctl_fd_os(fd,ZFS_IOC_USERSPACE_UPGRADE,&command));
++    }
++    command.zc_cookie=1;
++    TEST(lzc_ioctl_fd_os(fd,ZFS_IOC_USERSPACE_UPGRADE,&command)==-1&&errno==EINVAL);
++    command.zc_cookie=0;
++    strlcat(command.zc_name,"/missing-upgrade-fixture",sizeof(command.zc_name));
++    TEST(lzc_ioctl_fd_os(fd,ZFS_IOC_USERSPACE_UPGRADE,&command)==-1&&errno==ENOENT);
++done:
++    if(fd>0&&lzc_close_os(fd)&&!error)error=errno;
++    if(!error){const char *p=readonly?
++        "Public accounting upgrade PASS readonly=1 malformed=1 absent=1\n":
++        "Public accounting upgrade PASS writable=1 repeat=1 malformed=1 absent=1\n";
++        while(*p)RawPutChar(*p++);}
++    return error;
++}
+ int oz_public_bootenv_persistence_test(const char *pool,int write)
+ {
+     int error=0,initialized=0;
+@@ -441,6 +464,9 @@ int oz_public_ioctl_test(const char *pool)
+     TEST(!upstream_core_commands(pool));
+     TEST(!upstream_bootenv(pool));
+     TEST(!upstream_core_datasets(pool));
++    char accounting_dataset[256];
++    snprintf(accounting_dataset,sizeof(accounting_dataset),"%s/files",pool);
++    TEST(!oz_public_accounting_upgrade_test(accounting_dataset,0));
+     TEST(!oz_control_close(OZ_ADMISSION_PORT,&ticket,fd));
+     prepare(w,&ticket,fd,pool,capacity);fd=-1;
+     TEST(oz_ioctl_request(OZ_ADMISSION_PORT,w,length)==EBADF);
+diff --git a/aros/engine/ioctl-request.c b/aros/engine/ioctl-request.c
+index bba93ec..7af8e79 100644
+--- a/aros/engine/ioctl-request.c
++++ b/aros/engine/ioctl-request.c
+@@ -107,7 +107,8 @@ static int execute(void *storage,size_t length,const struct oz_packet_security *
+     boolean_t expanding=adding||attaching;
+     boolean_t splitting=w->command==ZFS_IOC_VDEV_SPLIT;
+     boolean_t upgrading=w->command==ZFS_IOC_POOL_UPGRADE;
+-    if(!query&&!modern&&!events&&!keyop&&!setprop&&!poolprop&&!inherit&&!fsacl&&!promote&&!removing&&!trying&&!importing&&!creating&&!vdevstate&&!detaching&&!renaming&&!reguid&&!vdevremove&&!clearing&&!expanding&&!splitting&&!upgrading)return ENOTSUP;
++    boolean_t accounting_upgrade=w->command==ZFS_IOC_USERSPACE_UPGRADE;
++    if(!query&&!modern&&!events&&!keyop&&!setprop&&!poolprop&&!inherit&&!fsacl&&!promote&&!removing&&!trying&&!importing&&!creating&&!vdevstate&&!detaching&&!renaming&&!reguid&&!vdevremove&&!clearing&&!expanding&&!splitting&&!upgrading&&!accounting_upgrade)return ENOTSUP;
+     zfs_cmd_t command;
+     memcpy(&command,(char *)storage+sizeof(*w),sizeof(command));
+     if(command.zc_nvlist_src||command.zc_nvlist_dst||command.zc_nvlist_conf||
+@@ -118,6 +119,12 @@ static int execute(void *storage,size_t length,const struct oz_packet_security *
+        command.zc_nvlist_dst_size!=w->dst_capacity||command.zc_nvlist_dst_filled||
+        !memchr(command.zc_name,0,sizeof(command.zc_name)))return EINVAL;
+     /* These read-only query commands accept no source/config nvlist. */
++    /* Legacy accounting upgrade takes only the filesystem name. Upstream
++     * retains version-property authorization and readonly/suspended guards. */
++    if(accounting_upgrade&&(w->src_size||w->conf_size||w->dst_capacity||
++        w->history_size||command.zc_cookie||command.zc_guid||command.zc_obj||
++        command.zc_flags||command.zc_history_offset||command.zc_cleanup_fd||
++        command.zc_objset_type||command.zc_value[0]||command.zc_string[0]))return EINVAL;
+     if((query&&w->src_size)||(!trying&&!importing&&!creating&&!expanding&&!splitting&&w->conf_size))return EINVAL;
+     if(error_log&&(w->dst_capacity%sizeof(zbookmark_phys_t)||w->history_size||
+         command.zc_cookie||command.zc_guid||command.zc_obj||command.zc_flags||
+diff --git a/aros/engine/public-service-test.c b/aros/engine/public-service-test.c
+index a4a5bb1..4dc632d 100644
+--- a/aros/engine/public-service-test.c
++++ b/aros/engine/public-service-test.c
+@@ -106,6 +106,7 @@ void oz_upstream_mount_cache_finish(void);
+ int oz_public_ioctl_test(const char *);
+ int oz_public_bootenv_readonly_test(const char *);
+ int oz_public_bootenv_persistence_test(const char *,int);
++int oz_public_accounting_upgrade_test(const char *,int);
+ #endif
+ static void child_exited(IPTR status,IPTR result){*(LONG *)result=(LONG)status;}
+ static int present(const char *name){Forbid();int found=FindPort((CONST_STRPTR)name)!=NULL;Permit();return found;}
+@@ -3203,6 +3204,7 @@ static int storage_test(int gui){
+     STORAGE_CHECK(!storage_alias_request(7,2));
+ #ifdef OZ_NATIVE_DISPATCHER
+     STORAGE_CHECK(!oz_public_bootenv_readonly_test("public_mirror"));
++    STORAGE_CHECK(!oz_public_accounting_upgrade_test("public_mirror/files",1));
+ #endif
+ #ifdef OZ_TEST_UPSTREAM_INIT
+     STORAGE_CHECK(!oz_upstream_file_vdev_test(2,storage_directory));

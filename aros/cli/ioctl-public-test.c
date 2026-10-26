@@ -126,6 +126,30 @@ static int same_nvlist(nvlist_t *a,nvlist_t *b)
     int same=as==bs&&!memcmp(ap,bp,as);
     fnvlist_pack_free(ap,as);fnvlist_pack_free(bp,bs);return same;
 }
+int oz_public_accounting_upgrade_test(const char *dataset,int readonly)
+{
+    int error=0;LONG fd=-1;zfs_cmd_t command={0};
+    fd=lzc_open_os();TEST(fd>0);
+    strlcpy(command.zc_name,dataset,sizeof(command.zc_name));
+    if(readonly){TEST(lzc_ioctl_fd_os(fd,ZFS_IOC_USERSPACE_UPGRADE,&command)==-1&&errno==EROFS);}
+    else {
+        TEST(!lzc_ioctl_fd_os(fd,ZFS_IOC_USERSPACE_UPGRADE,&command));
+        TEST(!lzc_ioctl_fd_os(fd,ZFS_IOC_USERSPACE_UPGRADE,&command));
+    }
+    command.zc_cookie=1;
+    TEST(lzc_ioctl_fd_os(fd,ZFS_IOC_USERSPACE_UPGRADE,&command)==-1&&errno==EINVAL);
+    command.zc_cookie=0;
+    strlcat(command.zc_name,"/missing-upgrade-fixture",sizeof(command.zc_name));
+    /* Upstream checks pool readonly state before dataset existence. */
+    TEST(lzc_ioctl_fd_os(fd,ZFS_IOC_USERSPACE_UPGRADE,&command)==-1&&errno==(readonly?EROFS:ENOENT));
+done:
+    if(fd>0&&lzc_close_os(fd)&&!error)error=errno;
+    if(!error){const char *p=readonly?
+        "Public accounting upgrade PASS readonly=1 malformed=1 absent-gated=1\n":
+        "Public accounting upgrade PASS writable=1 repeat=1 malformed=1 absent=1\n";
+        while(*p)RawPutChar(*p++);}
+    return error;
+}
 int oz_public_bootenv_persistence_test(const char *pool,int write)
 {
     int error=0,initialized=0;
@@ -441,6 +465,9 @@ int oz_public_ioctl_test(const char *pool)
     TEST(!upstream_core_commands(pool));
     TEST(!upstream_bootenv(pool));
     TEST(!upstream_core_datasets(pool));
+    char accounting_dataset[256];
+    snprintf(accounting_dataset,sizeof(accounting_dataset),"%s/files",pool);
+    TEST(!oz_public_accounting_upgrade_test(accounting_dataset,0));
     TEST(!oz_control_close(OZ_ADMISSION_PORT,&ticket,fd));
     prepare(w,&ticket,fd,pool,capacity);fd=-1;
     TEST(oz_ioctl_request(OZ_ADMISSION_PORT,w,length)==EBADF);

@@ -107,7 +107,8 @@ static int execute(void *storage,size_t length,const struct oz_packet_security *
     boolean_t expanding=adding||attaching;
     boolean_t splitting=w->command==ZFS_IOC_VDEV_SPLIT;
     boolean_t upgrading=w->command==ZFS_IOC_POOL_UPGRADE;
-    if(!query&&!modern&&!events&&!keyop&&!setprop&&!poolprop&&!inherit&&!fsacl&&!promote&&!removing&&!trying&&!importing&&!creating&&!vdevstate&&!detaching&&!renaming&&!reguid&&!vdevremove&&!clearing&&!expanding&&!splitting&&!upgrading)return ENOTSUP;
+    boolean_t accounting_upgrade=w->command==ZFS_IOC_USERSPACE_UPGRADE;
+    if(!query&&!modern&&!events&&!keyop&&!setprop&&!poolprop&&!inherit&&!fsacl&&!promote&&!removing&&!trying&&!importing&&!creating&&!vdevstate&&!detaching&&!renaming&&!reguid&&!vdevremove&&!clearing&&!expanding&&!splitting&&!upgrading&&!accounting_upgrade)return ENOTSUP;
     zfs_cmd_t command;
     memcpy(&command,(char *)storage+sizeof(*w),sizeof(command));
     if(command.zc_nvlist_src||command.zc_nvlist_dst||command.zc_nvlist_conf||
@@ -118,6 +119,12 @@ static int execute(void *storage,size_t length,const struct oz_packet_security *
        command.zc_nvlist_dst_size!=w->dst_capacity||command.zc_nvlist_dst_filled||
        !memchr(command.zc_name,0,sizeof(command.zc_name)))return EINVAL;
     /* These read-only query commands accept no source/config nvlist. */
+    /* Legacy accounting upgrade takes only the filesystem name. Upstream
+     * retains version-property authorization and readonly/suspended guards. */
+    if(accounting_upgrade&&(w->src_size||w->conf_size||w->dst_capacity||
+        w->history_size||command.zc_cookie||command.zc_guid||command.zc_obj||
+        command.zc_flags||command.zc_history_offset||command.zc_cleanup_fd||
+        command.zc_objset_type||command.zc_value[0]||command.zc_string[0]))return EINVAL;
     if((query&&w->src_size)||(!trying&&!importing&&!creating&&!expanding&&!splitting&&w->conf_size))return EINVAL;
     if(error_log&&(w->dst_capacity%sizeof(zbookmark_phys_t)||w->history_size||
         command.zc_cookie||command.zc_guid||command.zc_obj||command.zc_flags||
