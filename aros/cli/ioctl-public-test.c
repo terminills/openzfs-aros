@@ -140,7 +140,26 @@ static int upstream_bootenv(const char *pool)
     TEST(!nvlist_lookup_string(readback,"aros-test",&value));
     TEST(!strcmp(value,"upstream-label-roundtrip"));
 done:
-    if(changed&&saved){int rc=lzc_set_bootenv(pool,saved);if(rc&&!error)error=rc;}
+    if(changed&&saved){
+        int rc=lzc_set_bootenv(pool,saved);
+        if(!rc){
+            nvlist_free(readback);readback=NULL;
+            rc=lzc_get_bootenv(pool,&readback);
+            if(!rc){
+                size_t expected_size=0,actual_size=0;
+                char *expected=fnvlist_pack(saved,&expected_size);
+                char *actual=fnvlist_pack(readback,&actual_size);
+                if(expected_size!=actual_size||memcmp(expected,actual,expected_size))rc=EIO;
+                fnvlist_pack_free(expected,expected_size);
+                fnvlist_pack_free(actual,actual_size);
+            }
+        }
+        if(rc){
+            const char *p="Public upstream bootenv RESTORE FAIL\n";
+            while(*p)RawPutChar(*p++);
+            if(!error)error=rc;
+        }
+    }
     if(initialized)libzfs_core_fini();
     nvlist_free(saved);nvlist_free(written);nvlist_free(readback);nvlist_free(invalid);
     if(!error){const char *p="Public upstream bootenv PASS get=1 set=1 invalid-preserved=1 restored=1\n";while(*p)RawPutChar(*p++);}

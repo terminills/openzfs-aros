@@ -1,0 +1,35 @@
+In file included from /mnt/short-term/openzfs-bootenv-candidate-20261025/lib/libspl/include/sys/uio.h:195,
+                 from /mnt/short-term/openzfs-bootenv-candidate-20261025/include/sys/zfs_context.h:116,
+                 from /mnt/short-term/openzfs-bootenv-candidate-20261025/aros/cli/ioctl-public-test.c:3:
+/mnt/short-term/openzfs-bootenv-candidate-20261025/include/sys/uio_impl.h: In function 'zfs_uio_index_at_offset':
+/mnt/short-term/openzfs-bootenv-candidate-20261025/include/sys/uio_impl.h:97:25: warning: comparison of integer expressions of different signedness: 'uint_t' {aka 'unsigned int'} and 'int' [-Wsign-compare]
+   97 |         while (*vec_idx < zfs_uio_iovcnt(uio) &&
+      |                         ^
+/mnt/short-term/openzfs-bootenv-candidate-20261025/include/sys/uio_impl.h:98:17: warning: comparison of integer expressions of different signedness: 'offset_t' {aka 'long long int'} and 'size_t' {aka 'long unsigned int'} [-Wsign-compare]
+   98 |             off >= zfs_uio_iovlen(uio, *vec_idx)) {
+      |                 ^~
+/mnt/short-term/openzfs-bootenv-candidate-20261025/aros/cli/ioctl-public-test.c: In function 'upstream_bootenv':
+/mnt/short-term/openzfs-bootenv-candidate-20261025/aros/cli/ioctl-public-test.c:134:53: error: passing argument 3 of 'nvlist_lookup_string' from incompatible pointer type [-Wincompatible-pointer-types]
+  134 |     TEST(!nvlist_lookup_string(readback,"aros-test",&value));
+      |                                                     ^~~~~~
+      |                                                     |
+      |                                                     char **
+/mnt/short-term/openzfs-bootenv-candidate-20261025/aros/cli/ioctl-public-test.c:11:26: note: in definition of macro 'TEST'
+   11 | #define TEST(x) do {if(!(x)){char text[96];snprintf(text,sizeof(text),"Public ioctl FAIL line=%d\n",__LINE__);for(char *p=text;*p;p++)RawPutChar(*p);error=EIO;goto done;}}while(0)
+      |                          ^
+In file included from /mnt/short-term/openzfs-bootenv-candidate-20261025/include/sys/zfs_debug.h:42,
+                 from /mnt/short-term/openzfs-bootenv-candidate-20261025/include/sys/zfs_context.h:117:
+/mnt/short-term/openzfs-bootenv-candidate-20261025/include/sys/nvpair.h:237:5: note: expected 'const char **' but argument is of type 'char **'
+  237 |     const char **);
+      |     ^~~~~~~~~~~~~
+/mnt/short-term/openzfs-bootenv-candidate-20261025/aros/cli/ioctl-public-test.c:140:53: error: passing argument 3 of 'nvlist_lookup_string' from incompatible pointer type [-Wincompatible-pointer-types]
+  140 |     TEST(!nvlist_lookup_string(readback,"aros-test",&value));
+      |                                                     ^~~~~~
+      |                                                     |
+      |                                                     char **
+/mnt/short-term/openzfs-bootenv-candidate-20261025/aros/cli/ioctl-public-test.c:11:26: note: in definition of macro 'TEST'
+   11 | #define TEST(x) do {if(!(x)){char text[96];snprintf(text,sizeof(text),"Public ioctl FAIL line=%d\n",__LINE__);for(char *p=text;*p;p++)RawPutChar(*p);error=EIO;goto done;}}while(0)
+      |                          ^
+/mnt/short-term/openzfs-bootenv-candidate-20261025/include/sys/nvpair.h:237:5: note: expected 'const char **' but argument is of type 'char **'
+  237 |     const char **);
+      |     ^~~~~~~~~~~~~

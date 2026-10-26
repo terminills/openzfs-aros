@@ -1,0 +1,10 @@
+In file included from /mnt/short-term/openzfs-bootenv-candidate-20261025/lib/libspl/include/sys/uio.h:195,
+                 from /mnt/short-term/openzfs-bootenv-candidate-20261025/include/sys/zfs_context.h:116,
+                 from /mnt/short-term/openzfs-bootenv-candidate-20261025/aros/cli/ioctl-public-test.c:3:
+/mnt/short-term/openzfs-bootenv-candidate-20261025/include/sys/uio_impl.h: In function 'zfs_uio_index_at_offset':
+/mnt/short-term/openzfs-bootenv-candidate-20261025/include/sys/uio_impl.h:97:25: warning: comparison of integer expressions of different signedness: 'uint_t' {aka 'unsigned int'} and 'int' [-Wsign-compare]
+   97 |         while (*vec_idx < zfs_uio_iovcnt(uio) &&
+      |                         ^
+/mnt/short-term/openzfs-bootenv-candidate-20261025/include/sys/uio_impl.h:98:17: warning: comparison of integer expressions of different signedness: 'offset_t' {aka 'long long int'} and 'size_t' {aka 'long unsigned int'} [-Wsign-compare]
+   98 |             off >= zfs_uio_iovlen(uio, *vec_idx)) {
+      |                 ^~
