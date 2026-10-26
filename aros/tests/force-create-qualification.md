@@ -113,3 +113,23 @@ succeeded; the old payload was absent, and new data survived readonly
 reimport. Cleanup and the entire storage suite passed, with runner exit zero.
 Evidence is retained in `evidence/native-manager-force-20261026`.
 This tests a virtual ATA partition, not physical controller behavior.
+
+## CLI force-add result
+
+Commit 011260e carries an explicit transient add-force boolean from upstream
+zpool's force/allow-in-use selection into service admission. It is removed
+before the upstream ioctl. The retained member checks accept coherently
+exported labels only when requested, while retaining live-namespace checks,
+captured caller authority, topology policy and member reservations.
+
+Run `public-service-run.cAcAgy2H` exited zero using the rebuilt service and
+`cli-link.EOrlHpek`. It refused no-force exported addition and forced use of
+a readonly-imported source, then successfully added the exported mirror
+to a separate pool. Existing target payload remained exact before and after
+readonly reimport; health was ONLINE. Full public-service storage passed.
+Serial results, inputs, and pruned-image records are in
+`evidence/force-add-20261026`.
+
+This qualifies CLI file-backed force-add. Native force-add, the typed Manager
+add path, force attach/replace, potentially-active labels, and arbitrary
+nonzero-media force remain unqualified or unimplemented.
