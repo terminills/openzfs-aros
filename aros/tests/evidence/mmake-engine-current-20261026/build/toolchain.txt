@@ -1,0 +1,5 @@
+compiler=/home/terminills/Documents/GitHub/aros-adt-crosstools/x86_64-aros-gcc
+sdk=/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer
+genmodule=/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/shared-tools.7guw1X1e/genmodule
+nm=/home/terminills/Documents/GitHub/aros-adt-crosstools/lib/gcc/x86_64-aros/15.2.0/../../../../x86_64-aros/bin/nm
+objcopy=/home/terminills/Documents/GitHub/aros-adt-crosstools/lib/gcc/x86_64-aros/15.2.0/../../../../x86_64-aros/bin/objcopy

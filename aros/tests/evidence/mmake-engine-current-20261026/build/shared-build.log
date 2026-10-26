@@ -1,0 +1,28 @@
+Shared engine candidate: /mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/shared-engine.SNTTTWQk
+/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/shared-engine.SNTTTWQk/gen/openzfs_start.c:105:1: warning: missing initializer for field 'rt_Revision' of 'const struct Resident' [-Wmissing-field-initializers]
+  105 | };
+      | ^
+In file included from /mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/shared-engine.SNTTTWQk/gen/openzfs_start.c:11:
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/exec/resident.h:36:28: note: 'rt_Revision' declared here
+   36 |     UWORD                  rt_Revision;
+      |                            ^~~~~~~~~~~
+In file included from /home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/cpu.h:64,
+                 from /home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/system.h:13,
+                 from /home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/exec/types.h:17,
+                 from /mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/shared-engine.SNTTTWQk/gen/openzfs_start.c:9:
+/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/shared-engine.SNTTTWQk/gen/openzfs_start.c: In function 'OpenZFS_1_OpenZFS_OpenLib':
+/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/shared-engine.SNTTTWQk/gen/openzfs_start.c:217:22: warning: unused parameter 'version' [-Wunused-parameter]
+  217 |     AROS_LHA (ULONG, version, D0),
+      |               ~~~~~~~^~~~~~~
+/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/shared-engine.SNTTTWQk/gen/openzfs_start.c: In function 'OpenZFS_3_OpenZFS_ExpungeLib':
+/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/shared-engine.SNTTTWQk/gen/openzfs_start.c:261:30: warning: unused parameter 'extralh' [-Wunused-parameter]
+  261 |     AROS_LHA(LIBBASETYPEPTR, extralh, D0),
+/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/shared-engine.SNTTTWQk/gen/openzfs_start.c: In function 'OpenZFS_4_OpenZFS_ExtFuncLib':
+/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/shared-engine.SNTTTWQk/gen/openzfs_libdefs.h:7:26: warning: unused parameter 'OpenZFSBase' [-Wunused-parameter]
+    7 | #define LIBBASE          OpenZFSBase
+      |                          ^
+/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/shared-engine.SNTTTWQk/gen/openzfs_start.c:304:21: note: in expansion of macro 'LIBBASE'
+  304 |     LIBBASETYPEPTR, LIBBASE, 4, OpenZFS
+      |                     ^~~~~~~
+/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/shared-engine.SNTTTWQk/openzfs.library:      ELF 64-bit LSB relocatable, x86-64, version 1 (AROS Research Operating System), with debug_info, not stripped
+/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/shared-engine.SNTTTWQk/OpenZFSServiceNative: ELF 64-bit LSB relocatable, x86-64, version 1 (AROS Research Operating System), with debug_info, not stripped
