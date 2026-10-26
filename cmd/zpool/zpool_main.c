@@ -1631,7 +1631,13 @@ zpool_do_add(int argc, char **argv)
 
 		ret = 0;
 	} else {
-		ret = (zpool_add(zhp, nvroot, check_ashift) != 0);
+#ifdef __AROS__
+		if ((force || !check_inuse) &&
+		    nvlist_add_boolean_value(nvroot, OZ_ADD_FORCE, B_TRUE) != 0)
+			ret = 1;
+		else
+#endif
+			ret = (zpool_add(zhp, nvroot, check_ashift) != 0);
 	}
 
 	nvlist_free(props);

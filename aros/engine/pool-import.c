@@ -742,7 +742,7 @@ int oz_cli_attach_begin(const char *name,uint64_t target,int replacing,
     }
     nvlist_free(root);return error;
 }
-int oz_cli_add_begin(const char *name,const void *bytes,size_t size,cred_t *caller,const struct oz_packet_security *security,void **out)
+static int add_begin(const char *name,const void *bytes,size_t size,cred_t *caller,const struct oz_packet_security *security,void **out,int force)
 {
     if(!security||oz_packet_security_cred(security)!=caller)return EACCES;
     *out=NULL;int error=secpolicy_zfs(caller);if(error)return error;
@@ -766,7 +766,7 @@ int oz_cli_add_begin(const char *name,const void *bytes,size_t size,cred_t *call
         struct imported_files *p=s->files;p->count=count;p->guid=spa_guid(spa);strcpy(p->name,name);
         for(unsigned i=0;!error&&i<count;i++){
             error=!strncmp(paths[i],"/AROS/",6)?pin_native(p,i,paths[i],0):pin_file(p,i,paths[i],security,0);
-            if(!error)error=blank_backing(p,i,buffer,1);
+            if(!error)error=blank_backing(p,i,buffer,force?2:1);
         }
         if(!error){allowed.paths=p->paths;error=oz_import_config_check(&allowed,config);}
         if(!error)error=writable_handoff(p);
@@ -776,6 +776,26 @@ int oz_cli_add_begin(const char *name,const void *bytes,size_t size,cred_t *call
     free(buffer);nvlist_free(config);nvlist_free(root);spa_close(spa,FTAG);
     if(error){oz_cli_add_end(s,error);return error;}
     *out=s;return 0;
+}
+int oz_cli_add_begin(const char *name,const void *bytes,size_t size,cred_t *caller,const struct oz_packet_security *security,void **out)
+{
+    return add_begin(name,bytes,size,caller,security,out,0);
+}
+int oz_cli_add_request(const char *name,void *bytes,size_t *size,cred_t *caller,const struct oz_packet_security *security,void **out)
+{
+    *out=NULL;
+    if(!security||oz_packet_security_cred(security)!=caller)return EACCES;
+    int error=secpolicy_zfs(caller);if(error)return error;
+    nvlist_t *root=NULL;boolean_t force=B_FALSE;
+    error=nvlist_unpack(bytes,*size,&root,0);
+    if(!error&&nvlist_exists(root,OZ_ADD_FORCE)){
+        error=nvlist_lookup_boolean_value(root,OZ_ADD_FORCE,&force);
+        if(!error)error=nvlist_remove_all(root,OZ_ADD_FORCE);
+        if(!error){char *packed=bytes;error=nvlist_pack(root,&packed,size,NV_ENCODE_NATIVE,0);}
+    }
+    nvlist_free(root);
+    if(!error)error=add_begin(name,bytes,*size,caller,security,out,force);
+    return error;
 }
 int oz_pool_import_files(struct oz_message *m,cred_t *caller,const struct oz_packet_security *security)
 {

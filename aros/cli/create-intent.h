@@ -4,4 +4,5 @@
 /* Transient client intent, removed by service admission before spa_create.
  * This never substitutes for caller authorization or member reservations. */
 #define OZ_CREATE_FORCE "org.aros:create-force"
+#define OZ_ADD_FORCE "org.aros:add-force"
 #endif

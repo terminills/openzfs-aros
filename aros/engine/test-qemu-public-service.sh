@@ -1056,7 +1056,7 @@ if [[ -n $cli_dir ]];then
     rg -q '^Public file destroyed reuse PASS cli=1 manager-api=1 old-payload-absent=2 exact-read=3 exported-refused=2 cleanup=1' "$run/serial-results.log"
     rg -q '^Public file label denial PASS corrupt=4 conflicting-member=4 checksum=4 manager-denied=12 forced-cli-denied=12 whole-members-unchanged=12 restored=12' "$run/serial-results.log"
     rg -q '^Public file conflicting label offsets PASS same-position=4' "$run/serial-results.log"
-    rg -q '^Public destroyed changes CLI PASS attach=1 replace=1 add=1 active-force-refused=3 exported-force-refused=3 exact-read=5 cleanup=1' "$run/serial-results.log"
+    rg -q '^Public destroyed changes CLI PASS attach=1 replace=1 add=1 active-force-refused=3 exported-refused=3 add-without-force=1 exact-read=5 cleanup=1' "$run/serial-results.log"
     reuse_finish=cleanup
     if [[ $persistent == 1 ]];then reuse_finish=retained;fi
     rg -q "^Public destroyed changes Manager PASS attach=1 replace=1 add=1 active-refused=3 exported-refused=3 exact-read=5 $reuse_finish=1" "$run/serial-results.log"
@@ -1065,6 +1065,7 @@ rg -q '^Public DOS links PASS write=1 hard=1 relative-soft=1 unlinked-source=1 d
 if [[ $force_create == 1 ]];then
     rg -q '^Public force-create PASS active-refused=1 no-force-refused=1 exported-replaced=1 old-payload-absent=1 readonly-exact=1 cleanup=1' "$run/serial-results.log"
     rg -q '^Public force-create readonly-active refusal PASS payload-preserved=1' "$run/serial-results.log"
+    rg -q '^Public force-add PASS no-force-refused=1 readonly-active-refused=1 exported-added=1 target-payload-retained=1 readonly-exact=1' "$run/serial-results.log"
     rg -q '^Public Manager force-create PASS confirmation-required=1 force-required=1 active-refused=1 readonly-active-refused=1 exported-replaced=1 old-payload-absent=1 readonly-exact=1' "$run/serial-results.log"
     if [[ $native_discovery == 1 && $native_cold == 0 && $all_native == 0 ]];then
         rg -q '^Public native force-create PASS active-refused=1 readonly-active-refused=1 exported-replaced=1 old-payload-absent=1 readonly-exact=1 cleanup=1' "$run/serial-results.log"

@@ -2024,7 +2024,7 @@ static int storage_destroyed_changes(unsigned native,unsigned lane)
         if(native>=2){
             XCHECK(reuse_change_request(manager,9,NULL,paths[3],paths[4],1)!=0);
             XCHECK(!cli_command("C:zpool export public_reuse_donor"));
-            XCHECK(reuse_change_request(manager,9,NULL,paths[3],paths[4],1)!=0);
+            XCHECK(reuse_change_request(manager,9,NULL,paths[3],paths[4],0)!=0);
             XCHECK(!reuse_change_guid(paths[2],guid,1));
             XCHECK(!pool_root_payload("public_reuse_target",0,0));
             snprintf(command,sizeof(command),"C:zpool import -N -o cachefile=none -d %s -d %s public_reuse_donor",paths[3],paths[4]);XCHECK(!cli_command(command));
@@ -2033,7 +2033,7 @@ static int storage_destroyed_changes(unsigned native,unsigned lane)
             if(exported)XCHECK(!cli_command("C:zpool export public_reuse_source"));
             XCHECK(reuse_change_request(manager,11,guid,paths[0],NULL,1)!=0);
             XCHECK(reuse_change_request(manager,13,guid,paths[0],NULL,1)!=0);
-            XCHECK(reuse_change_request(manager,9,NULL,paths[0],paths[1],1)!=0);
+            XCHECK(reuse_change_request(manager,9,NULL,paths[0],paths[1],!exported)!=0);
             XCHECK(!reuse_change_guid(paths[2],guid,1));
             XCHECK(!pool_root_payload("public_reuse_target",0,0));
         }
@@ -2073,7 +2073,7 @@ static int storage_destroyed_changes(unsigned native,unsigned lane)
         }
         if(native){char line[160];snprintf(line,sizeof(line),"Public native changes PASS lane=%s candidates=%s exact-read=5 cleanup=1\n",manager?"Manager":"CLI",native==1?"attach-replace":"add");note(line);}
         else note(manager?"Public destroyed changes Manager PASS attach=1 replace=1 add=1 active-refused=3 exported-refused=3 exact-read=5 cleanup=1\n":
-            "Public destroyed changes CLI PASS attach=1 replace=1 add=1 active-force-refused=3 exported-force-refused=3 exact-read=5 cleanup=1\n");
+            "Public destroyed changes CLI PASS attach=1 replace=1 add=1 active-force-refused=3 exported-refused=3 add-without-force=1 exact-read=5 cleanup=1\n");
     }
     XCHECK(DeleteFile((CONST_STRPTR)directory_name));
 done:
@@ -2229,6 +2229,28 @@ static int storage_force_create(void)
     FCHECK(!pool_root_payload("public_force_manager",0,1));
     FCHECK(!cli_command("C:zpool export public_force_manager"));
     note("Public Manager force-create PASS confirmation-required=1 force-required=1 active-refused=1 readonly-active-refused=1 exported-replaced=1 old-payload-absent=1 readonly-exact=1\n");
+    stage="force-add-fixture";
+    file=Open((CONST_STRPTR)"RAM:OZForceCreate/disk2",MODE_NEWFILE);FCHECK(file);
+    for(unsigned n=0;n<64;n++)FCHECK(Write(file,zeros,1024*1024)==1024*1024);
+    FCHECK(Flush(file));int closed=Close(file);file=0;FCHECK(closed);
+    FCHECK(!cli_command("C:zpool create -o cachefile=none -O mountpoint=none public_force_target /RAM/OZForceCreate/disk2"));
+    FCHECK(!pool_root_payload("public_force_target",1,0));
+    stage="force-add-refusal";
+    FCHECK(cli_command("C:zpool add public_force_target mirror /RAM/OZForceCreate/disk0 /RAM/OZForceCreate/disk1")!=0);
+    FCHECK(!cli_command("C:zpool import -N -o cachefile=none -o readonly=on -d /RAM/OZForceCreate/disk0 -d /RAM/OZForceCreate/disk1 public_force_manager"));
+    FCHECK(cli_command("C:zpool add -f public_force_target mirror /RAM/OZForceCreate/disk0 /RAM/OZForceCreate/disk1")!=0);
+    FCHECK(!pool_root_payload("public_force_manager",0,1));
+    FCHECK(!cli_command("C:zpool export public_force_manager"));
+    stage="force-add-exported";
+    FCHECK(!cli_command("C:zpool add -f public_force_target mirror /RAM/OZForceCreate/disk0 /RAM/OZForceCreate/disk1"));
+    FCHECK(!pool_root_payload("public_force_target",0,0));
+    FCHECK(!cli_result("C:zpool list -H -o health public_force_target >T:cli-package-output.txt","ONLINE"));
+    FCHECK(!cli_command("C:zpool export public_force_target"));
+    FCHECK(!cli_command("C:zpool import -N -o cachefile=none -o readonly=on -d /RAM/OZForceCreate public_force_target"));
+    FCHECK(!pool_root_payload("public_force_target",0,1));
+    FCHECK(!cli_command("C:zpool export public_force_target"));
+    note("Public force-add PASS no-force-refused=1 readonly-active-refused=1 exported-added=1 target-payload-retained=1 readonly-exact=1\n");
+    FCHECK(DeleteFile((CONST_STRPTR)"RAM:OZForceCreate/disk2"));
     FCHECK(DeleteFile((CONST_STRPTR)"RAM:OZForceCreate/disk0"));
     FCHECK(DeleteFile((CONST_STRPTR)"RAM:OZForceCreate/disk1"));
     FCHECK(DeleteFile((CONST_STRPTR)"RAM:OZForceCreate"));
