@@ -2377,6 +2377,31 @@ static int storage_native_discovery(void)
         if(error)return error;
         note("Public native conflicting restore PASS recreate=1 exact-data=1 destroyed=1\n");
     }
+    marker=Lock((CONST_STRPTR)"SYS:openzfs-force-create-test",SHARED_LOCK);
+    if(marker){
+        UnLock(marker);
+        if(!retain){
+            /* Same runner-owned extent as the discovery tests above. Never
+             * run this path against physical media or an arbitrary device. */
+            const char *create="C:zpool create -o cachefile=none -O mountpoint=none public_native_force /AROS/ata.device/0/partition/0";
+            const char *replace="C:zpool create -f -o cachefile=none -O mountpoint=none public_native_force_new /AROS/ata.device/0/partition/0";
+            if(cli_command(create)||pool_root_payload("public_native_force",1,0))return EIO;
+            if(!cli_command(replace)||pool_root_payload("public_native_force",0,0))return EIO;
+            if(cli_command("C:zpool export public_native_force"))return EIO;
+            if(cli_command("C:zpool import -N -o cachefile=none -o readonly=on public_native_force"))return EIO;
+            if(!cli_command(replace)||pool_root_payload("public_native_force",0,1))return EIO;
+            if(cli_command("C:zpool export public_native_force")||cli_command(replace))return EIO;
+            if(pool_root_payload("public_native_force_new",0,0)!=EIO)return EIO;
+            if(pool_root_payload("public_native_force_new",1,0))return EIO;
+            if(cli_command("C:zpool export public_native_force_new"))return EIO;
+            if(cli_command("C:zpool import -N -o cachefile=none -o readonly=on public_native_force_new"))return EIO;
+            if(pool_root_payload("public_native_force_new",0,1))return EIO;
+            if(cli_command("C:zpool export public_native_force_new"))return EIO;
+            if(cli_command("C:zpool import -N -o cachefile=none public_native_force_new"))return EIO;
+            if(cli_command("C:zpool destroy public_native_force_new"))return EIO;
+            note("Public native force-create PASS active-refused=1 readonly-active-refused=1 exported-replaced=1 old-payload-absent=1 readonly-exact=1 cleanup=1\n");
+        }
+    }
     if(!DeleteFile((CONST_STRPTR)"RAM:discovery-root.key"))return EIO;
     if(!DeleteFile((CONST_STRPTR)"RAM:discovery-wrong.key"))return EIO;
     note("Public native reuse guards PASS active-force-denied=1 exported-without-force-denied=1 original-data-preserved=1\n");

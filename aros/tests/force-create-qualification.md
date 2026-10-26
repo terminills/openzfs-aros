@@ -52,3 +52,19 @@ The completed test ISO was hashed and pruned by the runner.
 This is file-backed runtime qualification with private CRT/pthread inputs;
 it is not native-device force recreation, physical durability, or full-port
 completion. Manager force and arbitrary nonzero-media force remain open.
+
+## Native virtual-device result
+
+Run `public-service-run.GAiH0Pp2` also exited zero with eight virtual CPUs,
+the native partition fixture, freshly rebuilt commands, and the opt-in force
+test. `Public native force-create PASS` proves active and readonly-imported
+refusal, exported recreation, old-payload absence, new payload verified after
+readonly reimport, and cleanup on `/AROS/ata.device/0/partition/0`.
+The complete public-service storage suite passed. Evidence is retained in
+`evidence/native-force-create-20261026`; the completed ISO and disposable
+disk images were hashed and pruned by the runner.
+
+An earlier launch stopped before QEMU because the default SDK path lacked
+partition.library. The successful retry explicitly selected the clean ADT
+SDK. This remains QEMU native-device API evidence, not physical hardware
+durability or controller qualification.
