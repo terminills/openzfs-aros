@@ -336,6 +336,10 @@ static void send_request(ULONG operation,int preview_only) {
     if(m.operation==9) {
         size_t n=strlen(text);
         snprintf(text+n,sizeof(text)-n,"\nAdds NEW groups, not replicas of existing groups.\nRemoving added data groups later may not be supported.");
+        if(m.flags&OZ_FORCE){
+            n=strlen(text);
+            snprintf(text+n,sizeof(text)-n,"\nForce also permits different sector-alignment shifts (ashift).");
+        }
     }
     if(m.operation==10) {
         size_t n=strlen(text);

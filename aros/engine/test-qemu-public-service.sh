@@ -1071,6 +1071,9 @@ if [[ $force_create == 1 ]];then
     if [[ $native_discovery == 1 && $native_cold == 0 && $all_native == 0 ]];then
         rg -q '^Public native force-create PASS active-refused=1 readonly-active-refused=1 exported-replaced=1 old-payload-absent=1 readonly-exact=1 cleanup=1' "$run/serial-results.log"
         rg -q '^Public native Manager force-create PASS active-refused=1 readonly-active-refused=1 confirmation-required=1 force-required=1 dryrun-refused=1 exported-replaced=1 readonly-exact=1 cleanup=1' "$run/serial-results.log"
+        for lane in CLI Manager;do
+            rg -q "^Public native force-add PASS lane=$lane active-refused=1 readonly-active-refused=1 no-force-refused=1 target-data=1 readonly-exact=1 cleanup=1" "$run/serial-results.log"
+        done
     fi
 fi
 if [[ $gui_health == 1 ]];then

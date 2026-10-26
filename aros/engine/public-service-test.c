@@ -2509,6 +2509,26 @@ static int storage_native_discovery(void)
             if(pool_root_payload("public_native_manager",0,1)||cli_command("C:zpool export public_native_manager"))return EIO;
             if(cli_command("C:zpool import -N -o cachefile=none public_native_manager")||cli_command("C:zpool destroy public_native_manager"))return EIO;
             note("Public native Manager force-create PASS active-refused=1 readonly-active-refused=1 confirmation-required=1 force-required=1 dryrun-refused=1 exported-replaced=1 readonly-exact=1 cleanup=1\n");
+            for(unsigned manager=0;manager<2;manager++){
+                const char *target="public_native_add";
+                const char *add="C:zpool add -f public_native_add /AROS/ata.device/0/partition/0";
+                if(cli_command(create)||pool_root_payload("public_native_force",1,0))return EIO;
+                if(cli_command("C:zpool create -o cachefile=none -O mountpoint=none public_native_add /AROS/ata.device/0/partition/2"))return EIO;
+                if(pool_root_payload(target,1,0))return EIO;
+                if(!(manager?pool_topology_explicit(9,target,path,NULL,OZ_CONFIRMED|OZ_FORCE):cli_command(add)))return EIO;
+                if(pool_root_payload("public_native_force",0,0)||cli_command("C:zpool export public_native_force"))return EIO;
+                if(!(manager?pool_topology_explicit(9,target,path,NULL,OZ_CONFIRMED):cli_command("C:zpool add public_native_add /AROS/ata.device/0/partition/0")))return EIO;
+                if(cli_command("C:zpool import -N -o cachefile=none -o readonly=on public_native_force"))return EIO;
+                if(!(manager?pool_topology_explicit(9,target,path,NULL,OZ_CONFIRMED|OZ_FORCE):cli_command(add)))return EIO;
+                if(pool_root_payload("public_native_force",0,1)||cli_command("C:zpool export public_native_force"))return EIO;
+                if(manager?pool_topology_explicit(9,target,path,NULL,OZ_CONFIRMED|OZ_FORCE):cli_command(add))return EIO;
+                if(pool_root_payload(target,0,0)||cli_command("C:zpool export public_native_add"))return EIO;
+                if(cli_command("C:zpool import -N -o cachefile=none -o readonly=on public_native_add"))return EIO;
+                if(pool_root_payload(target,0,1)||cli_command("C:zpool export public_native_add"))return EIO;
+                if(cli_command("C:zpool import -N -o cachefile=none public_native_add")||cli_command("C:zpool destroy public_native_add"))return EIO;
+                note(manager?"Public native force-add PASS lane=Manager active-refused=1 readonly-active-refused=1 no-force-refused=1 target-data=1 readonly-exact=1 cleanup=1\n":
+                    "Public native force-add PASS lane=CLI active-refused=1 readonly-active-refused=1 no-force-refused=1 target-data=1 readonly-exact=1 cleanup=1\n");
+            }
         }
     }
     if(!DeleteFile((CONST_STRPTR)"RAM:discovery-root.key"))return EIO;

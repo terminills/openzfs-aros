@@ -236,7 +236,9 @@ static int pool_files_change(struct oz_message *m,cred_t *caller,
         if(!error)error=operation?
             (force?oz_cli_add_force_begin:oz_cli_add_begin)(m->target,packed_root,root_size,caller,security,&reservation):
             (force?oz_cli_create_force_begin:oz_cli_create_begin)(m->target,packed_root,root_size,packed_props,props_size,caller,security,&reservation);
-        if(!error)error=operation==3?spa_vdev_add(spa,root,B_TRUE):operation?
+        /* Match upstream zpool add -f: explicit force permits ashift
+         * differences, but never bypasses member/credential admission. */
+        if(!error)error=operation==3?spa_vdev_add(spa,root,!force):operation?
             spa_vdev_attach(spa,guid,root,operation==2,rebuild):spa_create(m->target,root,props,NULL,NULL);
         if(reservation) {
             if(operation)oz_cli_add_end(reservation,error);
