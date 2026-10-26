@@ -15,8 +15,8 @@ labels, since a read-only import can retain those labels.
 The service cross-build passed using retained upstream engine objects and
 rebuilt adapters; see `build-audit/force-create/service-build.log`.
 The updated runtime test additionally checks read-only imported source
-refusal and preservation. A rebuilt CLI and a passing QEMU replay remain
-required. This does not qualify arbitrary nonzero-media overwrite, Manager
+refusal and preservation. The rebuilt CLI and passing QEMU replay are
+recorded below. This does not qualify arbitrary nonzero-media overwrite, Manager
 force semantics, or force add/attach/replace.
 
 ## Current CLI build
@@ -36,5 +36,19 @@ Neither intermediate CLI build was executed. Logs are retained under
 The exported-member denial regression now checks omission of force, while
 active-member denial still supplies force. The separate acceptance test
 requires exported recreation to succeed and checks readonly imported
-source preservation. Runtime results remain pending in
+source preservation. Runtime results are recorded in
 `build-audit/force-create/replay-matched.log`.
+
+## QEMU result
+
+The eight-core private QEMU run `public-service-run.PNPRlR82` exited zero.
+It proved active and readonly-imported source refusal with payload retained,
+no-force exported refusal, successful force recreation of exported file
+members, absence of the old payload, and exact new payload after readonly
+reimport. The complete public-service storage suite also passed. Retained
+serial results and input hashes are in `evidence/force-create-20261026`.
+The completed test ISO was hashed and pruned by the runner.
+
+This is file-backed runtime qualification with private CRT/pthread inputs;
+it is not native-device force recreation, physical durability, or full-port
+completion. Manager force and arbitrary nonzero-media force remain open.
