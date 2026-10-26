@@ -52,3 +52,29 @@ This proves mounted conversion from a pre-accounting pool, populated user
 accounting, preserved file contents after reopen, and regression coverage
 for native rollback/ownership on the private runtime. It does not establish
 official-runtime compatibility, physical durability, or every legacy format.
+
+## Rebuilt service regression and cold mirror
+
+The service and Manager were rebuilt at 5f96b20 using the retained fresh-source
+upstream objects and recompiled adapters. `service/rebuilt.sha256` identifies
+both binaries and the fixed mount source. This is an incremental relink, not
+a second from-scratch upstream build. Manager compilation is not UI runtime
+proof.
+
+Eight-vCPU run `public-service-run.BJlvvR01` used the rebuilt service through
+the authenticated public client and passed accounting authorization/delegation,
+mounted repeat upgrades, readonly rejection, bootenv checks and mirror DOS
+read/write/export/reimport. The runner exited zero and pruned its ISO.
+
+File-backed run `public-service-run.mVqWBgPy` also exited zero. A separate
+guest boot verified healthy, one-member-missing and restored readonly imports,
+bootenv persistence, exact DOS data/metadata and beyond-parity refusal with
+the service remaining responsive. Pool member hashes stayed unchanged across
+the cold read-only phases; independent host zdb found no leaks and did not
+change either member. The runner retained hashes and pruned seven disposable
+images. Evidence is in `service-cold/`.
+
+These are regression tests with the fixed service, not an additional claim
+that the cold mirror itself was created with legacy accounting. The dedicated
+legacy conversion is established by the quota fixture above. All runs remain
+private-runtime QEMU qualification, without DUT or user-hosted session access.

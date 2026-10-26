@@ -1,0 +1,3 @@
+89efbbd34953ad99ee4b6d918d443028c510e7f359b5acecc09e1c5f0d0102f3  build-audit/legacy-fixed-service/OpenZFSServiceNative
+66a67a697ecdbafea13f420a45a85b81e8ddc7f8e3e4fe8a31a2a0d8f42144e9  build-audit/legacy-fixed-service/OpenZFSManagerNative
+d9c99a9271484ec2c6b5edaa83ac2c08ab4a3693fe1fe9cf39f637cfe78af666  aros/zpl/read-mount.c
