@@ -1,0 +1,18 @@
+{"time": 1792993106.842104, "action": "capture", "args": ["initial.png"]}
+{"time": 1792993199.9359195, "action": "click", "args": ["320", "175", "1280", "800"]}
+{"time": 1792993373.6050265, "action": "capture", "args": ["selected.png"]}
+{"time": 1792993544.8826873, "action": "relative", "args": ["0", "20"]}
+{"time": 1792993545.1279142, "action": "press", "args": []}
+{"time": 1792993546.245474, "action": "capture", "args": ["relative-selected.png"]}
+{"time": 1792993647.3506167, "action": "key", "args": ["down"]}
+{"time": 1792993648.4579868, "action": "capture", "args": ["keyboard-selected.png"]}
+{"time": 1792993830.0491014, "action": "key", "args": ["tab"]}
+{"time": 1792993831.2100265, "action": "capture", "args": ["focus-target.png"]}
+{"time": 1792993936.7724552, "action": "key", "args": ["tab"]}
+{"time": 1792993936.9825542, "action": "key", "args": ["tab"]}
+{"time": 1792993937.1879401, "action": "key", "args": ["tab"]}
+{"time": 1792993937.39809, "action": "key", "args": ["tab"]}
+{"time": 1792993937.6105194, "action": "key", "args": ["tab"]}
+{"time": 1792993937.821655, "action": "key", "args": ["tab"]}
+{"time": 1792993938.030082, "action": "key", "args": ["tab"]}
+{"time": 1792993939.185275, "action": "capture", "args": ["focus-seven.png"]}

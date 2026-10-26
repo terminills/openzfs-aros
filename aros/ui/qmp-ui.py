@@ -18,8 +18,8 @@ root = Path(__file__).resolve().parents[2] / 'build-aros'
 external = os.environ.get('AROS_ARTIFACT_ROOT')
 if external:
     root = Path(external).resolve(strict=True)
-    if not root.is_dir() or root.stat().st_dev == Path(__file__).resolve().stat().st_dev:
-        p.error('external artifact root must be an existing separate filesystem')
+    if not root.is_dir() or root.stat().st_dev == Path('/').stat().st_dev:
+        p.error('external artifact root must be an existing non-system filesystem')
 if run.parent != root or not run.name.startswith(('native-gui-run.', 'native-import-run.', 'startup-cold.', 'file-corruption-run.', 'public-service-run.')):
     p.error('requires a private native-gui-run, native-import-run, startup-cold, file-corruption-run or public-service-run directory')
 s = socket.socket(socket.AF_UNIX)
