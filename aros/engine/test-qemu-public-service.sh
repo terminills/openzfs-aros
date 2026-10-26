@@ -120,6 +120,11 @@ sequential=${AROS_TEST_SEQUENTIAL:-0}
 [[ $sequential == 0 || ( $sequential == 1 && $dspare == 1 ) ]]
 [[ $startup_import == 0 || ( $layout == mirror && $replace == 0 && $dspare == 0 ) ]]
 gui=${AROS_PUBLIC_GUI:-0}
+gui_health=${AROS_TEST_GUI_HEALTH:-0}
+[[ $gui_health == 0 || ( $gui_health == 1 && $gui == 1 ) ]]
+if [[ $gui_health == 1 ]] && ! strings "$client" | grep -F 'Public GUI health saved response PASS' >/dev/null;then
+    echo 'Selected acceptance client lacks the required GUI health response probe' >&2;exit 2
+fi
 gui_defer=${AROS_TEST_GUI_DEFER:-0}
 [[ $gui_defer == 0 || ( $gui_defer == 1 && $gui == 1 && -n $cli_dir ) ]]
 gui_destroy_preview=${AROS_TEST_GUI_DESTROY_PREVIEW:-0}
@@ -396,6 +401,9 @@ if [[ $gui == 1 ]];then
     cp "${AROS_TEST_MANAGER_BINARY:?native Manager required for GUI test}" "$run/OpenZFSManagerNative"
     extra_maps+=(-map "$run/OpenZFSManagerNative" /C/OpenZFSManagerNative)
     sha256sum "$run/OpenZFSManagerNative" >"$run/gui-inputs.sha256"
+    if [[ $gui_health == 1 ]];then
+        extra_maps+=(-map aros/engine/public-service-test-only /openzfs-gui-health-test)
+    fi
 fi
 if [[ $partitions == 1 ]];then
     sdk=${AROS_SDK:-/opt/aros-workspace/aros-amiwest-nightly-release/bin/pc-x86_64-smp/AROS/Developer}
@@ -1046,6 +1054,9 @@ if [[ -n $cli_dir ]];then
     rg -q "^Public destroyed changes Manager PASS attach=1 replace=1 add=1 active-refused=3 exported-refused=3 exact-read=5 $reuse_finish=1" "$run/serial-results.log"
 fi
 rg -q '^Public DOS links PASS write=1 hard=1 relative-soft=1 unlinked-source=1 dangling-refused=1' "$run/serial-results.log"
+if [[ $gui_health == 1 ]];then
+    rg -q '^Public GUI health saved response PASS raw-topology=1 counters=1 scan=1 checkpoint=1 not-display-summary=1' "$run/serial-results.log"
+fi
 if [[ $gui_volume == 1 ]];then
     rg -q '^Public GUI volume PASS actual-mapping=1 readonly=1 exact-data=1 saved-mountfile=1 eject=1' "$run/serial-results.log"
 fi

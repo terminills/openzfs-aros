@@ -3170,8 +3170,26 @@ static int storage_test(int gui){
         }
         BPTR volume_gui=Lock((CONST_STRPTR)"SYS:openzfs-gui-volume-test",SHARED_LOCK);
         if(volume_gui){UnLock(volume_gui);note("Public GUI volume READY: Devices, unit 5, public_mirror/public_volume, read-only Remap; save whole-volume FFS mount file T:OZBLOCK, then close Manager\n");}
+        BPTR health_gui=Lock((CONST_STRPTR)"SYS:openzfs-gui-health-test",SHARED_LOCK);
+        if(health_gui){UnLock(health_gui);note("Public GUI health READY: query Pool health for public_mirror in Simple mode, Save response, then close Manager\n");}
         note("Public storage GUI ready: mounted public_mirror/files with hello.txt\n");
         STORAGE_CHECK(SystemTags((CONST_STRPTR)"C:OpenZFSManagerNative",TAG_DONE)==0);
+        if(health_gui){
+            static char report[32768];
+            BPTR saved=Open((CONST_STRPTR)"T:OpenZFS-Response.txt",MODE_OLDFILE);
+            STORAGE_CHECK(saved!=BNULL);
+            LONG count=Read(saved,report,sizeof(report)-1);
+            LONG close_ok=Close(saved);
+            STORAGE_CHECK(count>0&&count<(LONG)sizeof(report)-1&&close_ok);
+            report[count]=0;
+            STORAGE_CHECK(strstr(report,"pool | public_mirror | ONLINE")!=NULL);
+            STORAGE_CHECK(strstr(report,"role=pool guid=")!=NULL);
+            STORAGE_CHECK(strstr(report,"read-errors=0 write-errors=0 checksum-errors=0")!=NULL);
+            STORAGE_CHECK(strstr(report,"parent=public_mirror")!=NULL);
+            STORAGE_CHECK(strstr(report,"scan=")!=NULL&&strstr(report,"checkpoint=")!=NULL);
+            STORAGE_CHECK(strstr(report,"Errors: read ")==NULL);
+            note("Public GUI health saved response PASS raw-topology=1 counters=1 scan=1 checkpoint=1 not-display-summary=1\n");
+        }
         if(key_change_gui){
             STORAGE_CHECK(!cli_result("C:zfs get -H -o value keyformat public_mirror/gui_key >T:cli-package-output.txt","passphrase"));
             STORAGE_CHECK(!cli_result("C:zfs get -H -o value pbkdf2iters public_mirror/gui_key >T:cli-package-output.txt","400000"));
