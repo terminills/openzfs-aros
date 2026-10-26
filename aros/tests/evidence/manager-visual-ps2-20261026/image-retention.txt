@@ -1,0 +1,8 @@
+Completed generated image eligible for removal after terminal QEMU exit:
+/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/native-gui-run.aKyWdL8v/test.iso
+Size: 4901896192 bytes
+SHA256: 0aac205e9f41dc414a33e743dcfcee53b7a75be507d0decd9f520e31a68fe6a4
+The original timeout, tablet retry timeout and PS/2 pass retain separate logs.
+Reproduction uses the original run's source archive, source patch, input hashes,
+startup sequence, pack log and retained executables. No pool disk was attached.
+Removal is of a regenerable ISO, not source, logs, screenshots or a base image.
