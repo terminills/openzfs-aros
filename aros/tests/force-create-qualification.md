@@ -1,4 +1,22 @@
-# Force-create qualification in progress
+# Exported-member force qualification
+
+## Current scope (2026-10-26)
+
+Create, add, attach and replace have passing isolated QEMU coverage through
+both upstream CLI and Manager authenticated APIs, using file-backed and
+virtual ATA partition candidates. Explicit exported-member reuse, refusal
+of imported members (including readonly imports), and data verification are
+covered. Attach/replace also verify completed resilver and leaf inventory.
+Manager create/attach/replace previews have separate visual evidence; the
+add-specific ashift warning still needs a fresh visual capture.
+
+This is not full upstream force parity: arbitrary nonzero media and
+potentially-active labels remain outside the policy. Private CRT/pthread
+dependencies, physical storage qualification and wider full-port gates
+remain. Sections below are chronological records; statements about open
+work describe that stage and are superseded by later recorded results.
+
+## Initial reproduction
 
 The private QEMU baseline in `build-audit/public-service-run.KL3OjoXH`
 reached `Public force-create prerequisites PASS`, preserving the source
