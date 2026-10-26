@@ -1,0 +1,33 @@
+diff --git a/aros/zpl/read-mount.c b/aros/zpl/read-mount.c
+index ba2be97..ff25f28 100644
+--- a/aros/zpl/read-mount.c
++++ b/aros/zpl/read-mount.c
+@@ -321,6 +321,7 @@ int oz_read_mount_open(objset_t *os,sa_attr_type_t *attrs,uint64_t root,
+  * suspend a mount while the owner can still pump raw DOS operations. */
+ int zfs_suspend_fs(zfsvfs_t *fs)
+ {
++    mount_failure("accounting-suspend-temporary",fs?fs->z_use_hold:-1);
+     if (!fs || fs->z_use_hold) return EINVAL;
+     struct oz_read_mount *mount = (struct oz_read_mount *)fs;
+     if (mount->owner != FindTask(NULL)) return EDEADLK;
+@@ -363,6 +364,7 @@ int zfs_suspend_fs(zfsvfs_t *fs)
+      * just like unmount. Detach first so newly arriving waits see no ZPL. */
+     dsl_dir_cancel_waiters(mount->suspended_ds->ds_dir);
+     mount->suspended = B_TRUE;
++    mount_failure("accounting-suspended",0);
+     /* Ownership and publication-owner reference survive. Writer stays held
+      * across the upstream rollback/receive and matching resume call. */
+     return 0;
+@@ -370,9 +372,12 @@ int zfs_suspend_fs(zfsvfs_t *fs)
+ 
+ int zfs_resume_fs(zfsvfs_t *fs, dsl_dataset_t *ds)
+ {
++    mount_failure("accounting-resume-temporary",fs?fs->z_use_hold:-1);
+     if (!fs || fs->z_use_hold || !ds) return EINVAL;
+     struct oz_read_mount *mount = (struct oz_read_mount *)fs;
+     if (mount->owner != FindTask(NULL)) return EDEADLK;
++    mount_failure("accounting-resume-suspended",mount->suspended);
++    mount_failure("accounting-resume-same-dataset",mount->suspended_ds==ds);
+     if (!mount->suspended || mount->suspended_ds != ds) return EINVAL;
+     ASSERT(ZFS_TEARDOWN_WRITE_HELD(fs));
+     VERIFY3P(ds->ds_owner, ==, fs);

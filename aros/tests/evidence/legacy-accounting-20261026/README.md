@@ -25,4 +25,30 @@ cause. Keep ownership validation intact while investigating.
 
 The quota runner now validates storage before allocation and honors
 AROS_TEST_ARTIFACT_ROOT, allowing these iterations to remain on the external
-artifact drive. The failed ISO is retained for diagnosis, not silently reused.
+artifact drive. Each subsequent run builds a new ISO rather than reusing a
+failed image. Terminal-run ISOs can be removed after recording their hashes;
+the source, input hashes and logs remain.
+
+## Confirmed cause and verified fix
+
+Run `default-quota-run.EWUjQbOJ` adds diagnostic-only serial markers. Suspend
+succeeds; resume receives a different dataset pointer and the old pointer
+comparison returns EINVAL. See `trace/`. These diagnostics are removed from
+the fixed source.
+
+Resume now compares the saved pool and dataset object number, not the old
+allocation address. It does not dereference the released dataset pointer.
+Task ownership, suspended state, teardown writer lock, dataset ownership and
+long-hold requirements remain. GUID is intentionally not the key because
+receive may replace it. The end-filesystem path retains its existing check.
+
+Runs `default-quota-run.LbsH8j7T` and `default-quota-run.NZbDa0VE` both pass
+legacy conversion and the complete default-quota suite. The latter adds an
+explicit wrong-dataset resume attempt using a held snapshot in the same pool:
+it returns EINVAL and retains the suspended state and teardown lock, after
+which normal rollback/resume succeeds. See `fixed/` and `guard/`.
+
+This proves mounted conversion from a pre-accounting pool, populated user
+accounting, preserved file contents after reopen, and regression coverage
+for native rollback/ownership on the private runtime. It does not establish
+official-runtime compatibility, physical durability, or every legacy format.

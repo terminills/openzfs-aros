@@ -1,0 +1,98 @@
+[bootstrap:multiboot2] smartfb: using VBE mode 0x417a (1280x800x32, fb=0xFD000000)
+[bootstrap:multiboot2] smartfb: KRN_FBAddr=0x00000000FD000000
+0000000000000000 0x0000000000000000 | 000 | AROS64 - The AROS Research OS
+0000000000000000 0x0000000000000000 | 000 | 64-bit SMP build. Compiled Oct 21 2026
+0000000000000000 0x0000000000000000 | 000 | [Kernel] Local APIC: x2APIC
+00000000b03c3eb1 0x0000000000000000 | 000 | ACPI: RSDP 0x00000000000F52E0 000014 (v00 BOCHS )
+00000000b0f74f76 0x0000000000000000 | 000 | ACPI: RSDT 0x000000007FFE238A 000034 (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+00000000b19d91ab 0x0000000000000000 | 000 | ACPI: FACP 0x000000007FFE2236 000074 (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+00000000b23d0e16 0x0000000000000000 | 000 | ACPI: DSDT 0x000000007FFE0040 0021F6 (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+00000000b2e2c667 0x0000000000000000 | 000 | ACPI: FACS 0x000000007FFE0000 000040
+00000000b3499301 0x0000000000000000 | 000 | ACPI: APIC 0x000000007FFE22AA 000080 (v03 BOCHS  BXPC     00000001 BXPC 00000001)
+00000000b3e8bd32 0x0000000000000000 | 000 | ACPI: HPET 0x000000007FFE232A 000038 (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+00000000b487a92e 0x0000000000000000 | 000 | ACPI: WAET 0x000000007FFE2362 000028 (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+00000000b52dc54d 0x0000000000000000 | 000 | [HPET] 2 units total
+00000000b5e3e553 0x00000000013d2020 | 000 | ACPI: 1 ACPI AML tables successfully acquired and loaded
+00000000b6a0595e 0x00000000013b0130 | 000 | [Kernel:ACPI-IOAPIC] Registering IO-APIC #1 [ID=000] @ 00000000fec00000 [GSI = 0]
+00000000b74073b2 0x00000000013b0130 | 000 | [Kernel:ACPI] System Total APICs: 2, 2 usable
+00000000b7ef53f5 0x00000000013b0130 | 000 | [Kernel:APIC-IA32] MSI Interrupts Allocatable
+00000000b871667e 0x00000000013b0130 | 000 | [Kernel:APIC-IA32]     start = 16
+00000000b8d47eda 0x00000000013b0130 | 000 | [Kernel:APIC-IA32]     total = 198
+00000000d6fe504d 0x00000000013b0130 | 000 | [Kernel:APIC-IA32] Heartbeat timer: TSC deadline
+00000000d8fd7e9b 0x00000000013d4c20 | 001 | [Kernel:APIC-IA32.001] core_APIC_Calibrate: TSC freq inherited from BSP (2496023 kHz) [hypervisor]
+00000000daa1d50d 0x00000000013d4c20 | 001 | [Kernel:APIC-IA32.001] core_APIC_Calibrate: LAPIC timer freq inherited from BSP (1000416280 Hz) [hypervisor]
+00000000dcf2a1ca 0x00000000013b0130 | 000 | [PCIPC:Driver] PCIPC_InitClass: No ACPI MCFG table
+00000000de73452c 0x00000000013b0130 | 000 | [Timer] clock: PIT (no invariant TSC)
+00000001e42863ac 0x0000000001608750 | 000 | [ATI] Init
+00000001e4710233 0x0000000001608750 | 000 | [ATI] No supported cards found
+0000000202a3c277 0x00000000015ff8c0 | 000 | [HW] HW__HW__AddDriver: Failed to instantiate Driver Object
+RESULT native platform primitives PASS hlist=1 counters=320000 threads=8
+RESULT native caller scopes PASS threads=16
+RESULT native dispatcher credentials PASS
+RESULT native file scopes PASS threads=8 exit-cleanup=1 retained-read=2 final-close=1
+RESULT native session files PASS rounds=16 capacity=64 stale=1 retained=1 threads=16
+RESULT native legacy accounting PASS old-pool=1 mounted-conversion=1 user-bytes=1 data-preserved=1
+RESULT native zvol PASS write=1 reopen=1 readonly=1 resize=1 export-busy=1
+RESULT native zvol lifecycle PASS rename=1 snapshot-readonly=1 recreate=1
+RESULT native dispatcher runtime PASS cycles=80 upstream-stats=1 stopped-denial=1
+RESULT native creation properties PASS cases=3 root-normalization=1
+RESULT native legacy versions PASS versions=1-4 write=1 remount=1 unchanged-format=1
+RESULT native filesystem version PASS legacy=4 upgraded=5
+RESULT native upstream create PASS properties=3 inherited=3 lookup=2
+UTF8 metadata version=5 norm=0 utf8=1 case=0
+RESULT native UTF8 mount PASS create=1 rename=1 rejected=5 reopen=1
+RESULT native DOS alias rename PASS lock=1 handle=1 hardlink=1 enumeration=3 unicode=1
+UTF8 metadata version=5 norm=80 utf8=1 case=0
+RESULT native normalized mount PASS equivalent=1 duplicate=1 case-sensitive=1 rename=1 reopen=1
+RESULT native DOS alias rename PASS lock=1 handle=1 hardlink=1 enumeration=3 unicode=1
+UTF8 metadata version=5 norm=16 utf8=1 case=0
+RESULT native normalized mount PASS equivalent=1 duplicate=1 case-sensitive=1 rename=1 reopen=1
+RESULT native DOS alias rename PASS lock=1 handle=1 hardlink=1 enumeration=3 unicode=1
+UTF8 metadata version=5 norm=96 utf8=1 case=0
+RESULT native normalized mount PASS equivalent=1 duplicate=1 case-sensitive=1 rename=1 reopen=1
+RESULT native DOS alias rename PASS lock=1 handle=1 hardlink=1 enumeration=3 unicode=1
+UTF8 metadata version=5 norm=32 utf8=1 case=0
+RESULT native normalized mount PASS equivalent=1 duplicate=1 case-sensitive=1 rename=1 reopen=1
+RESULT native DOS alias rename PASS lock=1 handle=1 hardlink=1 enumeration=3 unicode=1
+UTF8 metadata version=5 norm=0 utf8=1 case=1
+RESULT native case mount PASS lookup=1 duplicate-policy=1 rename=1 reopen=1
+RESULT native DOS alias rename PASS lock=1 handle=1 hardlink=1 enumeration=3 unicode=1
+UTF8 metadata version=5 norm=80 utf8=1 case=1
+RESULT native case mount PASS lookup=1 duplicate-policy=1 rename=1 reopen=1
+RESULT native DOS alias rename PASS lock=1 handle=1 hardlink=1 enumeration=3 unicode=1
+UTF8 metadata version=5 norm=0 utf8=1 case=2
+RESULT native case mount PASS lookup=1 duplicate-policy=1 rename=1 reopen=1
+RESULT native DOS alias rename PASS lock=1 handle=1 hardlink=1 enumeration=3 unicode=1
+UTF8 metadata version=5 norm=80 utf8=1 case=2
+RESULT native case mount PASS lookup=1 duplicate-policy=1 rename=1 reopen=1
+RESULT native DOS alias rename PASS lock=1 handle=1 hardlink=1 enumeration=3 unicode=1
+RESULT native filesystem deleteq suspend PASS pending=1 interrupted=1 resumed=1
+RESULT native filesystem deleteq cancel PASS pending=1 interrupted=1 republished=1
+RESULT native filesystem deleteq wait PASS pending=1 drained=1 waited=1
+RESULT native node resume PASS identity=3 refs=2
+RESULT native DOS identity PASS cases=3 stale-parent=1 persistent=1 cleanup=1 reopen=1
+RESULT native mounted rollback PASS rounds=2 failed-resume=1 owner-task=1
+RESULT native mounted end PASS stale-io=1 cleanup=1 disown=1 reopen=1
+RESULT native temporary holds PASS cycles=16
+OpenZFS mount failed stage=objset-own errno=16
+OpenZFS mount failed stage=objset-own errno=16
+OpenZFS mount failed stage=objset-own errno=16
+RESULT native send caller PASS complete=1 failed=1
+RESULT native snapshot unmount PASS busy=1 detached=1
+Project stage: enter
+Project stage: enable features
+Project stage: create fixture
+Project stage: open mount
+Project stage: root acquired
+Project stage: set root project
+Project setattr=00000000042dad20 root=0000000017877540 fs=0000000017731e50
+Project stage: nonzero project quota byte/object enforcement passed
+RESULT native project attributes PASS write=1 inherited=1 stored=1
+OpenZFS mount failed stage=objset-own errno=16
+RESULT native ZPL accounting PASS persisted-user=1 persisted-group=1
+Project stage: enter
+Project stage: open mount
+Project stage: root acquired
+RESULT native project attributes PASS write=0 inherited=1 stored=1
+RESULT native mount ownership PASS phases=4 snapshot=1 rejected=2
+RESULT native default quota PASS properties=6 phases=4

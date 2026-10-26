@@ -1097,6 +1097,12 @@ static int mounted_rollback_test(const char *dataset)
         dsl_dataset_t *ds=dmu_objset_ds(fs->z_os);
         CHECK(zfs_suspend_fs(fs));
         CHECK(!fs->z_os && zfs_vfs_held(fs) && !kept->z_sa_hdl && !removed->z_sa_hdl ? 0:EIO);
+        /* Stable identity must not admit a different dataset in this pool.
+         * The snapshot has a valid hold, but is not the suspended head. */
+        objset_t *other=NULL;CHECK(dmu_objset_hold(snap,FTAG,&other));
+        CHECK(zfs_resume_fs(fs,dmu_objset_ds(other))==EINVAL?0:EIO);
+        dmu_objset_rele(other,FTAG);
+        CHECK(!fs->z_os && ZFS_TEARDOWN_WRITE_HELD(fs)?0:EIO);
         CHECK(oz_zpl_close(mount)==EBUSY ? 0:EIO);
         nvlist_t *out=fnvlist_alloc();
         error=dsl_dataset_rollback(dataset,snap,fs,out);
@@ -1119,7 +1125,7 @@ static int mounted_rollback_test(const char *dataset)
     CHECK(oz_zpl_read(mount,object,0,actual,sizeof(actual)));
     CHECK(!memcmp(actual,original,sizeof(actual))?0:EIO);
     zfs_vfs_rele(fs);CHECK(oz_zpl_close(mount));
-    const char *s="RESULT native mounted rollback PASS rounds=2 failed-resume=1 owner-task=1\n";
+    const char *s="RESULT native mounted rollback PASS rounds=2 failed-resume=1 owner-task=1 wrong-dataset=1\n";
     while(*s)RawPutChar(*s++);
     return 0;
 }

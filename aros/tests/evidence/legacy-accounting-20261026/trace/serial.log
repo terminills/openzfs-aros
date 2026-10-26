@@ -1,0 +1,41 @@
+[bootstrap:multiboot2] smartfb: using VBE mode 0x417a (1280x800x32, fb=0xFD000000)
+[bootstrap:multiboot2] smartfb: KRN_FBAddr=0x00000000FD000000
+0000000000000000 0x0000000000000000 | 000 | AROS64 - The AROS Research OS
+0000000000000000 0x0000000000000000 | 000 | 64-bit SMP build. Compiled Oct 21 2026
+0000000000000000 0x0000000000000000 | 000 | [Kernel] Local APIC: x2APIC
+000000009cfd2c6b 0x0000000000000000 | 000 | ACPI: RSDP 0x00000000000F52E0 000014 (v00 BOCHS )
+000000009d780cdd 0x0000000000000000 | 000 | ACPI: RSDT 0x000000007FFE238A 000034 (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+000000009e189239 0x0000000000000000 | 000 | ACPI: FACP 0x000000007FFE2236 000074 (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+000000009eb85940 0x0000000000000000 | 000 | ACPI: DSDT 0x000000007FFE0040 0021F6 (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+000000009f5859cc 0x0000000000000000 | 000 | ACPI: FACS 0x000000007FFE0000 000040
+000000009fbfbbb7 0x0000000000000000 | 000 | ACPI: APIC 0x000000007FFE22AA 000080 (v03 BOCHS  BXPC     00000001 BXPC 00000001)
+00000000a05f9f5b 0x0000000000000000 | 000 | ACPI: HPET 0x000000007FFE232A 000038 (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+00000000a0ff6aae 0x0000000000000000 | 000 | ACPI: WAET 0x000000007FFE2362 000028 (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+00000000a19fc60c 0x0000000000000000 | 000 | [HPET] 2 units total
+00000000a258328c 0x00000000013d2020 | 000 | ACPI: 1 ACPI AML tables successfully acquired and loaded
+00000000a2f62eb0 0x00000000013b0130 | 000 | [Kernel:ACPI-IOAPIC] Registering IO-APIC #1 [ID=000] @ 00000000fec00000 [GSI = 0]
+00000000a3967ad2 0x00000000013b0130 | 000 | [Kernel:ACPI] System Total APICs: 2, 2 usable
+00000000a444dfa5 0x00000000013b0130 | 000 | [Kernel:APIC-IA32] MSI Interrupts Allocatable
+00000000a4ba30f2 0x00000000013b0130 | 000 | [Kernel:APIC-IA32]     start = 16
+00000000a51defe8 0x00000000013b0130 | 000 | [Kernel:APIC-IA32]     total = 198
+00000000c3479e65 0x00000000013b0130 | 000 | [Kernel:APIC-IA32] Heartbeat timer: TSC deadline
+00000000c54cbadd 0x00000000013d4c20 | 001 | [Kernel:APIC-IA32.001] core_APIC_Calibrate: TSC freq inherited from BSP (2496019 kHz) [hypervisor]
+00000000c6e9d15a 0x00000000013d4c20 | 001 | [Kernel:APIC-IA32.001] core_APIC_Calibrate: LAPIC timer freq inherited from BSP (1000411080 Hz) [hypervisor]
+00000000c945741d 0x00000000013b0130 | 000 | [PCIPC:Driver] PCIPC_InitClass: No ACPI MCFG table
+00000000cac8cc90 0x00000000013b0130 | 000 | [Timer] clock: PIT (no invariant TSC)
+00000001c2d86e59 0x0000000001608750 | 000 | [ATI] Init
+00000001c3209cab 0x0000000001608750 | 000 | [ATI] No supported cards found
+00000001dcaa4af5 0x0000000001657890 | 000 | [HW] HW__HW__AddDriver: Failed to instantiate Driver Object
+RESULT native platform primitives PASS hlist=1 counters=320000 threads=8
+RESULT native caller scopes PASS threads=16
+RESULT native dispatcher credentials PASS
+RESULT native file scopes PASS threads=8 exit-cleanup=1 retained-read=2 final-close=1
+RESULT native session files PASS rounds=16 capacity=64 stale=1 retained=1 threads=16
+OpenZFS mount failed stage=accounting-suspend-temporary errno=0
+OpenZFS mount failed stage=accounting-suspended errno=0
+OpenZFS mount failed stage=accounting-resume-temporary errno=0
+OpenZFS mount failed stage=accounting-resume-suspended errno=1
+OpenZFS mount failed stage=accounting-resume-same-dataset errno=0
+FAIL quota line=549 error=22
+FAIL quota line=1517 error=22
+RESULT native default quota FAIL

@@ -35,6 +35,8 @@ struct oz_read_mount {
     boolean_t unpublished, owns_objset, suspended, mount_readonly;
     struct Task *owner;
     dsl_dataset_t *suspended_ds;
+    spa_t *suspended_spa;
+    uint64_t suspended_object;
 };
 int oz_read_mount_is_owner(struct oz_read_mount *mount)
 { return mount && mount->owner==FindTask(NULL); }
@@ -354,6 +356,8 @@ int zfs_suspend_fs(zfsvfs_t *fs)
     if (spa_writeable(dmu_objset_spa(os))) txg_wait_synced(dmu_objset_pool(os), 0);
     dmu_objset_evict_dbufs(os);
     mount->suspended_ds = dmu_objset_ds(os);
+    mount->suspended_spa = dmu_objset_spa(os);
+    mount->suspended_object = mount->suspended_ds->ds_object;
     mutex_enter(&os->os_user_ptr_lock);
     ASSERT(dmu_objset_get_user(os) == fs);
     dmu_objset_set_user(os, NULL);
@@ -373,7 +377,12 @@ int zfs_resume_fs(zfsvfs_t *fs, dsl_dataset_t *ds)
     if (!fs || fs->z_use_hold || !ds) return EINVAL;
     struct oz_read_mount *mount = (struct oz_read_mount *)fs;
     if (mount->owner != FindTask(NULL)) return EDEADLK;
-    if (!mount->suspended || mount->suspended_ds != ds) return EINVAL;
+    /* Accounting upgrade releases and reacquires the dataset to expand its
+     * objset. Its allocation address may change; do not dereference or use
+     * the old pointer as identity. Pool and dataset object remain stable.
+     * A receive may change the dataset GUID, so that is not a mount key. */
+    if (!mount->suspended || mount->suspended_spa != dsl_dataset_get_spa(ds) ||
+        mount->suspended_object != ds->ds_object) return EINVAL;
     ASSERT(ZFS_TEARDOWN_WRITE_HELD(fs));
     VERIFY3P(ds->ds_owner, ==, fs);
     VERIFY(dsl_dataset_long_held(ds));
@@ -415,6 +424,7 @@ int zfs_resume_fs(zfsvfs_t *fs, dsl_dataset_t *ds)
     mutex_exit(&os->os_user_ptr_lock);
     mutex_exit(&ds->ds_dir->dd_activity_lock);
     mount->suspended = B_FALSE; mount->suspended_ds = NULL;
+    mount->suspended_spa = NULL; mount->suspended_object = 0;
     ZFS_TEARDOWN_EXIT_WRITE(fs, FTAG);
     return error;
 }
@@ -445,6 +455,7 @@ int zfs_end_fs(zfsvfs_t *fs, dsl_dataset_t *ds)
     mutex_exit(&os->os_user_ptr_lock);
     mount->suspended = B_FALSE;
     mount->suspended_ds = NULL;
+    mount->suspended_spa = NULL; mount->suspended_object = 0;
     ZFS_TEARDOWN_EXIT_WRITE(fs, FTAG);
     return 0;
 }
