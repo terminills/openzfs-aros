@@ -2318,7 +2318,8 @@ static int storage_force_create(void)
         FCHECK(!pool_change_guid("public_force_target",manager?"/disk6":"/disk2",guid,5+manager+replacing));
         /* Exercise DOS assign spelling against the canonical RAM Disk name
          * stored in pool config; GUID inventory is checked independently. */
-        snprintf(change,sizeof(change),"public_force_target /RAM/OZForceCreate/disk2 /RAM/OZForceCreate/disk%u",member);
+        snprintf(change,sizeof(change),"public_force_target %s /RAM/OZForceCreate/disk%u",
+            replacing?"RAM:OZForceCreate/disk2":"/RAM/OZForceCreate/disk2",member);
         snprintf(command,sizeof(command),"C:zpool %s -f %s",replacing?"replace":"attach",change);
         stage=replacing?"force-replace-active":"force-attach-active";
         FCHECK((manager?pool_change_request(1,replacing?13:11,"public_force_target",guid,path,NULL,OZ_CONFIRMED|OZ_FORCE):cli_command(command))!=0);FCHECK(!pool_root_payload("public_attach_donor",0,0));

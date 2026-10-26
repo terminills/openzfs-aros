@@ -196,6 +196,23 @@ zfs_strcmp_pathname(const char *name, const char *cmp, int wholedisk)
 	char cmp_name[MAXPATHLEN];
 	char *dir, *tmp = NULL;
 
+#ifdef OZ_NATIVE_LABEL_CLIENT
+	/* An explicit DOS volume/assign is not a Linux device shortname.
+	 * Resolve both existing files through DOS before slash normalization,
+	 * which would otherwise turn RAM:foo into /RAM:foo. */
+	const char *colon = strchr(name, ':');
+	const char *slash = strchr(name, '/');
+	if (!wholedisk && colon != NULL &&
+	    (slash == NULL || colon < slash)) {
+		char *left = zfs_get_underlying_path(name);
+		char *right = zfs_get_underlying_path(cmp);
+		boolean_t same = left && right && strcmp(left, right) == 0;
+		free(left);
+		free(right);
+		return (same ? 0 : ENOENT);
+	}
+#endif
+
 	/* Strip redundant slashes if they exist due to ZPOOL_IMPORT_PATH */
 	cmp_name[0] = '\0';
 	(void) strlcpy(path_name, cmp, sizeof (path_name));

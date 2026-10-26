@@ -1,0 +1,460 @@
+[bootstrap:multiboot2] smartfb: using VBE mode 0x417a (1280x800x32, fb=0xFD000000)
+[bootstrap:multiboot2] smartfb: KRN_FBAddr=0x00000000FD000000
+AROS64 - The AROS Research OS
+64-bit SMP build. Compiled Oct 21 2026
+[Kernel] Local APIC: x2APIC
+ACPI: RSDP 0x00000000000F52E0 000014 (v00 BOCHS )
+ACPI: RSDT 0x000000007FFE25C5 000034 (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+ACPI: FACP 0x000000007FFE2441 000074 (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+ACPI: DSDT 0x000000007FFE0040 002401 (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+ACPI: FACS 0x000000007FFE0000 000040
+ACPI: APIC 0x000000007FFE24B5 0000B0 (v03 BOCHS  BXPC     00000001 BXPC 00000001)
+ACPI: HPET 0x000000007FFE2565 000038 (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+ACPI: WAET 0x000000007FFE259D 000028 (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+[HPET] 2 units total
+ACPI: 1 ACPI AML tables successfully acquired and loaded
+[Kernel:ACPI-IOAPIC] Registering IO-APIC #1 [ID=000] @ 00000000fec00000 [GSI = 0]
+[Kernel:ACPI] System Total APICs: 8, 8 usable
+[Kernel:APIC-IA32] MSI Interrupts Allocatable
+[Kernel:APIC-IA32]     start = 16
+[Kernel:APIC-IA32]     total = 198
+[Kernel:APIC-IA32] Heartbeat timer: TSC deadline
+[Kernel:APIC-IA32.001] core_APIC_Calibrate: TSC freq inherited from BSP (2495987 kHz) [hypervisor]
+[Kernel:APIC-IA32.001] core_APIC_Calibrate: LAPIC timer freq inherited from BSP (1000410040 Hz) [hypervisor]
+[Kernel:APIC-IA32.002] core_APIC_Calibrate: TSC freq inherited from BSP (2495987 kHz) [hypervisor]
+[Kernel:APIC-IA32.002] core_APIC_Calibrate: LAPIC timer freq inherited from BSP (1000410040 Hz) [hypervisor]
+[Kernel:APIC-IA32.003] core_APIC_Calibrate: TSC freq inherited from BSP (2495987 kHz) [hypervisor]
+[Kernel:APIC-IA32.003] core_APIC_Calibrate: LAPIC timer freq inherited from BSP (1000410040 Hz) [hypervisor]
+[Kernel:APIC-IA32.004] core_APIC_Calibrate: TSC freq inherited from BSP (2495987 kHz) [hypervisor]
+[Kernel:APIC-IA32.004] core_APIC_Calibrate: LAPIC timer freq inherited from BSP (1000410040 Hz) [hypervisor]
+[Kernel:APIC-IA32.005] core_APIC_Calibrate: TSC freq inherited from BSP (2495987 kHz) [hypervisor]
+[Kernel:APIC-IA32.005] core_APIC_Calibrate: LAPIC timer freq inherited from BSP (1000410040 Hz) [hypervisor]
+[Kernel:APIC-IA32.006] core_APIC_Calibrate: TSC freq inherited from BSP (2495987 kHz) [hypervisor]
+[Kernel:APIC-IA32.006] core_APIC_Calibrate: LAPIC timer freq inherited from BSP (1000410040 Hz) [hypervisor]
+[Kernel:APIC-IA32.007] core_APIC_Calibrate: TSC freq inherited from BSP (2495987 kHz) [hypervisor]
+[Kernel:APIC-IA32.007] core_APIC_Calibrate: LAPIC timer freq inherited from BSP (1000410040 Hz) [hypervisor]
+[PCIPC:Driver] PCIPC_InitClass: No ACPI MCFG table
+[Timer] clock: PIT (no invariant TSC)
+[ATI] Init
+[ATI] No supported cards found
+[HW] HW__HW__AddDriver: Failed to instantiate Driver Object
+Writable startup denied: configured security.library and system task identity required.
+RESULT shared engine lifecycle cycle=1 PASS
+Writable startup denied: configured security.library and system task identity required.
+RESULT shared engine lifecycle cycle=2 PASS
+Writable startup denied: configured security.library and system task identity required.
+RESULT shared engine lifecycle cycle=3 PASS
+Writable startup denied: configured security.library and system task identity required.
+RESULT shared engine lifecycle cycle=4 PASS
+Writable startup denied: configured security.library and system task identity required.
+RESULT shared engine lifecycle cycle=5 PASS
+Writable startup denied: configured security.library and system task identity required.
+RESULT shared engine lifecycle cycle=6 PASS
+Writable startup denied: configured security.library and system task identity required.
+RESULT shared engine lifecycle cycle=7 PASS
+Writable startup denied: configured security.library and system task identity required.
+RESULT shared engine lifecycle cycle=8 PASS
+RESULT shared engine denied return PASS status=20 repeated=10 caller-exit=7
+RESULT shared engine library lifecycle PASS invalid-mode=2 nested-open=1 foreign-refused=1 reload-other-task=1
+Native authenticated admission ready
+OpenZFS management API 3 ready; engine initialized
+Public service op=1 status=0 engine=1 rows=0
+Public service op=2 status=0 engine=1 rows=0
+Public service op=3 status=0 engine=1 rows=0
+Public mutation requires authenticated admission PASS
+OpenZFS service engine shutdown complete
+Public service test line=0
+RESULT public service lifecycle PASS
+Native authenticated admission ready
+OpenZFS management API 3 ready; engine initialized
+Public service op=1 status=0 engine=1 rows=0
+Public service op=2 status=0 engine=1 rows=0
+Public service op=3 status=0 engine=1 rows=0
+Public mutation requires authenticated admission PASS
+OpenZFS service engine shutdown complete
+Public service test line=0
+RESULT public service lifecycle PASS
+Writable startup denied: configured security.library and system task identity required.
+Public startup invalid-mode and non-root denial PASS
+Native authenticated admission ready
+OpenZFS management API 3 ready; engine initialized
+Public service op=1 status=0 engine=1 rows=0
+Public service op=2 status=0 engine=1 rows=0
+Public service op=3 status=0 engine=1 rows=0
+Service remains resident: active client sessions or admitted operations.
+Public native control descriptors PASS capacity=64 ownership=1 stale=1 session-cleanup=1
+Public task-exit session reclamation PASS cycles=4 sessions=32
+Public authenticated sessions ownership, capacity, stale handles and shutdown guard PASS
+Public mutation requires authenticated admission PASS
+OpenZFS service engine shutdown complete
+Public service test line=0
+RESULT public service lifecycle PASS
+Writable startup denied: configured security.library and system task identity required.
+Public startup invalid-mode and non-root denial PASS
+Native authenticated admission ready
+OpenZFS management API 3 ready; engine initialized
+Public service op=1 status=0 engine=1 rows=0
+Public service op=2 status=0 engine=1 rows=0
+Public service op=3 status=0 engine=1 rows=0
+Service remains resident: active client sessions or admitted operations.
+Public native control descriptors PASS capacity=64 ownership=1 stale=1 session-cleanup=1
+Public task-exit session reclamation PASS cycles=4 sessions=32
+Public authenticated sessions ownership, capacity, stale handles and shutdown guard PASS
+Public mutation requires authenticated admission PASS
+Public fixture directory: AROS Live CD:
+Public pool alias identity PASS duplicate-refused=1
+Public storage op=5 status=0 Authenticated pool creation returned errno=0
+Public CLI command result=0 ioerr=0: C:zpool destroy public_file_reuse
+Public storage op=5 status=9 Authenticated pool creation returned errno=4096
+Public diagnostic begin T:public-cli-errors.log
+cannot create 'public_file_refused': insufficient replicas
+
+Public diagnostic end
+Public CLI command result=1 ioerr=209: C:zpool create -f -o cachefile=none -O mountpoint=none public_file_refused mirror /RAM/OZFileReuse/disk0 /RAM/OZFileReuse/disk1
+Public storage op=5 status=9 Authenticated pool creation returned errno=4096
+Public diagnostic begin T:public-cli-errors.log
+cannot create 'public_file_refused': insufficient replicas
+
+Public diagnostic end
+Public CLI command result=1 ioerr=209: C:zpool create -f -o cachefile=none -O mountpoint=none public_file_refused mirror /RAM/OZFileReuse/disk0 /RAM/OZFileReuse/disk1
+Public storage op=5 status=9 Authenticated pool creation returned errno=4096
+Public diagnostic begin T:public-cli-errors.log
+cannot create 'public_file_refused': insufficient replicas
+
+Public diagnostic end
+Public CLI command result=1 ioerr=209: C:zpool create -f -o cachefile=none -O mountpoint=none public_file_refused mirror /RAM/OZFileReuse/disk0 /RAM/OZFileReuse/disk1
+Public storage op=5 status=9 Authenticated pool creation returned errno=4096
+Public diagnostic begin T:public-cli-errors.log
+cannot create 'public_file_refused': insufficient replicas
+
+Public diagnostic end
+Public CLI command result=1 ioerr=209: C:zpool create -f -o cachefile=none -O mountpoint=none public_file_refused mirror /RAM/OZFileReuse/disk0 /RAM/OZFileReuse/disk1
+Public storage op=5 status=9 Authenticated pool creation returned errno=17
+Public diagnostic begin T:public-cli-errors.log
+cannot create 'public_file_refused': pool already exists
+
+Public diagnostic end
+Public CLI command result=1 ioerr=209: C:zpool create -f -o cachefile=none -O mountpoint=none public_file_refused mirror /RAM/OZFileReuse/disk0 /RAM/OZFileReuse/disk1
+Public storage op=5 status=9 Authenticated pool creation returned errno=17
+Public diagnostic begin T:public-cli-errors.log
+cannot create 'public_file_refused': pool already exists
+
+Public diagnostic end
+Public CLI command result=1 ioerr=209: C:zpool create -f -o cachefile=none -O mountpoint=none public_file_refused mirror /RAM/OZFileReuse/disk0 /RAM/OZFileReuse/disk1
+Public storage op=5 status=9 Authenticated pool creation returned errno=17
+Public diagnostic begin T:public-cli-errors.log
+cannot create 'public_file_refused': pool already exists
+
+Public diagnostic end
+Public CLI command result=1 ioerr=209: C:zpool create -f -o cachefile=none -O mountpoint=none public_file_refused mirror /RAM/OZFileReuse/disk0 /RAM/OZFileReuse/disk1
+Public storage op=5 status=9 Authenticated pool creation returned errno=17
+Public diagnostic begin T:public-cli-errors.log
+cannot create 'public_file_refused': pool already exists
+
+Public diagnostic end
+Public CLI command result=1 ioerr=209: C:zpool create -f -o cachefile=none -O mountpoint=none public_file_refused mirror /RAM/OZFileReuse/disk0 /RAM/OZFileReuse/disk1
+Public storage op=5 status=9 Authenticated pool creation returned errno=4096
+Public diagnostic begin T:public-cli-errors.log
+cannot create 'public_file_refused': insufficient replicas
+
+Public diagnostic end
+Public CLI command result=1 ioerr=209: C:zpool create -f -o cachefile=none -O mountpoint=none public_file_refused mirror /RAM/OZFileReuse/disk0 /RAM/OZFileReuse/disk1
+Public storage op=5 status=9 Authenticated pool creation returned errno=4096
+Public diagnostic begin T:public-cli-errors.log
+cannot create 'public_file_refused': insufficient replicas
+
+Public diagnostic end
+Public CLI command result=1 ioerr=209: C:zpool create -f -o cachefile=none -O mountpoint=none public_file_refused mirror /RAM/OZFileReuse/disk0 /RAM/OZFileReuse/disk1
+Public storage op=5 status=9 Authenticated pool creation returned errno=4096
+Public diagnostic begin T:public-cli-errors.log
+cannot create 'public_file_refused': insufficient replicas
+
+Public diagnostic end
+Public CLI command result=1 ioerr=209: C:zpool create -f -o cachefile=none -O mountpoint=none public_file_refused mirror /RAM/OZFileReuse/disk0 /RAM/OZFileReuse/disk1
+Public storage op=5 status=9 Authenticated pool creation returned errno=4096
+Public diagnostic begin T:public-cli-errors.log
+cannot create 'public_file_refused': insufficient replicas
+
+Public diagnostic end
+Public CLI command result=1 ioerr=209: C:zpool create -f -o cachefile=none -O mountpoint=none public_file_refused mirror /RAM/OZFileReuse/disk0 /RAM/OZFileReuse/disk1
+Public file label denial PASS corrupt=4 conflicting-member=4 checksum=4 manager-denied=12 forced-cli-denied=12 whole-members-unchanged=12 restored=12
+Public file conflicting label offsets PASS same-position=4
+Public CLI command result=0 ioerr=0: C:zpool create -o cachefile=none -O mountpoint=none public_file_reuse mirror /RAM/OZFileReuse/disk0 /RAM/OZFileReuse/disk1
+Public CLI command result=0 ioerr=0: C:zpool export public_file_reuse
+Public storage op=5 status=9 Authenticated pool creation returned errno=17
+Public diagnostic begin T:public-cli-errors.log
+invalid vdev specification
+use '-f' to override the following errors:
+/RAM Disk/OZFileReuse/disk0 is part of exported pool 'public_file_reuse'
+/RAM Disk/OZFileReuse/disk1 is part of exported pool 'public_file_reuse'
+
+Public diagnostic end
+Public CLI command result=1 ioerr=209: C:zpool create -o cachefile=none -O mountpoint=none public_file_refused mirror /RAM/OZFileReuse/disk0 /RAM/OZFileReuse/disk1
+Public storage op=7 status=0 Authenticated pool import returned errno=0
+Public CLI command result=0 ioerr=0: C:zpool destroy public_file_reuse
+Public storage op=5 status=0 Authenticated pool creation returned errno=0
+Public CLI command result=0 ioerr=0: C:zpool destroy public_file_reuse
+Public CLI command result=0 ioerr=0: C:zpool create -o cachefile=none -o ashift=12 -O mountpoint=none public_reuse_source mirror /RAM/OZReuseChanges/disk0 /RAM/OZReuseChanges/disk1
+Public CLI command result=0 ioerr=0: C:zpool create -o cachefile=none -o ashift=12 -O mountpoint=none public_reuse_target /RAM/OZReuseChanges/disk2
+Public CLI command result=0 ioerr=0: C:zpool create -o cachefile=none -o ashift=12 -O mountpoint=none public_reuse_donor mirror /RAM/OZReuseChanges/disk3 /RAM/OZReuseChanges/disk4
+Public diagnostic begin T:public-cli-errors.log
+invalid vdev specification
+the following errors must be manually repaired:
+/RAM Disk/OZReuseChanges/disk0 is part of active pool 'public_reuse_source'
+
+Public diagnostic end
+Public CLI command result=1 ioerr=209: C:zpool attach -f public_reuse_target 10415663049480029241 /RAM/OZReuseChanges/disk0
+Public diagnostic begin T:public-cli-errors.log
+invalid vdev specification
+the following errors must be manually repaired:
+/RAM Disk/OZReuseChanges/disk0 is part of active pool 'public_reuse_source'
+
+Public diagnostic end
+Public CLI command result=1 ioerr=209: C:zpool replace -f public_reuse_target 10415663049480029241 /RAM/OZReuseChanges/disk0
+Public diagnostic begin T:public-cli-errors.log
+invalid vdev specification
+the following errors must be manually repaired:
+/RAM Disk/OZReuseChanges/disk0 is part of active pool 'public_reuse_source'
+/RAM Disk/OZReuseChanges/disk1 is part of active pool 'public_reuse_source'
+
+Public diagnostic end
+Public CLI command result=1 ioerr=209: C:zpool add -f public_reuse_target mirror /RAM/OZReuseChanges/disk0 /RAM/OZReuseChanges/disk1
+Public CLI command result=0 ioerr=0: C:zpool export public_reuse_source
+Public diagnostic begin T:public-cli-errors.log
+invalid vdev specification
+use '-f' to override the following errors:
+/RAM Disk/OZReuseChanges/disk0 is part of exported pool 'public_reuse_source'
+
+Public diagnostic end
+Public CLI command result=1 ioerr=209: C:zpool attach  public_reuse_target 10415663049480029241 /RAM/OZReuseChanges/disk0
+Public diagnostic begin T:public-cli-errors.log
+invalid vdev specification
+use '-f' to override the following errors:
+/RAM Disk/OZReuseChanges/disk0 is part of exported pool 'public_reuse_source'
+
+Public diagnostic end
+Public CLI command result=1 ioerr=209: C:zpool replace  public_reuse_target 10415663049480029241 /RAM/OZReuseChanges/disk0
+Public diagnostic begin T:public-cli-errors.log
+invalid vdev specification
+use '-f' to override the following errors:
+/RAM Disk/OZReuseChanges/disk0 is part of exported pool 'public_reuse_source'
+/RAM Disk/OZReuseChanges/disk1 is part of exported pool 'public_reuse_source'
+
+Public diagnostic end
+Public CLI command result=1 ioerr=209: C:zpool add  public_reuse_target mirror /RAM/OZReuseChanges/disk0 /RAM/OZReuseChanges/disk1
+Public CLI command result=0 ioerr=0: C:zpool import -N -o cachefile=none -d /RAM/OZReuseChanges/disk0 -d /RAM/OZReuseChanges/disk1 public_reuse_source
+Public CLI command result=0 ioerr=0: C:zpool destroy public_reuse_source
+Public CLI command result=0 ioerr=0: C:zpool attach  public_reuse_target 10415663049480029241 /RAM/OZReuseChanges/disk0
+Public CLI command result=0 ioerr=0: C:zpool wait -t resilver public_reuse_target
+Public CLI command result=0 ioerr=0: C:zpool replace  public_reuse_target 8980640359362508614 /RAM/OZReuseChanges/disk1
+Public CLI command result=0 ioerr=0: C:zpool wait -t resilver,replace public_reuse_target
+Public CLI command result=0 ioerr=0: C:zpool destroy public_reuse_donor
+Public CLI command result=0 ioerr=0: C:zpool add  public_reuse_target mirror /RAM/OZReuseChanges/disk3 /RAM/OZReuseChanges/disk4
+Public CLI command result=0 ioerr=0: C:zpool destroy public_reuse_target
+Public destroyed changes CLI PASS attach=1 replace=1 add=1 active-force-refused=3 exported-refused=3 add-without-force=1 exact-read=5 cleanup=1
+Public CLI command result=0 ioerr=0: C:zpool create -o cachefile=none -o ashift=12 -O mountpoint=none public_reuse_source mirror /RAM/OZReuseChanges/disk0 /RAM/OZReuseChanges/disk1
+Public CLI command result=0 ioerr=0: C:zpool create -o cachefile=none -o ashift=12 -O mountpoint=none public_reuse_target /RAM/OZReuseChanges/disk2
+Public CLI command result=0 ioerr=0: C:zpool create -o cachefile=none -o ashift=12 -O mountpoint=none public_reuse_donor mirror /RAM/OZReuseChanges/disk3 /RAM/OZReuseChanges/disk4
+Public CLI command result=0 ioerr=0: C:zpool export public_reuse_source
+Public CLI command result=0 ioerr=0: C:zpool import -N -o cachefile=none -d /RAM/OZReuseChanges/disk0 -d /RAM/OZReuseChanges/disk1 public_reuse_source
+Public CLI command result=0 ioerr=0: C:zpool destroy public_reuse_source
+Public CLI command result=0 ioerr=0: C:zpool wait -t resilver public_reuse_target
+Public CLI command result=0 ioerr=0: C:zpool wait -t resilver,replace public_reuse_target
+Public CLI command result=0 ioerr=0: C:zpool destroy public_reuse_donor
+Public CLI command result=0 ioerr=0: C:zpool destroy public_reuse_target
+Public destroyed changes Manager PASS attach=1 replace=1 add=1 active-refused=3 exported-refused=3 exact-read=5 cleanup=1
+Public file destroyed reuse PASS cli=1 manager-api=1 old-payload-absent=2 exact-read=3 exported-refused=2 cleanup=1
+Public CLI command result=0 ioerr=0: C:zpool create -o cachefile=none -O mountpoint=none public_force_source mirror /RAM/OZForceCreate/disk0 /RAM/OZForceCreate/disk1
+Public diagnostic begin T:public-cli-errors.log
+invalid vdev specification
+the following errors must be manually repaired:
+/RAM Disk/OZForceCreate/disk0 is part of active pool 'public_force_source'
+/RAM Disk/OZForceCreate/disk1 is part of active pool 'public_force_source'
+
+Public diagnostic end
+Public CLI command result=1 ioerr=209: C:zpool create -f -o cachefile=none -O mountpoint=none public_force_new mirror /RAM/OZForceCreate/disk0 /RAM/OZForceCreate/disk1
+Public CLI command result=0 ioerr=0: C:zpool export public_force_source
+Public diagnostic begin T:public-cli-errors.log
+invalid vdev specification
+use '-f' to override the following errors:
+/RAM Disk/OZForceCreate/disk0 is part of exported pool 'public_force_source'
+/RAM Disk/OZForceCreate/disk1 is part of exported pool 'public_force_source'
+
+Public diagnostic end
+Public CLI command result=1 ioerr=209: C:zpool create -o cachefile=none -O mountpoint=none public_force_new mirror /RAM/OZForceCreate/disk0 /RAM/OZForceCreate/disk1
+Public CLI command result=0 ioerr=0: C:zpool import -N -o cachefile=none -d /RAM/OZForceCreate/disk0 -d /RAM/OZForceCreate/disk1 public_force_source
+Public CLI command result=0 ioerr=0: C:zpool export public_force_source
+Public force-create prerequisites PASS active-refused=1 no-force-refused=1 source-payload-preserved=2
+Public CLI command result=0 ioerr=0: C:zpool import -N -o cachefile=none -o readonly=on -d /RAM/OZForceCreate/disk0 -d /RAM/OZForceCreate/disk1 public_force_source
+Public diagnostic begin T:public-cli-errors.log
+invalid vdev specification
+the following errors must be manually repaired:
+/RAM Disk/OZForceCreate/disk0 is part of active pool 'public_force_source'
+/RAM Disk/OZForceCreate/disk1 is part of active pool 'public_force_source'
+
+Public diagnostic end
+Public CLI command result=1 ioerr=209: C:zpool create -f -o cachefile=none -O mountpoint=none public_force_new mirror /RAM/OZForceCreate/disk0 /RAM/OZForceCreate/disk1
+Public CLI command result=0 ioerr=0: C:zpool export public_force_source
+Public force-create readonly-active refusal PASS payload-preserved=1
+Public CLI command result=0 ioerr=0: C:zpool create -f -o cachefile=none -O mountpoint=none public_force_new mirror /RAM/OZForceCreate/disk0 /RAM/OZForceCreate/disk1
+Public CLI command result=0 ioerr=0: C:zpool export public_force_new
+Public CLI command result=0 ioerr=0: C:zpool import -N -o cachefile=none -o readonly=on -d /RAM/OZForceCreate/disk0 -d /RAM/OZForceCreate/disk1 public_force_new
+Public storage op=5 status=9 Authenticated pool creation returned errno=16
+Public CLI command result=0 ioerr=0: C:zpool export public_force_new
+Public storage op=5 status=9 Authenticated pool creation returned errno=17
+Public storage op=5 status=0 Authenticated pool creation returned errno=0
+Public storage op=5 status=9 Authenticated pool creation returned errno=17
+Public CLI command result=0 ioerr=0: C:zpool export public_force_manager
+Public CLI command result=0 ioerr=0: C:zpool import -N -o cachefile=none -o readonly=on -d /RAM/OZForceCreate/disk0 -d /RAM/OZForceCreate/disk1 public_force_manager
+Public CLI command result=0 ioerr=0: C:zpool export public_force_manager
+Public Manager force-create PASS confirmation-required=1 force-required=1 active-refused=1 readonly-active-refused=1 exported-replaced=1 old-payload-absent=1 readonly-exact=1
+Public CLI command result=0 ioerr=0: C:zpool create -o cachefile=none -O mountpoint=none public_force_target /RAM/OZForceCreate/disk2
+Public diagnostic begin T:public-cli-errors.log
+invalid vdev specification
+use '-f' to override the following errors:
+/RAM Disk/OZForceCreate/disk0 is part of exported pool 'public_force_manager'
+/RAM Disk/OZForceCreate/disk1 is part of exported pool 'public_force_manager'
+
+Public diagnostic end
+Public CLI command result=1 ioerr=209: C:zpool add public_force_target mirror /RAM/OZForceCreate/disk0 /RAM/OZForceCreate/disk1
+Public CLI command result=0 ioerr=0: C:zpool import -N -o cachefile=none -o readonly=on -d /RAM/OZForceCreate/disk0 -d /RAM/OZForceCreate/disk1 public_force_manager
+Public diagnostic begin T:public-cli-errors.log
+invalid vdev specification
+the following errors must be manually repaired:
+/RAM Disk/OZForceCreate/disk0 is part of active pool 'public_force_manager'
+/RAM Disk/OZForceCreate/disk1 is part of active pool 'public_force_manager'
+
+Public diagnostic end
+Public CLI command result=1 ioerr=209: C:zpool add -f public_force_target mirror /RAM/OZForceCreate/disk0 /RAM/OZForceCreate/disk1
+Public CLI command result=0 ioerr=0: C:zpool export public_force_manager
+Public CLI command result=0 ioerr=0: C:zpool add -f public_force_target mirror /RAM/OZForceCreate/disk0 /RAM/OZForceCreate/disk1
+Public CLI command result=0 ioerr=0: C:zpool list -H -o health public_force_target >T:cli-package-output.txt
+Public CLI command result=0 ioerr=0: C:zpool export public_force_target
+Public CLI command result=0 ioerr=0: C:zpool import -N -o cachefile=none -o readonly=on -d /RAM/OZForceCreate public_force_target
+Public CLI command result=0 ioerr=0: C:zpool export public_force_target
+Public force-add PASS no-force-refused=1 readonly-active-refused=1 exported-added=1 target-payload-retained=1 readonly-exact=1
+Public CLI command result=0 ioerr=0: C:zpool import -N -o cachefile=none -d /RAM/OZForceCreate public_force_target
+Public CLI command result=0 ioerr=0: C:zpool create -o cachefile=none -O mountpoint=none public_add_donor mirror /RAM/OZForceCreate/disk3 /RAM/OZForceCreate/disk4
+Public explicit topology op=9 status=9 Authenticated pool add (query status for new topology) returned errno=17
+Public CLI command result=0 ioerr=0: C:zpool export public_add_donor
+Public CLI command result=0 ioerr=0: C:zpool import -N -o cachefile=none -o readonly=on -d /RAM/OZForceCreate public_add_donor
+Public explicit topology op=9 status=9 Authenticated pool add (query status for new topology) returned errno=16
+Public CLI command result=0 ioerr=0: C:zpool export public_add_donor
+Public explicit topology op=9 status=9 Authenticated pool add (query status for new topology) returned errno=17
+Public explicit topology op=9 status=0 Authenticated pool add (query status for new topology) returned errno=0
+Public CLI command result=0 ioerr=0: C:zpool export public_force_target
+Public CLI command result=0 ioerr=0: C:zpool import -N -o cachefile=none -o readonly=on -d /RAM/OZForceCreate public_force_target
+Public CLI command result=0 ioerr=0: C:zpool export public_force_target
+Public CLI command result=0 ioerr=0: C:zpool create -o cachefile=none -O mountpoint=none public_attach_donor /RAM/OZForceCreate/disk5
+Public CLI command result=0 ioerr=0: C:zpool import -N -o cachefile=none -d /RAM/OZForceCreate public_force_target
+Public diagnostic begin T:public-cli-errors.log
+invalid vdev specification
+the following errors must be manually repaired:
+/RAM Disk/OZForceCreate/disk5 is part of active pool 'public_attach_donor'
+
+Public diagnostic end
+Public CLI command result=1 ioerr=209: C:zpool attach -f public_force_target /RAM/OZForceCreate/disk2 /RAM/OZForceCreate/disk5
+Public CLI command result=0 ioerr=0: C:zpool export public_attach_donor
+Public diagnostic begin T:public-cli-errors.log
+invalid vdev specification
+use '-f' to override the following errors:
+/RAM Disk/OZForceCreate/disk5 is part of exported pool 'public_attach_donor'
+
+Public diagnostic end
+Public CLI command result=1 ioerr=209: C:zpool attach public_force_target /RAM/OZForceCreate/disk2 /RAM/OZForceCreate/disk5
+Public CLI command result=0 ioerr=0: C:zpool import -N -o cachefile=none -o readonly=on -d /RAM/OZForceCreate public_attach_donor
+Public diagnostic begin T:public-cli-errors.log
+invalid vdev specification
+the following errors must be manually repaired:
+/RAM Disk/OZForceCreate/disk5 is part of active pool 'public_attach_donor'
+
+Public diagnostic end
+Public CLI command result=1 ioerr=209: C:zpool attach -f public_force_target /RAM/OZForceCreate/disk2 /RAM/OZForceCreate/disk5
+Public CLI command result=0 ioerr=0: C:zpool export public_attach_donor
+Public CLI command result=0 ioerr=0: C:zpool attach -f public_force_target /RAM/OZForceCreate/disk2 /RAM/OZForceCreate/disk5
+Public CLI command result=0 ioerr=0: C:zpool wait -t resilver public_force_target
+Public CLI command result=0 ioerr=0: C:zpool list -H -o health public_force_target >T:cli-package-output.txt
+Public CLI command result=0 ioerr=0: C:zpool export public_force_target
+Public CLI command result=0 ioerr=0: C:zpool import -N -o cachefile=none -o readonly=on -d /RAM/OZForceCreate public_force_target
+Public CLI command result=0 ioerr=0: C:zpool export public_force_target
+Public force-attach PASS active-refused=1 readonly-active-refused=1 no-force-refused=1 exported-reused=1 resilver=1 readonly-exact=1
+Public CLI command result=0 ioerr=0: C:zpool create -o cachefile=none -O mountpoint=none public_attach_donor /RAM/OZForceCreate/disk6
+Public CLI command result=0 ioerr=0: C:zpool import -N -o cachefile=none -d /RAM/OZForceCreate public_force_target
+Public diagnostic begin T:public-cli-errors.log
+invalid vdev specification
+the following errors must be manually repaired:
+/RAM Disk/OZForceCreate/disk6 is part of active pool 'public_attach_donor'
+
+Public diagnostic end
+Public CLI command result=1 ioerr=209: C:zpool replace -f public_force_target RAM:OZForceCreate/disk2 /RAM/OZForceCreate/disk6
+Public CLI command result=0 ioerr=0: C:zpool export public_attach_donor
+Public diagnostic begin T:public-cli-errors.log
+invalid vdev specification
+use '-f' to override the following errors:
+/RAM Disk/OZForceCreate/disk6 is part of exported pool 'public_attach_donor'
+
+Public diagnostic end
+Public CLI command result=1 ioerr=209: C:zpool replace public_force_target RAM:OZForceCreate/disk2 /RAM/OZForceCreate/disk6
+Public CLI command result=0 ioerr=0: C:zpool import -N -o cachefile=none -o readonly=on -d /RAM/OZForceCreate public_attach_donor
+Public diagnostic begin T:public-cli-errors.log
+invalid vdev specification
+the following errors must be manually repaired:
+/RAM Disk/OZForceCreate/disk6 is part of active pool 'public_attach_donor'
+
+Public diagnostic end
+Public CLI command result=1 ioerr=209: C:zpool replace -f public_force_target RAM:OZForceCreate/disk2 /RAM/OZForceCreate/disk6
+Public CLI command result=0 ioerr=0: C:zpool export public_attach_donor
+Public diagnostic begin T:public-cli-errors.log
+cannot replace RAM:OZForceCreate/disk2 with /RAM/OZForceCreate/disk6: no such device in pool
+
+Public diagnostic end
+Public CLI command result=-1 ioerr=209: C:zpool replace -f public_force_target RAM:OZForceCreate/disk2 /RAM/OZForceCreate/disk6
+Public force-create FAIL stage=force-replace-exported errno=5
+Public storage failure=2897
+Public diagnostic begin T:service-first.log
+Native authenticated admission ready
+OpenZFS management API 3 ready; engine initialized
+request=1 operation=1 status=0
+request=2 operation=2 status=0
+request=3 operation=3 status=0
+request=4 operation=43 status=5
+OpenZFS service engine shutdown complete
+
+Public diagnostic end
+Public diagnostic begin T:service-second.log
+Native authenticated admission ready
+OpenZFS management API 3 ready; engine initialized
+request=1 operation=1 status=0
+request=2 operation=2 status=0
+request=3 operation=3 status=0
+request=4 operation=43 status=5
+OpenZFS service engine shutdown complete
+
+Public diagnostic end
+Public diagnostic begin T:service-writable.log
+Native authenticated admission ready
+OpenZFS management API 3 ready; engine initialized
+request=1 operation=1 status=0
+request=2 operation=2 status=0
+request=3 operation=3 status=0
+Service remains resident: active client sessions or admitted operations.
+request=4 operation=43 status=5
+request=1 ope0000001a3888d059 0x0000000001862690 | 000 | ration=4 status=0
+request=1 operation=4 status=0
+request=1 operation=4 status=0
+request=1 operation=4 status=0
+request=1 operation=4 status=0
+request=1 operation=4 status=0
+request=1 operation=4 status=0
+request=1 operation=4 status=0
+request=1 operation=4 status=0
+request=1 operation=4 status=0
+re0000001a3a424b64 0x0000000001862690 | 000 | quest=1 operation=4 status=0
+request=1 operation=4 status=0
+request=1 operation=4 status=0
+request=1 operation=4 status=0
+request=1 operation=4 status=0
+
+Public diagnostic end
+Public service test line=4172
+RESULT public service storage FAIL
