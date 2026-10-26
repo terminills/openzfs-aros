@@ -314,6 +314,23 @@ static int storage_alias_request(unsigned op,unsigned kind)
     }
     return error;
 }
+static int pool_create_explicit(const char *name,const char *path,unsigned flags)
+{
+    static struct oz_message m,out;memset(&m,0,sizeof(m));
+    m.magic=OZ_MAGIC;m.version=OZ_VERSION;m.msg.mn_Length=sizeof(m);
+    m.operation=5;m.flags=flags;snprintf(m.target,sizeof(m.target),"%s",name);
+    m.topology.device_count=1;m.topology.group_count=1;m.topology.ashift=12;
+    m.topology.groups[0].layout=OZ_STRIPE;
+    snprintf(m.topology.devices[0].path,sizeof(m.topology.devices[0].path),"%s",path);
+    struct oz_ticket ticket={0};int error=oz_admission_submit(OZ_ADMISSION_PORT,&m,&ticket);
+    if(!error){do{error=oz_admission_query(OZ_ADMISSION_PORT,&ticket,&out);if(error==EAGAIN)Delay(1);}while(error==EAGAIN);}
+    if(!error){
+        char line[256];snprintf(line,sizeof(line),"Public explicit create status=%lu %.170s\n",(unsigned long)out.status,out.detail);note(line);
+        if(out.status!=OZ_OK)error=EIO;
+    }
+    if(ticket.number){int released=oz_admission_release(OZ_ADMISSION_PORT,&ticket);if(!error)error=released;}
+    return error;
+}
 static int pool_file_refused(const char *first,const char *second,int expected)
 {
     static struct oz_message m,out;memset(&m,0,sizeof(m));
@@ -2417,6 +2434,23 @@ static int storage_native_discovery(void)
             if(cli_command("C:zpool import -N -o cachefile=none public_native_force_new"))return EIO;
             if(cli_command("C:zpool destroy public_native_force_new"))return EIO;
             note("Public native force-create PASS active-refused=1 readonly-active-refused=1 exported-replaced=1 old-payload-absent=1 readonly-exact=1 cleanup=1\n");
+            const char *path="/AROS/ata.device/0/partition/0";
+            if(cli_command(create)||pool_root_payload("public_native_force",1,0))return EIO;
+            if(!pool_create_explicit("public_native_manager",path,OZ_CONFIRMED|OZ_FORCE))return EIO;
+            if(pool_root_payload("public_native_force",0,0)||cli_command("C:zpool export public_native_force"))return EIO;
+            if(cli_command("C:zpool import -N -o cachefile=none -o readonly=on public_native_force"))return EIO;
+            if(!pool_create_explicit("public_native_manager",path,OZ_CONFIRMED|OZ_FORCE))return EIO;
+            if(pool_root_payload("public_native_force",0,1)||cli_command("C:zpool export public_native_force"))return EIO;
+            if(!pool_create_explicit("public_native_manager",path,OZ_FORCE)||
+                !pool_create_explicit("public_native_manager",path,OZ_CONFIRMED)||
+                !pool_create_explicit("public_native_manager",path,OZ_CONFIRMED|OZ_FORCE|OZ_DRYRUN))return EIO;
+            if(pool_create_explicit("public_native_manager",path,OZ_CONFIRMED|OZ_FORCE))return EIO;
+            if(pool_root_payload("public_native_manager",0,0)!=EIO||pool_root_payload("public_native_manager",1,0))return EIO;
+            if(cli_command("C:zpool export public_native_manager"))return EIO;
+            if(cli_command("C:zpool import -N -o cachefile=none -o readonly=on public_native_manager"))return EIO;
+            if(pool_root_payload("public_native_manager",0,1)||cli_command("C:zpool export public_native_manager"))return EIO;
+            if(cli_command("C:zpool import -N -o cachefile=none public_native_manager")||cli_command("C:zpool destroy public_native_manager"))return EIO;
+            note("Public native Manager force-create PASS active-refused=1 readonly-active-refused=1 confirmation-required=1 force-required=1 dryrun-refused=1 exported-replaced=1 readonly-exact=1 cleanup=1\n");
         }
     }
     if(!DeleteFile((CONST_STRPTR)"RAM:discovery-root.key"))return EIO;

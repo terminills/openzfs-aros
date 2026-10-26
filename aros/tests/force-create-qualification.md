@@ -102,3 +102,14 @@ client resumed, readonly reimport and DOS round trip passed, and the runner
 exited zero with `RESULT public service storage PASS`. Screenshot, QMP
 actions, serial results, hashes, and pruned-image record are retained in
 `evidence/manager-force-visual-20261026`.
+
+## Manager native-device API result
+
+Run `public-service-run.dfUqNFqx` passed the native partition fixture through
+the Manager's typed authenticated create API as well as the CLI. It refused
+active and readonly-imported pools, omitted confirmation, omitted force, and
+the unsupported dry-run flag combination. Confirmed forced recreation then
+succeeded; the old payload was absent, and new data survived readonly
+reimport. Cleanup and the entire storage suite passed, with runner exit zero.
+Evidence is retained in `evidence/native-manager-force-20261026`.
+This tests a virtual ATA partition, not physical controller behavior.
