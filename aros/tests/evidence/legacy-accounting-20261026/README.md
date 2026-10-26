@@ -78,3 +78,13 @@ These are regression tests with the fixed service, not an additional claim
 that the cold mirror itself was created with legacy accounting. The dedicated
 legacy conversion is established by the quota fixture above. All runs remain
 private-runtime QEMU qualification, without DUT or user-hosted session access.
+
+## Unmounted conversion
+
+Run `default-quota-run.Iy06otz1` repeats the populated pre-accounting-pool
+fixture twice, once mounted and once closing the filesystem before upgrading
+the pool. Both ioctl conversion paths pass, report nonzero user accounting,
+and preserve the payload after reopen. The full quota suite also passes.
+The runner requires both markers; see `unmounted/` for the source delta,
+input hashes and serial results. The disposable ISO hash is retained before
+pruning. This remains private-runtime, diskless QEMU evidence.

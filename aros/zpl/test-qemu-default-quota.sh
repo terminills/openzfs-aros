@@ -60,6 +60,7 @@ while :; do
            { [[ ${AROS_TEST_REQUIRE_ZVOL:-0} != 1 ]] ||
              { rg -q '^RESULT native upstream create PASS properties=3 inherited=3 lookup=2' "$run/serial-completion.log" &&
                rg -q '^RESULT native legacy accounting PASS old-pool=1 mounted-conversion=1 user-bytes=1 data-preserved=1' "$run/serial-completion.log" &&
+               rg -q '^RESULT native legacy accounting PASS old-pool=1 unmounted-conversion=1 user-bytes=1 data-preserved=1' "$run/serial-completion.log" &&
                rg -q '^RESULT native zvol PASS write=1 reopen=1 readonly=1 resize=1 export-busy=1' "$run/serial-completion.log" &&
                rg -q '^RESULT native zvol lifecycle PASS rename=1 snapshot-readonly=1 recreate=1' "$run/serial-completion.log" &&
                rg -q '^RESULT native dispatcher runtime PASS cycles=80 upstream-stats=1 stopped-denial=1' "$run/serial-completion.log"; }; } &&

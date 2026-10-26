@@ -519,7 +519,7 @@ static int creation_properties_test(const char *pool)
     return 0;
 }
 #ifdef OZ_NATIVE_DISPATCHER
-static int legacy_accounting_test(nvlist_t *root)
+static int legacy_accounting_test(nvlist_t *root,int mounted)
 {
     /* Only the exclusive RAM mirror owned by this diskless test is reused.
      * A low ZPL version on a modern pool is not a legacy accounting fixture. */
@@ -541,6 +541,7 @@ static int legacy_accounting_test(nvlist_t *root)
     CHECK(!dmu_objset_userused_enabled(fs->z_os)?0:EIO);
     CHECK(!dmu_objset_userspace_present(fs->z_os)?0:EIO);
     zfs_vfs_rele(fs);
+    if(!mounted){CHECK(oz_zpl_close(mount));mount=NULL;}
     spa_t *spa=NULL;CHECK(spa_open(pool,&spa,FTAG));
     spa_upgrade(spa,SPA_VERSION_USERSPACE);
     txg_wait_synced(spa->spa_dsl_pool,0);spa_close(spa,FTAG);
@@ -548,6 +549,7 @@ static int legacy_accounting_test(nvlist_t *root)
     strlcpy(zc->zc_name,dataset,sizeof(zc->zc_name));
     CHECK(zfsdev_ioctl_common(ZFS_IOC_USERSPACE_UPGRADE-ZFS_IOC_FIRST,zc,FKIOCTL));
     free(zc);
+    if(!mounted)CHECK(oz_zpl_open_writable(dataset,&mount));
     CHECK(getzfsvfs(dataset,&fs));
     CHECK(dmu_objset_userused_enabled(fs->z_os)?0:EIO);
     CHECK(dmu_objset_userspace_present(fs->z_os)?0:EIO);
@@ -561,7 +563,9 @@ static int legacy_accounting_test(nvlist_t *root)
     CHECK(memcmp(actual,payload,sizeof(actual))?EIO:0);
     CHECK(oz_zpl_close(mount));CHECK(spa_destroy(pool));
     CHECK(oz_cred_pop(scope));
-    const char *s="RESULT native legacy accounting PASS old-pool=1 mounted-conversion=1 user-bytes=1 data-preserved=1\n";
+    const char *s=mounted?
+        "RESULT native legacy accounting PASS old-pool=1 mounted-conversion=1 user-bytes=1 data-preserved=1\n":
+        "RESULT native legacy accounting PASS old-pool=1 unmounted-conversion=1 user-bytes=1 data-preserved=1\n";
     while(*s)RawPutChar(*s++);
     return 0;
 }
@@ -1520,7 +1524,8 @@ static int run(void)
     CHECK(file_scope_test(dir));
     CHECK(session_files_test());
 #ifdef OZ_NATIVE_DISPATCHER
-    CHECK(legacy_accounting_test(root));
+    CHECK(legacy_accounting_test(root,1));
+    CHECK(legacy_accounting_test(root,0));
 #endif
     CHECK(spa_create(pool,root,options,NULL,NULL));
 #ifdef OZ_NATIVE_DISPATCHER
