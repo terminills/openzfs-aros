@@ -9,6 +9,21 @@
 int oz_pool_import_readmit(spa_t *);
 int oz_pool_import_identity_check(spa_t *);
 
+/* Shared by Manager clear and the real upstream ioctl. The caller holds a
+ * SPA reference and has checked configuration privilege and MMP activity.
+ * Never resume I/O through a stale native binding merely because its path
+ * has reappeared. All target/label checks precede vdev_clear/zio_resume. */
+int oz_pool_clear_readmit(spa_t *spa,uint64_t guid)
+{
+    int error=oz_pool_import_identity_check(spa);
+    if(error||!spa_suspended(spa))return error;
+    spa_config_enter(spa,SCL_CONFIG,FTAG,RW_READER);
+    if(guid&&!spa_lookup_by_guid(spa,guid,B_TRUE))error=ENODEV;
+    else error=oz_pool_import_readmit(spa);
+    spa_config_exit(spa,SCL_CONFIG,FTAG);
+    return error;
+}
+
 int oz_pool_clear(struct oz_message *m,cred_t *caller)
 {
     int error=secpolicy_zfs(caller);
@@ -42,20 +57,11 @@ int oz_pool_clear(struct oz_message *m,cred_t *caller)
     if(error)goto done;
     error=spa_open(m->target,&spa,FTAG);
     if(error)goto done;
-    error=oz_pool_import_identity_check(spa);
-    if(error)goto close;
     if(spa_multihost(spa)&&spa_suspended(spa)&&spa_mmp_remote_host_activity(spa)) {
         error=EREMOTEIO;goto close;
     }
-    if(spa_suspended(spa)) {
-        spa_config_enter(spa,SCL_CONFIG,FTAG,RW_READER);
-        /* Reject an unknown target before refreshing any native binding.
-         * Keep the later lookup under the state lock as well. */
-        if(guid&&!spa_lookup_by_guid(spa,guid,B_TRUE))error=ENODEV;
-        else error=oz_pool_import_readmit(spa);
-        spa_config_exit(spa,SCL_CONFIG,FTAG);
-        if(error)goto close;
-    }
+    error=oz_pool_clear_readmit(spa,guid);
+    if(error)goto close;
     spa_vdev_state_enter(spa,SCL_NONE);
     vdev_t *vd=guid?spa_lookup_by_guid(spa,guid,B_TRUE):NULL;
     if(guid&&!vd) {

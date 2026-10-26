@@ -558,6 +558,7 @@ while :;do
              rg -q '^RESULT native inventory worker PASS delayed=1 busy-free=1 success=1 denied=1 malformed=10 absent=1 unchanged=1' "$run/serial-results.log"; } &&
            { [[ ${AROS_TEST_REQUIRE_CONTROL:-0} != 1 ]] ||
              { [[ $controls == 2 ]] && rg -q '^Public upstream ioctl transport PASS stats=1 configs=1 resize=1 bounds=1 stale=1' "$run/serial-results.log" &&
+               rg -q '^Public native clear ioctl PASS invalid-guid=1 pool-clear=1' "$run/serial-results.log" &&
                rg -q '^Public upstream snapshot ioctls PASS create=1 hold=1 onexit=1 release=1 destroy=1 schema=1' "$run/serial-results.log" &&
                rg -q '^Public upstream snapshot authorization PASS changed-user=1 own-session-denied=1 no-mutation=1' "$run/serial-results.log" &&
                rg -q '^Public upstream libzfs_core PASS snapshot=1 temporary-hold=1 destroy=1 reopen=1' "$run/serial-results.log" &&

@@ -6305,6 +6305,17 @@ zfs_ioc_clear(zfs_cmd_t *zc)
 		return (SET_ERROR(EREMOTEIO));
 	}
 
+#ifdef __AROS__
+	/* Match native Manager clear: identity-checked explicit readmission is
+	 * required before resuming an invalidated native device binding. */
+	extern int oz_pool_clear_readmit(spa_t *, uint64_t);
+	error = oz_pool_clear_readmit(spa, zc->zc_guid);
+	if (error != 0) {
+		spa_close(spa, FTAG);
+		return (error);
+	}
+#endif
+
 	spa_vdev_state_enter(spa, SCL_NONE);
 
 	if (zc->zc_guid == 0) {

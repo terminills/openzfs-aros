@@ -473,6 +473,19 @@ int oz_public_ioctl_test(const char *pool)
     TEST(!nvlist_unpack((char *)(command+1),command->zc_nvlist_dst_size,&result,0));
     const char *name=NULL;TEST(!nvlist_lookup_string(result,ZPOOL_CONFIG_POOL_NAME,&name));
     TEST(!strcmp(name,pool));nvlist_free(result);result=NULL;
+    /* Exercise the real CLEAR ioctl rather than only Manager operation 17.
+     * The engine must retain its native admission checks on this entry point. */
+    prepare(w,&ticket,fd,pool,0);w->command=ZFS_IOC_CLEAR;
+    command->zc_cookie=ZPOOL_NO_REWIND;
+    command->zc_guid=UINT64_MAX;
+    TEST(!oz_ioctl_request(OZ_ADMISSION_PORT,w,sizeof(*w)+sizeof(*command)));
+    TEST(w->engine_error==ENODEV);
+    prepare(w,&ticket,fd,pool,0);w->command=ZFS_IOC_CLEAR;
+    command->zc_cookie=ZPOOL_NO_REWIND;
+    TEST(!oz_ioctl_request(OZ_ADMISSION_PORT,w,sizeof(*w)+sizeof(*command)));
+    TEST(!w->engine_error);
+    const char *clear_marker="Public native clear ioctl PASS invalid-guid=1 pool-clear=1\n";
+    for(const char *p=clear_marker;*p;p++)RawPutChar(*p);
     prepare(w,&ticket,fd,pool,capacity);w->command=ZFS_IOC_POOL_CONFIGS;
     command->zc_name[0]=0;
     TEST(!oz_ioctl_request(OZ_ADMISSION_PORT,w,length));TEST(!w->engine_error);
