@@ -88,3 +88,22 @@ and preserve the payload after reopen. The full quota suite also passes.
 The runner requires both markers; see `unmounted/` for the source delta,
 input hashes and serial results. The disposable ISO hash is retained before
 pruning. This remains private-runtime, diskless QEMU evidence.
+
+## Installed CLI filesystem upgrade
+
+Eight-vCPU `public-service-run.z9lP4DWs` uses the fixed rebuilt service and
+the retained package-stage.8NugSU7T zfs/zpool commands. Their hashes match
+the previously recorded package inputs (zfs 6aa0a454..., zpool a31f44ac...).
+The acceptance client was rebuilt from current source; the commands were
+not rebuilt in this run.
+
+The client invokes C:zfs to create an unmounted version-3 filesystem on the
+modern test pool, verifies version 3, mounts and writes a payload, upgrades
+to version 5 while mounted, verifies version 5, unmounts/remounts and reads
+the exact payload. It then unmounts and destroys only its fixture dataset.
+The command sequence and full package/service suite pass, runner exit zero.
+Logs, package hashes and pruned-image hashes are in `cli-upgrade/`.
+
+This tests the installed CLI ZPL-version upgrade and data preservation. It
+does not replace the pre-accounting pool conversion fixture above, and does
+not claim fresh Manager UI execution or official-runtime qualification.

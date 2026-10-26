@@ -754,6 +754,37 @@ static int cli_result(const char *command,const char *expected)
     while(count>0&&(text[count-1]=='\n'||text[count-1]=='\r'))text[--count]=0;
     return strcmp(text,expected)?EIO:0;
 }
+static int cli_filesystem_upgrade(void)
+{
+    BPTR marker=Lock((CONST_STRPTR)"SYS:openzfs-cli-package-test",SHARED_LOCK);
+    if(!marker)return 0;
+    UnLock(marker);
+    int error=0,created=0,mounted=0;BPTR file=0;
+    const char payload[]="Native CLI filesystem upgrade preserves data";
+    char actual[sizeof(payload)];
+#define UPGRADE_CHECK(x) do{if(!(x)){error=EIO;goto done;}}while(0)
+    UPGRADE_CHECK(!cli_command("C:zfs create -u -o version=3 -o mountpoint=OZVERSION: public_mirror/upgradecheck"));created=1;
+    UPGRADE_CHECK(!cli_result("C:zfs get -H -o value version public_mirror/upgradecheck >T:cli-package-output.txt","3"));
+    UPGRADE_CHECK(!cli_command("C:zfs mount public_mirror/upgradecheck"));mounted=1;
+    file=Open((CONST_STRPTR)"OZVERSION:payload",MODE_NEWFILE);UPGRADE_CHECK(file);
+    UPGRADE_CHECK(Write(file,payload,sizeof(payload))==sizeof(payload));
+    {int closed=Close(file);file=0;UPGRADE_CHECK(closed);}
+    UPGRADE_CHECK(!cli_command("C:zfs upgrade -V 5 public_mirror/upgradecheck"));
+    UPGRADE_CHECK(!cli_result("C:zfs get -H -o value version public_mirror/upgradecheck >T:cli-package-output.txt","5"));
+    UPGRADE_CHECK(!cli_command("C:zfs unmount public_mirror/upgradecheck"));mounted=0;
+    UPGRADE_CHECK(!cli_command("C:zfs mount public_mirror/upgradecheck"));mounted=1;
+    file=Open((CONST_STRPTR)"OZVERSION:payload",MODE_OLDFILE);UPGRADE_CHECK(file);
+    UPGRADE_CHECK(Read(file,actual,sizeof(actual))==sizeof(actual));
+    UPGRADE_CHECK(!memcmp(payload,actual,sizeof(payload)));
+done:
+    if(file&&!Close(file))error=EIO;
+    if(mounted&&cli_command("C:zfs unmount public_mirror/upgradecheck"))error=EIO;
+    if(created&&cli_command("C:zfs destroy public_mirror/upgradecheck"))error=EIO;
+    note(error?"Public CLI filesystem upgrade FAIL\n":
+        "Public CLI filesystem upgrade PASS version3=1 version5=1 remount=1 exact-data=1 cleanup=1\n");
+    return error;
+#undef UPGRADE_CHECK
+}
 static int cli_trim_unsupported(void)
 {
     char *commands[][5]={{"C:zpool","trim","public_mirror",NULL,NULL},
@@ -2545,6 +2576,7 @@ static int storage_test(int gui){
     STORAGE_CHECK(!storage_request(37,"public_mirror/files",NULL,NULL));
 #endif
     STORAGE_CHECK(!companion_mount_test());
+    STORAGE_CHECK(!cli_filesystem_upgrade());
     STORAGE_CHECK(!companion_import_test(1));
     STORAGE_CHECK(oz_mount_control(OZ_ADMISSION_PORT,"public_mirror/files","bad:name",OZ_MOUNT_ATTACH,0)==EINVAL);
     STORAGE_CHECK(!oz_mount_control(OZ_ADMISSION_PORT,"public_mirror/files","OZPUBLIC",OZ_MOUNT_ATTACH,0));
