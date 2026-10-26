@@ -1,6 +1,8 @@
 /* SPDX-License-Identifier: CDDL-1.0 */
 /* Disposable, configured-security QEMU fixture only. Never a user session. */
 #include "hostid-settings.h"
+#include "api.h"
+#include "admission-api.h"
 #include "../engine/hostid-record.h"
 #include <proto/exec.h>
 #include <proto/dos.h>
@@ -26,6 +28,8 @@ int main(void)
     unsigned published = 99;
     ULONG previous_owner = 0;
     BPTR transaction = 0;
+    struct MsgPort *fixture_port = NULL;
+    int port_added = 0;
     struct TagItem root[] = {{secT_UserID,(IPTR)"oztestroot"},
         {secT_Password,(IPTR)""},{TAG_DONE,0}};
     struct TagItem reader[] = {{secT_UserID,(IPTR)"ozreader"},
@@ -64,6 +68,36 @@ int main(void)
     CHECK(DeleteFile((CONST_STRPTR)"ENV:OpenZFSHost.prefs.txn"));
     CHECK(!oz_hostid_settings_apply(0xaabbccdd, &published) && published == 3);
     bug("RESULT host identity partial-save PASS saved=1 current=0 collision-preserved=1 recovered=1\n");
+    /* Named-port fixtures exercise the real publication guard, not a running
+     * engine. This isolated guest has no management service or clients. */
+    const char *names[] = {OZ_PORT ".Starting", OZ_PORT, OZ_ADMISSION_PORT};
+    fixture_port = CreateMsgPort();
+    CHECK(fixture_port);
+    for (unsigned i = 0; i < sizeof(names) / sizeof(names[0]); ++i) {
+        CHECK(!FindPort((CONST_STRPTR)names[i]));
+        fixture_port->mp_Node.ln_Name = (char *)names[i];
+        AddPort(fixture_port); port_added = 1;
+        published = 99;
+        CHECK(oz_hostid_settings_apply(0x12345678, &published) == EBUSY && !published);
+        CHECK(SystemTags((CONST_STRPTR)"C:OpenZFSHostIdentity 12345678 SAVE >NIL:", TAG_DONE) == 20);
+        CHECK(record_is("ENV:OpenZFSHost.prefs", 0xaabbccdd));
+        CHECK(record_is("ENVARC:OpenZFSHost.prefs", 0xaabbccdd));
+        transaction = Lock((CONST_STRPTR)"ENV:OpenZFSHost.update", SHARED_LOCK);
+        CHECK(!transaction && IoErr() == ERROR_OBJECT_NOT_FOUND);
+        RemPort(fixture_port); port_added = 0;
+    }
+    DeleteMsgPort(fixture_port); fixture_port = NULL;
+    transaction = CreateDir((CONST_STRPTR)"ENV:OpenZFSHost.update");
+    CHECK(transaction); UnLock(transaction); transaction = 0;
+    published = 99;
+    CHECK(oz_hostid_settings_apply(0x12345678, &published) == EBUSY && !published);
+    transaction = Lock((CONST_STRPTR)"ENV:OpenZFSHost.update", SHARED_LOCK);
+    CHECK(transaction); UnLock(transaction); transaction = 0;
+    CHECK(record_is("ENV:OpenZFSHost.prefs", 0xaabbccdd));
+    CHECK(record_is("ENVARC:OpenZFSHost.prefs", 0xaabbccdd));
+    CHECK(DeleteFile((CONST_STRPTR)"ENV:OpenZFSHost.update"));
+    CHECK(!oz_hostid_settings_apply(0xaabbccdd, &published) && published == 3);
+    bug("RESULT host identity guards PASS port-fixtures=3 competing-writer=1 retry=1\n");
     CHECK(secLogoutA(logout) == previous_owner); logged = 0;
     CHECK(secLoginA(reader) == ((77UL << 16) | 88)); logged = 1;
     published = 99;
@@ -78,6 +112,8 @@ int main(void)
     transaction = Lock((CONST_STRPTR)"ENV:OpenZFSHost.update", SHARED_LOCK);
     CHECK(!transaction && IoErr() == ERROR_OBJECT_NOT_FOUND);
 done:
+    if (port_added) RemPort(fixture_port);
+    if (fixture_port) DeleteMsgPort(fixture_port);
     if (transaction) UnLock(transaction);
     if (logged) secLogoutA(logout);
     if (secBase) CloseLibrary(secBase);

@@ -18,6 +18,12 @@ Never install the empty-password security fixture on a real user system.
   reporting the saved-only result, and retry completed publication.
 - A configured unprivileged owner was refused by both API and command;
   previously published records remained unchanged.
+- Follow-up `hostid-guards` fresh guest: three named-port fixtures (starting,
+  ready management, admission) each refused API and CLI writes without
+  changing either record or leaking the temporary update marker. A preexisting
+  writer marker was preserved on refusal; removing it allowed publication.
+  These are controlled guard fixtures, not an engine launch or proof against
+  concurrent service-start races.
 
 The initial host-identity test failed at its logout assertion. secLogoutA
 returns the restored owner, not a Boolean. The test now compares it with
