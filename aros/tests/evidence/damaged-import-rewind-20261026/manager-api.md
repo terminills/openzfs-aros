@@ -35,3 +35,23 @@ outside this evidence.
 
 Full logs and input hashes are retained under build-audit; selected serial
 and runner logs are included alongside this note for review.
+
+## Subsequent GUI and regression verification
+
+Fresh native GUI run `cOJU9Wox` closes the visual gap above. The actual
+MetaMake Manager opens Import paths in Advanced/Pools/import. The load-mode
+cycle displays Current state, Checkpoint view, Recover recent transactions,
+and Extreme transaction recovery. A typed pool name and backing path are
+retained in the draft. Using the extreme read-only draft and Preview shows
+`readonly=on;recovery=extreme` and the no-commit/inconsistent-state warnings.
+Reopening the editor preserves the selected mode; clearing Read-only and
+previewing shows `readonly=off;recovery=extreme` and the permanent-loss warning.
+No request is submitted: the UI reports Preview only. Screenshots and input
+actions accompany this note. This is draft/preview UI verification, not a
+GUI-submitted damaged import; native API execution is verified separately above.
+
+Closing Manager through its normal close gadget lets the full public service
+and mirror DOS suite finish with PASS. Independent non-GUI run `uLWmVPI4`
+also passes. Both successful generated ISOs are pruned by the runner.
+Three completed native recovery ISOs (including the failed assertion run)
+were separately hash-recorded and pruned; disk chains and all logs remain.

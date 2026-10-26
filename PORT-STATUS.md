@@ -392,7 +392,13 @@ selected dependencies, not a newly qualified official or bootstrap release.
   separate eight-CPU guest. Host zdb verifies the repaired current state
   with no leaks; cold backing/overlay hashes are unchanged. This is one
   mirror/MOS-root corruption fixture, not all rewind modes, topologies,
-  interrupted recovery, the Manager recovery workflow or physical durability.
+  interrupted recovery or physical durability. The Manager operation-7 API
+  now forwards recent/extreme transaction-recovery policy to SPA, preserving
+  authorization, read-only and expected-identity guards. Extreme recovery
+  passes exact DOS read/write and a separate ordinary-import cold reader.
+  Actual native Manager draft/preview tests verify mode selection, round-trip
+  retention and distinct read-only/writable loss warnings; no GUI import was
+  submitted. See `damaged-import-rewind-20261026/manager-api.md` for scope.
 - Not every upstream feature or topology has end-to-end AROS validation.
 - Native and file-backed pool creation accept blank extents or consistently labeled destroyed
   members (all four checksummed labels must agree on destroyed state and pool/member GUIDs).
