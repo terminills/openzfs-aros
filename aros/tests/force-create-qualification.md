@@ -186,3 +186,15 @@ This uses private CRT/pthread dependencies and an adapter rebuild over
 retained upstream engine objects. Manager and native-device force
 attach/replace, arbitrary nonzero-media force, official SDK qualification,
 and physical failure testing remain open; this is not full-port completion.
+
+## Manager file-backed force attach/replace
+
+`public-service-run.TjFqAZ52` passed both operations through the Manager's
+authenticated typed API, targeting member GUIDs as the UI does. Missing
+confirmation, missing force, active donors, and readonly-imported donors
+were refused. Explicit exported reuse completed, with seven ONLINE leaves
+after the added mirror member and subsequent replacement, exact target
+payload, and readonly reimport/write-refusal checks. The unchanged CLI
+cases and full storage suite also passed; runner exit was zero.
+Evidence is in `evidence/manager-force-attach-20261026`. This is API runtime
+coverage, not a fresh mouse-driven UI test or native-device qualification.

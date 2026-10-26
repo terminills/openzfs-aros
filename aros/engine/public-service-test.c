@@ -1956,18 +1956,18 @@ static int reuse_change_guid(const char *suffix,char *guid,unsigned wanted_leave
 {
     return pool_change_guid("public_reuse_target",suffix,guid,wanted_leaves);
 }
-static int reuse_change_request(int manager,unsigned op,const char *guid,
-    const char *first,const char *second,int force)
+static int pool_change_request(int manager,unsigned op,const char *pool,const char *guid,
+    const char *first,const char *second,unsigned flags)
 {
     if(!manager){
         char command[768];
-        if(op==9)snprintf(command,sizeof(command),"C:zpool add %s public_reuse_target mirror %s %s",force?"-f":"",first,second);
-        else snprintf(command,sizeof(command),"C:zpool %s %s public_reuse_target %s %s",op==11?"attach":"replace",force?"-f":"",guid,first);
+        if(op==9)snprintf(command,sizeof(command),"C:zpool add %s %s mirror %s %s",flags&OZ_FORCE?"-f":"",pool,first,second);
+        else snprintf(command,sizeof(command),"C:zpool %s %s %s %s %s",op==11?"attach":"replace",flags&OZ_FORCE?"-f":"",pool,guid,first);
         return cli_command(command);
     }
     static struct oz_message m,out;memset(&m,0,sizeof(m));
     m.magic=OZ_MAGIC;m.version=OZ_VERSION;m.msg.mn_Length=sizeof(m);
-    m.operation=op;m.flags=OZ_CONFIRMED|(force?OZ_FORCE:0);strcpy(m.target,"public_reuse_target");
+    m.operation=op;m.flags=flags;snprintf(m.target,sizeof(m.target),"%s",pool);
     if(op!=9)snprintf(m.argument,sizeof(m.argument),"%s",guid);
     m.topology.group_count=1;m.topology.device_count=second?2:1;m.topology.ashift=12;
     m.topology.groups[0].layout=second?OZ_MIRROR:OZ_STRIPE;
@@ -1978,6 +1978,12 @@ static int reuse_change_request(int manager,unsigned op,const char *guid,
     if(!error&&out.status!=OZ_OK)error=EIO;
     if(ticket.number){int released=oz_admission_release(OZ_ADMISSION_PORT,&ticket);if(!error)error=released;}
     return error;
+}
+static int reuse_change_request(int manager,unsigned op,const char *guid,
+    const char *first,const char *second,int force)
+{
+    return pool_change_request(manager,op,"public_reuse_target",guid,first,second,
+        OZ_CONFIRMED|(force?OZ_FORCE:0));
 }
 static int storage_destroyed_changes(unsigned native,unsigned lane)
 {
@@ -2287,9 +2293,10 @@ static int storage_force_create(void)
     FCHECK(!cli_command("C:zpool import -N -o cachefile=none -o readonly=on -d /RAM/OZForceCreate public_force_target"));
     FCHECK(!pool_root_payload("public_force_target",0,1));
     FCHECK(!cli_command("C:zpool export public_force_target"));
-    for(unsigned replacing=0;replacing<2;replacing++){
+    for(unsigned iteration=0;iteration<4;iteration++){
+        unsigned replacing=iteration%2,manager=iteration/2;
         char path[80],command[768],change[512],guid[32];
-        unsigned member=5+replacing;storage_member(path,sizeof(path),member);
+        unsigned member=5+iteration;storage_member(path,sizeof(path),member);
         stage=replacing?"force-replace-fixture":"force-attach-fixture";
         file=Open((CONST_STRPTR)path,MODE_NEWFILE);FCHECK(file);
         for(unsigned n=0;n<64;n++)FCHECK(Write(file,zeros,1024*1024)==1024*1024);
@@ -2297,36 +2304,41 @@ static int storage_force_create(void)
         snprintf(command,sizeof(command),"C:zpool create -o cachefile=none -O mountpoint=none public_attach_donor /RAM/OZForceCreate/disk%u",member);
         FCHECK(!cli_command(command));FCHECK(!pool_root_payload("public_attach_donor",1,0));
         FCHECK(!cli_command("C:zpool import -N -o cachefile=none -d /RAM/OZForceCreate public_force_target"));
-        FCHECK(!pool_change_guid("public_force_target","/disk2",guid,replacing?6:5));
+        FCHECK(!pool_change_guid("public_force_target",manager?"/disk6":"/disk2",guid,5+manager+replacing));
         /* Exercise DOS assign spelling against the canonical RAM Disk name
          * stored in pool config; GUID inventory is checked independently. */
         snprintf(change,sizeof(change),"public_force_target /RAM/OZForceCreate/disk2 /RAM/OZForceCreate/disk%u",member);
         snprintf(command,sizeof(command),"C:zpool %s -f %s",replacing?"replace":"attach",change);
         stage=replacing?"force-replace-active":"force-attach-active";
-        FCHECK(cli_command(command)!=0);FCHECK(!pool_root_payload("public_attach_donor",0,0));
+        FCHECK((manager?pool_change_request(1,replacing?13:11,"public_force_target",guid,path,NULL,OZ_CONFIRMED|OZ_FORCE):cli_command(command))!=0);FCHECK(!pool_root_payload("public_attach_donor",0,0));
         FCHECK(!cli_command("C:zpool export public_attach_donor"));
         snprintf(command,sizeof(command),"C:zpool %s %s",replacing?"replace":"attach",change);
-        FCHECK(cli_command(command)!=0);
+        FCHECK((manager?pool_change_request(1,replacing?13:11,"public_force_target",guid,path,NULL,OZ_CONFIRMED):cli_command(command))!=0);
+        if(manager)FCHECK(pool_change_request(1,replacing?13:11,"public_force_target",guid,path,NULL,OZ_FORCE)!=0);
         FCHECK(!cli_command("C:zpool import -N -o cachefile=none -o readonly=on -d /RAM/OZForceCreate public_attach_donor"));
         snprintf(command,sizeof(command),"C:zpool %s -f %s",replacing?"replace":"attach",change);
-        FCHECK(cli_command(command)!=0);FCHECK(!pool_root_payload("public_attach_donor",0,1));
+        FCHECK((manager?pool_change_request(1,replacing?13:11,"public_force_target",guid,path,NULL,OZ_CONFIRMED|OZ_FORCE):cli_command(command))!=0);FCHECK(!pool_root_payload("public_attach_donor",0,1));
         FCHECK(!cli_command("C:zpool export public_attach_donor"));
         stage=replacing?"force-replace-exported":"force-attach-exported";
-        FCHECK(!cli_command(command));
+        FCHECK(!(manager?pool_change_request(1,replacing?13:11,"public_force_target",guid,path,NULL,OZ_CONFIRMED|OZ_FORCE):cli_command(command)));
         FCHECK(!cli_command("C:zpool wait -t resilver public_force_target"));
         if(replacing)FCHECK(!cli_command("C:zpool wait -t replace public_force_target"));
-        FCHECK(!pool_change_guid("public_force_target",path,guid,6));
+        FCHECK(!pool_change_guid("public_force_target",path,guid,6+manager));
         FCHECK(!pool_root_payload("public_force_target",0,0));
         FCHECK(!cli_result("C:zpool list -H -o health public_force_target >T:cli-package-output.txt","ONLINE"));
         FCHECK(!cli_command("C:zpool export public_force_target"));
         FCHECK(!cli_command("C:zpool import -N -o cachefile=none -o readonly=on -d /RAM/OZForceCreate public_force_target"));
         FCHECK(!pool_root_payload("public_force_target",0,1));
         FCHECK(!cli_command("C:zpool export public_force_target"));
-        note(replacing?"Public force-replace PASS active-refused=1 readonly-active-refused=1 no-force-refused=1 exported-reused=1 resilver=1 readonly-exact=1\n":
+        if(manager)note(replacing?"Public Manager force-replace PASS confirmation-required=1 active-refused=1 readonly-active-refused=1 no-force-refused=1 exported-reused=1 resilver=1 readonly-exact=1\n":
+            "Public Manager force-attach PASS confirmation-required=1 active-refused=1 readonly-active-refused=1 no-force-refused=1 exported-reused=1 resilver=1 readonly-exact=1\n");
+        else note(replacing?"Public force-replace PASS active-refused=1 readonly-active-refused=1 no-force-refused=1 exported-reused=1 resilver=1 readonly-exact=1\n":
             "Public force-attach PASS active-refused=1 readonly-active-refused=1 no-force-refused=1 exported-reused=1 resilver=1 readonly-exact=1\n");
     }
     FCHECK(DeleteFile((CONST_STRPTR)"RAM:OZForceCreate/disk5"));
     FCHECK(DeleteFile((CONST_STRPTR)"RAM:OZForceCreate/disk6"));
+    FCHECK(DeleteFile((CONST_STRPTR)"RAM:OZForceCreate/disk7"));
+    FCHECK(DeleteFile((CONST_STRPTR)"RAM:OZForceCreate/disk8"));
     FCHECK(DeleteFile((CONST_STRPTR)"RAM:OZForceCreate/disk3"));
     FCHECK(DeleteFile((CONST_STRPTR)"RAM:OZForceCreate/disk4"));
     note("Public Manager force-add PASS confirmation-required=1 force-required=1 active-refused=1 readonly-active-refused=1 exported-added=1 target-payload-retained=1 readonly-exact=1\n");
