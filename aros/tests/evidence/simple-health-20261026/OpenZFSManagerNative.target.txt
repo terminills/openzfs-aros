@@ -1,0 +1,4 @@
+sdk=/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer
+pthread=/home/terminills/Documents/GitHub/openzfs-aros-public/build-aros/pthread-consistent.ARVzbA2v/libpthread.a
+pthread_include=/home/terminills/Documents/GitHub/openzfs-aros-public/build-aros/pthread-consistent.ARVzbA2v/source
+pthread_backend=private
