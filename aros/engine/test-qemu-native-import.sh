@@ -1,30 +1,26 @@
 #!/usr/bin/env bash
 set -euo pipefail
-repo=$(cd -- "$(dirname -- "$0")/../.." && pwd)
+repo=${OZ_NATIVE_RUNNER_REPO:-$(cd -- "$(dirname -- "$0")/../.." && pwd)}
+repo=$(realpath -e "$repo")
 cd "$repo"
 source "$repo/aros/engine/storage-preflight.sh"
-oz_storage_preflight "$repo/build-aros"
-artifact_root="$repo/build-aros"
-if [[ -n ${AROS_TEST_ARTIFACT_ROOT:-} ]];then
-    artifact_root=$(realpath -e "$AROS_TEST_ARTIFACT_ROOT")
-    [[ -d $artifact_root && -w $artifact_root ]]
-    # An unplugged archive drive must not silently spill into the root disk.
-    [[ $(stat -c %d "$artifact_root") != $(stat -c %d "$repo/build-aros") ]] || {
-        echo 'External artifact root must reside on a separate mounted filesystem' >&2;exit 2;
-    }
-    oz_storage_preflight "$artifact_root"
+artifact_root=$(oz_artifact_root "$repo" "${AROS_TEST_ARTIFACT_ROOT:-}")
+if [[ -z ${AROS_TEST_ARTIFACT_ROOT:-} ]];then
+    artifact_root="$repo/build-aros"
+    mkdir -p "$artifact_root"
 fi
 # Bash reads later commands lazily. Run an immutable private copy so source
 # edits during a long GUI session cannot splice new text into the live parser.
 if [[ ${OZ_NATIVE_RUNNER_FROZEN:-0} != 1 ]];then
-    frozen=$(mktemp -d "$repo/build-aros/native-runner.XXXXXXXX")
+    frozen=$(mktemp -d "$artifact_root/native-runner.XXXXXXXX")
     cp "$0" "$frozen/test-qemu-native-import.sh"
     export OZ_NATIVE_RUNNER_FROZEN=1
+    export OZ_NATIVE_RUNNER_REPO="$repo"
     exec bash "$frozen/test-qemu-native-import.sh" "$@"
 fi
 fixture=${AROS_TEST_NATIVE_FIXTURE:?existing disposable partition pool fixture required}
 fixture=$(realpath -e "$fixture")
-case "$fixture" in "$repo"/build-aros/qemu-run.*|"$repo"/build-aros/native-raidz-run.*) ;; *) exit 2;; esac
+case "$fixture" in "$repo"/build-aros/qemu-run.*|"$repo"/build-aros/native-raidz-run.*|"$artifact_root"/qemu-run.*|"$artifact_root"/native-raidz-run.*) ;; *) exit 2;; esac
 bundle=${AROS_TEST_NATIVE_BUNDLE:-}
 if [[ -n $bundle ]];then
     bundle=$(realpath -e "$bundle")
