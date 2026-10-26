@@ -1,0 +1,8 @@
+{"time": 1793056064.2818003, "kind": "greeting", "value": {"QMP": {"version": {"qemu": {"micro": 94, "minor": 1, "major": 10}, "package": ""}, "capabilities": ["oob"]}}}
+{"time": 1793056064.2841768, "kind": "qmp_capabilities", "value": {"return": {}}}
+{"time": 1793056064.2860847, "kind": "query-status", "value": {"return": {"status": "prelaunch", "running": false}}}
+{"time": 1793056064.2878146, "kind": "human-monitor-command", "value": {"return": ""}}
+{"time": 1793056064.289232, "kind": "cont", "value": {"timestamp": {"seconds": 1793056064, "microseconds": 288997}, "event": "RESUME"}}
+{"time": 1793056064.2900233, "kind": "cont", "value": {"return": {}}}
+{"time": 1793056069.4133983, "kind": "boundary", "value": {"member": 0, "event": "flush_to_disk", "returned_to_guest": false}}
+{"time": 1793056069.4322202, "kind": "signal", "value": {"pid": 3756268, "signal": "SIGKILL"}}

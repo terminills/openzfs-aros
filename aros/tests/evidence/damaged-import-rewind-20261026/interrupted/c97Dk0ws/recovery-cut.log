@@ -1,0 +1,7 @@
+Recovery cut breakpoint armed on member 0 flush_to_disk
+Traceback (most recent call last):
+  File "/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/native-import-run.c97Dk0ws/qmp-recovery-cut.py", line 97, in <module>
+    main()
+  File "/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/native-import-run.c97Dk0ws/qmp-recovery-cut.py", line 77, in main
+    raise RuntimeError('guest finished without reaching the required write boundary')
+RuntimeError: guest finished without reaching the required write boundary

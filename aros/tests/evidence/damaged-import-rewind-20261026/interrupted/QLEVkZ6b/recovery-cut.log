@@ -1,0 +1,13 @@
+Recovery cut breakpoint armed on member 0 completed write
+Traceback (most recent call last):
+  File "/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/native-import-run.QLEVkZ6b/qmp-recovery-cut.py", line 96, in <module>
+    main()
+  File "/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/native-import-run.QLEVkZ6b/qmp-recovery-cut.py", line 85, in main
+    call('stop')
+  File "/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/native-import-run.QLEVkZ6b/qmp-recovery-cut.py", line 55, in call
+    message = json.loads(stream.readline())
+                         ^^^^^^^^^^^^^^^^^
+  File "/home/terminills/.local/share/uv/python/cpython-3.12.12-linux-x86_64-gnu/lib/python3.12/socket.py", line 720, in readinto
+    return self._sock.recv_into(b)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+TimeoutError: timed out

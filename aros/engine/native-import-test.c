@@ -525,6 +525,7 @@ int main(void)
     note("RESULT native damaged import rewind PASS cycles=2 ordinary-refused=2 absent-after-refusal=2 readonly-" OZ_REWIND_FLAG "=2 exact-DOS=2 write-refused=2");
 #endif
 #ifdef OZ_NATIVE_IMPORT_REWIND_COMMIT
+    note("READY native writable recovery request");
 #ifdef OZ_NATIVE_IMPORT_REWIND_MANAGER
     CHECK(!request(7,"readonly=off;recovery=" OZ_REWIND_POLICY,0));
 #else

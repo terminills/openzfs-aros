@@ -405,6 +405,12 @@ selected dependencies, not a newly qualified official or bootstrap release.
   separate cold guest. The original fixture still refuses normal recovery;
   it is not silently promoted to extreme mode. See `recent-normal.md` and
   `normal-window.md` in the same evidence directory for the discriminator.
+  One interrupted writable-recovery boundary is now qualified: a host-side
+  block-debug cut at member 0's flush boundary leaves changed guest-visible
+  bytes before import returns. A new guest recovers those disks and a third
+  ordinary-import guest reads the original and post-recovery files exactly.
+  This uses the explicit flush-capable ATA overlay, not baseline ATA. See
+  `interrupted.md`; other cut points and physical durability remain open.
 - Not every upstream feature or topology has end-to-end AROS validation.
 - Native and file-backed pool creation accept blank extents or consistently labeled destroyed
   members (all four checksummed labels must agree on destroyed state and pool/member GUIDs).

@@ -62,12 +62,13 @@ if [[ ${AROS_TEST_ZVOL_TRANSPORT:-0} == 1 && -z ${AROS_TEST_WHOLE_CLI_LINK:-} ]]
     exit 2
 fi
 runtime_profile=${AROS_TEST_RUNTIME_PROFILE:-private}
-[[ $runtime_profile == private || $runtime_profile == base || $runtime_profile == dos-only || $runtime_profile == dos-posix || $runtime_profile == posix-only || $runtime_profile == posix-pipe || $runtime_profile == posix-pipe-stdio || $runtime_profile == dos-posix-pipe-stdio ]]
+[[ $runtime_profile == private || $runtime_profile == base || $runtime_profile == dos-only || $runtime_profile == dos-posix || $runtime_profile == dos-posix-ata || $runtime_profile == posix-only || $runtime_profile == posix-pipe || $runtime_profile == posix-pipe-stdio || $runtime_profile == dos-posix-pipe-stdio ]]
 if [[ $runtime_profile != private ]];then
     # This mode measures the selected ISO, not a silently repaired runtime.
     for override in AROS_TEST_DOS_OVERLAY AROS_TEST_ATA_OVERLAY AROS_TEST_POSIX_LIBRARY \
         AROS_TEST_PARTITION_LIBRARY AROS_TEST_FS_PACKAGE AROS_TEST_PIPE_POLICY_HANDLER \
         AROS_TEST_AFS_HANDLER AROS_TEST_FAT_HANDLER AROS_TEST_STDCIO_LIBRARY;do
+        if [[ $runtime_profile == dos-posix-ata && ( $override == AROS_TEST_DOS_OVERLAY || $override == AROS_TEST_ATA_OVERLAY || $override == AROS_TEST_POSIX_LIBRARY ) ]];then continue;fi
         if [[ ( $runtime_profile == dos-only || $runtime_profile == dos-posix || $runtime_profile == dos-posix-pipe-stdio ) && $override == AROS_TEST_DOS_OVERLAY ]];then continue;fi
         if [[ ( $runtime_profile == posix-only || $runtime_profile == dos-posix || $runtime_profile == posix-pipe || $runtime_profile == posix-pipe-stdio || $runtime_profile == dos-posix-pipe-stdio ) && $override == AROS_TEST_POSIX_LIBRARY ]];then continue;fi
         if [[ ( $runtime_profile == posix-pipe || $runtime_profile == posix-pipe-stdio || $runtime_profile == dos-posix-pipe-stdio ) && $override == AROS_TEST_PIPE_POLICY_HANDLER ]];then continue;fi
@@ -80,6 +81,11 @@ else
     dos=${AROS_TEST_DOS_OVERLAY:?private DOS required}
     ata=${AROS_TEST_ATA_OVERLAY:?private ATA required}
     posix=${AROS_TEST_POSIX_LIBRARY:?private POSIX required}
+fi
+if [[ $runtime_profile == dos-posix-ata ]];then
+    dos=${AROS_TEST_DOS_OVERLAY:?explicit DOS overlay required}
+    posix=${AROS_TEST_POSIX_LIBRARY:?explicit POSIX library required}
+    ata=${AROS_TEST_ATA_OVERLAY:?explicit ATA overlay required}
 fi
 if [[ $runtime_profile == dos-only || $runtime_profile == dos-posix || $runtime_profile == dos-posix-pipe-stdio ]];then dos=${AROS_TEST_DOS_OVERLAY:?private DOS required};fi
 if [[ $runtime_profile == posix-only || $runtime_profile == dos-posix || $runtime_profile == posix-pipe || $runtime_profile == posix-pipe-stdio || $runtime_profile == dos-posix-pipe-stdio ]];then posix=${AROS_TEST_POSIX_LIBRARY:?private POSIX required};fi
@@ -145,6 +151,8 @@ import_rewind=${AROS_TEST_IMPORT_REWIND:-0}
 [[ $import_rewind == 0 || $import_rewind == 1 ]]
 import_rewind_mode=${AROS_TEST_IMPORT_REWIND_MODE:-preview}
 import_rewind_manager=${AROS_TEST_IMPORT_REWIND_MANAGER:-0}
+import_rewind_cut=${AROS_TEST_IMPORT_REWIND_CUT:-0}
+[[ $import_rewind_cut == 0 || ( $import_rewind_cut == 1 && $import_rewind == 1 && $import_rewind_mode == commit ) ]]
 import_rewind_normal=${AROS_TEST_IMPORT_REWIND_NORMAL:-0}
 import_rewind_refuse_normal=${AROS_TEST_IMPORT_REWIND_REFUSE_NORMAL:-0}
 [[ $import_rewind_refuse_normal == 0 || ( $import_rewind_refuse_normal == 1 && $import_rewind == 1 && $import_rewind_mode != cold && $import_rewind_normal == 0 ) ]]
@@ -1109,7 +1117,12 @@ for unit in "${units[@]}";do
         qemu-img create -f qcow2 -F raw -b "$fixture/disk$unit.raw" "$run/disk$unit.qcow2"
     fi
     if [[ $members == both || $members == "$unit" || ( $members == 1-empty-peer && $unit == 1 ) || ( $members == 01 && ( $unit == 0 || $unit == 1 ) ) ]];then
-        if [[ $native_bus == usb ]];then
+        if [[ $import_rewind_cut == 1 && $unit == 0 ]];then
+            # Observe qcow2's file-child flush after its cached metadata has
+            # been written, not a filter above qcow2 that cannot see it.
+            drives+=(-blockdev "driver=qcow2,node-name=ozcut0,file.driver=blkdebug,file.image.driver=file,file.image.filename=$run/disk0.qcow2"
+                -device ide-hd,drive=ozcut0,bus=ide.0,unit=0)
+        elif [[ $native_bus == usb ]];then
             drives+=(-drive "file=$run/disk$unit.qcow2,format=qcow2,if=none,id=ozusb$unit,aio=threads"
                 -device "usb-storage,drive=ozusb$unit,bus=ozusb.0,port=$((unit+1)),id=ozmember$unit,serial=oz-member-$unit,removable=on")
         elif [[ $native_bus == ahci ]];then
@@ -1199,6 +1212,12 @@ if [[ -n ${AROS_TEST_ENGINE_LIBRARY:-} ]];then
     fi
 fi
 runtime_maps=()
+if [[ $runtime_profile == dos-posix-ata ]];then
+    sha256sum "$dos/aros-base.pkg.xz" "$posix" "$ata/aros-bsp.pkg.xz" >>"$run/inputs.sha256"
+    runtime_maps+=(-map "$dos/aros-base.pkg.xz" /boot/aros-base.pkg.xz
+        -map "$posix" /Libs/posixc.library
+        -map "$ata/aros-bsp.pkg.xz" /boot/pc-smp/aros-bsp.pkg.xz)
+fi
 if [[ $runtime_profile == private || $runtime_profile == dos-only || $runtime_profile == dos-posix || $runtime_profile == dos-posix-pipe-stdio ]];then
     sha256sum "$dos/aros-base.pkg.xz" >>"$run/inputs.sha256"
     runtime_maps+=(-map "$dos/aros-base.pkg.xz" /boot/aros-base.pkg.xz)
@@ -1236,7 +1255,13 @@ xorriso -indev "$base" -outdev "$run/test.iso" \
     -boot_image any discard -boot_image grub bin_path=/boot/grub/i386-pc/eltorito.img \
     -boot_image grub boot_info_table=on -boot_image grub grub2_boot_info=on >"$run/pack.log" 2>&1
 echo "Guest memory MiB: $memory"
+cut_start=()
+if [[ $import_rewind_cut == 1 ]];then
+    cut_start=(-S)
+    cp aros/engine/qmp-recovery-cut.py "$run/qmp-recovery-cut.py"
+fi
 "$qemu" -name "openzfs-native-import-$$" -machine "pc,accel=$accel" -cpu "$cpu" -smp "$smp" -m "$memory" \
+    "${cut_start[@]}" \
     -drive "file=$run/test.iso,media=cdrom,if=ide,index=2,readonly=on" \
     "${drives[@]}" \
     -display none -nic none -boot d -no-reboot -no-shutdown "${gui_devices[@]}" \
@@ -1245,6 +1270,11 @@ echo "Guest memory MiB: $memory"
     -serial "file:$run/serial.log" -monitor "unix:$run/monitor,server=on,wait=off" >"$run/qemu.log" 2>&1 &
 pid=$!
 trap 'if kill -0 "$pid" 2>/dev/null;then kill "$pid";wait "$pid" || true;fi' EXIT
+if [[ $import_rewind_cut == 1 ]];then
+    # A deliberate blkdebug suspension prevents graceful QEMU draining.
+    # This PID is the private child just launched above, never another VM.
+    trap 'if kill -0 "$pid" 2>/dev/null;then kill -KILL "$pid";wait "$pid" || true;fi' EXIT
+fi
 timeout_seconds=600
 if [[ $gui != 0 ]];then timeout_seconds=1800;fi
 timeout_seconds=${AROS_TEST_TIMEOUT_SECONDS:-$timeout_seconds}
@@ -1253,6 +1283,20 @@ timeout_seconds=${AROS_TEST_TIMEOUT_SECONDS:-$timeout_seconds}
     echo 'AROS_TEST_TIMEOUT_SECONDS must be between 60 and 14400' >&2;exit 2;
 }
 echo "Guest completion deadline: $timeout_seconds seconds"
+if [[ $import_rewind_cut == 1 ]];then
+    python3 "$run/qmp-recovery-cut.py" "$run" "$pid" --timeout "$timeout_seconds" >"$run/recovery-cut.log" 2>&1
+    cut_status=0
+    wait "$pid" || cut_status=$?
+    [[ $cut_status == 137 ]]
+    trap - EXIT
+    rg -q '^CUT: private VM at member 0 flush_to_disk, before request return' "$run/recovery-cut.log"
+    sha256sum -c "$run/backing.sha256"
+    compare_status=0
+    qemu-img compare -f qcow2 -F raw "$run/disk0.qcow2" "$fixture/disk0.raw" >"$run/recovery-cut-compare.log" 2>&1 || compare_status=$?
+    [[ $compare_status == 1 ]] || { echo 'FAIL: no changed guest-visible member bytes at cut';exit 1; }
+    echo "CAPTURED: interrupted writable recovery; cold recovery not yet verified: $run"
+    exit 0
+fi
 deadline=$((SECONDS+timeout_seconds))
 usb_removed=0
 usb_reinserted=0

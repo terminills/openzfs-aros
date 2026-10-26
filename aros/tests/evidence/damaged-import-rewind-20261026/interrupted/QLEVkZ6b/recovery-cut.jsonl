@@ -1,0 +1,7 @@
+{"time": 1793054763.3262362, "kind": "greeting", "value": {"QMP": {"version": {"qemu": {"micro": 94, "minor": 1, "major": 10}, "package": ""}, "capabilities": ["oob"]}}}
+{"time": 1793054763.3282845, "kind": "qmp_capabilities", "value": {"return": {}}}
+{"time": 1793054763.3299975, "kind": "query-status", "value": {"return": {"status": "prelaunch", "running": false}}}
+{"time": 1793054763.3316047, "kind": "human-monitor-command", "value": {"return": ""}}
+{"time": 1793054763.333274, "kind": "cont", "value": {"timestamp": {"seconds": 1793054763, "microseconds": 332776}, "event": "RESUME"}}
+{"time": 1793054763.3341746, "kind": "cont", "value": {"return": {}}}
+{"time": 1793054768.8607175, "kind": "stop", "value": {"timestamp": {"seconds": 1793054768, "microseconds": 860135}, "event": "STOP"}}

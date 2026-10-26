@@ -1,0 +1,14 @@
+Native members attached: both
+Native pool layout: mirror
+Native storage bus: ide
+QEMU acceleration: kvm CPU: host
+Guest virtual CPUs: 8
+OS runtime profile: dos-posix-ata
+Formatting '/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/native-import-run.xKyI7e5j/disk0.qcow2', fmt=qcow2 cluster_size=65536 extended_l2=off compression_type=zlib size=536870912 backing_file=/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/qemu-run.recent-corrupt.zj_ccalr/disk0.raw backing_fmt=raw lazy_refcounts=off refcount_bits=16
+Formatting '/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/native-import-run.xKyI7e5j/disk1.qcow2', fmt=qcow2 cluster_size=65536 extended_l2=off compression_type=zlib size=536870912 backing_file=/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/qemu-run.recent-corrupt.zj_ccalr/disk1.raw backing_fmt=raw lazy_refcounts=off refcount_bits=16
+Guest memory MiB: 2048
+Guest completion deadline: 600 seconds
+/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/native-runner.ZNyVsCsd/test-qemu-native-import.sh: line 1289: 3756268 Killed                     "$qemu" -name "openzfs-native-import-$$" -machine "pc,accel=$accel" -cpu "$cpu" -smp "$smp" -m "$memory" "${cut_start[@]}" -drive "file=$run/test.iso,media=cdrom,if=ide,index=2,readonly=on" "${drives[@]}" -display none -nic none -boot d -no-reboot -no-shutdown "${gui_devices[@]}" -qmp "unix:$run/qmp,server=on,wait=off" -debugcon "file:$run/completion.log" -global isa-debugcon.iobase=0xe9 -serial "file:$run/serial.log" -monitor "unix:$run/monitor,server=on,wait=off" > "$run/qemu.log" 2>&1
+/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/qemu-run.recent-corrupt.zj_ccalr/disk0.raw: OK
+/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/qemu-run.recent-corrupt.zj_ccalr/disk1.raw: OK
+CAPTURED: interrupted writable recovery; cold recovery not yet verified: /mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/native-import-run.xKyI7e5j
