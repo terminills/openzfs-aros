@@ -198,3 +198,21 @@ payload, and readonly reimport/write-refusal checks. The unchanged CLI
 cases and full storage suite also passed; runner exit was zero.
 Evidence is in `evidence/manager-force-attach-20261026`. This is API runtime
 coverage, not a fresh mouse-driven UI test or native-device qualification.
+
+## Virtual-native force attach/replace
+
+`public-service-run.xpDq4al7` exited zero with all four CLI/Manager and
+attach/replace combinations passing. The runner's disposable 256 MiB ATA
+MBR fixture supplies the candidate partition; a RAM-file target provides
+the existing pool data. Active and readonly-imported candidates, and
+exported candidates without force, were refused. Manager cases also
+require confirmation. Forced exported reuse completed with resilver waits,
+exact ONLINE leaf counts, exact target data and readonly reimport/write
+refusal. Each pool was destroyed normally before the next case, without
+harness label erasure. The full native discovery and storage suite passed.
+Evidence is in `evidence/native-force-attach-20261026`.
+
+Create/add/attach/replace now have exported-reuse evidence through both
+interfaces on file and virtual-native candidates. This does not qualify
+all-native topologies, physical devices, arbitrary nonzero-media force,
+potentially-active labels, or the official SDK/runtime dependency set.

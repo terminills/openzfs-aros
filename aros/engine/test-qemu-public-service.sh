@@ -1077,6 +1077,9 @@ if [[ $force_create == 1 ]];then
         rg -q '^Public native Manager force-create PASS active-refused=1 readonly-active-refused=1 confirmation-required=1 force-required=1 dryrun-refused=1 exported-replaced=1 readonly-exact=1 cleanup=1' "$run/serial-results.log"
         for lane in CLI Manager;do
             rg -q "^Public native force-add PASS lane=$lane active-refused=1 readonly-active-refused=1 no-force-refused=1 target-data=1 readonly-exact=1 cleanup=1" "$run/serial-results.log"
+            for change in attach replace;do
+                rg -q "^Public native force-change PASS lane=$lane op=$change active-refused=1 readonly-active-refused=1 no-force-refused=1 resilver=1 readonly-exact=1 cleanup=1" "$run/serial-results.log"
+            done
         done
     fi
 fi

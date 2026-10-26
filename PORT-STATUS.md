@@ -355,8 +355,14 @@ results, not a fresh qualification of this public snapshot.
 - Not every upstream feature or topology has end-to-end AROS validation.
 - Native and file-backed pool creation accept blank extents or consistently labeled destroyed
   members (all four checksummed labels must agree on destroyed state and pool/member GUIDs).
-  Active and exported members remain refused even with CLI force. Arbitrary
-  nonzero media and force-create over exported members remain incomplete.
+  Explicit confirmed force also accepts consistently labeled exported members
+  for create/add/attach/replace. CLI and Manager typed-API paths now pass
+  file-backed and virtual ATA partition candidate tests, including active and
+  readonly-imported refusal, resilvering where applicable, and exact data after
+  readonly reimport. See `aros/tests/force-create-qualification.md` and its
+  retained failure/passing evidence. This uses private CRT/pthread dependencies;
+  it is not stock SDK or physical-device qualification. Arbitrary nonzero media
+  and potentially-active labels remain outside the implemented force policy.
   Add/attach/replace now use the same checked destroyed-member admission as
   create. CLI and Manager API file-backed lifecycles pass. Four isolated QEMU
   runs also qualify native partition candidates for all three operations in

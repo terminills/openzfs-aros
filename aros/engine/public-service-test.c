@@ -2412,6 +2412,61 @@ done:
     return error;
 #undef LCHECK
 }
+static int native_force_change(unsigned manager,unsigned replacing)
+{
+    /* Invoked only inside the runner-verified disposable partition fixture.
+     * Destroy the completed target to release the native candidate; never
+     * erase labels in the harness to make a subsequent case pass. */
+    const char *target="public_native_change",*donor="public_native_force";
+    const char *path="/AROS/ata.device/0/partition/0";
+    const char *backing="RAM:native-force-target";
+    const unsigned op=replacing?13:11;
+    char guid[32],line[256];int error=0;const char *stage="fixture";
+    BPTR file=0;void *zeros=AllocVec(1024*1024,MEMF_PUBLIC|MEMF_CLEAR);
+#define NCHECK(x) do{if(!(x)){error=EIO;goto done;}}while(0)
+    NCHECK(zeros);file=Open((CONST_STRPTR)backing,MODE_NEWFILE);NCHECK(file);
+    for(unsigned n=0;n<64;n++)NCHECK(Write(file,zeros,1024*1024)==1024*1024);
+    NCHECK(Flush(file));int closed=Close(file);file=0;NCHECK(closed);
+    NCHECK(!cli_command("C:zpool create -o cachefile=none -O mountpoint=none public_native_force /AROS/ata.device/0/partition/0"));
+    NCHECK(!pool_root_payload(donor,1,0));
+    NCHECK(!cli_command("C:zpool create -o cachefile=none -O mountpoint=none public_native_change /RAM/native-force-target"));
+    NCHECK(!pool_root_payload(target,1,0));
+    NCHECK(!pool_change_guid(target,"/native-force-target",guid,1));
+    stage="active-refusal";
+    NCHECK(pool_change_request(manager,op,target,guid,path,NULL,OZ_CONFIRMED|OZ_FORCE)!=0);
+    NCHECK(!pool_root_payload(donor,0,0));
+    NCHECK(!cli_command("C:zpool export public_native_force"));
+    stage="exported-no-force-refusal";
+    NCHECK(pool_change_request(manager,op,target,guid,path,NULL,OZ_CONFIRMED)!=0);
+    if(manager)NCHECK(pool_change_request(manager,op,target,guid,path,NULL,OZ_FORCE)!=0);
+    NCHECK(!cli_command("C:zpool import -N -o cachefile=none -o readonly=on public_native_force"));
+    stage="readonly-active-refusal";
+    NCHECK(pool_change_request(manager,op,target,guid,path,NULL,OZ_CONFIRMED|OZ_FORCE)!=0);
+    NCHECK(!pool_root_payload(donor,0,1));
+    NCHECK(!cli_command("C:zpool export public_native_force"));
+    stage="exported-reuse";
+    NCHECK(!pool_change_request(manager,op,target,guid,path,NULL,OZ_CONFIRMED|OZ_FORCE));
+    NCHECK(!cli_command("C:zpool wait -t resilver public_native_change"));
+    if(replacing)NCHECK(!cli_command("C:zpool wait -t replace public_native_change"));
+    NCHECK(!pool_change_guid(target,path,guid,replacing?1:2));
+    NCHECK(!pool_root_payload(target,0,0));
+    NCHECK(!cli_command("C:zpool export public_native_change"));
+    stage="readonly-reimport";
+    NCHECK(!cli_command("C:zpool import -N -o cachefile=none -o readonly=on -d /RAM/native-force-target -d /AROS/ata.device/0/partition/0 public_native_change"));
+    NCHECK(!pool_root_payload(target,0,1));
+    NCHECK(!cli_command("C:zpool export public_native_change"));
+    NCHECK(!cli_command("C:zpool import -N -o cachefile=none -d /RAM/native-force-target -d /AROS/ata.device/0/partition/0 public_native_change"));
+    stage="cleanup";
+    NCHECK(!cli_command("C:zpool destroy public_native_change"));
+    NCHECK(DeleteFile((CONST_STRPTR)backing));
+done:
+    if(file)Close(file);
+    if(zeros)FreeVec(zeros);
+    if(error)snprintf(line,sizeof(line),"Public native force-change FAIL lane=%s op=%s stage=%s errno=%d\n",manager?"Manager":"CLI",replacing?"replace":"attach",stage,error);
+    else snprintf(line,sizeof(line),"Public native force-change PASS lane=%s op=%s active-refused=1 readonly-active-refused=1 no-force-refused=1 resilver=1 readonly-exact=1 cleanup=1\n",manager?"Manager":"CLI",replacing?"replace":"attach");
+    note(line);return error;
+#undef NCHECK
+}
 static int storage_native_discovery(void)
 {
     BPTR marker=Lock((CONST_STRPTR)"SYS:openzfs-native-discovery-test",SHARED_LOCK);
@@ -2584,6 +2639,8 @@ static int storage_native_discovery(void)
                 if(cli_command("C:zpool import -N -o cachefile=none public_native_add")||cli_command("C:zpool destroy public_native_add"))return EIO;
                 note(manager?"Public native force-add PASS lane=Manager active-refused=1 readonly-active-refused=1 no-force-refused=1 target-data=1 readonly-exact=1 cleanup=1\n":
                     "Public native force-add PASS lane=CLI active-refused=1 readonly-active-refused=1 no-force-refused=1 target-data=1 readonly-exact=1 cleanup=1\n");
+                for(unsigned replacing=0;replacing<2;replacing++)
+                    if(native_force_change(manager,replacing))return EIO;
             }
         }
     }
