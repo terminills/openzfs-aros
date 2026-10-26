@@ -40,6 +40,58 @@ static int invoke_nvlist(const struct oz_ticket *ticket,LONG fd,unsigned operati
     if(!error)error=nvlist_unpack((char *)(command+1)+packed_size,command->zc_nvlist_dst_size,output,0);
     free(w);return error;
 }
+static int invoke_clear(const struct oz_ticket *ticket,LONG fd,const char *pool,
+    uint64_t flags,nvlist_t *policy,size_t capacity,int require_config)
+{
+    size_t packed_size=0;
+    char *packed=policy?fnvlist_pack(policy,&packed_size):NULL;
+    size_t size=sizeof(struct oz_ioctl_wire)+sizeof(zfs_cmd_t)+packed_size+capacity;
+    struct oz_ioctl_wire *w=calloc(1,size);
+    if(!w){if(packed)fnvlist_pack_free(packed,packed_size);return ENOMEM;}
+    prepare(w,ticket,fd,pool,0);
+    w->command=ZFS_IOC_CLEAR;w->src_size=packed_size;w->dst_capacity=capacity;
+    zfs_cmd_t *command=(void *)(w+1);
+    command->zc_cookie=flags;command->zc_nvlist_src_size=packed_size;
+    command->zc_nvlist_dst_size=capacity;
+    if(packed){memcpy(command+1,packed,packed_size);fnvlist_pack_free(packed,packed_size);}
+    int error=oz_ioctl_request(OZ_ADMISSION_PORT,w,size);
+    if(!error)error=w->engine_error;
+    if(!error&&require_config) {
+        nvlist_t *config=NULL;const char *name=NULL;
+        if(!command->zc_nvlist_dst_filled||command->zc_nvlist_dst_size>capacity||
+            command->zc_nvlist_src||command->zc_nvlist_dst)error=EIO;
+        if(!error)error=nvlist_unpack((char *)(command+1)+packed_size,
+            command->zc_nvlist_dst_size,&config,0);
+        if(!error)error=nvlist_lookup_string(config,ZPOOL_CONFIG_POOL_NAME,&name);
+        if(!error&&strcmp(name,pool))error=EIO;
+        nvlist_free(config);
+    }
+    free(w);return error;
+}
+static int clear_policy_wire(const struct oz_ticket *ticket,LONG fd,const char *pool)
+{
+    int error=0;nvlist_t *policy=fnvlist_alloc(),*wrapper=fnvlist_alloc();
+    fnvlist_add_uint32(policy,ZPOOL_LOAD_REWIND_POLICY,ZPOOL_TRY_REWIND);
+    TEST(!invoke_clear(ticket,fd,pool,ZPOOL_TRY_REWIND,policy,65536,1));
+    fnvlist_add_nvlist(wrapper,ZPOOL_LOAD_POLICY,policy);
+    TEST(!invoke_clear(ticket,fd,pool,ZPOOL_TRY_REWIND,wrapper,65536,1));
+    TEST(invoke_clear(ticket,fd,pool,ZPOOL_DO_REWIND,policy,65536,0)==EINVAL);
+    TEST(invoke_clear(ticket,fd,pool,UINT64_MAX,policy,65536,0)==EINVAL);
+    TEST(invoke_clear(ticket,fd,pool,ZPOOL_TRY_REWIND,NULL,65536,0)==EINVAL);
+    TEST(invoke_clear(ticket,fd,pool,ZPOOL_TRY_REWIND,policy,0,0)==EINVAL);
+    fnvlist_add_uint32(wrapper,ZPOOL_LOAD_REWIND_POLICY,ZPOOL_TRY_REWIND);
+    TEST(invoke_clear(ticket,fd,pool,ZPOOL_TRY_REWIND,wrapper,65536,0)==EINVAL);
+    fnvlist_free(policy);policy=fnvlist_alloc();
+    fnvlist_add_uint64(policy,ZPOOL_LOAD_REWIND_POLICY,ZPOOL_TRY_REWIND);
+    TEST(invoke_clear(ticket,fd,pool,ZPOOL_TRY_REWIND,policy,65536,0)==EINVAL);
+    fnvlist_free(policy);policy=fnvlist_alloc();
+    fnvlist_add_uint32(policy,ZPOOL_LOAD_REWIND_POLICY,ZPOOL_TRY_REWIND);
+    fnvlist_add_boolean(policy,"unrecognized-policy");
+    TEST(invoke_clear(ticket,fd,pool,ZPOOL_TRY_REWIND,policy,65536,0)==EINVAL);
+    {const char *p="Public clear rewind wire PASS flat=1 nested=1 mismatched=1 flags=1 missing=1 capacity=1 ambiguous=1 type=1 unknown=1\n";while(*p)RawPutChar(*p++);}
+done:
+    fnvlist_free(policy);fnvlist_free(wrapper);return error;
+}
 static int upstream_enumeration(const char *pool,const char *filesystem,const char *snapshot)
 {
     int error=0,fd=-1;char output[65536];nvlist_t *properties=NULL;
@@ -179,7 +231,17 @@ done:
 int oz_public_bootenv_readonly_test(const char *pool)
 {
     int error=0,initialized=0;
+    struct oz_ticket ticket={0};LONG fd=-1;int opened=0;
     nvlist_t *before=NULL,*after=NULL,*input=fnvlist_alloc();
+    nvlist_t *policy=fnvlist_alloc();
+    fnvlist_add_uint32(policy,ZPOOL_LOAD_REWIND_POLICY,ZPOOL_TRY_REWIND);
+    TEST(!oz_session_open(OZ_ADMISSION_PORT,&ticket));opened=1;
+    TEST(!oz_control_open(OZ_ADMISSION_PORT,&ticket,&fd));
+    TEST(invoke_clear(&ticket,fd,pool,ZPOOL_TRY_REWIND,policy,65536,0)==EROFS);
+    fnvlist_remove(policy,ZPOOL_LOAD_REWIND_POLICY);
+    fnvlist_add_uint32(policy,ZPOOL_LOAD_REWIND_POLICY,ZPOOL_DO_REWIND);
+    TEST(invoke_clear(&ticket,fd,pool,ZPOOL_DO_REWIND,policy,65536,0)==EROFS);
+    {const char *p="Public clear rewind readonly PASS preview-erofs=1 commit-erofs=1\n";while(*p)RawPutChar(*p++);}
     TEST(!libzfs_core_init());initialized=1;
     TEST(!lzc_get_bootenv(pool,&before));
     fnvlist_add_uint64(input,"version",1);
@@ -187,6 +249,9 @@ int oz_public_bootenv_readonly_test(const char *pool)
     TEST(lzc_set_bootenv(pool,input)==EROFS);
     TEST(!lzc_get_bootenv(pool,&after));TEST(same_nvlist(before,after));
 done:
+    if(fd>0)(void)oz_control_close(OZ_ADMISSION_PORT,&ticket,fd);
+    if(opened)(void)oz_session_close(OZ_ADMISSION_PORT,&ticket);
+    nvlist_free(policy);
     if(initialized)libzfs_core_fini();
     nvlist_free(before);nvlist_free(after);nvlist_free(input);
     if(!error){const char *p="Public upstream bootenv readonly PASS get=1 set-erofs=1 unchanged=1\n";while(*p)RawPutChar(*p++);}
@@ -292,6 +357,13 @@ static int denied_snapshot(const char *pool,const struct oz_ticket *root_ticket,
     TEST(!oz_control_open(OZ_ADMISSION_PORT,&ticket,&fd));
     int denied=invoke_nvlist(&ticket,fd,ZFS_IOC_SNAPSHOT,pool,input,&result);
     TEST(denied==EPERM||denied==EACCES);
+    nvlist_t *policy=fnvlist_alloc();
+    fnvlist_add_uint32(policy,ZPOOL_LOAD_REWIND_POLICY,ZPOOL_TRY_REWIND);
+    int stale=invoke_clear(root_ticket,root_fd,pool,ZPOOL_TRY_REWIND,policy,65536,0);
+    denied=invoke_clear(&ticket,fd,pool,ZPOOL_TRY_REWIND,policy,65536,0);
+    fnvlist_free(policy);
+    TEST(stale==EACCES);TEST(denied==EPERM||denied==EACCES);
+    {const char *p="Public clear rewind authorization PASS changed-user=1 own-session-denied=1\n";while(*p)RawPutChar(*p++);}
 done:
     if(fd>0)(void)oz_control_close(OZ_ADMISSION_PORT,&ticket,fd);
     if(opened)(void)oz_session_close(OZ_ADMISSION_PORT,&ticket);
@@ -486,6 +558,7 @@ int oz_public_ioctl_test(const char *pool)
     TEST(!w->engine_error);
     const char *clear_marker="Public native clear ioctl PASS invalid-guid=1 pool-clear=1\n";
     for(const char *p=clear_marker;*p;p++)RawPutChar(*p);
+    TEST(!clear_policy_wire(&ticket,fd,pool));
     prepare(w,&ticket,fd,pool,capacity);w->command=ZFS_IOC_POOL_CONFIGS;
     command->zc_name[0]=0;
     TEST(!oz_ioctl_request(OZ_ADMISSION_PORT,w,length));TEST(!w->engine_error);

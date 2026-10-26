@@ -559,6 +559,9 @@ while :;do
            { [[ ${AROS_TEST_REQUIRE_CONTROL:-0} != 1 ]] ||
              { [[ $controls == 2 ]] && rg -q '^Public upstream ioctl transport PASS stats=1 configs=1 resize=1 bounds=1 stale=1' "$run/serial-results.log" &&
                rg -q '^Public native clear ioctl PASS invalid-guid=1 pool-clear=1' "$run/serial-results.log" &&
+               rg -q '^Public clear rewind wire PASS flat=1 nested=1 mismatched=1 flags=1 missing=1 capacity=1 ambiguous=1 type=1 unknown=1' "$run/serial-results.log" &&
+               rg -q '^Public clear rewind authorization PASS changed-user=1 own-session-denied=1' "$run/serial-results.log" &&
+               rg -q '^Public clear rewind readonly PASS preview-erofs=1 commit-erofs=1' "$run/serial-results.log" &&
                rg -q '^Public upstream snapshot ioctls PASS create=1 hold=1 onexit=1 release=1 destroy=1 schema=1' "$run/serial-results.log" &&
                rg -q '^Public upstream snapshot authorization PASS changed-user=1 own-session-denied=1 no-mutation=1' "$run/serial-results.log" &&
                rg -q '^Public upstream libzfs_core PASS snapshot=1 temporary-hold=1 destroy=1 reopen=1' "$run/serial-results.log" &&
@@ -643,7 +646,8 @@ while :;do
              rg -q '^Public packaged CLI PASS' "$run/serial-results.log" &&
              { [[ ${AROS_TEST_REQUIRE_TRIM:-0} != 1 ]] ||
                rg -q '^Public CLI TRIM unsupported PASS start=1 suspend=1 cancel=1 upstream-device-errors=1' "$run/serial-results.log"; } &&
-             rg -q '^Public CLI clear rewind unsupported PASS dryrun-refused=1 commit-refused=1 diagnostic=1' "$run/serial-results.log" &&
+             rg -q '^Public CLI clear rewind healthy PASS preview=1 commit=1 extreme-preview=1 extreme-commit=1' "$run/serial-results.log" &&
+             rg -q '^Public CLI clear rewind mounted PASS dryrun-refused=1 commit-refused=1 diagnostic=1' "$run/serial-results.log" &&
              rg -q '^Public packaged replication PASS .*incremental=1' "$run/serial-results.log"; }; } &&
            { [[ -z $handler ]] ||
              rg -q '^Public packaged handler PASS' "$run/serial-results.log"; } &&

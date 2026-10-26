@@ -192,6 +192,26 @@ int oz_cli_pool_export_check(const char *name,cred_t *caller)
     error=suspended_export_check(name);if(error)return error;
     return mounted_subtree(name)?EBUSY:oz_pool_split_source_busy(name);
 }
+int oz_cli_pool_rewind_check(const char *name,cred_t *caller)
+{
+    if(!ready||FindTask(NULL)!=engine_owner)return ENODEV;
+    int error=secpolicy_zfs(caller);
+    if(error)return error;
+    if(pool_namecheck(name,NULL,NULL))return EINVAL;
+    /* Recovery may inspect an uninitialized or suspended SPA. Do not call
+     * spa_open or wait for sync before upstream applies the load policy. */
+    if(mounted_subtree(name)||oz_pool_split_source_busy(name))return EBUSY;
+    spa_namespace_enter(FTAG);
+    spa_t *spa=spa_lookup(name);
+    if(!spa)error=ENOENT;
+    else if(!spa_writeable(spa))error=EROFS;
+    else {
+        extern int oz_pool_import_identity_check(spa_t *);
+        error=oz_pool_import_identity_check(spa);
+    }
+    spa_namespace_exit(FTAG);
+    return error;
+}
 void oz_cli_pool_export_done(const char *name)
 {
     oz_pool_import_release(name);

@@ -830,7 +830,20 @@ done:
     return error;
 #undef UPGRADE_CHECK
 }
-static int cli_clear_rewind_unsupported(void)
+static int cli_clear_rewind_unmounted(void)
+{
+    BPTR marker=Lock((CONST_STRPTR)"SYS:openzfs-cli-package-test",SHARED_LOCK);
+    if(!marker)return 0;
+    UnLock(marker);
+    const char *commands[]={"C:zpool clear -nF public_mirror",
+        "C:zpool clear -F public_mirror","C:zpool clear -nFX public_mirror",
+        "C:zpool clear -FX public_mirror"};
+    for(unsigned i=0;i<sizeof(commands)/sizeof(*commands);i++)
+        if(cli_command(commands[i]))return EIO;
+    note("Public CLI clear rewind healthy PASS preview=1 commit=1 extreme-preview=1 extreme-commit=1\n");
+    return 0;
+}
+static int cli_clear_rewind_busy(void)
 {
     char *commands[][5]={{"C:zpool","clear","-nF","public_mirror",NULL},
         {"C:zpool","clear","-F","public_mirror",NULL}};
@@ -841,15 +854,15 @@ static int cli_clear_rewind_unsupported(void)
         int error=oz_cli_spawn_exact(commands[i][0],commands[i],Output(),errors,&result);
         if(!Close(errors))error=EIO;
         diagnostic_log("T:public-clear-errors.log");
-        /* A transport refusal is not a successful recovery feasibility test. */
+        /* A mounted-pool refusal is not a successful feasibility test. */
         if(error||result.dos_error||!result.status)return EIO;
         BPTR f=Open((CONST_STRPTR)"T:public-clear-errors.log",MODE_OLDFILE);
         if(!f)return EIO;
         char text[2048]={0};LONG n=Read(f,text,sizeof(text)-1);
         int closed=Close(f);
-        if(n<=0||n==sizeof(text)-1||!closed||!strstr(text,"not supported"))return EIO;
+        if(n<=0||n==sizeof(text)-1||!closed||!strstr(text,"busy"))return EIO;
     }
-    note("Public CLI clear rewind unsupported PASS dryrun-refused=1 commit-refused=1 diagnostic=1\n");
+    note("Public CLI clear rewind mounted PASS dryrun-refused=1 commit-refused=1 diagnostic=1\n");
     return 0;
 }
 static int cli_trim_unsupported(void)
@@ -2981,6 +2994,7 @@ static int storage_test(int gui){
     STORAGE_CHECK(!storage_alias_request(5,0));
     STORAGE_CHECK(!pool_root_payload("public_mirror",1,0));
     note("Public pool root payload PASS written=1 flushed=1 detached=1\n");
+    STORAGE_CHECK(!cli_clear_rewind_unmounted());
 #ifdef OZ_NATIVE_DISPATCHER
     STORAGE_CHECK(!oz_public_ioctl_test("public_mirror"));
     if(native_file_fixture)STORAGE_CHECK(!oz_public_bootenv_persistence_test("public_mirror",1));
@@ -3098,7 +3112,7 @@ static int storage_test(int gui){
         if(storage_dspare)STORAGE_CHECK(!storage_spare_test());
         STORAGE_CHECK(!cli_result("C:zpool list -H -o name public_mirror >T:cli-package-output.txt","public_mirror"));
         STORAGE_CHECK(!cli_trim_unsupported());
-        STORAGE_CHECK(!cli_clear_rewind_unsupported());
+        STORAGE_CHECK(!cli_clear_rewind_busy());
         STORAGE_CHECK(!cli_result("C:zfs list -H -o name public_mirror/files >T:cli-package-output.txt","public_mirror/files"));
         STORAGE_CHECK(!cli_result("C:zfs get -H -o value type public_mirror/files >T:cli-package-output.txt","filesystem"));
         STORAGE_CHECK(SystemTags((CONST_STRPTR)"C:zfs snapshot public_mirror/files@cli_roundtrip",TAG_DONE)==0);

@@ -12,10 +12,41 @@
 #include "packet-cred.h"
 #include "cache-policy.h"
 int oz_cli_pool_export_check(const char *,cred_t *);
+int oz_cli_pool_rewind_check(const char *,cred_t *);
 void oz_cli_pool_export_done(const char *);
 int oz_cli_dataset_rename_check(const char *,const char *,int);
 int oz_cli_history_check(const char *,uint64_t,cred_t *);
 extern uint_t zfs_allow_log_key;
+
+/* Upstream accepts either the policy itself or one load-policy wrapper.
+ * Reject malformed/ambiguous fields instead of silently defaulting to a
+ * different recovery operation. The wire cookie and policy must agree. */
+static int clear_policy_check(nvlist_t *policy,uint64_t expected,unsigned depth)
+{
+    if(depth>4)return EINVAL;
+    unsigned seen=0;
+    for(nvpair_t *p=nvlist_next_nvpair(policy,NULL);p;p=nvlist_next_nvpair(policy,p)) {
+        const char *name=nvpair_name(p);unsigned bit;uint64_t value;
+        if(!strcmp(name,ZPOOL_LOAD_POLICY)) {
+            nvlist_t *inner=NULL;
+            if(seen||nvlist_next_nvpair(policy,p)||nvpair_value_nvlist(p,&inner))return EINVAL;
+            return clear_policy_check(inner,expected,depth+1);
+        }
+        if(!strcmp(name,ZPOOL_LOAD_REWIND_POLICY)) {
+            uint32_t flags;bit=1;
+            if(nvpair_value_uint32(p,&flags)||flags!=expected)return EINVAL;
+        } else {
+            if(!strcmp(name,ZPOOL_LOAD_REQUEST_TXG))bit=2;
+            else if(!strcmp(name,ZPOOL_LOAD_META_THRESH))bit=4;
+            else if(!strcmp(name,ZPOOL_LOAD_DATA_THRESH))bit=8;
+            else return EINVAL;
+            if(nvpair_value_uint64(p,&value))return EINVAL;
+        }
+        if(seen&bit)return EINVAL;
+        seen|=bit;
+    }
+    return (seen&1)||expected==ZPOOL_NO_REWIND?0:EINVAL;
+}
 
 size_t oz_ioctl_request_limit(void)
 {
@@ -251,9 +282,20 @@ static int execute(void *storage,size_t length,const struct oz_packet_security *
     /* Optional packed GUID property is decoded and authorized upstream. */
     if(reguid&&(w->dst_capacity||command.zc_guid||command.zc_cookie||
         command.zc_obj||command.zc_value[0]))return EINVAL;
-    /* Match native Manager clear: admitted pools only, no rewind/recovery
-     * policy. Upstream owns configuration permissions and read-only checks. */
-    if(clearing&&command.zc_cookie!=ZPOOL_NO_REWIND)return ENOTSUP;
+    if(clearing) {
+        uint64_t flags=command.zc_cookie;
+        if(flags!=ZPOOL_NO_REWIND&&flags!=ZPOOL_NEVER_REWIND&&
+            flags!=ZPOOL_TRY_REWIND&&flags!=ZPOOL_DO_REWIND&&
+            flags!=(ZPOOL_TRY_REWIND|ZPOOL_EXTREME_REWIND)&&
+            flags!=(ZPOOL_DO_REWIND|ZPOOL_EXTREME_REWIND))return EINVAL;
+        if(flags!=ZPOOL_NO_REWIND&&(!w->src_size||!w->dst_capacity))return EINVAL;
+        if(w->src_size) {
+            nvlist_t *policy=NULL;
+            int e=nvlist_unpack((char *)storage+base,w->src_size,&policy,0);
+            if(!e)e=clear_policy_check(policy,flags,0);
+            nvlist_free(policy);if(e)return e;
+        }
+    }
     if(clearing&&(command.zc_obj||command.zc_value[0]))return EINVAL;
     /* Detach cannot admit new paths. Keep the pool's backing reservations
      * until export/destroy, as the native management detach path does. */
@@ -378,6 +420,8 @@ static int execute(void *storage,size_t length,const struct oz_packet_security *
         /* Destroy requires the same native authorization, mounted-subtree
          * exclusion and successful-removal binding cleanup as export. */
         w->engine_error=removing?oz_cli_pool_export_check(command.zc_name,cred):0;
+        if(clearing&&command.zc_cookie!=ZPOOL_NO_REWIND)
+            w->engine_error=oz_cli_pool_rewind_check(command.zc_name,cred);
         if(history_read)w->engine_error=oz_cli_history_check(command.zc_name,command.zc_history_offset,cred);
         if(poolprop) {
             nvlist_t *props=NULL;const char *cache=NULL;

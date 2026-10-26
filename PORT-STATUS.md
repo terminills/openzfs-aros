@@ -370,7 +370,16 @@ selected dependencies, not a newly qualified official or bootstrap release.
   in a separate guest with unchanged backing/overlay hashes. Evidence is in
   `aros/tests/evidence/cli-clear-hotplug-20261026` and
   `aros/tests/evidence/cli-clear-inflight-20261026`. Unacknowledged tail data,
-  physical durability and clear-with-rewind recovery are not qualified.
+  physical durability and damaged-pool clear-with-rewind recovery are not
+  qualified. The native CLEAR transport now forwards validated upstream
+  rewind policies, with mounted-pool exclusion and retained-identity checks.
+  Fresh eight-CPU file and partition/discovery QEMU runs pass real CLI
+  `clear -nF`, `-F`, `-nFX`, and `-FX` on healthy unmounted pools; malformed,
+  unauthorized, mounted and readonly requests are refused. AROS libzfs no
+  longer decodes an absent recovery response after admission refusal.
+  See `aros/tests/evidence/clear-rewind-policy-20261026`. Healthy SPA loads
+  do not exercise selection of an older transaction group; that recovery
+  qualification and a corresponding management UI workflow remain open.
 - Not every upstream feature or topology has end-to-end AROS validation.
 - Native and file-backed pool creation accept blank extents or consistently labeled destroyed
   members (all four checksummed labels must agree on destroyed state and pool/member GUIDs).
