@@ -4,7 +4,13 @@ repo=${AROS_TEST_SOURCE_ROOT:-$(cd -- "$(dirname -- "$0")/../.." && pwd)}
 if [[ ${AROS_TEST_RUNNER_SNAPSHOT:-} != "$0" ]];then
     # Bash reads a script incrementally. Execute a private snapshot so source
     # edits during a guest run cannot shift the shell's read offset mid-test.
-    snapshot=$(mktemp -d "$repo/build-aros/public-runner.XXXXXXXX")
+    source "$repo/aros/engine/storage-preflight.sh"
+    snapshot_root=$(oz_artifact_root "$repo" "${AROS_TEST_ARTIFACT_ROOT:-}")
+    if [[ -z ${AROS_TEST_ARTIFACT_ROOT:-} ]];then
+        snapshot_root="$repo/build-aros"
+        mkdir -p "$snapshot_root"
+    fi
+    snapshot=$(mktemp -d "$snapshot_root/public-runner.XXXXXXXX")
     cp "$0" "$snapshot/runner.sh"
     exec env AROS_TEST_SOURCE_ROOT="$repo" AROS_TEST_RUNNER_SNAPSHOT="$snapshot/runner.sh" \
         bash "$snapshot/runner.sh" "$@"
@@ -247,7 +253,11 @@ if [[ $gui == 1 ]];then
 fi
 source "$repo/aros/engine/storage-preflight.sh"
 mkdir -p "$repo/build-aros"
-artifact_root=$(oz_artifact_root "$repo/build-aros" "${AROS_TEST_ARTIFACT_ROOT:-}")
+artifact_root=$(oz_artifact_root "$repo" "${AROS_TEST_ARTIFACT_ROOT:-}")
+if [[ -z ${AROS_TEST_ARTIFACT_ROOT:-} ]];then
+    artifact_root="$repo/build-aros"
+    mkdir -p "$artifact_root"
+fi
 run=$(mktemp -d "$artifact_root/$prefix.XXXXXXXX")
 printf '%s\n' "$missing_helper" >"$run/missing-exec-helper.txt"
 cp "$0" "$run/runner.sh"
