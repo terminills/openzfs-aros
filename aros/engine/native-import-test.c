@@ -419,6 +419,26 @@ int main(void)
 #endif
         ,TAG_DONE)==0);
     for(unsigned i=0;i<1500;i++){Forbid();int ready=FindPort((CONST_STRPTR)OZ_ADMISSION_PORT)!=NULL;Permit();if(ready)break;Delay(1);}
+#ifdef OZ_NATIVE_IMPORT_REWIND
+    for(unsigned cycle=0;cycle<2;cycle++) {
+        /* Latest MOS root is deliberately damaged in BOTH disposable
+         * members. An ordinary import must fail again after readonly
+         * recovery; otherwise a preview may have silently committed. */
+        CHECK(SystemTags((CONST_STRPTR)"C:zpool import -N -f -o cachefile=none -o readonly=on -d /AROS/ata.device/0/partition/0 -d /AROS/ata.device/1/partition/0 qemu_mirror",TAG_DONE)>0);
+        CHECK(SystemTags((CONST_STRPTR)"C:zpool list -H qemu_mirror",TAG_DONE)>0);
+        CHECK(SystemTags((CONST_STRPTR)"C:zpool import -N -f -FX -o cachefile=none -o readonly=on -d /AROS/ata.device/0/partition/0 -d /AROS/ata.device/1/partition/0 qemu_mirror",TAG_DONE)==0);
+        CHECK(!oz_mount_control(OZ_ADMISSION_PORT,"qemu_mirror/files","OZREWIND",OZ_MOUNT_ATTACH,OZ_MOUNT_READONLY));
+        const char expected[]="OpenZFS on AROS: real ZPL file on a two-device QEMU mirror.\n";
+        char data[128];file=Open((CONST_STRPTR)"OZREWIND:hello.txt",MODE_OLDFILE);CHECK(file);
+        CHECK(Read(file,data,sizeof(data))==sizeof(expected)-1);
+        CHECK(!memcmp(data,expected,sizeof(expected)-1));CHECK(Close(file));file=0;
+        file=Open((CONST_STRPTR)"OZREWIND:must-not-write",MODE_NEWFILE);CHECK(!file&&IoErr()==ERROR_DISK_WRITE_PROTECTED);
+        CHECK(!oz_mount_control(OZ_ADMISSION_PORT,"qemu_mirror/files","",OZ_MOUNT_DETACH,0));
+        CHECK(SystemTags((CONST_STRPTR)"C:zpool export qemu_mirror",TAG_DONE)==0);
+    }
+    note("RESULT native damaged import rewind PASS cycles=2 ordinary-refused=2 absent-after-refusal=2 readonly-FX=2 exact-DOS=2 write-refused=2");
+    goto done;
+#endif
 #ifdef OZ_NATIVE_LABELCLEAR_ONLY
     CHECK(!request(7,"readonly=off",0));
     CHECK(!health());
@@ -1070,7 +1090,9 @@ done:
     if(file)Close(file);
     if(secBase)CloseLibrary(secBase);
     char line[160];snprintf(line,sizeof(line),
-#if defined(OZ_NATIVE_FILE_CORRUPTION)
+#if defined(OZ_NATIVE_IMPORT_REWIND)
+        "RESULT native damaged rewind test %s line=%d",
+#elif defined(OZ_NATIVE_FILE_CORRUPTION)
         "RESULT native real file corruption %s line=%d",
 #elif defined(OZ_NATIVE_USB_CREATED_RECOVERY)
         "RESULT native created recovery test %s line=%d",

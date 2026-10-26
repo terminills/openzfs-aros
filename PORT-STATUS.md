@@ -380,6 +380,14 @@ selected dependencies, not a newly qualified official or bootstrap release.
   See `aros/tests/evidence/clear-rewind-policy-20261026`. Healthy SPA loads
   do not exercise selection of an older transaction group; that recovery
   qualification and a corresponding management UI workflow remain open.
+  Separately, a real damaged-pool readonly `import -FX` test now passes:
+  both mirror members have all three newest MOS-root copies corrupted,
+  ordinary import fails, and extreme readonly recovery exposes exact file
+  contents through the native DOS handler. Two cycles leave backing and
+  overlay hashes unchanged. Host zdb independently rejects the latest state
+  and verifies an older TXG with no leaks. See
+  `aros/tests/evidence/damaged-import-rewind-20261026`; this does not prove
+  writable recovery, cold persistence or physical durability.
 - Not every upstream feature or topology has end-to-end AROS validation.
 - Native and file-backed pool creation accept blank extents or consistently labeled destroyed
   members (all four checksummed labels must agree on destroyed state and pool/member GUIDs).

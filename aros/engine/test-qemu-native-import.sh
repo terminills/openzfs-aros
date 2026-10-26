@@ -141,6 +141,12 @@ usb_rounds=${AROS_TEST_USB_RECOVERY_ROUNDS:-1}
 usb_created=${AROS_TEST_USB_CREATED_RECOVERY:-0}
 usb_inflight=${AROS_TEST_USB_INFLIGHT_WRITE:-0}
 usb_cli_clear=${AROS_TEST_USB_CLI_CLEAR:-0}
+import_rewind=${AROS_TEST_IMPORT_REWIND:-0}
+[[ $import_rewind == 0 || $import_rewind == 1 ]]
+if [[ $import_rewind == 1 ]];then
+    [[ $native_bus == ide && $members == both && $layout == mirror && $writable == 0 && $gpt == 0 && $gui == 0 && -z ${AROS_TEST_WHOLE_CLI_LINK:-} ]]
+    [[ -f ${AROS_TEST_CLI_DIR:?rewind test needs packaged CLI}/zpool ]]
+fi
 [[ $usb_cli_clear == 0 || $usb_cli_clear == 1 ]]
 if [[ $usb_cli_clear == 1 ]];then
     [[ $usb_all_lost_writable == 1 && -z ${AROS_TEST_WHOLE_CLI_LINK:-} ]]
@@ -371,6 +377,12 @@ git rev-parse HEAD >"$run/source-head.txt"
 git diff --binary >"$run/source.patch"
 cp "$0" aros/engine/native-import-test.c aros/engine/Startup-Native-Import "$run/"
 sha256sum "$cc" "$pthread" "$pthread_include/pthread.h" > "$run/client-toolchain.sha256"
+if [[ $import_rewind == 1 ]];then
+    cp "$AROS_TEST_CLI_DIR/zpool" "$run/zpool"
+    sha256sum "$run/zpool" > "$run/rewind-cli.sha256"
+    gui_maps+=(-map "$run/zpool" /C/zpool)
+    gui_flags+=(-DOZ_NATIVE_IMPORT_REWIND)
+fi
 if [[ $usb_cli_clear == 1 ]];then
     cp "$AROS_TEST_CLI_DIR/zpool" "$run/zpool"
     sha256sum "$run/zpool" > "$run/clear-cli.sha256"
@@ -1281,6 +1293,15 @@ done
 printf 'quit\n' | socat - "UNIX-CONNECT:$run/monitor" >/dev/null
 wait "$pid"
 trap - EXIT
+if [[ $import_rewind == 1 ]];then
+    rg -q '^RESULT native damaged import rewind PASS cycles=2 ordinary-refused=2 absent-after-refusal=2 readonly-FX=2 exact-DOS=2 write-refused=2' "$run/serial.log"
+    rg -q '^RESULT native damaged rewind test PASS line=0' "$run/serial.log"
+    [[ -s "$run/overlays.sha256" ]]
+    sha256sum -c "$run/backing.sha256"
+    sha256sum -c "$run/overlays.sha256"
+    echo "PASS: native damaged-pool readonly extreme rewind, exact DOS and unchanged images: $run"
+    exit 0
+fi
 if [[ $labelclear_only == 1 ]];then
     marker='RESULT native raw labelclear PASS active-refused=1 exported-force=1 labels=8 pads-preserved=8 regions-zero=8 import-absent=1'
     rg -Fq "$marker" "$run/serial.log"
