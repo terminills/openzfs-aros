@@ -310,6 +310,39 @@ done:
     }
     return error;
 }
+static int invoke_accounting_upgrade(const struct oz_ticket *ticket,LONG fd,const char *dataset)
+{
+    size_t size=sizeof(struct oz_ioctl_wire)+sizeof(zfs_cmd_t);
+    struct oz_ioctl_wire *w=calloc(1,size);
+    if(!w)return ENOMEM;
+    prepare(w,ticket,fd,dataset,0);w->command=ZFS_IOC_USERSPACE_UPGRADE;
+    int error=oz_ioctl_request(OZ_ADMISSION_PORT,w,size);
+    if(!error)error=w->engine_error;
+    free(w);return error;
+}
+static int denied_accounting_upgrade(const char *dataset,const struct oz_ticket *root_ticket,LONG root_fd)
+{
+    int error=0,switched=0,opened=0;LONG fd=-1;struct oz_ticket ticket={0};
+    struct Library *secBase=OpenLibrary((CONST_STRPTR)SECURITYNAME,SECURITYVERSION);
+    struct TagItem quiet[]={{secT_Quiet,TRUE},{TAG_DONE,0}};
+    struct TagItem reader[]={{secT_UserID,(IPTR)"ozreader"},{secT_Password,(IPTR)""},{TAG_DONE,0}};
+    struct TagItem root[]={{secT_UserID,(IPTR)"oztestroot"},{secT_Password,(IPTR)""},{TAG_DONE,0}};
+    TEST(secBase!=NULL);
+    secLogoutA(quiet);switched=1;
+    TEST(secLoginA(reader)==((77UL<<16)|88));
+    TEST(invoke_accounting_upgrade(root_ticket,root_fd,dataset)==EACCES);
+    TEST(!oz_session_open(OZ_ADMISSION_PORT,&ticket));opened=1;
+    TEST(!oz_control_open(OZ_ADMISSION_PORT,&ticket,&fd));
+    int denied=invoke_accounting_upgrade(&ticket,fd,dataset);
+    TEST(denied==EPERM||denied==EACCES);
+done:
+    if(fd>0)(void)oz_control_close(OZ_ADMISSION_PORT,&ticket,fd);
+    if(opened)(void)oz_session_close(OZ_ADMISSION_PORT,&ticket);
+    if(switched){secLogoutA(quiet);if(secLoginA(root)!=secOWNER_SYSTEM)error=EACCES;}
+    if(secBase)CloseLibrary(secBase);
+    if(!error){const char *p="Public accounting upgrade authorization PASS changed-user=1 own-session-denied=1\n";while(*p)RawPutChar(*p++);}
+    return error;
+}
 static int denied_bootenv(const char *pool,const struct oz_ticket *root_ticket,LONG root_fd)
 {
     int error=0,switched=0,opened=0;LONG fd=-1;struct oz_ticket ticket={0};
@@ -467,6 +500,7 @@ int oz_public_ioctl_test(const char *pool)
     TEST(!upstream_core_datasets(pool));
     char accounting_dataset[256];
     snprintf(accounting_dataset,sizeof(accounting_dataset),"%s/files",pool);
+    TEST(!denied_accounting_upgrade(accounting_dataset,&ticket,fd));
     TEST(!oz_public_accounting_upgrade_test(accounting_dataset,0));
     TEST(!oz_control_close(OZ_ADMISSION_PORT,&ticket,fd));
     prepare(w,&ticket,fd,pool,capacity);fd=-1;

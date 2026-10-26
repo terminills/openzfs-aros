@@ -2548,6 +2548,10 @@ static int storage_test(int gui){
     STORAGE_CHECK(!companion_import_test(1));
     STORAGE_CHECK(oz_mount_control(OZ_ADMISSION_PORT,"public_mirror/files","bad:name",OZ_MOUNT_ATTACH,0)==EINVAL);
     STORAGE_CHECK(!oz_mount_control(OZ_ADMISSION_PORT,"public_mirror/files","OZPUBLIC",OZ_MOUNT_ATTACH,0));
+#ifdef OZ_NATIVE_DISPATCHER
+    STORAGE_CHECK(!oz_public_accounting_upgrade_test("public_mirror/files",0));
+    note("Public accounting mounted upgrade PASS writable=1 repeat=1\n");
+#endif
     STORAGE_CHECK(oz_mount_control(OZ_ADMISSION_PORT,"public_mirror/files","OZDUPLICATE",OZ_MOUNT_ATTACH,0)==EEXIST);
     {
         BPTR busy=Lock((CONST_STRPTR)"OZPUBLIC:",ACCESS_READ);

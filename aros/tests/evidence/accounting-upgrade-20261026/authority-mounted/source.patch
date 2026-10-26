@@ -1,0 +1,82 @@
+diff --git a/aros/cli/ioctl-public-test.c b/aros/cli/ioctl-public-test.c
+index 229c0f4..4aa5ba9 100644
+--- a/aros/cli/ioctl-public-test.c
++++ b/aros/cli/ioctl-public-test.c
+@@ -310,6 +310,39 @@ done:
+     }
+     return error;
+ }
++static int invoke_accounting_upgrade(const struct oz_ticket *ticket,LONG fd,const char *dataset)
++{
++    size_t size=sizeof(struct oz_ioctl_wire)+sizeof(zfs_cmd_t);
++    struct oz_ioctl_wire *w=calloc(1,size);
++    if(!w)return ENOMEM;
++    prepare(w,ticket,fd,dataset,0);w->command=ZFS_IOC_USERSPACE_UPGRADE;
++    int error=oz_ioctl_request(OZ_ADMISSION_PORT,w,size);
++    if(!error)error=w->engine_error;
++    free(w);return error;
++}
++static int denied_accounting_upgrade(const char *dataset,const struct oz_ticket *root_ticket,LONG root_fd)
++{
++    int error=0,switched=0,opened=0;LONG fd=-1;struct oz_ticket ticket={0};
++    struct Library *secBase=OpenLibrary((CONST_STRPTR)SECURITYNAME,SECURITYVERSION);
++    struct TagItem quiet[]={{secT_Quiet,TRUE},{TAG_DONE,0}};
++    struct TagItem reader[]={{secT_UserID,(IPTR)"ozreader"},{secT_Password,(IPTR)""},{TAG_DONE,0}};
++    struct TagItem root[]={{secT_UserID,(IPTR)"oztestroot"},{secT_Password,(IPTR)""},{TAG_DONE,0}};
++    TEST(secBase!=NULL);
++    secLogoutA(quiet);switched=1;
++    TEST(secLoginA(reader)==((77UL<<16)|88));
++    TEST(invoke_accounting_upgrade(root_ticket,root_fd,dataset)==EACCES);
++    TEST(!oz_session_open(OZ_ADMISSION_PORT,&ticket));opened=1;
++    TEST(!oz_control_open(OZ_ADMISSION_PORT,&ticket,&fd));
++    int denied=invoke_accounting_upgrade(&ticket,fd,dataset);
++    TEST(denied==EPERM||denied==EACCES);
++done:
++    if(fd>0)(void)oz_control_close(OZ_ADMISSION_PORT,&ticket,fd);
++    if(opened)(void)oz_session_close(OZ_ADMISSION_PORT,&ticket);
++    if(switched){secLogoutA(quiet);if(secLoginA(root)!=secOWNER_SYSTEM)error=EACCES;}
++    if(secBase)CloseLibrary(secBase);
++    if(!error){const char *p="Public accounting upgrade authorization PASS changed-user=1 own-session-denied=1\n";while(*p)RawPutChar(*p++);}
++    return error;
++}
+ static int denied_bootenv(const char *pool,const struct oz_ticket *root_ticket,LONG root_fd)
+ {
+     int error=0,switched=0,opened=0;LONG fd=-1;struct oz_ticket ticket={0};
+@@ -467,6 +500,7 @@ int oz_public_ioctl_test(const char *pool)
+     TEST(!upstream_core_datasets(pool));
+     char accounting_dataset[256];
+     snprintf(accounting_dataset,sizeof(accounting_dataset),"%s/files",pool);
++    TEST(!denied_accounting_upgrade(accounting_dataset,&ticket,fd));
+     TEST(!oz_public_accounting_upgrade_test(accounting_dataset,0));
+     TEST(!oz_control_close(OZ_ADMISSION_PORT,&ticket,fd));
+     prepare(w,&ticket,fd,pool,capacity);fd=-1;
+diff --git a/aros/engine/public-service-test.c b/aros/engine/public-service-test.c
+index 4dc632d..32547db 100644
+--- a/aros/engine/public-service-test.c
++++ b/aros/engine/public-service-test.c
+@@ -2548,6 +2548,10 @@ static int storage_test(int gui){
+     STORAGE_CHECK(!companion_import_test(1));
+     STORAGE_CHECK(oz_mount_control(OZ_ADMISSION_PORT,"public_mirror/files","bad:name",OZ_MOUNT_ATTACH,0)==EINVAL);
+     STORAGE_CHECK(!oz_mount_control(OZ_ADMISSION_PORT,"public_mirror/files","OZPUBLIC",OZ_MOUNT_ATTACH,0));
++#ifdef OZ_NATIVE_DISPATCHER
++    STORAGE_CHECK(!oz_public_accounting_upgrade_test("public_mirror/files",0));
++    note("Public accounting mounted upgrade PASS writable=1 repeat=1\n");
++#endif
+     STORAGE_CHECK(oz_mount_control(OZ_ADMISSION_PORT,"public_mirror/files","OZDUPLICATE",OZ_MOUNT_ATTACH,0)==EEXIST);
+     {
+         BPTR busy=Lock((CONST_STRPTR)"OZPUBLIC:",ACCESS_READ);
+diff --git a/aros/engine/test-qemu-public-service.sh b/aros/engine/test-qemu-public-service.sh
+index 417d220..72a239c 100644
+--- a/aros/engine/test-qemu-public-service.sh
++++ b/aros/engine/test-qemu-public-service.sh
+@@ -506,6 +506,10 @@ while :;do
+         reaped=$(rg -c '^Public task-exit session reclamation PASS cycles=4 sessions=32' "$run/serial-results.log" || true)
+         controls=$(rg -c '^Public native control descriptors PASS capacity=64 ownership=1 stale=1 session-cleanup=1' "$run/serial-results.log" || true)
+         if [[ $count == 3 && $sessions == 2 && $reaped == 2 ]] &&
++           { [[ ${AROS_TEST_REQUIRE_ACCOUNTING_UPGRADE:-0} != 1 ]] || {
++               rg -q '^Public accounting upgrade authorization PASS changed-user=1 own-session-denied=1' "$run/serial-results.log" &&
++               rg -q '^Public accounting mounted upgrade PASS writable=1 repeat=1' "$run/serial-results.log" &&
++               rg -q '^Public accounting upgrade PASS readonly=1 malformed=1 absent-gated=1' "$run/serial-results.log"; }; } &&
+            { [[ ${AROS_TEST_REQUIRE_BOOTENV:-0} != 1 ]] || {
+                rg -q '^Public upstream bootenv PASS get=1 set=1 invalid-preserved=1 restored=1' "$run/serial-results.log" &&
+                rg -q '^Public upstream bootenv authorization PASS changed-user=1 own-session-denied=1 reader-get=1 unchanged=1' "$run/serial-results.log" &&
