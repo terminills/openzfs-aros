@@ -53,7 +53,12 @@ $(OZ_CLI_OBJ)/metadata.h: $(OZ_SOURCE)/META $(OZ_SOURCE)/aros/cli/generate-metad
 	@$(MKDIR) $(dir $@)
 	$(OPENZFS_PYTHON) $(OZ_SOURCE)/aros/cli/generate-metadata.py $(OZ_SOURCE)/META $@
 
-$(OZ_CLI_OBJ)/zfs_gitrev.h: $(OZ_SOURCE)/META
+# Git HEAD and tracked dirty state can change without touching META. The
+# upstream generator compares content, preserving the header mtime if equal.
+.PHONY: openzfs-cli-gitrev-check
+openzfs-cli-gitrev-check:
+
+$(OZ_CLI_OBJ)/zfs_gitrev.h: $(OZ_SOURCE)/META $(OZ_SOURCE)/scripts/make_gitrev.sh openzfs-cli-gitrev-check
 	@$(MKDIR) $(dir $@)
 	cd $(OZ_CLI_OBJ) && bash $(OZ_SOURCE)/scripts/make_gitrev.sh zfs_gitrev.h
 

@@ -1,0 +1,29 @@
+FF
+======================================================================
+FAIL: test_cli_incremental_revision (__main__.RevisionTests.test_cli_incremental_revision)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/mnt/short-term/openzfs-bootenv-candidate-20261025/aros/distribution/test-mmake-gitrev.py", line 65, in test_cli_incremental_revision
+    self.check_fragment("cli")
+  File "/mnt/short-term/openzfs-bootenv-candidate-20261025/aros/distribution/test-mmake-gitrev.py", line 54, in check_fragment
+    build()
+  File "/mnt/short-term/openzfs-bootenv-candidate-20261025/aros/distribution/test-mmake-gitrev.py", line 48, in build
+    self.assertIn('"' + git("describe", "--always", "--long", "--dirty") + '"', header.read_text())
+AssertionError: '"a55ee5c-dirty"' not found in '#define\tZFS_META_GITREV "a55ee5c"\n'
+
+======================================================================
+FAIL: test_engine_incremental_revision (__main__.RevisionTests.test_engine_incremental_revision)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/mnt/short-term/openzfs-bootenv-candidate-20261025/aros/distribution/test-mmake-gitrev.py", line 68, in test_engine_incremental_revision
+    self.check_fragment("engine")
+  File "/mnt/short-term/openzfs-bootenv-candidate-20261025/aros/distribution/test-mmake-gitrev.py", line 54, in check_fragment
+    build()
+  File "/mnt/short-term/openzfs-bootenv-candidate-20261025/aros/distribution/test-mmake-gitrev.py", line 48, in build
+    self.assertIn('"' + git("describe", "--always", "--long", "--dirty") + '"', header.read_text())
+AssertionError: '"ee38e81-dirty"' not found in '#define\tZFS_META_GITREV "ee38e81"\n'
+
+----------------------------------------------------------------------
+Ran 2 tests in 0.372s
+
+FAILED (failures=2)

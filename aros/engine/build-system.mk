@@ -76,7 +76,12 @@ $(OZE_OUT)/include/engine-metadata.h: $(OZE_ROOT)/META $(OZE_ROOT)/aros/cli/gene
 	@$(MKDIR) $(dir $@)
 	$(OPENZFS_PYTHON) $(OZE_ROOT)/aros/cli/generate-metadata.py $(OZE_ROOT)/META $@
 
-$(OZE_OUT)/include/zfs_gitrev.h: $(OZE_ROOT)/META
+# Recheck HEAD and tracked dirty state on incremental builds. Unchanged
+# content is not rewritten by make_gitrev.sh, avoiding needless rebuilds.
+.PHONY: openzfs-engine-gitrev-check
+openzfs-engine-gitrev-check:
+
+$(OZE_OUT)/include/zfs_gitrev.h: $(OZE_ROOT)/META $(OZE_ROOT)/scripts/make_gitrev.sh openzfs-engine-gitrev-check
 	@$(MKDIR) $(dir $@)
 	cd $(OZE_OUT) && bash $(OZE_ROOT)/scripts/make_gitrev.sh include/zfs_gitrev.h
 
