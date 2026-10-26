@@ -2324,9 +2324,11 @@ static int storage_native_discovery(void)
         }else error=cli_result(command,i==4?"on":"");
         diagnostic_log("T:cli-package-output.txt");
         if(!error&&(i==0||i==1)){
-            /* Force must not bypass active reservations or the service's
-             * exported-member policy. Subsequent exact reads prove retention. */
-            if(!cli_command("C:zpool create -f -o cachefile=none -O mountpoint=none public_reuse_denied /AROS/ata.device/0/partition/0"))error=EIO;
+            /* Active reuse must fail even with force; exported reuse requires
+             * force. Subsequent exact reads prove retention in both cases. */
+            if(!cli_command(i==0?
+                "C:zpool create -f -o cachefile=none -O mountpoint=none public_reuse_denied /AROS/ata.device/0/partition/0":
+                "C:zpool create -o cachefile=none -O mountpoint=none public_reuse_denied /AROS/ata.device/0/partition/0"))error=EIO;
         }
         if(!error&&(i==3||i==6)){
             error=cli_result("C:zfs get -H -o value keystatus public_discovery >T:cli-package-output.txt","unavailable");
@@ -2377,7 +2379,7 @@ static int storage_native_discovery(void)
     }
     if(!DeleteFile((CONST_STRPTR)"RAM:discovery-root.key"))return EIO;
     if(!DeleteFile((CONST_STRPTR)"RAM:discovery-wrong.key"))return EIO;
-    note("Public native reuse guards PASS active-force-denied=1 exported-force-denied=1 original-data-preserved=1\n");
+    note("Public native reuse guards PASS active-force-denied=1 exported-without-force-denied=1 original-data-preserved=1\n");
     if(retain){
         note("Public native cold writer PASS encrypted-root=1 exact-write=1 detached=1 exported=1\n");
         note("Public native cold retained PASS properties=6 locked-import=2 wrong-key-denied=2 key-reload=2 exact-data=1 neighbor-cleanup=1\n");
