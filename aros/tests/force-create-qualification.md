@@ -148,3 +148,17 @@ source members, added exported members, and preserved the target payload
 through readonly reimport. The full storage suite passed. Both the failure
 and passing evidence are in `evidence/manager-force-add-20261026`.
 The changed UI wording still needs a fresh visual run.
+
+## Native force-add CLI and Manager result
+
+Run `public-service-run.sOg7EliC` exited zero with both CLI and Manager native
+force-add markers. Each lane used the disposable ATA partition fixture,
+refused active and readonly-imported source members, refused exported reuse
+without force, added the exported member, and verified exact target data
+after readonly reimport. Cleanup and the complete storage suite passed.
+Evidence is in `evidence/native-force-add-20261026`.
+
+Force create/add now have file and virtual-native-device runtime evidence
+through both interfaces. This does not close force attach/replace,
+potentially-active or arbitrary nonzero-media admission, physical failure
+qualification, or the remaining full-port requirements.
