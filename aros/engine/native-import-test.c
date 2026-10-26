@@ -682,18 +682,19 @@ int main(void)
 #endif
             note("READY native USB member removal member=ozmember0");
 #ifdef OZ_NATIVE_USB_INFLIGHT_WRITE
-            unsigned full_writes=0;LONG write_result=65536,write_error=0,flush_error=0;
+            unsigned full_writes=0,committed_writes=0;LONG write_result=65536,write_error=0,flush_error=0;
             for(unsigned write_no=0;write_no<2048;write_no++){
                 write_result=Write(file,chunk,65536);
                 if(write_result!=65536){write_error=IoErr();break;}
                 full_writes++;
                 if(!Flush(file)){flush_error=IoErr();break;}
+                committed_writes++;
             }
             LONG close_result=Close(file);file=0;free(chunk);
             {char line[192];snprintf(line,sizeof(line),
-                "Native USB in-flight write full=%u write-result=%ld write-errno=%ld flush-errno=%ld close=%ld",
-                full_writes,(long)write_result,(long)write_error,(long)flush_error,(long)close_result);note(line);}
-            CHECK(full_writes>0&&(write_result!=65536||flush_error));
+                "Native USB in-flight write full=%u committed=%u write-result=%ld write-errno=%ld flush-errno=%ld close=%ld",
+                full_writes,committed_writes,(long)write_result,(long)write_error,(long)flush_error,(long)close_result);note(line);}
+            CHECK(committed_writes>0&&(write_result!=65536||flush_error));
             note("RESULT native USB in-flight write interruption PASS wrote-before-error=1 error-observed=1");
 #endif
             int removed=0;
@@ -795,6 +796,20 @@ int main(void)
                 CHECK(!memcmp(data,sentinel,sizeof(sentinel)));
                 CHECK(Read(file,data,1)==0);}
             CHECK(Close(file));file=0;
+            /* A successful Flush is an acknowledged durability boundary.
+             * Unacknowledged tail bytes may or may not survive, but every
+             * successfully flushed chunk must survive the readonly reimport. */
+            file=Open((CONST_STRPTR)"OZINFLIGHT:interrupted-write",MODE_OLDFILE);CHECK(file);
+            {unsigned char data[4096];
+                for(unsigned block=0;block<committed_writes*16;block++) {
+                    CHECK(Read(file,data,sizeof(data))==sizeof(data));
+                    for(unsigned i=0;i<sizeof(data);i++)CHECK(data[i]==0xa5);
+                }
+            }
+            CHECK(Close(file));file=0;
+            {char line[192];snprintf(line,sizeof(line),
+                "RESULT native USB acknowledged writes PASS chunks=%u bytes=%llu readonly-reimport=1 exact-prefix=1",
+                committed_writes,(unsigned long long)committed_writes*65536);note(line);}
             CHECK(!oz_mount_control(OZ_ADMISSION_PORT,"qemu_mirror/files","",OZ_MOUNT_DETACH,0));
             note("RESULT native USB in-flight recovery PASS committed-sentinel=1 fresh-import=ONLINE");
 #endif
@@ -848,6 +863,25 @@ int main(void)
             CHECK(!memcmp(data,payload,sizeof(data)));CHECK(Read(file,data,1)==0);
             CHECK(Close(file));file=0;
             note("RESULT native USB cold survivor PASS exact-read=1 readonly=1");
+        }
+#endif
+#ifdef OZ_NATIVE_USB_COLD_ACK_CHUNKS
+        {
+            static const char sentinel[]="Committed before in-flight USB loss.\n";
+            file=Open((CONST_STRPTR)"OZNATIVE:committed-before-loss",MODE_OLDFILE);CHECK(file);
+            char saved[sizeof(sentinel)];CHECK(Read(file,saved,sizeof(saved))==sizeof(saved));
+            CHECK(!memcmp(saved,sentinel,sizeof(saved)));CHECK(Read(file,saved,1)==0);
+            CHECK(Close(file));file=0;
+            file=Open((CONST_STRPTR)"OZNATIVE:interrupted-write",MODE_OLDFILE);CHECK(file);
+            unsigned char data[4096];
+            for(unsigned block=0;block<OZ_NATIVE_USB_COLD_ACK_CHUNKS*16;block++) {
+                CHECK(Read(file,data,sizeof(data))==sizeof(data));
+                for(unsigned i=0;i<sizeof(data);i++)CHECK(data[i]==0xa5);
+            }
+            CHECK(Close(file));file=0;
+            char line[160];snprintf(line,sizeof(line),
+                "RESULT native USB cold acknowledged PASS chunks=%u exact-prefix=1 sentinel=1 readonly=1",
+                (unsigned)OZ_NATIVE_USB_COLD_ACK_CHUNKS);note(line);
         }
 #endif
         for(unsigned reopen=0;reopen<3;reopen++) {

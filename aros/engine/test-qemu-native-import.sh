@@ -172,11 +172,20 @@ if [[ $usb_all_lost == 1 ]];then [[ $usb_reinsert == 1 ]];fi
 [[ $usb_reinsert == 0 || $usb_reinsert == 1 || $usb_reinsert == 2 ]]
 if [[ $usb_reinsert != 0 ]];then [[ $usb_remove == 1 ]];fi
 usb_cold=${AROS_TEST_USB_COLD_SOURCE:-}
+usb_cold_kind=${AROS_TEST_USB_COLD_KIND:-survivor}
+[[ $usb_cold_kind == survivor || $usb_cold_kind == acknowledged ]]
+if [[ $usb_cold_kind == acknowledged ]];then [[ -n $usb_cold ]];fi
 if [[ -n $usb_cold ]];then
     usb_cold=$(realpath -e "$usb_cold")
     case "$usb_cold" in "$artifact_root"/native-import-run.*) ;; *) exit 2;; esac
     [[ $native_bus == usb && $usb_remove == 0 ]]
-    rg -q 'RESULT native USB degraded write PASS flush=1 survivor-reimport=1 exact-read=1' "$usb_cold/serial.log"
+    if [[ $usb_cold_kind == acknowledged ]];then
+        ack_chunks=$(sed -n 's/^RESULT native USB acknowledged writes PASS chunks=\([0-9]*\) bytes=.*readonly-reimport=1 exact-prefix=1\r*$/\1/p' "$usb_cold/serial.log")
+        [[ $ack_chunks =~ ^[1-9][0-9]{0,3}$ ]] && ((ack_chunks<=2048))
+        rg -q '^RESULT native CLI suspended clear PASS returned=0' "$usb_cold/serial.log"
+    else
+        rg -q 'RESULT native USB degraded write PASS flush=1 survivor-reimport=1 exact-read=1' "$usb_cold/serial.log"
+    fi
     rg -qx 'OZ-NATIVE-COMPLETION-v1 PASS line=0' "$usb_cold/completion.log"
     sha256sum -c "$usb_cold/backing.sha256"
 fi
@@ -309,7 +318,13 @@ if [[ $native_bus == usb ]];then
     if [[ $usb_suspend_guard == 1 ]];then gui_flags+=(-DOZ_NATIVE_USB_SUSPEND_GUARD);fi
     if [[ $usb_swap == 1 ]];then gui_flags+=(-DOZ_NATIVE_USB_SWAP_MEMBERS);fi
     if [[ $usb_inflight == 1 ]];then gui_flags+=(-DOZ_NATIVE_USB_INFLIGHT_WRITE);fi
-    if [[ -n $usb_cold ]];then gui_flags+=(-DOZ_NATIVE_USB_COLD -DOZ_NATIVE_IMPORT_DEGRADED);fi
+    if [[ -n $usb_cold ]];then
+        if [[ $usb_cold_kind == acknowledged ]];then
+            gui_flags+=(-DOZ_NATIVE_USB_COLD_ACK_CHUNKS="$ack_chunks")
+        else
+            gui_flags+=(-DOZ_NATIVE_USB_COLD -DOZ_NATIVE_IMPORT_DEGRADED)
+        fi
+    fi
 fi
 if [[ $native_bus == ahci ]];then
     gui_flags+=(-DOZ_NATIVE_AHCI_MEMBERS -DOZ_CLIENT_TIMEOUT_SECONDS=10)
@@ -1043,7 +1058,7 @@ for unit in "${units[@]}";do
         rg -q 'No problems found' "$run/created-member$unit-gpt.log"
         sha256sum "$run/created-member$unit.raw" >>"$run/backing.sha256"
         qemu-img create -f qcow2 -F raw -b "$run/created-member$unit.raw" "$run/disk$unit.qcow2"
-    elif [[ -n $usb_cold && $unit == 0 ]];then
+    elif [[ -n $usb_cold && $unit == 0 && $usb_cold_kind == survivor ]];then
         # Fresh empty member, not the removed disk or any of its labels.
         qemu-img create -f raw "$run/usb-empty.raw" 512M
         sgdisk --clear "$run/usb-empty.raw" >"$run/usb-empty-create.log" 2>&1
@@ -1052,8 +1067,8 @@ for unit in "${units[@]}";do
         sha256sum "$run/usb-empty.raw" >>"$run/backing.sha256"
         qemu-img create -f qcow2 -F raw -b "$run/usb-empty.raw" "$run/disk0.qcow2"
     elif [[ -n $usb_cold ]];then
-        sha256sum "$usb_cold/disk1.qcow2" >>"$run/backing.sha256"
-        qemu-img create -f qcow2 -F qcow2 -b "$usb_cold/disk1.qcow2" "$run/disk1.qcow2"
+        sha256sum "$usb_cold/disk$unit.qcow2" >>"$run/backing.sha256"
+        qemu-img create -f qcow2 -F qcow2 -b "$usb_cold/disk$unit.qcow2" "$run/disk$unit.qcow2"
     elif [[ $writable == 2 ]];then
         sha256sum "$verify_run/disk$unit.qcow2" >>"$run/backing.sha256"
         qemu-img create -f qcow2 -F qcow2 -b "$verify_run/disk$unit.qcow2" "$run/disk$unit.qcow2"
@@ -1334,7 +1349,11 @@ if [[ $usb_reinsert != 0 ]];then
     fi
 fi
 if [[ -n $usb_cold ]];then
-    [[ $(rg -c '^RESULT native USB cold survivor PASS exact-read=1 readonly=1' "$run/serial.log") == 2 ]]
+    if [[ $usb_cold_kind == acknowledged ]];then
+        [[ $(rg -c "^RESULT native USB cold acknowledged PASS chunks=$ack_chunks exact-prefix=1 sentinel=1 readonly=1" "$run/serial.log") == 2 ]]
+    else
+        [[ $(rg -c '^RESULT native USB cold survivor PASS exact-read=1 readonly=1' "$run/serial.log") == 2 ]]
+    fi
 fi
 if [[ $usb_remove != 0 && $usb_all_lost == 0 ]];then
     [[ $usb_removed == 1 ]]
@@ -1369,6 +1388,7 @@ if [[ $usb_inflight == 1 ]];then
     [[ $(rg -Fc 'RESULT native USB in-flight write interruption PASS wrote-before-error=1 error-observed=1' "$run/serial.log") == 1 ]]
     [[ $(rg -Fc 'RESULT native suspended unmount guard PASS error=EAGAIN responsive=1 namespace-retained=1' "$run/serial.log") == 1 ]]
     [[ $(rg -Fc 'RESULT native USB in-flight recovery PASS committed-sentinel=1 fresh-import=ONLINE' "$run/serial.log") == 1 ]]
+    rg -q '^RESULT native USB acknowledged writes PASS chunks=[1-9][0-9]* bytes=[1-9][0-9]* readonly-reimport=1 exact-prefix=1' "$run/serial.log"
 fi
 if [[ $usb_created == 1 ]];then
     rg -q '^RESULT native created pool recovery PASS first-export-after-clear=1 exact-read=1' "$run/serial.log"

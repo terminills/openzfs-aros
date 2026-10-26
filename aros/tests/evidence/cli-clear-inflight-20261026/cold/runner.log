@@ -1,0 +1,18 @@
+Native members attached: both
+Native pool layout: mirror
+Native storage bus: usb
+QEMU acceleration: kvm CPU: host
+Guest virtual CPUs: 8
+OS runtime profile: dos-posix
+USB controller: qemu-xhci
+Formatting '/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/native-import-run.PAyGO7cw/disk0.qcow2', fmt=qcow2 cluster_size=65536 extended_l2=off compression_type=zlib size=536870912 backing_file=/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/native-import-run.ejVLtkqL/disk0.qcow2 backing_fmt=qcow2 lazy_refcounts=off refcount_bits=16
+Formatting '/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/native-import-run.PAyGO7cw/disk1.qcow2', fmt=qcow2 cluster_size=65536 extended_l2=off compression_type=zlib size=536870912 backing_file=/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/native-import-run.ejVLtkqL/disk1.qcow2 backing_fmt=qcow2 lazy_refcounts=off refcount_bits=16
+Guest memory MiB: 2048
+Guest completion deadline: 600 seconds
+/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/qemu-run.cli-clear.w9j57Aci/disk0.raw: OK
+/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/native-import-run.ejVLtkqL/disk0.qcow2: OK
+/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/qemu-run.cli-clear.w9j57Aci/disk1.raw: OK
+/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/native-import-run.ejVLtkqL/disk1.qcow2: OK
+/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/native-import-run.PAyGO7cw/disk0.qcow2: OK
+/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/native-import-run.PAyGO7cw/disk1.qcow2: OK
+PASS: native readonly mirror import and DOS read; explicit GPT test=0: /mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/native-import-run.PAyGO7cw

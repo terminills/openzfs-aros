@@ -363,6 +363,14 @@ selected dependencies, not a newly qualified official or bootstrap release.
   semantics, a DOS whiteout command, or arbitrary special-device I/O.
 - Physical storage flush, disconnect, and abrupt power-loss behavior require
   hardware qualification. Virtual-disk tests do not establish these guarantees.
+  Current CLI clear now shares Manager's native identity/readmission checks.
+  Eight-CPU QEMU tests verify idle virtual USB total-loss recovery, swapped
+  member refusal with unchanged disks, and in-flight write interruption.
+  All 57 acknowledged 64-KiB writes survive CLI clear and two readonly imports
+  in a separate guest with unchanged backing/overlay hashes. Evidence is in
+  `aros/tests/evidence/cli-clear-hotplug-20261026` and
+  `aros/tests/evidence/cli-clear-inflight-20261026`. Unacknowledged tail data,
+  physical durability and clear-with-rewind recovery are not qualified.
 - Not every upstream feature or topology has end-to-end AROS validation.
 - Native and file-backed pool creation accept blank extents or consistently labeled destroyed
   members (all four checksummed labels must agree on destroyed state and pool/member GUIDs).
