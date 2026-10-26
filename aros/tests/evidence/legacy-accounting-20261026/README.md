@@ -107,3 +107,18 @@ Logs, package hashes and pruned-image hashes are in `cli-upgrade/`.
 This tests the installed CLI ZPL-version upgrade and data preservation. It
 does not replace the pre-accounting pool conversion fixture above, and does
 not claim fresh Manager UI execution or official-runtime qualification.
+
+## Manager asynchronous upgrade worker
+
+Run `public-service-run.SGE8ZAkj` passes a second upgrade fixture using the
+same `oz_project_worker_start/poll/free` path as Manager operation 47.
+Unconfirmed version-5 and confirmed invalid version-6 requests return engine
+errors before command execution. Version readback remains 3. The confirmed
+version-5 request succeeds, readback becomes 5, and exact payload survives
+unmount/remount. Cleanup unmounts and destroys the fixture dataset. The full
+public package/service suite passes and the runner exits zero.
+
+`manager-worker/` retains serial output, input/package hashes, source delta
+and pruned ISO hashes. The client is freshly rebuilt; the CLI and fixed service
+are the same recorded selections as the preceding run. This validates the
+actual asynchronous Manager execution path, not visual widget interaction.

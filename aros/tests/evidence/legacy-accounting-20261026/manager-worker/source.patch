@@ -1,0 +1,63 @@
+diff --git a/aros/engine/public-service-test.c b/aros/engine/public-service-test.c
+index 674db90..6e390b4 100644
+--- a/aros/engine/public-service-test.c
++++ b/aros/engine/public-service-test.c
+@@ -754,7 +754,23 @@ static int cli_result(const char *command,const char *expected)
+     while(count>0&&(text[count-1]=='\n'||text[count-1]=='\r'))text[--count]=0;
+     return strcmp(text,expected)?EIO:0;
+ }
+-static int cli_filesystem_upgrade(void)
++static int manager_upgrade_request(ULONG flags,const char *options,ULONG expected)
++{
++    struct oz_message request={0};struct oz_project_worker *worker=NULL;
++    request.magic=OZ_MAGIC;request.version=OZ_VERSION;request.msg.mn_Length=sizeof(request);
++    request.operation=47;request.flags=flags;
++    strcpy(request.target,"public_mirror/upgradecheck");
++    snprintf(request.options,sizeof(request.options),"%s",options);
++    int error=oz_project_worker_start(&request,&worker);
++    if(error)return error;
++    do{error=oz_project_worker_poll(worker,&request);if(error==EAGAIN)Delay(1);}while(error==EAGAIN);
++    int released=oz_project_worker_free(worker);
++    if(!error)error=released;
++    if(!error&&request.status!=expected)error=EIO;
++    note(request.detail);note("\n");
++    return error;
++}
++static int cli_filesystem_upgrade(int manager)
+ {
+     BPTR marker=Lock((CONST_STRPTR)"SYS:openzfs-cli-package-test",SHARED_LOCK);
+     if(!marker)return 0;
+@@ -769,7 +785,12 @@ static int cli_filesystem_upgrade(void)
+     file=Open((CONST_STRPTR)"OZVERSION:payload",MODE_NEWFILE);UPGRADE_CHECK(file);
+     UPGRADE_CHECK(Write(file,payload,sizeof(payload))==sizeof(payload));
+     {int closed=Close(file);file=0;UPGRADE_CHECK(closed);}
+-    UPGRADE_CHECK(!cli_command("C:zfs upgrade -V 5 public_mirror/upgradecheck"));
++    if(manager){
++        UPGRADE_CHECK(!manager_upgrade_request(0,"version=5",OZ_ENGINE_ERROR));
++        UPGRADE_CHECK(!manager_upgrade_request(OZ_CONFIRMED,"version=6",OZ_ENGINE_ERROR));
++        UPGRADE_CHECK(!cli_result("C:zfs get -H -o value version public_mirror/upgradecheck >T:cli-package-output.txt","3"));
++        UPGRADE_CHECK(!manager_upgrade_request(OZ_CONFIRMED,"version=5",OZ_OK));
++    } else UPGRADE_CHECK(!cli_command("C:zfs upgrade -V 5 public_mirror/upgradecheck"));
+     UPGRADE_CHECK(!cli_result("C:zfs get -H -o value version public_mirror/upgradecheck >T:cli-package-output.txt","5"));
+     UPGRADE_CHECK(!cli_command("C:zfs unmount public_mirror/upgradecheck"));mounted=0;
+     UPGRADE_CHECK(!cli_command("C:zfs mount public_mirror/upgradecheck"));mounted=1;
+@@ -780,7 +801,8 @@ done:
+     if(file&&!Close(file))error=EIO;
+     if(mounted&&cli_command("C:zfs unmount public_mirror/upgradecheck"))error=EIO;
+     if(created&&cli_command("C:zfs destroy public_mirror/upgradecheck"))error=EIO;
+-    note(error?"Public CLI filesystem upgrade FAIL\n":
++    note(error?"Public CLI filesystem upgrade FAIL\n":manager?
++        "Public Manager upgrade worker PASS unconfirmed=1 invalid=1 unchanged=1 version5=1 remount=1 exact-data=1 cleanup=1\n":
+         "Public CLI filesystem upgrade PASS version3=1 version5=1 remount=1 exact-data=1 cleanup=1\n");
+     return error;
+ #undef UPGRADE_CHECK
+@@ -2576,7 +2598,8 @@ static int storage_test(int gui){
+     STORAGE_CHECK(!storage_request(37,"public_mirror/files",NULL,NULL));
+ #endif
+     STORAGE_CHECK(!companion_mount_test());
+-    STORAGE_CHECK(!cli_filesystem_upgrade());
++    STORAGE_CHECK(!cli_filesystem_upgrade(0));
++    STORAGE_CHECK(!cli_filesystem_upgrade(1));
+     STORAGE_CHECK(!companion_import_test(1));
+     STORAGE_CHECK(oz_mount_control(OZ_ADMISSION_PORT,"public_mirror/files","bad:name",OZ_MOUNT_ATTACH,0)==EINVAL);
+     STORAGE_CHECK(!oz_mount_control(OZ_ADMISSION_PORT,"public_mirror/files","OZPUBLIC",OZ_MOUNT_ATTACH,0));
