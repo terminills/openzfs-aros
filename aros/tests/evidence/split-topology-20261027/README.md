@@ -56,6 +56,18 @@ normally and with sanitizers using an explicit external artifact directory and
 explicit host-control build; both pass. These supersede the initial candidate
 results above without changing their stated qualification scope.
 
+Follow-up `public-service-run.QT3ysnID` qualifies the final engine through the
+existing persistent mirror regression: writer boot, fresh healthy/degraded
+readonly recovery with exact DOS data and unchanged members, and a third
+writable boot releasing deferred snapshots. Host FAT checks are clean and
+independent `zdb -bcc` checks report no leaks. This is general persistent
+engine regression evidence, not cold qualification of the RAM-backed hole
+and indirect fixtures. Selected logs are in `final/persistent/`.
+
+Additional host tests reject wrongly typed or nonempty placeholder children,
+unexpected root spare arrays and reordered otherwise-valid members. Normal
+and ASan/UBSan replays pass; logs are in `final/shape-*.log`.
+
 The wrapper and input scripts record the private dependency/SDK/OS selections;
 their local paths must be supplied explicitly on another host. Use
 `AROS_TEST_SPLIT_TOPOLOGY=hole|indirect|plain` with the native-import runner,

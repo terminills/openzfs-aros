@@ -63,6 +63,26 @@ int main(void)
     assert(fnvlist_lookup_uint64(children[2],ZPOOL_CONFIG_GUID)==104);
     nvlist_t *admitted=NULL;
     assert(!oz_split_config_admit(tree,out,&admitted));nvlist_free(admitted);admitted=NULL;
+    /* Wrongly typed/nested placeholder data cannot bypass shape admission. */
+    fnvlist_add_string(children[1],ZPOOL_CONFIG_CHILDREN,"not-an-array");
+    assert(oz_split_config_admit(tree,out,&admitted)==EINVAL&&!admitted);
+    fnvlist_remove(children[1],ZPOOL_CONFIG_CHILDREN);
+    fnvlist_add_nvlist_array(children[1],ZPOOL_CONFIG_CHILDREN,
+        (const nvlist_t *const *)leaf,1);
+    assert(oz_split_config_admit(tree,out,&admitted)==EINVAL&&!admitted);
+    fnvlist_remove(children[1],ZPOOL_CONFIG_CHILDREN);
+    fnvlist_add_nvlist_array(root,ZPOOL_CONFIG_SPARES,
+        (const nvlist_t *const *)leaf,1);
+    assert(oz_split_config_admit(tree,out,&admitted)==EINVAL&&!admitted);
+    fnvlist_remove(root,ZPOOL_CONFIG_SPARES);
+    /* Even an otherwise-valid selection must retain source slot order. */
+    nvlist_t *reordered[]={children[2],children[1],children[0]};
+    nvlist_t *wrong=fnvlist_dup(root),*request=fnvlist_alloc();
+    fnvlist_add_nvlist_array(wrong,ZPOOL_CONFIG_CHILDREN,
+        (const nvlist_t *const *)reordered,3);
+    fnvlist_add_nvlist(request,ZPOOL_CONFIG_VDEV_TREE,wrong);
+    assert(oz_split_config_admit(tree,request,&admitted)==EINVAL&&!admitted);
+    nvlist_free(request);nvlist_free(wrong);
     fnvlist_add_string(children[1],ZPOOL_CONFIG_PATH,"/unadmitted");
     assert(oz_split_config_admit(tree,out,&admitted)==EINVAL&&!admitted);
     fnvlist_remove(children[1],ZPOOL_CONFIG_PATH);
