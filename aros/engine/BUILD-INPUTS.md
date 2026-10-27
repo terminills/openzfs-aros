@@ -23,3 +23,10 @@ compilation. It does not replace a clean build, compiler/toolchain provenance,
 dependency source packaging, or runtime verification. Paths are absolute and
 describe the local qualification environment; the manifest is not a relocatable
 source release. Source files and headers are retained separately from evidence.
+
+The shared-library engine provenance gate validates this manifest when present
+and binds its linked-object hash to the selected engine. A valid manifest from
+another build is rejected. Historical engines without a manifest still use
+the existing object-hash/symbol/diagnostic checks; they are not retroactively
+claimed to have compiler-input coverage. Gate regression tests are in
+`aros/library/test-engine-inputs.py`.
