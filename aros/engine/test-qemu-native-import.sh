@@ -151,6 +151,8 @@ import_rewind=${AROS_TEST_IMPORT_REWIND:-0}
 [[ $import_rewind == 0 || $import_rewind == 1 ]]
 import_rewind_mode=${AROS_TEST_IMPORT_REWIND_MODE:-preview}
 clear_rewind=${AROS_TEST_CLEAR_REWIND:-0}
+clear_manager=${AROS_TEST_CLEAR_MANAGER:-0}
+[[ $clear_manager == 0 || ( $clear_manager == 1 && $clear_rewind == 1 && -z ${AROS_TEST_WHOLE_CLI_LINK:-} ) ]]
 [[ $clear_rewind == 0 || ( $clear_rewind == 1 && $import_rewind == 1 && $import_rewind_mode == commit ) ]]
 import_rewind_manager=${AROS_TEST_IMPORT_REWIND_MANAGER:-0}
 import_rewind_cut=${AROS_TEST_IMPORT_REWIND_CUT:-0}
@@ -415,6 +417,7 @@ if [[ $import_rewind == 1 ]];then
     gui_maps+=(-map "$run/zpool" /C/zpool)
     gui_flags+=(-DOZ_NATIVE_IMPORT_REWIND)
     if [[ $clear_rewind == 1 ]];then gui_flags+=(-DOZ_NATIVE_CLEAR_REWIND);fi
+    if [[ $clear_manager == 1 ]];then gui_flags+=(-DOZ_NATIVE_CLEAR_MANAGER);fi
     if [[ $import_rewind_mode == seed ]];then gui_flags+=(-DOZ_NATIVE_IMPORT_REWIND_SEED);fi
     if [[ $import_rewind_normal == 1 ]];then gui_flags+=(-DOZ_NATIVE_IMPORT_REWIND_NORMAL);fi
     if [[ $import_assessment == 1 ]];then gui_flags+=(-DOZ_NATIVE_IMPORT_ASSESSMENT);fi
@@ -1086,6 +1089,11 @@ if [[ $gpt == 3 ]];then
     sha256sum "${cli_objects[@]}" >"$run/cli-inputs.sha256"
 fi
 completion_flags=(-DOZ_QEMU_COMPLETION_PORT=0xe9)
+clear_objects=()
+if [[ $clear_manager == 1 ]];then
+    clear_objects=(aros/ui/project-worker.c aros/cli/process.c aros/cli/arguments.c aros/cli/output.c)
+    sha256sum "${clear_objects[@]}" >"$run/manager-clear-inputs.sha256"
+fi
 case ${AROS_TEST_COMPLETION_FAIL:-0} in
     0) ;;
     1) completion_flags+=(-DOZ_QEMU_COMPLETION_FAIL) ;;
@@ -1095,7 +1103,7 @@ esac
     -I"$pthread_include" \
     "${completion_flags[@]}" "${gui_flags[@]}" aros/engine/native-import-test.c aros/ui/api.c aros/ui/admission-client.c \
     aros/ui/startup-import.c aros/ui/startup-settings.c aros/ui/startup-settings-file.c aros/ui/preferences.c aros/ui/preferences-file.c \
-    aros/ui/admission-worker.c "${inventory_objects[@]}" "${cli_objects[@]}" "$pthread" \
+    aros/ui/admission-worker.c "${inventory_objects[@]}" "${cli_objects[@]}" "${clear_objects[@]}" "$pthread" \
     -liffparse -o "$run/OpenZFSNativeImportTest" >"$run/build.log" 2>&1
 if [[ $native_bus == usb ]];then
     echo "USB controller: $usb_controller"
@@ -1405,6 +1413,9 @@ if [[ $import_rewind == 1 ]];then
         rg -q '^RESULT native verbatim privilege PASS nonroot-refused=1 absent=1 root-restored=1' "$run/serial.log"
         rg -q '^RESULT native verbatim admission PASS readonly-refused=1 absent=1 writable-admitted=1' "$run/serial.log"
         rg -q '^RESULT native damaged clear rewind PASS assessment=1 recoverable-report=1 commit=1' "$run/serial.log"
+    fi
+    if [[ $clear_manager == 1 ]];then
+        rg -q '^RESULT native Manager damaged clear PASS assessment=1 captured-report=1 commit=1 joined=2' "$run/serial.log"
     fi
     if [[ $import_rewind_manager == 1 ]];then
         rg -q '^RESULT native recovery parser PASS modes=3 guid=1 malformed=5 unchanged=1 legacy-refused=1' "$run/serial.log"

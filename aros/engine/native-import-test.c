@@ -10,6 +10,9 @@
 #include "../ui/startup-import.h"
 #include "../ui/startup-settings.h"
 #include "../ui/settings-file.h"
+#ifdef OZ_NATIVE_CLEAR_MANAGER
+#include "../ui/project-worker.h"
+#endif
 #include <proto/exec.h>
 #include <proto/dos.h>
 #include <dos/dostags.h>
@@ -277,6 +280,24 @@ static int request_paths(unsigned op,const char *options,int expected,unsigned f
 }
 static int request(unsigned op,const char *options,int expected)
 {return request_paths(op,options,expected,0,1);}
+#ifdef OZ_NATIVE_CLEAR_MANAGER
+static int manager_damaged_clear(int assessment)
+{
+    struct oz_message m={0};struct oz_project_worker *worker=NULL;
+    m.magic=OZ_MAGIC;m.version=OZ_VERSION;m.msg.mn_Length=sizeof(m);
+    m.operation=17;m.flags=OZ_CONFIRMED;strcpy(m.target,"qemu_mirror");
+    snprintf(m.options,sizeof(m.options),"recovery=%s%s",OZ_REWIND_POLICY,
+        assessment?";assessment=on":"");
+    int error=oz_project_worker_start(&m,&worker);
+    if(error)return error;
+    do {error=oz_project_worker_poll(worker,&m);if(error==EAGAIN)Delay(1);}while(error==EAGAIN);
+    int released=oz_project_worker_free(worker);if(!error)error=released;
+    note(m.detail);
+    if(!error&&(m.status!=OZ_OK||!strstr(m.detail,"Upstream zpool clear: exit=0")))error=EIO;
+    if(!error&&assessment&&!strstr(m.detail,"Would be able to return qemu_mirror to its state as of"))error=EIO;
+    return error;
+}
+#endif
 #ifdef OZ_NATIVE_IMPORT_REWIND_MANAGER
 static int recovery_parser_test(void)
 {
@@ -593,6 +614,11 @@ int main(void)
     CHECK(SystemTags((CONST_STRPTR)"C:zpool list -H qemu_mirror",TAG_DONE)>0);
     CHECK(SystemTags((CONST_STRPTR)"C:zpool import -N -V -f -o cachefile=none -d /AROS/ata.device/0/partition/0 -d /AROS/ata.device/1/partition/0 qemu_mirror",TAG_DONE)==0);
     note("RESULT native verbatim admission PASS readonly-refused=1 absent=1 writable-admitted=1");
+#ifdef OZ_NATIVE_CLEAR_MANAGER
+    CHECK(!manager_damaged_clear(1));
+    CHECK(!manager_damaged_clear(0));
+    note("RESULT native Manager damaged clear PASS assessment=1 captured-report=1 commit=1 joined=2");
+#else
     file=Open((CONST_STRPTR)"T:clear-assessment",MODE_NEWFILE);CHECK(file);
     LONG clear_assessment=SystemTags((CONST_STRPTR)"C:zpool clear -n" OZ_REWIND_FLAG " qemu_mirror",SYS_Output,file,SYS_Error,file,TAG_DONE);
     LONG clear_closed=Close(file);file=0;
@@ -603,6 +629,7 @@ int main(void)
     CHECK(clear_closed&&clear_assessment==0);
     CHECK(strstr(clear_report,"Would be able to return qemu_mirror to its state as of"));
     CHECK(SystemTags((CONST_STRPTR)"C:zpool clear -" OZ_REWIND_FLAG " qemu_mirror",TAG_DONE)==0);
+#endif
     note("RESULT native damaged clear rewind PASS assessment=1 recoverable-report=1 commit=1");
 #else
 #ifdef OZ_NATIVE_IMPORT_REWIND_MANAGER

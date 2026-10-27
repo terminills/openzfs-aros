@@ -77,8 +77,27 @@ to a new fixture and use mode `cold` without `AROS_TEST_CLEAR_REWIND`.
 The existing damaged-import evidence describes the exact corruption and
 member partition offsets used by both fixtures.
 
-The Manager worker still needs a damaged-pool end-to-end run; its healthy
-and refusal coverage is not substituted for that. Assessment-only disk
-equality, interrupted CLEAR, other topologies and physical durability remain
+The Manager worker now also passes the damaged-pool end-to-end run below.
+A visible damaged-pool UI session, assessment-only disk equality,
+interrupted CLEAR, other topologies and physical durability remain
 separate qualification work. `-V` is an expert diagnostic mechanism, not a
 default import policy or automatic startup action.
+
+## Manager worker integration
+
+`native-import-run.p9JiiFji` uses the same production engine and damaged
+extreme fixture, but invokes the actual Manager `oz_project_worker_start`,
+poll and join path for both assessment and commit. The operation-17 requests
+use `recovery=extreme;assessment=on` and `recovery=extreme` respectively.
+The worker validates the API request, launches the exact CLI argv under the
+inherited identity, captures `exit=0, DOS=0, capture errno=0`, and returns
+the actual historical recovery report. Both calls join successfully; exact
+DOS write/flush/export/ordinary-readonly-reimport checks then pass. This is
+not a replacement worker or a mock command response. No GUI screenshot is
+claimed for this headless execution-path test.
+
+Add `AROS_TEST_CLEAR_MANAGER=1` to the commit-mode CLEAR replay to select
+this path. Its explicit input hashes and serial log are retained here. The
+runner rejects incompatible whole-CLI-link and import-Manager/cut modes,
+and requires a separate Manager completion marker in addition to the data
+and image checks.
