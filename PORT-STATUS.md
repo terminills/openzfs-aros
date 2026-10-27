@@ -7,8 +7,11 @@ Experimental development snapshot; not production-qualified storage software.
 All three upstream `zdb`/`libzdb` translation units now cross-compile against
 the recorded private SDK. AROS maps `open64` to native `open`, guarded by a
 compile-time 64-bit `off_t` assertion. This is not native debugger qualification:
-the dependency-only link audit still fails on five symbols, and production
-shared-engine integration and read-only storage admission remain unfinished.
+the initial dependency-only link audit failed on five symbols. Linking real
+client support now resolves them. An isolated eight-CPU native diagnostic
+executable reads all four ISO-backed labels twice, with both zero-exit reports
+matching host zdb exactly. Production shared-engine integration, full pool
+traversal and read-only raw-device admission remain unfinished.
 See `aros/tests/evidence/native-zdb-build-20261027`. Existing pool-integrity
 results continue to use the independent **host** zdb, not this native candidate.
 

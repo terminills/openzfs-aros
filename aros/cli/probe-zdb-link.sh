@@ -16,6 +16,9 @@ out=$(mktemp -d "$root/zdb-link-probe.XXXXXXXX")
 echo "Evidence: $out"
 objects=("$probe/cmd_zdb_zdb.c.o" "$probe/cmd_zdb_zdb_il.c.o"
     "$probe/lib_libzdb_libzdb.c.o" "$engine")
+if [[ -n ${3:-} ]];then
+    objects+=("$(realpath -e "$3")")
+fi
 archives=("$AROS_NVPAIR_ARCHIVE" "$AROS_CRYPTO_ARCHIVE"
     "$AROS_PRIVATE_PTHREAD" "$AROS_SDK/lib/libz.static.a")
 sha256sum "${objects[@]}" "${archives[@]}" >"$out/inputs.sha256"
