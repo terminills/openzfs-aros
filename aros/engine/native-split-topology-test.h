@@ -17,6 +17,7 @@ static int split_topology_command(const char *command)
 static int native_split_topology_test(unsigned mode)
 {
     unsigned indirect=mode==2,hole=mode==1,trailing=mode==4,mirrorlog=mode==5;
+    const char *allocation=mode==6?"special":mode==7?"dedup":NULL;
     unsigned haslog=hole||trailing||mirrorlog;
     int cold=0,persistent=0;
 #ifdef OZ_NATIVE_SPLIT_PERSISTENT
@@ -43,9 +44,12 @@ static int native_split_topology_test(unsigned mode)
         snprintf(paths[i],sizeof(paths[i]),"/%s",canonical);
     }
     free(zero);zero=NULL;
-    const char payload[]="Split topology retained payload\n";
+    char payload[4097];
+    for(unsigned i=0;i<sizeof(payload)-1;i++)payload[i]=(char)(33+(i*37+i/31)%90);
+    payload[sizeof(payload)-1]=0;
     if(!cold){
-    if(mirrorlog)snprintf(command,sizeof(command),"C:zpool create -o cachefile=none -O mountpoint=none topo_source mirror \"%s\" \"%s\" log mirror \"%s\" \"%s\"",paths[0],paths[1],paths[4],paths[5]);
+    if(allocation)snprintf(command,sizeof(command),"C:zpool create -o cachefile=none -O mountpoint=none topo_source mirror \"%s\" \"%s\" %s mirror \"%s\" \"%s\"",paths[0],paths[1],allocation,paths[2],paths[3]);
+    else if(mirrorlog)snprintf(command,sizeof(command),"C:zpool create -o cachefile=none -O mountpoint=none topo_source mirror \"%s\" \"%s\" log mirror \"%s\" \"%s\"",paths[0],paths[1],paths[4],paths[5]);
     else if(!hole)snprintf(command,sizeof(command),"C:zpool create -o cachefile=none -O mountpoint=none topo_source mirror \"%s\" \"%s\" mirror \"%s\" \"%s\"",paths[0],paths[1],paths[2],paths[3]);
     else snprintf(command,sizeof(command),"C:zpool create -o cachefile=none -O mountpoint=none topo_source mirror \"%s\" \"%s\" log \"%s\"",paths[0],paths[1],paths[4]);
     TOPO_CHECK(!split_topology_command(command));
@@ -58,10 +62,17 @@ static int native_split_topology_test(unsigned mode)
         TOPO_CHECK(!split_topology_command(command));
     }
     TOPO_CHECK(!split_topology_command("C:zfs create -u topo_source/files"));
+    if(mode==6)TOPO_CHECK(!split_topology_command("C:zfs set special_small_blocks=128K topo_source/files"));
+    if(mode==7)TOPO_CHECK(!split_topology_command("C:zfs set compression=off dedup=on topo_source/files"));
     TOPO_CHECK(!oz_mount_control(OZ_ADMISSION_PORT,"topo_source/files","OZTOPO",OZ_MOUNT_ATTACH,0));
     file=Open((CONST_STRPTR)"OZTOPO:payload",MODE_NEWFILE);TOPO_CHECK(file);
     TOPO_CHECK(Write(file,(APTR)payload,sizeof(payload)-1)==sizeof(payload)-1&&Flush(file));
     TOPO_CHECK(Close(file));file=0;
+    if(mode==7){
+        file=Open((CONST_STRPTR)"OZTOPO:duplicate",MODE_NEWFILE);TOPO_CHECK(file);
+        TOPO_CHECK(Write(file,(APTR)payload,sizeof(payload)-1)==sizeof(payload)-1&&Flush(file));
+        TOPO_CHECK(Close(file));file=0;
+    }
     TOPO_CHECK(!oz_mount_control(OZ_ADMISSION_PORT,"topo_source/files","",OZ_MOUNT_DETACH,0));
     TOPO_CHECK(!split_topology_command("C:zpool sync topo_source"));
     if(indirect){
@@ -81,9 +92,14 @@ static int native_split_topology_test(unsigned mode)
         else snprintf(command,sizeof(command),"C:zpool import -N -o cachefile=none -o readonly=on -d \"%s\" -d \"%s\" %s",paths[pool],paths[2+pool],name);
         TOPO_CHECK(!split_topology_command(command));
         TOPO_CHECK(!oz_mount_control(OZ_ADMISSION_PORT,dataset,"OZTOPO",OZ_MOUNT_ATTACH,OZ_MOUNT_READONLY));
-        char bytes[128];file=Open((CONST_STRPTR)"OZTOPO:payload",MODE_OLDFILE);TOPO_CHECK(file);
+        char bytes[sizeof(payload)];file=Open((CONST_STRPTR)"OZTOPO:payload",MODE_OLDFILE);TOPO_CHECK(file);
         TOPO_CHECK(Read(file,bytes,sizeof(bytes))==sizeof(payload)-1&&!memcmp(bytes,payload,sizeof(payload)-1));
         TOPO_CHECK(Close(file));file=0;
+        if(mode==7){
+            file=Open((CONST_STRPTR)"OZTOPO:duplicate",MODE_OLDFILE);TOPO_CHECK(file);
+            TOPO_CHECK(Read(file,bytes,sizeof(bytes))==sizeof(payload)-1&&!memcmp(bytes,payload,sizeof(payload)-1));
+            TOPO_CHECK(Close(file));file=0;
+        }
         file=Open((CONST_STRPTR)"OZTOPO:no-write",MODE_NEWFILE);TOPO_CHECK(!file&&IoErr()==ERROR_DISK_WRITE_PROTECTED);
         TOPO_CHECK(!oz_mount_control(OZ_ADMISSION_PORT,dataset,"",OZ_MOUNT_DETACH,0));
         snprintf(command,sizeof(command),"C:zpool export %s",name);TOPO_CHECK(!split_topology_command(command));
@@ -95,7 +111,7 @@ static int native_split_topology_test(unsigned mode)
 done:
     if(file)Close(file);free(zero);
     char line[160];snprintf(line,sizeof(line),"RESULT native CLI split topology %s kind=%s line=%d separate-imports=2 exact-payload=1 readonly=1",
-        error?"FAIL":"PASS",indirect?"indirect":hole?"hole":trailing?"trailing":mirrorlog?"mirrorlog":"plain",error);note(line);
+        error?"FAIL":"PASS",allocation?allocation:indirect?"indirect":hole?"hole":trailing?"trailing":mirrorlog?"mirrorlog":"plain",error);note(line);
     return error;
 #undef TOPO_CHECK
 }

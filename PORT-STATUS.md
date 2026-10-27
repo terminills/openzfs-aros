@@ -331,6 +331,13 @@ fault while replaying inherited log-space maps. Internal split construction
 now retains trailing hole slots; invalid unrelated vdev references fail with
 EINVAL. Both layouts pass unchanged cold-member hashes and independent block
 and MOS-object checks. See `aros/tests/evidence/split-log-layouts-20261027`.
+Mirrored special and dedup allocation classes also pass separate writer/cold
+qualification, including nonzero class allocation, preserved top-vdev allocation
+metadata, exact 4 KiB DOS payloads, actual shared dedup blocks, unchanged cold
+members and independent integrity checks. See
+`aros/tests/evidence/split-allocation-classes-20261027`. These qualify existing
+production behavior; they are not new driver functionality or concurrent/power-loss
+qualification.
 
 Damaged-pool CLEAR update (2026-10-27): actual upstream `clear -nF/-F` and
 `clear -nFX/-FX` pass on separately prepared damaged mirror fixtures through

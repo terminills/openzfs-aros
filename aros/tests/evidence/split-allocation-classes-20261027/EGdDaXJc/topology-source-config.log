@@ -1,0 +1,53 @@
+
+MOS Configuration:
+        version: 5000
+        name: 'topo_source'
+        state: 1
+        txg: 43
+        pool_guid: 7108060260738870925
+        errata: 0
+        min_alloc: 512
+        max_alloc: 512
+        hostname: 'localhost.localdomain'
+        com.delphix:has_per_vdev_zaps
+        vdev_children: 2
+        vdev_tree:
+            type: 'root'
+            id: 0
+            guid: 7108060260738870925
+            create_txg: 4
+            com.klarasystems:vdev_zap_root: 129
+            children[0]:
+                type: 'file'
+                id: 0
+                guid: 5590101890818012104
+                path: '/Ozfiles/split-topology-0'
+                metaslab_array: 137
+                metaslab_shift: 24
+                ashift: 9
+                asize: 62390272
+                min_alloc: 512
+                is_log: 0
+                create_txg: 4
+                com.delphix:vdev_zap_leaf: 131
+                com.delphix:vdev_zap_top: 130
+                orig_guid: 11207085979893808671
+            children[1]:
+                type: 'file'
+                id: 1
+                guid: 15413895274231931464
+                path: '/Ozfiles/split-topology-2'
+                metaslab_array: 136
+                metaslab_shift: 24
+                ashift: 9
+                asize: 62390272
+                min_alloc: 512
+                is_log: 0
+                create_txg: 4
+                com.delphix:vdev_zap_leaf: 134
+                com.delphix:vdev_zap_top: 133
+                orig_guid: 6941549884064878492
+        features_for_read:
+            com.delphix:hole_birth
+            com.delphix:embedded_data
+            com.klarasystems:vdev_zaps_v2

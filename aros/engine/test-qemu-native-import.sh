@@ -157,7 +157,7 @@ split_persistent=${AROS_TEST_SPLIT_PERSISTENT:-0}
 topology_cold_source=${AROS_TEST_SPLIT_COLD_SOURCE:-}
 [[ $split_persistent == 0 || ( $split_persistent == 1 && $split_topology != none ) ]]
 [[ -z $topology_cold_source || $split_persistent == 1 ]]
-[[ $split_topology == none || $split_topology == hole || $split_topology == indirect || $split_topology == plain || $split_topology == trailing || $split_topology == mirrorlog ]]
+[[ $split_topology == none || $split_topology == hole || $split_topology == indirect || $split_topology == plain || $split_topology == trailing || $split_topology == mirrorlog || $split_topology == special || $split_topology == dedup ]]
 if [[ $split_topology != none ]];then
     [[ $manager_split == none && $native_bus == ide && $members == both && $layout == mirror && $writable == 0 && $gui == 0 && $gpt == 0 && $import_rewind == 0 && -z ${AROS_TEST_WHOLE_CLI_LINK:-} ]]
     [[ -f ${AROS_TEST_CLI_DIR:?split topology needs packaged CLI}/zpool && -f $AROS_TEST_CLI_DIR/zfs ]]
@@ -420,6 +420,8 @@ if [[ $split_topology != none ]];then
     if [[ $split_topology == plain ]];then topology_mode=3;fi
     if [[ $split_topology == trailing ]];then topology_mode=4;fi
     if [[ $split_topology == mirrorlog ]];then topology_mode=5;fi
+    if [[ $split_topology == special ]];then topology_mode=6;fi
+    if [[ $split_topology == dedup ]];then topology_mode=7;fi
     gui_flags+=(-DOZ_NATIVE_SPLIT_TOPOLOGY=$topology_mode)
     if [[ $split_persistent == 1 ]];then
         gui_flags+=(-DOZ_NATIVE_SPLIT_PERSISTENT)
@@ -1493,6 +1495,20 @@ if [[ $split_topology != none ]];then
         rg -q 'No leaks' "$run/topology-split-zdb.log"
         for pool in source split;do
             "$AROS_TEST_HOST_ZDB" -e -p "$run/topology-$pool" -dddd "topo_$pool" >"$run/topology-$pool-objects.log" 2>&1
+            if [[ $split_topology == special || $split_topology == dedup ]];then
+                rg -q "org.zfsonlinux:allocation_bias = $split_topology" "$run/topology-$pool-objects.log" || {
+                    echo "FAIL: split $pool lost $split_topology allocation metadata" >&2;exit 1;
+                }
+                class=Special;if [[ $split_topology == dedup ]];then class=Dedup;fi
+                rg -q "$class class[[:space:]]+[1-9][0-9]*" "$run/topology-$pool-zdb.log" || {
+                    echo "FAIL: split $pool did not exercise $split_topology allocation" >&2;exit 1;
+                }
+            fi
+            if [[ $split_topology == dedup ]];then
+                rg -q 'bp deduped:[[:space:]]+[1-9][0-9]*' "$run/topology-$pool-zdb.log" || {
+                    echo "FAIL: split $pool fixture has no deduplicated blocks" >&2;exit 1;
+                }
+            fi
             if rg -q 'MOS object .* leaked|refcount mismatch' "$run/topology-$pool-objects.log";then
                 echo "FAIL: split topology $pool metadata-object leak" >&2;exit 1
             fi
