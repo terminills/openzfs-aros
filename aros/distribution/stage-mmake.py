@@ -9,6 +9,7 @@ import hashlib
 import importlib.util
 import json
 import pathlib
+import re
 import shutil
 import subprocess
 import tempfile
@@ -119,6 +120,22 @@ def member_hashes(path):
     return values
 
 
+def require_zdb_integrity(run, name, objects=False):
+    if not (run / name).is_file():
+        raise ValueError(f"Missing independent zdb evidence: {name}")
+    text = (run / name).read_text()
+    marker = "Dataset mos [META]" if objects else "No leaks"
+    if marker not in text or re.search(
+            r"refcount mismatch|MOS object .* leaked|ASSERT at|\[PF-DBG\]|"
+            r"\bFAIL(?:ED)?\b", text):
+        raise ValueError(f"Missing or contradictory independent zdb evidence: {name}")
+
+
+def guest_failed(text):
+    return bool(re.search(r"ASSERT at|\[PF-DBG\]|RESULT [^\n]*\bFAIL\b|"
+                          r"Public service test line=[1-9][0-9]*", text))
+
+
 def require_companions(run):
     writer = (run / "serial-results.log").read_text()
     cold = (run / "cold-results.log").read_text()
@@ -129,7 +146,7 @@ def require_companions(run):
         if marker not in writer:
             raise ValueError(f"Missing companion runtime evidence: {marker}")
     marker = "Public persistent enabled restore PASS trusted-envarc=1 imported=1 mounted=1 readonly=1"
-    if cold.count(marker) != 3 or "FAIL" in cold:
+    if cold.count(marker) != 3 or "FAIL" in cold or guest_failed(writer + cold):
         raise ValueError("Missing persistent enabled startup qualification")
     unchanged = (run / "archive-unchanged.log").read_text()
     if ": OK" not in unchanged or "FAILED" in unchanged:
@@ -154,8 +171,10 @@ def require_optional_release(run):
         if not path.is_file():
             raise ValueError(f"Missing writable cold-release evidence: {name}")
         text = path.read_text()
-        if "FAIL" in text or any(marker not in text for marker in markers):
+        if "FAIL" in text or guest_failed(text) or any(marker not in text for marker in markers):
             raise ValueError(f"Failed writable cold-release evidence: {name}")
+    require_zdb_integrity(run, "release-zdb-check.log")
+    require_zdb_integrity(run, "release-zdb-objects.log", objects=True)
 
 
 def require_encrypted_root(run):
@@ -168,22 +187,21 @@ def require_encrypted_root(run):
         "Public file conflicting label offsets PASS same-position=4",
         "Public native conflicting label offsets PASS same-position=4",
     )
-    if any(marker not in lines for marker in required) or any(
-            line.startswith("ASSERT at ") or
-            (line.startswith("RESULT ") and line.endswith(" FAIL"))
-            for line in lines):
+    if any(marker not in lines for marker in required) or guest_failed("\n".join(lines)):
         raise ValueError("Missing or failed encrypted pool-root regression")
 
 
 def require_changed_pool(run):
     writer = (run / "serial-results.log").read_text().splitlines()
     for marker in (
-        "Public destroyed changes CLI PASS attach=1 replace=1 add=1 active-force-refused=3 exported-force-refused=3 exact-read=5 cleanup=1",
+        "Public destroyed changes CLI PASS attach=1 replace=1 add=1 active-force-refused=3 exported-refused=3 add-without-force=1 exact-read=5 cleanup=1",
         "Public destroyed changes Manager PASS attach=1 replace=1 add=1 active-refused=3 exported-refused=3 exact-read=5 retained=1",
     ):
         if marker not in writer:
             raise ValueError("Missing changed-pool writer qualification")
     cold = (run / "cold-results.log").read_text().splitlines()
+    if guest_failed("\n".join(writer + cold)):
+        raise ValueError("Failed changed-pool guest qualification")
     for phase in range(3):
         marker = f"Public changed pool cold PASS phase={phase} exact-read=1 readonly-write-denied=1 exported=1"
         if cold.count(marker) != 1:
@@ -197,6 +215,8 @@ def require_changed_pool(run):
         text = (run / name).read_text()
         if marker not in text or "FAIL" in text:
             raise ValueError("Missing changed-pool independent integrity evidence")
+    require_zdb_integrity(run, "reuse-zdb-check.log")
+    require_zdb_integrity(run, "reuse-zdb-objects.log", objects=True)
 
 
 def main():
@@ -221,15 +241,15 @@ def main():
     # Require terminal guest acceptance, not merely an opened window or link.
     for run in (gui, cold):
         serial = (run / "serial.log").read_text()
-        if "RESULT public service storage PASS" not in serial or any(
-                "RESULT " in line and "FAIL" in line for line in serial.splitlines()):
+        if "RESULT public service storage PASS" not in serial or guest_failed(serial):
             raise ValueError(f"Missing writer/GUI acceptance: {run}")
     if "Public desktop post-UI data PASS exact-read=1" not in (gui / "serial.log").read_text():
         raise ValueError("Missing post-UI filesystem verification")
-    if "RESULT public service storage PASS" not in (cold / "cold-serial.log").read_text():
+    cold_serial = (cold / "cold-serial.log").read_text()
+    if "RESULT public service storage PASS" not in cold_serial or guest_failed(cold_serial):
         raise ValueError("Missing cold import acceptance")
-    if "No leaks" not in (cold / "zdb-check.log").read_text():
-        raise ValueError("Missing independent zdb verification")
+    require_zdb_integrity(cold, "zdb-check.log")
+    require_zdb_integrity(cold, "zdb-objects.log", objects=True)
     if member_hashes(cold / "members-before.sha256") != member_hashes(cold / "members-after.sha256"):
         raise ValueError("Cold import changed member hashes")
     for filename in ("zdb-members-unchanged.log",):

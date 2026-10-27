@@ -12,6 +12,40 @@ spec.loader.exec_module(stage)
 
 
 class EvidenceTests(unittest.TestCase):
+    def test_guest_failures_cannot_be_masked_by_terminal_pass(self):
+        for failure in ('00000012 | 000 | ASSERT at source.c:10',
+                        '[PF-DBG] CR2=60', 'RESULT native FAIL line=42',
+                        'Public service test line=12'):
+            self.assertTrue(stage.guest_failed(failure + '\nRESULT public service storage PASS\n'))
+        self.assertFalse(stage.guest_failed('Public service test line=0\nRESULT public service storage PASS\n'))
+
+    def test_zdb_gate_rejects_contradictions_and_real_failed_split(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = pathlib.Path(directory)
+            path = root / 'check.log'
+            with self.assertRaises(ValueError):
+                stage.require_zdb_integrity(root, path.name)
+            for diagnostic in ('space map refcount mismatch: expected 8 != actual 7',
+                               'MOS object 100 (SPA space map) leaked',
+                               '00000001 | 000 | ASSERT at test.c:1',
+                               '[PF-DBG] CR2=00000060', 'FAILED'):
+                path.write_text('No leaks\n' + diagnostic + '\n')
+                with self.assertRaises(ValueError):
+                    stage.require_zdb_integrity(root, path.name)
+                path.write_text('Dataset mos [META]\n' + diagnostic + '\n')
+                with self.assertRaises(ValueError):
+                    stage.require_zdb_integrity(root, path.name, objects=True)
+            path.write_text('No leaks\n')
+            with self.assertRaises(ValueError):
+                stage.require_zdb_integrity(root, path.name, objects=True)
+        evidence = pathlib.Path(__file__).resolve().parents[1] / 'tests/evidence/split-persistent-20261027'
+        with self.assertRaises(ValueError):
+            stage.require_zdb_integrity(evidence / 'old-hole', 'topology-split-zdb.log')
+        with self.assertRaises(ValueError):
+            stage.require_zdb_integrity(evidence / 'old-hole', 'topology-split-objects.log', objects=True)
+        stage.require_zdb_integrity(evidence / 'hole-cold', 'topology-split-zdb.log')
+        stage.require_zdb_integrity(evidence / 'hole-cold', 'topology-split-objects.log', objects=True)
+
     def test_posix_snapshot_requires_matching_binary_and_assembly(self):
         with tempfile.TemporaryDirectory() as directory:
             root = pathlib.Path(directory)
@@ -109,23 +143,27 @@ class EvidenceTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             root = pathlib.Path(directory)
             writer = (
-                "Public destroyed changes CLI PASS attach=1 replace=1 add=1 active-force-refused=3 exported-force-refused=3 exact-read=5 cleanup=1\n"
+                "Public destroyed changes CLI PASS attach=1 replace=1 add=1 active-force-refused=3 exported-refused=3 add-without-force=1 exact-read=5 cleanup=1\n"
                 "Public destroyed changes Manager PASS attach=1 replace=1 add=1 active-refused=3 exported-refused=3 exact-read=5 retained=1\n")
             cold = "".join(f"Public changed pool cold PASS phase={i} exact-read=1 readonly-write-denied=1 exported=1\n" for i in range(3))
             hashes = "".join(f"hash{i}  /test/disk{i}\n" for i in range(5))
             files = {"serial-results.log": writer, "cold-results.log": cold,
                      "reuse-before.sha256": hashes, "reuse-after.sha256": hashes,
                      "reuse-zdb-check.log": "No leaks\n",
+                     "reuse-zdb-objects.log": "Dataset mos [META]\n",
                      "reuse-zdb-unchanged.log": "disk0: OK\n"}
             for name, value in files.items():
                 (root / name).write_text(value)
             stage.require_changed_pool(root)
             for name, bad in (
                 ("serial-results.log", writer.replace("retained=1", "cleanup=1")),
+                ("serial-results.log", writer.replace("exported-refused=3 add-without-force=1", "exported-force-refused=3")),
                 ("cold-results.log", cold.replace("phase=2", "phase=1")),
                 ("reuse-after.sha256", hashes.replace("hash4", "changed")),
                 ("reuse-before.sha256", hashes.replace("hash4  /test/disk4\n", "")),
                 ("reuse-zdb-check.log", "incomplete\n"),
+                ("reuse-zdb-check.log", "No leaks\nspace map refcount mismatch\n"),
+                ("reuse-zdb-objects.log", "Dataset mos [META]\nMOS object 7 leaked\n"),
                 ("reuse-zdb-unchanged.log", "disk0: OK\ndisk1: FAILED\n"),
             ):
                 (root / name).write_text(bad)
@@ -169,6 +207,7 @@ class EvidenceTests(unittest.TestCase):
                 "Public cold writable release PASS pending-before=1 recursive-release=1 parent-absent=1 child-absent=1 reimport-absent=1 exact-data=1 exported=1\n"
                 "Public backing clean detach PASS\n")
             (root / "release-zdb-check.log").write_text("No leaks\n")
+            (root / "release-zdb-objects.log").write_text("Dataset mos [META]\n")
             (root / "release-zdb-unchanged.log").write_text("disk0: OK\n")
             stage.require_optional_release(root)
             (root / "archive-before.sha256").write_text("hash archive\n")

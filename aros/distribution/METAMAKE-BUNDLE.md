@@ -70,6 +70,14 @@ for the other boot modules, the SDK or toolchain. Those remain
 public-binary-release gates.
 
 Metadata/qualification.json identifies the exact selected inputs and evidence.
+Cold qualification requires both block-integrity (`zdb -bcc`) and full MOS
+object-reachability (`zdb -dddd`) reports for the main pool, changed-member pool
+and optional writable-release phase. A `No leaks` line does not override a
+later reference-count mismatch, leaked MOS object or failure diagnostic.
+Guest assertions/page faults and failed results invalidate qualification even
+when a PASS marker is also present. Earlier retained packages without these
+reports need fresh exact-binary qualification before restaging under this gate;
+the stricter gate does not retroactively claim that their tests covered it.
 The GUI and cold runs qualify the selected shared library, launcher, zfs/zpool,
 handler, device and runtime dependency; Manager is covered by the GUI run.
 The four startup/runtime/host-identity utilities are hash-bound to native

@@ -862,10 +862,14 @@ if [[ $persistent == 1 ]];then
         sha256sum "$run/reuse-after/"* >"$run/reuse-after.sha256"
         "$host_zdb" -e -p "$run/reuse-after" -bcc public_reuse_target >"$run/reuse-zdb-check.log" 2>&1
         rg -q 'No leaks' "$run/reuse-zdb-check.log"
+        "$host_zdb" -e -p "$run/reuse-after" -dddd public_reuse_target >"$run/reuse-zdb-objects.log" 2>&1
+        if rg -q 'MOS object .* leaked|refcount mismatch' "$run/reuse-zdb-objects.log";then exit 1;fi
         sha256sum -c "$run/reuse-after.sha256" >"$run/reuse-zdb-unchanged.log"
     fi
     "$host_zdb" -e -p "$run/members-after" -bcc public_mirror >"$run/zdb-check.log" 2>&1
     rg -q 'No leaks' "$run/zdb-check.log"
+    "$host_zdb" -e -p "$run/members-after" -dddd public_mirror >"$run/zdb-objects.log" 2>&1
+    if rg -q 'MOS object .* leaked|refcount mismatch' "$run/zdb-objects.log";then exit 1;fi
     sha256sum -c "$run/members-after.sha256" >"$run/zdb-members-unchanged.log"
     echo "PASS: fresh-boot healthy/degraded import, exact DOS data, unchanged pool members. Evidence: $run"
     rg -q '^Public DOS links PASS write=0 hard=1 relative-soft=1 unlinked-source=1 dangling-refused=1' "$run/cold-results.log"
@@ -923,6 +927,8 @@ if [[ $persistent == 1 ]];then
         sha256sum "$run/members-release/"* >"$run/members-release.sha256"
         "$host_zdb" -e -p "$run/members-release" -bcc public_mirror >"$run/release-zdb-check.log" 2>&1
         rg -q 'No leaks' "$run/release-zdb-check.log"
+        "$host_zdb" -e -p "$run/members-release" -dddd public_mirror >"$run/release-zdb-objects.log" 2>&1
+        if rg -q 'MOS object .* leaked|refcount mismatch' "$run/release-zdb-objects.log";then exit 1;fi
         sha256sum -c "$run/members-release.sha256" >"$run/release-zdb-unchanged.log"
         echo "PASS: writable cold release, persisted deletion and independent zdb. Evidence: $run"
     fi

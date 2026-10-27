@@ -1,0 +1,3257 @@
+
+Metaslabs:
+	vdev          0	  metaslab shift   24
+	metaslabs     7   offset                spacemap          free        
+	---------------   -------------------   ---------------   ------------
+	metaslab      0   offset            0   spacemap     72   free    14.4M
+space map object 72:
+  smp_length = 0x4b78
+  smp_alloc = 0x18e000
+	metaslab      1   offset      1000000   spacemap     71   free    15.4M
+space map object 71:
+  smp_length = 0x4f40
+  smp_alloc = 0x98000
+	metaslab      2   offset      2000000   spacemap     70   free    15.4M
+space map object 70:
+  smp_length = 0x4f50
+  smp_alloc = 0x9d000
+	metaslab      3   offset      3000000   spacemap     69   free    15.2M
+space map object 69:
+  smp_length = 0x5110
+  smp_alloc = 0xc0000
+	metaslab      4   offset      4000000   spacemap     68   free    15.5M
+space map object 68:
+  smp_length = 0x5c80
+  smp_alloc = 0x74000
+	metaslab      5   offset      5000000   spacemap      3   free    15.9M
+space map object 3:
+  smp_length = 0x190
+  smp_alloc = 0x1a000
+	metaslab      6   offset      6000000   spacemap      2   free    15.9M
+space map object 2:
+  smp_length = 0x190
+  smp_alloc = 0x1a000
+
+Dataset mos [META], ID 0, cr_txg 4, 1.48M, 103 objects, rootbp DVA[0]=<0:5037000:1000> DVA[1]=<0:6037000:1000> DVA[2]=<0:3092000:1000> [L0 DMU objset] fletcher4 uncompressed unencrypted LE contiguous unique triple size=1000L/1000P birth=549L/549P fill=103 cksum=00000002f753492f:00000b62f04e94e1:0015e0f7f22e141a:1c0e5da51a764410
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+         0    2   128K    16K   132K     512   192K   26.82  DMU dnode
+	dnode flags: USED_BYTES 
+	dnode maxblkid: 11
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+         1    1   128K    16K    36K     512    48K  100.00  object directory
+	dnode flags: USED_BYTES 
+	dnode maxblkid: 2
+	Fat ZAP stats:
+		Pointer table:
+			1024 elements
+			zt_blk: 0
+			zt_numblks: 0
+			zt_shift: 10
+			zt_blks_copied: 0
+			zt_nextblk: 0
+		ZAP entries: 20
+		Leaf blocks: 2
+		Total blocks: 3
+		zap_block_type: 0x8000000000000001
+		zap_magic: 0x2f52ab2ab
+		zap_salt: 0xea1ec3
+		Leafs with 2^n pointers:
+			  9:      2 **
+		Blocks with n*5 entries:
+			  1:      1 *
+			  2:      1 *
+		Blocks n/10 full:
+			  1:      1 *
+			  2:      0 
+			  3:      0 
+			  4:      0 
+			  5:      0 
+			  6:      0 
+			  7:      0 
+			  8:      0 
+			  9:      1 *
+		Entries with n chunks:
+			  3:     13 *************
+			  4:      1 *
+			  5:      1 *
+			  6:      1 *
+			  7:      0 
+			  8:      0 
+			  9:      4 ****
+		Buckets with n entries:
+			  0:   1005 ****************************************
+			  1:     18 *
+			  2:      1 *
+
+		org.illumos:checksum_salt = 265239c6501bb0944a8c5cf5a7d96af5a3b11ac628158a0ab8f675c1f18a270b
+		errlog_last = 0 
+		errlog_scrub = 0 
+		history = 60 
+		root_dataset = 32 
+		com.delphix:vdev_zap_map = 63 
+		features_for_write = 52 
+		features_for_read = 51 
+		error_scrub = 0 0 0 0 0 0 0 0 0 
+		creation_version = 5000 
+		com.klarasystems:txg_log_time:months = 0 1 1 1793097375 4 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+		tmp_userrefs = 78 
+		free_bpobj = 41 
+		scan = 2 2 0 216 224 216 224 1793097381 1793097382 2772992 1224704 0 1421312 0 0 3 0 0 0 -1 0 0 0 0 
+		deflate = 1 
+		feature_descriptions = 53 
+		com.klarasystems:txg_log_time:minutes = 0 2 2 1793097494 531 1793097496 549 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+		sync_bplist = 62 
+		config = 61 
+		com.klarasystems:txg_log_time:days = 0 1 1 1793097400 530 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+         2    1    16K    16K    12K     512    16K  100.00  SPA space map
+                                                24   bonus  SPA space map header
+	dnode flags: USED_BYTES 
+	dnode maxblkid: 0
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+         3    1    16K    16K    12K     512    16K  100.00  SPA space map
+                                                24   bonus  SPA space map header
+	dnode flags: USED_BYTES 
+	dnode maxblkid: 0
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+        32    1   128K    512      0     512    512    0.00  DSL directory
+                                               256   bonus  DSL directory
+	dnode flags: 
+	dnode maxblkid: 0
+		creation_time = Tue Oct 27 05:36:15 2026
+		head_dataset_obj = 54
+		parent_dir_obj = 0
+		origin_obj = 48
+		child_dir_zapobj = 34
+		used_bytes = 4.03M
+		compressed_bytes = 1.86M
+		uncompressed_bytes = 2.10M
+		quota = 0
+		reserved = 0
+		props_zapobj = 33
+		deleg_zapobj = 0
+		flags = 1
+		used_breakdown[HEAD] = 192K
+		used_breakdown[SNAP] = 0
+		used_breakdown[CHILD] = 3.84M
+		used_breakdown[CHILD_RSRV] = 0
+		used_breakdown[REFRSRV] = 0
+		clones = 0
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+        33    1   128K    512    12K     512    512  100.00  DSL props
+	dnode flags: USED_BYTES 
+	dnode maxblkid: 0
+	microzap: 512 bytes, 0 entries
+
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+        34    1   128K     1K    12K     512     1K  100.00  DSL directory child map
+	dnode flags: USED_BYTES 
+	dnode maxblkid: 0
+	microzap: 1024 bytes, 9 entries
+
+		$MOS = 35 
+		files = 84 
+		defer_pending = 183 
+		passphrase = 348 
+		$ORIGIN = 42 
+		encrypted = 292 
+		check_hex = 338 
+		public_volume = 136 
+		$FREE = 38 
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+        35    1   128K    512      0     512    512    0.00  DSL directory
+                                               256   bonus  DSL directory
+	dnode flags: 
+	dnode maxblkid: 0
+		creation_time = Tue Oct 27 05:36:15 2026
+		head_dataset_obj = 0
+		parent_dir_obj = 32
+		origin_obj = 0
+		child_dir_zapobj = 37
+		used_bytes = 1.48M
+		compressed_bytes = 313K
+		uncompressed_bytes = 313K
+		quota = 0
+		reserved = 0
+		props_zapobj = 36
+		deleg_zapobj = 0
+		flags = 1
+		used_breakdown[HEAD] = 1.48M
+		used_breakdown[SNAP] = 0
+		used_breakdown[CHILD] = 0
+		used_breakdown[CHILD_RSRV] = 0
+		used_breakdown[REFRSRV] = 0
+		clones = 0
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+        36    1   128K    512    12K     512    512  100.00  DSL props
+	dnode flags: USED_BYTES 
+	dnode maxblkid: 0
+	microzap: 512 bytes, 0 entries
+
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+        37    1   128K    512    12K     512    512  100.00  DSL directory child map
+	dnode flags: USED_BYTES 
+	dnode maxblkid: 0
+	microzap: 512 bytes, 0 entries
+
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+        38    1   128K    512      0     512    512    0.00  DSL directory
+                                               256   bonus  DSL directory
+	dnode flags: 
+	dnode maxblkid: 0
+		creation_time = Tue Oct 27 05:36:15 2026
+		head_dataset_obj = 0
+		parent_dir_obj = 32
+		origin_obj = 0
+		child_dir_zapobj = 40
+		used_bytes = 0
+		compressed_bytes = 0
+		uncompressed_bytes = 0
+		quota = 0
+		reserved = 0
+		props_zapobj = 39
+		deleg_zapobj = 0
+		flags = 1
+		used_breakdown[HEAD] = 0
+		used_breakdown[SNAP] = 0
+		used_breakdown[CHILD] = 0
+		used_breakdown[CHILD_RSRV] = 0
+		used_breakdown[REFRSRV] = 0
+		clones = 0
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+        39    1   128K    512    12K     512    512  100.00  DSL props
+	dnode flags: USED_BYTES 
+	dnode maxblkid: 0
+	microzap: 512 bytes, 0 entries
+
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+        40    1   128K    512    12K     512    512  100.00  DSL directory child map
+	dnode flags: USED_BYTES 
+	dnode maxblkid: 0
+	microzap: 512 bytes, 0 entries
+
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+        41    1   128K   128K      0     512   128K    0.00  bpobj
+                                                48   bonus  bpobj header
+	dnode flags: USED_BYTES 
+	dnode maxblkid: 0
+		num_blkptrs = 0
+		bytes = 0
+		comp = 0
+		uncomp = 0
+		subobjs = 0
+		num_subobjs = 0
+		num_freed = 0
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+        42    1   128K    512      0     512    512    0.00  DSL directory
+                                               256   bonus  DSL directory
+	dnode flags: 
+	dnode maxblkid: 0
+		creation_time = Tue Oct 27 05:36:15 2026
+		head_dataset_obj = 45
+		parent_dir_obj = 32
+		origin_obj = 0
+		child_dir_zapobj = 44
+		used_bytes = 0
+		compressed_bytes = 0
+		uncompressed_bytes = 0
+		quota = 0
+		reserved = 0
+		props_zapobj = 43
+		deleg_zapobj = 0
+		flags = 1
+		used_breakdown[HEAD] = 0
+		used_breakdown[SNAP] = 0
+		used_breakdown[CHILD] = 0
+		used_breakdown[CHILD_RSRV] = 0
+		used_breakdown[REFRSRV] = 0
+		clones = 59
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+        43    1   128K    512    12K     512    512  100.00  DSL props
+	dnode flags: USED_BYTES 
+	dnode maxblkid: 0
+	microzap: 512 bytes, 0 entries
+
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+        44    1   128K    512    12K     512    512  100.00  DSL directory child map
+	dnode flags: USED_BYTES 
+	dnode maxblkid: 0
+	microzap: 512 bytes, 0 entries
+
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+        45    1   128K    512      0     512    512    0.00  DSL dataset
+                                               320   bonus  DSL dataset
+	dnode flags: 
+	dnode maxblkid: 0
+		dir_obj = 42
+		prev_snap_obj = 48
+		prev_snap_txg = 1
+		next_snap_obj = 0
+		snapnames_zapobj = 46
+		num_children = 0
+		userrefs_obj = 0
+		creation_time = Tue Oct 27 05:36:15 2026
+		creation_txg = 1
+		deadlist_obj = 49
+		used_bytes = 0
+		compressed_bytes = 0
+		uncompressed_bytes = 0
+		unique = 0
+		fsid_guid = 64525043742972409
+		guid = 4363366743945443204
+		flags = 4
+		next_clones_obj = 0
+		props_obj = 0
+		bp = HOLE [L0 unallocated] size=200L birth=0L
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+        46    1   128K    512    12K     512    512  100.00  DSL dataset snap map
+	dnode flags: USED_BYTES 
+	dnode maxblkid: 0
+	microzap: 512 bytes, 1 entries
+
+		$ORIGIN = 48 
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+        47    1   128K    512    12K     512    512  100.00  DSL deadlist map
+                                               320   bonus  DSL deadlist map hdr
+	dnode flags: USED_BYTES 
+	dnode maxblkid: 0
+	microzap: 512 bytes, 0 entries
+
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+        48    1   128K    512      0     512    512    0.00  DSL dataset
+                                               320   bonus  DSL dataset
+	dnode flags: 
+	dnode maxblkid: 0
+		dir_obj = 42
+		prev_snap_obj = 0
+		prev_snap_txg = 0
+		next_snap_obj = 45
+		snapnames_zapobj = 0
+		num_children = 9
+		userrefs_obj = 0
+		creation_time = Tue Oct 27 05:36:15 2026
+		creation_txg = 1
+		deadlist_obj = 47
+		used_bytes = 0
+		compressed_bytes = 0
+		uncompressed_bytes = 0
+		unique = 0
+		fsid_guid = 43928747404500974
+		guid = 11964069197285840240
+		flags = 4
+		next_clones_obj = 58
+		props_obj = 0
+		bp = HOLE [L0 unallocated] size=200L birth=0L
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+        49    1   128K    512    12K     512    512  100.00  DSL deadlist map
+                                               320   bonus  DSL deadlist map hdr
+	dnode flags: USED_BYTES 
+	dnode maxblkid: 0
+	microzap: 512 bytes, 1 entries
+
+		0 = 50 
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+        50    1   128K   128K      0     512   128K    0.00  bpobj
+                                                48   bonus  bpobj header
+	dnode flags: 
+	dnode maxblkid: 0
+		num_blkptrs = 0
+		bytes = 0
+		comp = 0
+		uncomp = 0
+		subobjs = 0
+		num_subobjs = 0
+		num_freed = 0
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+        51    1   128K    512    12K     512    512  100.00  zap
+	dnode flags: USED_BYTES 
+	dnode maxblkid: 0
+	microzap: 512 bytes, 4 entries
+
+		org.illumos:lz4_compress = 1 
+		com.datto:encryption = 3 
+		com.delphix:extensible_dataset = 8 
+		com.datto:bookmark_v2 = 0 
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+        52    1   128K    512    12K     512    512  100.00  zap
+	dnode flags: USED_BYTES 
+	dnode maxblkid: 0
+	microzap: 512 bytes, 1 entries
+
+		com.delphix:bookmarks = 0 
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+        53    1   128K    16K    24K     512    32K  100.00  zap
+	dnode flags: USED_BYTES 
+	dnode maxblkid: 1
+	Fat ZAP stats:
+		Pointer table:
+			1024 elements
+			zt_blk: 0
+			zt_numblks: 0
+			zt_shift: 10
+			zt_blks_copied: 0
+			zt_nextblk: 0
+		ZAP entries: 5
+		Leaf blocks: 1
+		Total blocks: 2
+		zap_block_type: 0x8000000000000001
+		zap_magic: 0x2f52ab2ab
+		zap_salt: 0x197a32fb
+		Leafs with 2^n pointers:
+			  9:      1 *
+		Blocks with n*5 entries:
+			  1:      1 *
+		Blocks n/10 full:
+			  1:      1 *
+		Entries with n chunks:
+			  4:      1 *
+			  5:      3 ***
+			  6:      1 *
+		Buckets with n entries:
+			  0:    507 ****************************************
+			  1:      5 *
+
+		com.delphix:extensible_dataset = Enhanced dataset functionality, used by other features.
+		com.delphix:bookmarks = "zfs bookmark" command
+		org.illumos:lz4_compress = LZ4 compression algorithm support.
+		com.datto:encryption = Support for dataset level encryption
+		com.datto:bookmark_v2 = Support for larger bookmarks
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+        54    1   128K    512      0     512    512    0.00  DSL dataset
+                                               320   bonus  DSL dataset
+	dnode flags: 
+	dnode maxblkid: 0
+		dir_obj = 32
+		prev_snap_obj = 48
+		prev_snap_txg = 1
+		next_snap_obj = 0
+		snapnames_zapobj = 55
+		num_children = 0
+		userrefs_obj = 0
+		creation_time = Tue Oct 27 05:36:15 2026
+		creation_txg = 1
+		deadlist_obj = 80
+		used_bytes = 192K
+		compressed_bytes = 66K
+		uncompressed_bytes = 66K
+		unique = 192K
+		fsid_guid = 6840320217962988
+		guid = 13494796742784929682
+		flags = 4
+		next_clones_obj = 0
+		props_obj = 0
+		bp = DVA[0]=<0:5000000:1000> DVA[1]=<0:6000000:1000> [L0 DMU objset] fletcher4 uncompressed unencrypted LE contiguous unique double size=1000L/1000P birth=531L/531P fill=9 cksum=0000000957a2c6be:00001d9bb982ffa7:0030897d162fef4c:36a10272102560b9
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+        55    1   128K    512    12K     512    512  100.00  DSL dataset snap map
+	dnode flags: USED_BYTES 
+	dnode maxblkid: 0
+	microzap: 512 bytes, 0 entries
+
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+        58    1   128K     1K    12K     512     1K  100.00  DSL dataset next clones
+	dnode flags: USED_BYTES 
+	dnode maxblkid: 0
+	microzap: 1024 bytes, 8 entries
+
+		8b = 139 
+		c1 = 193 
+		127 = 295 
+		ba = 186 
+		57 = 87 
+		36 = 54 
+		155 = 341 
+		15f = 351 
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+        59    1   128K     1K    12K     512     1K  100.00  DSL dir clones
+	dnode flags: USED_BYTES 
+	dnode maxblkid: 0
+	microzap: 1024 bytes, 8 entries
+
+		127 = 295 
+		36 = 54 
+		57 = 87 
+		ba = 186 
+		15f = 351 
+		c1 = 193 
+		155 = 341 
+		8b = 139 
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+        60    1   128K   128K    48K     512   128K  100.00  SPA history
+                                                40   bonus  SPA history offsets
+	dnode flags: USED_BYTES 
+	dnode maxblkid: 0
+		pool_create_len = 592
+		phys_max_off = 131072
+		bof = 592
+		eof = 130332
+		records_lost = 0
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+        61    1   128K    16K    12K     512    16K  100.00  packed nvlist
+                                                 8   bonus  packed nvlist size
+	dnode flags: USED_BYTES 
+	dnode maxblkid: 0
+        version: 5000
+        name: 'public_mirror'
+        state: 1
+        txg: 549
+        pool_guid: 6459989822358792249
+        errata: 0
+        min_alloc: 4096
+        max_alloc: 4096
+        hostname: 'localhost.localdomain'
+        com.delphix:has_per_vdev_zaps
+        vdev_children: 1
+        vdev_tree:
+            type: 'root'
+            id: 0
+            guid: 6459989822358792249
+            create_txg: 4
+            children[0]:
+                type: 'mirror'
+                id: 0
+                guid: 1812153658665848090
+                metaslab_array: 67
+                metaslab_shift: 24
+                ashift: 12
+                asize: 129499136
+                min_alloc: 4096
+                is_log: 0
+                create_txg: 4
+                com.delphix:vdev_zap_top: 64
+                children[0]:
+                    type: 'file'
+                    id: 0
+                    guid: 8150113380408372207
+                    path: '/Ozfiles/OZPublicPool/disk0'
+                    DTL: 143
+                    create_txg: 4
+                    com.delphix:vdev_zap_leaf: 65
+                children[1]:
+                    type: 'file'
+                    id: 1
+                    guid: 177522824695408963
+                    path: '/Ozfiles/OZPublicPool/disk1'
+                    DTL: 147
+                    create_txg: 4
+                    com.delphix:vdev_zap_leaf: 66
+        features_for_read:
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+        62    1   128K    16K    12K     512    16K  100.00  bpobj (Z=uncompressed)
+                                                48   bonus  bpobj header
+	dnode flags: USED_BYTES 
+	dnode maxblkid: 0
+		num_blkptrs = 10
+		bytes = 120K
+		comp = 40K
+		uncomp = 40K
+		subobjs = 0
+		num_subobjs = 0
+		num_freed = 0
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+        63    1   128K    512    12K     512    512  100.00  zap
+	dnode flags: USED_BYTES 
+	dnode maxblkid: 0
+	microzap: 512 bytes, 3 entries
+
+		42 = 66 
+		41 = 65 
+		40 = 64 
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+        64    1   128K    512    12K     512    512  100.00  zap
+	dnode flags: USED_BYTES 
+	dnode maxblkid: 0
+	microzap: 512 bytes, 0 entries
+
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+        65    1   128K    512    12K     512    512  100.00  zap
+	dnode flags: USED_BYTES 
+	dnode maxblkid: 0
+	microzap: 512 bytes, 0 entries
+
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+        66    1   128K    512    12K     512    512  100.00  zap
+	dnode flags: USED_BYTES 
+	dnode maxblkid: 0
+	microzap: 512 bytes, 0 entries
+
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+        67    1   128K    512    12K     512    512  100.00  object array
+	dnode flags: USED_BYTES 
+	dnode maxblkid: 0
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+        68    1    16K    16K    60K     512    32K  100.00  SPA space map
+                                                24   bonus  SPA space map header
+	dnode flags: USED_BYTES 
+	dnode maxblkid: 1
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+        69    1    16K    16K    48K     512    32K  100.00  SPA space map
+                                                24   bonus  SPA space map header
+	dnode flags: USED_BYTES 
+	dnode maxblkid: 1
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+        70    1    16K    16K    48K     512    32K  100.00  SPA space map
+                                                24   bonus  SPA space map header
+	dnode flags: USED_BYTES 
+	dnode maxblkid: 1
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+        71    1    16K    16K    48K     512    32K  100.00  SPA space map
+                                                24   bonus  SPA space map header
+	dnode flags: USED_BYTES 
+	dnode maxblkid: 1
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+        72    1    16K    16K    48K     512    32K  100.00  SPA space map
+                                                24   bonus  SPA space map header
+	dnode flags: USED_BYTES 
+	dnode maxblkid: 1
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+        78    1   128K    512    12K     512    512  100.00  snapshot refcount tags
+	dnode flags: USED_BYTES 
+	dnode maxblkid: 0
+	microzap: 512 bytes, 0 entries
+
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+        80    1   128K    512    12K     512    512  100.00  DSL deadlist map
+                                               320   bonus  DSL deadlist map hdr
+	dnode flags: USED_BYTES 
+	dnode maxblkid: 0
+	microzap: 512 bytes, 1 entries
+
+		0 = 81 
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+        81    1   128K   128K      0     512   128K    0.00  bpobj
+                                                48   bonus  bpobj header
+	dnode flags: 
+	dnode maxblkid: 0
+		num_blkptrs = 0
+		bytes = 0
+		comp = 0
+		uncomp = 0
+		subobjs = 0
+		num_subobjs = 0
+		num_freed = 0
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+        84    1   128K    512      0     512    512    0.00  DSL directory
+                                               256   bonus  DSL directory
+	dnode flags: 
+	dnode maxblkid: 0
+		creation_time = Tue Oct 27 05:36:16 2026
+		head_dataset_obj = 87
+		parent_dir_obj = 32
+		origin_obj = 48
+		child_dir_zapobj = 86
+		used_bytes = 1.31M
+		compressed_bytes = 1.10M
+		uncompressed_bytes = 1.33M
+		quota = 0
+		reserved = 0
+		props_zapobj = 85
+		deleg_zapobj = 120
+		flags = 1
+		used_breakdown[HEAD] = 1.31M
+		used_breakdown[SNAP] = 0
+		used_breakdown[CHILD] = 0
+		used_breakdown[CHILD_RSRV] = 0
+		used_breakdown[REFRSRV] = 0
+		clones = 104
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+        85    1   128K    512    12K     512    512  100.00  DSL props
+	dnode flags: USED_BYTES 
+	dnode maxblkid: 0
+	microzap: 512 bytes, 4 entries
+
+		atime = 1 
+		exec = 1 
+		readonly = 0 
+		relatime = 1 
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+        86    1   128K    512    12K     512    512  100.00  DSL directory child map
+	dnode flags: USED_BYTES 
+	dnode maxblkid: 0
+	microzap: 512 bytes, 0 entries
+
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+        87    1   128K    512      0     512    512    0.00  DSL dataset
+                                               320   bonus  DSL dataset
+	dnode flags: 
+	dnode maxblkid: 0
+		dir_obj = 84
+		prev_snap_obj = 48
+		prev_snap_txg = 1
+		next_snap_obj = 0
+		snapnames_zapobj = 88
+		num_children = 0
+		userrefs_obj = 0
+		creation_time = Tue Oct 27 05:36:16 2026
+		creation_txg = 59
+		deadlist_obj = 149
+		used_bytes = 1.31M
+		compressed_bytes = 1.10M
+		uncompressed_bytes = 1.33M
+		unique = 1.31M
+		fsid_guid = 44512754061621228
+		guid = 2675344154734969558
+		flags = 4
+		next_clones_obj = 0
+		props_obj = 0
+		bp = DVA[0]=<0:5001000:1000> DVA[1]=<0:6001000:1000> [L0 DMU objset] fletcher4 uncompressed unencrypted LE contiguous unique double size=1000L/1000P birth=531L/531P fill=28 cksum=00000008f7b5c33a:00001c015c5912bc:002d17a78b7b1214:31baef994e2b4406
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+        88    1   128K    512    12K     512    512  100.00  DSL dataset snap map
+	dnode flags: USED_BYTES 
+	dnode maxblkid: 0
+	microzap: 512 bytes, 0 entries
+
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+       104    1   128K    512    12K     512    512  100.00  DSL dir clones
+	dnode flags: USED_BYTES 
+	dnode maxblkid: 0
+	microzap: 512 bytes, 0 entries
+
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+       120    1   128K    512    12K     512    512  100.00  DSL permissions
+	dnode flags: USED_BYTES 
+	dnode maxblkid: 0
+	microzap: 512 bytes, 0 entries
+
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+       136    1   128K    512      0     512    512    0.00  DSL directory
+                                               256   bonus  DSL directory
+	dnode flags: 
+	dnode maxblkid: 0
+		creation_time = Tue Oct 27 05:36:21 2026
+		head_dataset_obj = 139
+		parent_dir_obj = 32
+		origin_obj = 48
+		child_dir_zapobj = 138
+		used_bytes = 112K
+		compressed_bytes = 56.5K
+		uncompressed_bytes = 64.5K
+		quota = 0
+		reserved = 0
+		props_zapobj = 137
+		deleg_zapobj = 0
+		flags = 1
+		used_breakdown[HEAD] = 112K
+		used_breakdown[SNAP] = 0
+		used_breakdown[CHILD] = 0
+		used_breakdown[CHILD_RSRV] = 0
+		used_breakdown[REFRSRV] = 0
+		clones = 0
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+       137    1   128K    512    12K     512    512  100.00  DSL props
+	dnode flags: USED_BYTES 
+	dnode maxblkid: 0
+	microzap: 512 bytes, 0 entries
+
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+       138    1   128K    512    12K     512    512  100.00  DSL directory child map
+	dnode flags: USED_BYTES 
+	dnode maxblkid: 0
+	microzap: 512 bytes, 0 entries
+
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+       139    1   128K    512      0     512    512    0.00  DSL dataset
+                                               320   bonus  DSL dataset
+	dnode flags: 
+	dnode maxblkid: 0
+		dir_obj = 136
+		prev_snap_obj = 48
+		prev_snap_txg = 1
+		next_snap_obj = 0
+		snapnames_zapobj = 140
+		num_children = 0
+		userrefs_obj = 0
+		creation_time = Tue Oct 27 05:36:21 2026
+		creation_txg = 210
+		deadlist_obj = 141
+		used_bytes = 112K
+		compressed_bytes = 56.5K
+		uncompressed_bytes = 64.5K
+		unique = 112K
+		fsid_guid = 33129885840207357
+		guid = 228619283612690908
+		flags = 4
+		next_clones_obj = 0
+		props_obj = 0
+		bp = DVA[0]=<0:402d000:1000> DVA[1]=<0:1028000:1000> [L0 DMU objset] fletcher4 uncompressed unencrypted LE contiguous unique double size=1000L/1000P birth=536L/536P fill=2 cksum=000000055b124522:00001330e2484bc0:00228e17a618de5e:29b02afad6d10265
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+       140    1   128K    512    12K     512    512  100.00  DSL dataset snap map
+	dnode flags: USED_BYTES 
+	dnode maxblkid: 0
+	microzap: 512 bytes, 0 entries
+
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+       141    1   128K    512    12K     512    512  100.00  DSL deadlist map
+                                               320   bonus  DSL deadlist map hdr
+	dnode flags: USED_BYTES 
+	dnode maxblkid: 0
+	microzap: 512 bytes, 1 entries
+
+		0 = 142 
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+       142    1   128K   128K      0     512   128K    0.00  bpobj
+                                                48   bonus  bpobj header
+	dnode flags: 
+	dnode maxblkid: 0
+		num_blkptrs = 0
+		bytes = 0
+		comp = 0
+		uncomp = 0
+		subobjs = 0
+		num_subobjs = 0
+		num_freed = 0
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+       143    1    16K     4K      0     512     4K    0.00  SPA space map
+                                                24   bonus  SPA space map header
+	dnode flags: USED_BYTES 
+	dnode maxblkid: 0
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+       147    1    16K     4K      0     512     4K    0.00  SPA space map
+                                                24   bonus  SPA space map header
+	dnode flags: USED_BYTES 
+	dnode maxblkid: 0
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+       149    1   128K    512    12K     512    512  100.00  DSL deadlist map
+                                               320   bonus  DSL deadlist map hdr
+	dnode flags: USED_BYTES 
+	dnode maxblkid: 0
+	microzap: 512 bytes, 1 entries
+
+		0 = 150 
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+       150    1   128K   128K      0     512   128K    0.00  bpobj
+                                                48   bonus  bpobj header
+	dnode flags: 
+	dnode maxblkid: 0
+		num_blkptrs = 0
+		bytes = 0
+		comp = 0
+		uncomp = 0
+		subobjs = 0
+		num_subobjs = 0
+		num_freed = 0
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+       183    2   128K    16K    36K     512    32K  100.00  zap
+                                               256   bonus  DSL directory
+	dnode flags: USED_BYTES 
+	dnode maxblkid: 1
+		creation_time = Tue Oct 27 05:36:24 2026
+		head_dataset_obj = 186
+		parent_dir_obj = 32
+		origin_obj = 48
+		child_dir_zapobj = 185
+		used_bytes = 352K
+		compressed_bytes = 130K
+		uncompressed_bytes = 130K
+		quota = 0
+		reserved = 0
+		props_zapobj = 184
+		deleg_zapobj = 0
+		flags = 1
+		used_breakdown[HEAD] = 176K
+		used_breakdown[SNAP] = 0
+		used_breakdown[CHILD] = 176K
+		used_breakdown[CHILD_RSRV] = 0
+		used_breakdown[REFRSRV] = 0
+		clones = 0
+	Fat ZAP stats:
+		Pointer table:
+			1024 elements
+			zt_blk: 0
+			zt_numblks: 0
+			zt_shift: 10
+			zt_blks_copied: 0
+			zt_nextblk: 0
+		ZAP entries: 1
+		Leaf blocks: 1
+		Total blocks: 2
+		zap_block_type: 0x8000000000000001
+		zap_magic: 0x2f52ab2ab
+		zap_salt: 0x3295f
+		Leafs with 2^n pointers:
+			  9:      1 *
+		Blocks with n*5 entries:
+			  0:      1 *
+		Blocks n/10 full:
+			  1:      1 *
+		Entries with n chunks:
+			  4:      1 *
+		Buckets with n entries:
+			  0:    511 ****************************************
+			  1:      1 *
+
+		com.ixsystems:snapshots_changed = 1793097494 974019000 
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+       184    1   128K    16K    24K     512    32K  100.00  DSL props
+	dnode flags: USED_BYTES 
+	dnode maxblkid: 1
+	Fat ZAP stats:
+		Pointer table:
+			1024 elements
+			zt_blk: 0
+			zt_numblks: 0
+			zt_shift: 10
+			zt_blks_copied: 0
+			zt_nextblk: 0
+		ZAP entries: 1
+		Leaf blocks: 1
+		Total blocks: 2
+		zap_block_type: 0x8000000000000001
+		zap_magic: 0x2f52ab2ab
+		zap_salt: 0x4e8121
+		Leafs with 2^n pointers:
+			  9:      1 *
+		Blocks with n*5 entries:
+			  0:      1 *
+		Blocks n/10 full:
+			  1:      1 *
+		Entries with n chunks:
+			  3:      1 *
+		Buckets with n entries:
+			  0:    511 ****************************************
+			  1:      1 *
+
+		mountpoint = none
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+       185    1   128K    512    12K     512    512  100.00  DSL directory child map
+	dnode flags: USED_BYTES 
+	dnode maxblkid: 0
+	microzap: 512 bytes, 1 entries
+
+		child = 190 
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+       186    1   128K    512      0     512    512    0.00  DSL dataset
+                                               320   bonus  DSL dataset
+	dnode flags: 
+	dnode maxblkid: 0
+		dir_obj = 183
+		prev_snap_obj = 48
+		prev_snap_txg = 1
+		next_snap_obj = 0
+		snapnames_zapobj = 187
+		num_children = 0
+		userrefs_obj = 0
+		creation_time = Tue Oct 27 05:36:24 2026
+		creation_txg = 258
+		deadlist_obj = 198
+		used_bytes = 176K
+		compressed_bytes = 65K
+		uncompressed_bytes = 65K
+		unique = 176K
+		fsid_guid = 54387001019005123
+		guid = 73320247538391197
+		flags = 4
+		next_clones_obj = 0
+		props_obj = 0
+		bp = DVA[0]=<0:582000:1000> DVA[1]=<0:135c000:1000> [L0 DMU objset] fletcher4 uncompressed unencrypted LE contiguous unique double size=1000L/1000P birth=258L/258P fill=6 cksum=000000079ecc7bc6:000017a5ae26fe0d:0026478f1178f7f3:2aee1a3e0fe046f1
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+       187    1   128K    512    12K     512    512  100.00  DSL dataset snap map
+	dnode flags: USED_BYTES 
+	dnode maxblkid: 0
+	microzap: 512 bytes, 0 entries
+
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+       190    2   128K    16K    36K     512    32K  100.00  zap
+                                               256   bonus  DSL directory
+	dnode flags: USED_BYTES 
+	dnode maxblkid: 1
+		creation_time = Tue Oct 27 05:36:25 2026
+		head_dataset_obj = 193
+		parent_dir_obj = 183
+		origin_obj = 48
+		child_dir_zapobj = 192
+		used_bytes = 176K
+		compressed_bytes = 65K
+		uncompressed_bytes = 65K
+		quota = 0
+		reserved = 0
+		props_zapobj = 191
+		deleg_zapobj = 0
+		flags = 1
+		used_breakdown[HEAD] = 176K
+		used_breakdown[SNAP] = 0
+		used_breakdown[CHILD] = 0
+		used_breakdown[CHILD_RSRV] = 0
+		used_breakdown[REFRSRV] = 0
+		clones = 0
+	Fat ZAP stats:
+		Pointer table:
+			1024 elements
+			zt_blk: 0
+			zt_numblks: 0
+			zt_shift: 10
+			zt_blks_copied: 0
+			zt_nextblk: 0
+		ZAP entries: 1
+		Leaf blocks: 1
+		Total blocks: 2
+		zap_block_type: 0x8000000000000001
+		zap_magic: 0x2f52ab2ab
+		zap_salt: 0x1573d
+		Leafs with 2^n pointers:
+			  9:      1 *
+		Blocks with n*5 entries:
+			  0:      1 *
+		Blocks n/10 full:
+			  1:      1 *
+		Entries with n chunks:
+			  4:      1 *
+		Buckets with n entries:
+			  0:    511 ****************************************
+			  1:      1 *
+
+		com.ixsystems:snapshots_changed = 1793097494 971613000 
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+       191    1   128K    16K    24K     512    32K  100.00  DSL props
+	dnode flags: USED_BYTES 
+	dnode maxblkid: 1
+	Fat ZAP stats:
+		Pointer table:
+			1024 elements
+			zt_blk: 0
+			zt_numblks: 0
+			zt_shift: 10
+			zt_blks_copied: 0
+			zt_nextblk: 0
+		ZAP entries: 1
+		Leaf blocks: 1
+		Total blocks: 2
+		zap_block_type: 0x8000000000000001
+		zap_magic: 0x2f52ab2ab
+		zap_salt: 0x196c1bcf
+		Leafs with 2^n pointers:
+			  9:      1 *
+		Blocks with n*5 entries:
+			  0:      1 *
+		Blocks n/10 full:
+			  1:      1 *
+		Entries with n chunks:
+			  3:      1 *
+		Buckets with n entries:
+			  0:    511 ****************************************
+			  1:      1 *
+
+		mountpoint = none
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+       192    1   128K    512    12K     512    512  100.00  DSL directory child map
+	dnode flags: USED_BYTES 
+	dnode maxblkid: 0
+	microzap: 512 bytes, 0 entries
+
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+       193    1   128K    512      0     512    512    0.00  DSL dataset
+                                               320   bonus  DSL dataset
+	dnode flags: 
+	dnode maxblkid: 0
+		dir_obj = 190
+		prev_snap_obj = 48
+		prev_snap_txg = 1
+		next_snap_obj = 0
+		snapnames_zapobj = 194
+		num_children = 0
+		userrefs_obj = 0
+		creation_time = Tue Oct 27 05:36:25 2026
+		creation_txg = 260
+		deadlist_obj = 202
+		used_bytes = 176K
+		compressed_bytes = 65K
+		uncompressed_bytes = 65K
+		unique = 176K
+		fsid_guid = 64266143428409592
+		guid = 18083278832872335888
+		flags = 4
+		next_clones_obj = 0
+		props_obj = 0
+		bp = DVA[0]=<0:5a9000:1000> DVA[1]=<0:136f000:1000> [L0 DMU objset] fletcher4 uncompressed unencrypted LE contiguous unique double size=1000L/1000P birth=260L/260P fill=6 cksum=00000008883c77d6:00001a1b90bc9d5d:0029c0445c7d21e3:2e5c88256b8380d4
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+       194    1   128K    512    12K     512    512  100.00  DSL dataset snap map
+	dnode flags: USED_BYTES 
+	dnode maxblkid: 0
+	microzap: 512 bytes, 0 entries
+
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+       198    1   128K    512    12K     512    512  100.00  DSL deadlist map
+                                               320   bonus  DSL deadlist map hdr
+	dnode flags: USED_BYTES 
+	dnode maxblkid: 0
+	microzap: 512 bytes, 1 entries
+
+		0 = 199 
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+       199    1   128K   128K      0     512   128K    0.00  bpobj
+                                                48   bonus  bpobj header
+	dnode flags: 
+	dnode maxblkid: 0
+		num_blkptrs = 0
+		bytes = 0
+		comp = 0
+		uncomp = 0
+		subobjs = 0
+		num_subobjs = 0
+		num_freed = 0
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+       202    1   128K    512    12K     512    512  100.00  DSL deadlist map
+                                               320   bonus  DSL deadlist map hdr
+	dnode flags: USED_BYTES 
+	dnode maxblkid: 0
+	microzap: 512 bytes, 1 entries
+
+		0 = 203 
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+       203    1   128K   128K      0     512   128K    0.00  bpobj
+                                                48   bonus  bpobj header
+	dnode flags: 
+	dnode maxblkid: 0
+		num_blkptrs = 0
+		bytes = 0
+		comp = 0
+		uncomp = 0
+		subobjs = 0
+		num_subobjs = 0
+		num_freed = 0
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+       292    2   128K    16K    36K     512    32K  100.00  zap
+                                               256   bonus  DSL directory
+	dnode flags: USED_BYTES 
+	dnode maxblkid: 1
+		creation_time = Tue Oct 27 05:36:30 2026
+		head_dataset_obj = 295
+		parent_dir_obj = 32
+		origin_obj = 48
+		child_dir_zapobj = 294
+		used_bytes = 216K
+		compressed_bytes = 72K
+		uncompressed_bytes = 72K
+		quota = 0
+		reserved = 0
+		props_zapobj = 293
+		deleg_zapobj = 300
+		flags = 1
+		used_breakdown[HEAD] = 216K
+		used_breakdown[SNAP] = 0
+		used_breakdown[CHILD] = 0
+		used_breakdown[CHILD_RSRV] = 0
+		used_breakdown[REFRSRV] = 0
+		clones = 0
+	Fat ZAP stats:
+		Pointer table:
+			1024 elements
+			zt_blk: 0
+			zt_numblks: 0
+			zt_shift: 10
+			zt_blks_copied: 0
+			zt_nextblk: 0
+		ZAP entries: 2
+		Leaf blocks: 1
+		Total blocks: 2
+		zap_block_type: 0x8000000000000001
+		zap_magic: 0x2f52ab2ab
+		zap_salt: 0xf0b0c9
+		Leafs with 2^n pointers:
+			  9:      1 *
+		Blocks with n*5 entries:
+			  0:      1 *
+		Blocks n/10 full:
+			  1:      1 *
+		Entries with n chunks:
+			  4:      2 **
+		Buckets with n entries:
+			  0:    510 ****************************************
+			  1:      2 *
+
+		com.datto:crypto_key_obj = 299 
+		com.ixsystems:snapshots_changed = 1793097395 115876000 
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+       293    1   128K    16K    24K     512    32K  100.00  DSL props
+	dnode flags: USED_BYTES 
+	dnode maxblkid: 1
+	Fat ZAP stats:
+		Pointer table:
+			1024 elements
+			zt_blk: 0
+			zt_numblks: 0
+			zt_shift: 10
+			zt_blks_copied: 0
+			zt_nextblk: 0
+		ZAP entries: 2
+		Leaf blocks: 1
+		Total blocks: 2
+		zap_block_type: 0x8000000000000001
+		zap_magic: 0x2f52ab2ab
+		zap_salt: 0xe2e5b
+		Leafs with 2^n pointers:
+			  9:      1 *
+		Blocks with n*5 entries:
+			  0:      1 *
+		Blocks n/10 full:
+			  1:      1 *
+		Entries with n chunks:
+			  3:      1 *
+			  4:      1 *
+		Buckets with n entries:
+			  0:    510 ****************************************
+			  1:      2 *
+
+		mountpoint = none
+		keylocation = file:///RAM/public-test.key
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+       294    1   128K    512    12K     512    512  100.00  DSL directory child map
+	dnode flags: USED_BYTES 
+	dnode maxblkid: 0
+	microzap: 512 bytes, 0 entries
+
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+       295    1   128K    512    12K     512    512  100.00  zap
+                                               320   bonus  DSL dataset
+	dnode flags: USED_BYTES 
+	dnode maxblkid: 0
+		dir_obj = 292
+		prev_snap_obj = 48
+		prev_snap_txg = 1
+		next_snap_obj = 0
+		snapnames_zapobj = 296
+		num_children = 0
+		userrefs_obj = 0
+		creation_time = Tue Oct 27 05:36:30 2026
+		creation_txg = 328
+		deadlist_obj = 319
+		used_bytes = 216K
+		compressed_bytes = 72K
+		uncompressed_bytes = 72K
+		unique = 216K
+		fsid_guid = 32815430587939392
+		guid = 16826191616431560620
+		flags = 4
+		next_clones_obj = 0
+		props_obj = 0
+		bp = DVA[0]=<0:5002000:1000> DVA[1]=<0:6002000:1000> [L0 DMU objset] fletcher4 uncompressed authenticated LE contiguous unique double size=1000L/1000P birth=531L/531P fill=12 cksum=0000001b74184ed4:00005664bc897059:008b3db935b89154:98cf6b14cef488cd
+	microzap: 512 bytes, 1 entries
+
+		com.datto:encryption = 0 
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+       296    1   128K    512    12K     512    512  100.00  DSL dataset snap map
+	dnode flags: USED_BYTES 
+	dnode maxblkid: 0
+	microzap: 512 bytes, 0 entries
+
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+       299    1   128K    16K    24K     512    32K  100.00  zap
+	dnode flags: USED_BYTES 
+	dnode maxblkid: 1
+	Fat ZAP stats:
+		Pointer table:
+			1024 elements
+			zt_blk: 0
+			zt_numblks: 0
+			zt_shift: 10
+			zt_blks_copied: 0
+			zt_nextblk: 0
+		ZAP entries: 12
+		Leaf blocks: 1
+		Total blocks: 2
+		zap_block_type: 0x8000000000000001
+		zap_magic: 0x2f52ab2ab
+		zap_salt: 0x18316ac7
+		Leafs with 2^n pointers:
+			  9:      1 *
+		Blocks with n*5 entries:
+			  2:      1 *
+		Blocks n/10 full:
+			  2:      1 *
+		Entries with n chunks:
+			  3:      9 *********
+			  4:      1 *
+			  5:      1 *
+			  6:      0 
+			  7:      1 *
+		Buckets with n entries:
+			  0:    500 ****************************************
+			  1:     12 *
+
+		DSL_CRYPTO_HMAC_KEY_1 = 66d27adfc2bf62eae30aa67111d9458f7e1f68b67824cbe725886a3622a44165c26570bf88531df3141869a857f7f8ff26f186893792108b947d018f7c899ade
+		DSL_CRYPTO_SUITE = 8 
+		DSL_CRYPTO_REFCOUNT = 1 
+		pbkdf2iters = 0 
+		DSL_CRYPTO_ROOT_DDOBJ = 292 
+		DSL_CRYPTO_MASTER_KEY_1 = 3e5bb3b3377a404712bfd07bd36a057572a8066d80986368b11d8cfd9f2e29c9
+		DSL_CRYPTO_VERSION = 1 
+		pbkdf2salt = 0 
+		DSL_CRYPTO_MAC = 8acc51b0c5a3e7d4ab7955a652ba1175
+		DSL_CRYPTO_IV = e3beb8f309b8bce6cbdf3d06
+		keyformat = 1 
+		DSL_CRYPTO_GUID = 8718535116794034327 
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+       300    1   128K    512    12K     512    512  100.00  DSL permissions
+	dnode flags: USED_BYTES 
+	dnode maxblkid: 0
+	microzap: 512 bytes, 0 entries
+
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+       319    1   128K    512    12K     512    512  100.00  DSL deadlist map
+                                               320   bonus  DSL deadlist map hdr
+	dnode flags: USED_BYTES 
+	dnode maxblkid: 0
+	microzap: 512 bytes, 1 entries
+
+		0 = 320 
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+       320    1   128K   128K      0     512   128K    0.00  bpobj
+                                                48   bonus  bpobj header
+	dnode flags: 
+	dnode maxblkid: 0
+		num_blkptrs = 0
+		bytes = 0
+		comp = 0
+		uncomp = 0
+		subobjs = 0
+		num_subobjs = 0
+		num_freed = 0
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+       338    1   128K    512    12K     512    512  100.00  zap
+                                               256   bonus  DSL directory
+	dnode flags: USED_BYTES 
+	dnode maxblkid: 0
+		creation_time = Tue Oct 27 05:36:35 2026
+		head_dataset_obj = 341
+		parent_dir_obj = 32
+		origin_obj = 48
+		child_dir_zapobj = 340
+		used_bytes = 200K
+		compressed_bytes = 70.5K
+		uncompressed_bytes = 70.5K
+		quota = 0
+		reserved = 0
+		props_zapobj = 339
+		deleg_zapobj = 346
+		flags = 1
+		used_breakdown[HEAD] = 200K
+		used_breakdown[SNAP] = 0
+		used_breakdown[CHILD] = 0
+		used_breakdown[CHILD_RSRV] = 0
+		used_breakdown[REFRSRV] = 0
+		clones = 0
+	microzap: 512 bytes, 1 entries
+
+		com.datto:crypto_key_obj = 345 
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+       339    1   128K    16K    24K     512    32K  100.00  DSL props
+	dnode flags: USED_BYTES 
+	dnode maxblkid: 1
+	Fat ZAP stats:
+		Pointer table:
+			1024 elements
+			zt_blk: 0
+			zt_numblks: 0
+			zt_shift: 10
+			zt_blks_copied: 0
+			zt_nextblk: 0
+		ZAP entries: 2
+		Leaf blocks: 1
+		Total blocks: 2
+		zap_block_type: 0x8000000000000001
+		zap_magic: 0x2f52ab2ab
+		zap_salt: 0x18db3497
+		Leafs with 2^n pointers:
+			  9:      1 *
+		Blocks with n*5 entries:
+			  0:      1 *
+		Blocks n/10 full:
+			  1:      1 *
+		Entries with n chunks:
+			  3:      1 *
+			  4:      1 *
+		Buckets with n entries:
+			  0:    510 ****************************************
+			  1:      2 *
+
+		keylocation = file:///RAM/public-hex.key
+		mountpoint = none
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+       340    1   128K    512    12K     512    512  100.00  DSL directory child map
+	dnode flags: USED_BYTES 
+	dnode maxblkid: 0
+	microzap: 512 bytes, 0 entries
+
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+       341    1   128K    512    12K     512    512  100.00  zap
+                                               320   bonus  DSL dataset
+	dnode flags: USED_BYTES 
+	dnode maxblkid: 0
+		dir_obj = 338
+		prev_snap_obj = 48
+		prev_snap_txg = 1
+		next_snap_obj = 0
+		snapnames_zapobj = 342
+		num_children = 0
+		userrefs_obj = 0
+		creation_time = Tue Oct 27 05:36:35 2026
+		creation_txg = 441
+		deadlist_obj = 343
+		used_bytes = 200K
+		compressed_bytes = 70.5K
+		uncompressed_bytes = 70.5K
+		unique = 200K
+		fsid_guid = 51659843433421905
+		guid = 9675377272237975632
+		flags = 4
+		next_clones_obj = 0
+		props_obj = 0
+		bp = DVA[0]=<0:5005000:1000> DVA[1]=<0:6005000:1000> [L0 DMU objset] fletcher4 uncompressed authenticated LE contiguous unique double size=1000L/1000P birth=531L/531P fill=9 cksum=0000001b5f75e79e:000055215a3f806d:008779454e26ee39:92c14e6f85a6ef64
+	microzap: 512 bytes, 1 entries
+
+		com.datto:encryption = 0 
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+       342    1   128K    512    12K     512    512  100.00  DSL dataset snap map
+	dnode flags: USED_BYTES 
+	dnode maxblkid: 0
+	microzap: 512 bytes, 0 entries
+
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+       343    1   128K    512    12K     512    512  100.00  DSL deadlist map
+                                               320   bonus  DSL deadlist map hdr
+	dnode flags: USED_BYTES 
+	dnode maxblkid: 0
+	microzap: 512 bytes, 1 entries
+
+		0 = 344 
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+       344    1   128K   128K      0     512   128K    0.00  bpobj
+                                                48   bonus  bpobj header
+	dnode flags: 
+	dnode maxblkid: 0
+		num_blkptrs = 0
+		bytes = 0
+		comp = 0
+		uncomp = 0
+		subobjs = 0
+		num_subobjs = 0
+		num_freed = 0
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+       345    1   128K    16K    24K     512    32K  100.00  zap
+	dnode flags: USED_BYTES 
+	dnode maxblkid: 1
+	Fat ZAP stats:
+		Pointer table:
+			1024 elements
+			zt_blk: 0
+			zt_numblks: 0
+			zt_shift: 10
+			zt_blks_copied: 0
+			zt_nextblk: 0
+		ZAP entries: 12
+		Leaf blocks: 1
+		Total blocks: 2
+		zap_block_type: 0x8000000000000001
+		zap_magic: 0x2f52ab2ab
+		zap_salt: 0x1943dc83
+		Leafs with 2^n pointers:
+			  9:      1 *
+		Blocks with n*5 entries:
+			  2:      1 *
+		Blocks n/10 full:
+			  2:      1 *
+		Entries with n chunks:
+			  3:      9 *********
+			  4:      1 *
+			  5:      1 *
+			  6:      0 
+			  7:      1 *
+		Buckets with n entries:
+			  0:    501 ****************************************
+			  1:     10 *
+			  2:      1 *
+
+		keyformat = 2 
+		pbkdf2iters = 0 
+		pbkdf2salt = 0 
+		DSL_CRYPTO_SUITE = 8 
+		DSL_CRYPTO_MASTER_KEY_1 = 87f27f5a7051d12ee67a51ed942991b74d5389f7ef276dcd3c655755df712658
+		DSL_CRYPTO_GUID = -3981915515766520044 
+		DSL_CRYPTO_REFCOUNT = 1 
+		DSL_CRYPTO_VERSION = 1 
+		DSL_CRYPTO_ROOT_DDOBJ = 338 
+		DSL_CRYPTO_MAC = ddd3dce368519351e4b94cd4e1d005a3
+		DSL_CRYPTO_HMAC_KEY_1 = c916a887ae24af9bae2a8ae64ee3e7c6407b46c6ff257a3fa90b324b3cd28ee070b9811acb73ded23120594d74223f6d4d1f405d5801a9e09ef75250b837ff53
+		DSL_CRYPTO_IV = d4dd1cb7ff81af1927f19dac
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+       346    1   128K    512    12K     512    512  100.00  DSL permissions
+	dnode flags: USED_BYTES 
+	dnode maxblkid: 0
+	microzap: 512 bytes, 0 entries
+
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+       348    1   128K    512    12K     512    512  100.00  zap
+                                               256   bonus  DSL directory
+	dnode flags: USED_BYTES 
+	dnode maxblkid: 0
+		creation_time = Tue Oct 27 05:36:38 2026
+		head_dataset_obj = 351
+		parent_dir_obj = 32
+		origin_obj = 48
+		child_dir_zapobj = 350
+		used_bytes = 200K
+		compressed_bytes = 70.5K
+		uncompressed_bytes = 70.5K
+		quota = 0
+		reserved = 0
+		props_zapobj = 349
+		deleg_zapobj = 0
+		flags = 1
+		used_breakdown[HEAD] = 200K
+		used_breakdown[SNAP] = 0
+		used_breakdown[CHILD] = 0
+		used_breakdown[CHILD_RSRV] = 0
+		used_breakdown[REFRSRV] = 0
+		clones = 0
+	microzap: 512 bytes, 1 entries
+
+		com.datto:crypto_key_obj = 355 
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+       349    1   128K    16K    24K     512    32K  100.00  DSL props
+	dnode flags: USED_BYTES 
+	dnode maxblkid: 1
+	Fat ZAP stats:
+		Pointer table:
+			1024 elements
+			zt_blk: 0
+			zt_numblks: 0
+			zt_shift: 10
+			zt_blks_copied: 0
+			zt_nextblk: 0
+		ZAP entries: 2
+		Leaf blocks: 1
+		Total blocks: 2
+		zap_block_type: 0x8000000000000001
+		zap_magic: 0x2f52ab2ab
+		zap_salt: 0x18c9c43b
+		Leafs with 2^n pointers:
+			  9:      1 *
+		Blocks with n*5 entries:
+			  0:      1 *
+		Blocks n/10 full:
+			  1:      1 *
+		Entries with n chunks:
+			  3:      1 *
+			  4:      1 *
+		Buckets with n entries:
+			  0:    510 ****************************************
+			  1:      2 *
+
+		mountpoint = none
+		keylocation = file:///RAM/public-passphrase-new
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+       350    1   128K    512    12K     512    512  100.00  DSL directory child map
+	dnode flags: USED_BYTES 
+	dnode maxblkid: 0
+	microzap: 512 bytes, 0 entries
+
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+       351    1   128K    512    12K     512    512  100.00  zap
+                                               320   bonus  DSL dataset
+	dnode flags: USED_BYTES 
+	dnode maxblkid: 0
+		dir_obj = 348
+		prev_snap_obj = 48
+		prev_snap_txg = 1
+		next_snap_obj = 0
+		snapnames_zapobj = 352
+		num_children = 0
+		userrefs_obj = 0
+		creation_time = Tue Oct 27 05:36:38 2026
+		creation_txg = 494
+		deadlist_obj = 353
+		used_bytes = 200K
+		compressed_bytes = 70.5K
+		uncompressed_bytes = 70.5K
+		unique = 200K
+		fsid_guid = 54323652202221147
+		guid = 13892444260126989982
+		flags = 4
+		next_clones_obj = 0
+		props_obj = 0
+		bp = DVA[0]=<0:5004000:1000> DVA[1]=<0:6004000:1000> [L0 DMU objset] fletcher4 uncompressed authenticated LE contiguous unique double size=1000L/1000P birth=531L/531P fill=9 cksum=0000001bf7803ad2:000056c14ef8ad82:008a172c89b54d4f:95fc0861eccb3b3b
+	microzap: 512 bytes, 1 entries
+
+		com.datto:encryption = 0 
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+       352    1   128K    512    12K     512    512  100.00  DSL dataset snap map
+	dnode flags: USED_BYTES 
+	dnode maxblkid: 0
+	microzap: 512 bytes, 0 entries
+
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+       353    1   128K    512    12K     512    512  100.00  DSL deadlist map
+                                               320   bonus  DSL deadlist map hdr
+	dnode flags: USED_BYTES 
+	dnode maxblkid: 0
+	microzap: 512 bytes, 1 entries
+
+		0 = 354 
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+       354    1   128K   128K      0     512   128K    0.00  bpobj
+                                                48   bonus  bpobj header
+	dnode flags: 
+	dnode maxblkid: 0
+		num_blkptrs = 0
+		bytes = 0
+		comp = 0
+		uncomp = 0
+		subobjs = 0
+		num_subobjs = 0
+		num_freed = 0
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+       355    1   128K    16K    24K     512    32K  100.00  zap
+	dnode flags: USED_BYTES 
+	dnode maxblkid: 1
+	Fat ZAP stats:
+		Pointer table:
+			1024 elements
+			zt_blk: 0
+			zt_numblks: 0
+			zt_shift: 10
+			zt_blks_copied: 0
+			zt_nextblk: 0
+		ZAP entries: 12
+		Leaf blocks: 1
+		Total blocks: 2
+		zap_block_type: 0x8000000000000001
+		zap_magic: 0x2f52ab2ab
+		zap_salt: 0x190ceed7
+		Leafs with 2^n pointers:
+			  9:      1 *
+		Blocks with n*5 entries:
+			  2:      1 *
+		Blocks n/10 full:
+			  2:      1 *
+		Entries with n chunks:
+			  3:      9 *********
+			  4:      1 *
+			  5:      1 *
+			  6:      0 
+			  7:      1 *
+		Buckets with n entries:
+			  0:    500 ****************************************
+			  1:     12 *
+
+		DSL_CRYPTO_HMAC_KEY_1 = d0e560a077e22242fd5c10b689b000f1e820a8b7c365b60e6e44c74bc6516eff130c9df6ccd40273c56e841073226420f3870a796a91010a87006b9c5ea86f73
+		DSL_CRYPTO_REFCOUNT = 1 
+		DSL_CRYPTO_MASTER_KEY_1 = 89006072186ef17cceb0b968bae759b4359af65d75803a06e7eb0a35646b01a7
+		DSL_CRYPTO_ROOT_DDOBJ = 348 
+		DSL_CRYPTO_IV = d233779364a4c34cce3310bf
+		DSL_CRYPTO_SUITE = 8 
+		DSL_CRYPTO_MAC = eb46d7e940d89804c6690fb1a6721497
+		DSL_CRYPTO_VERSION = 1 
+		pbkdf2salt = -1727776957289990641 
+		pbkdf2iters = 400000 
+		keyformat = 3 
+		DSL_CRYPTO_GUID = 6864484977240648004 
+
+    Dnode slots:
+	Total used:           103
+	Max used:             355
+	Percent empty:  70.985915
+
+    Deferred frees: object 62, 10 blkptrs, 120K
+    Pool snapshot frees: object 41, 0 blkptrs, 0
+
+Dirty time logs:
+
+	public_mirror [DTL-required]
+	    mirror [DTL-required]
+	        /mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/public-service-run.M625rCxw/members-release/disk0 [DTL-expendable]
+	        /mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/public-service-run.M625rCxw/members-release/disk1 [DTL-expendable]
+Dataset public_mirror/files [ZPL], ID 87, cr_txg 59, 1.31M, 28 objects, rootbp DVA[0]=<0:5001000:1000> DVA[1]=<0:6001000:1000> [L0 DMU objset] fletcher4 uncompressed unencrypted LE contiguous unique double size=1000L/1000P birth=531L/531P fill=28 cksum=00000008f7b5c33a:00001c015c5912bc:002d17a78b7b1214:31baef994e2b4406
+
+    ZIL header: claim_txg 531, claim_blk_seq 313, claim_lr_seq 0 replay_seq 0, flags 0x2
+
+	Block seqno 313, already claimed
+
+
+    Deadlist: 0 (0/0 comp), 1 entries
+
+mintxg 0 -> obj 150
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+         0    6   128K    16K    56K     512    32K   43.75  DMU dnode
+	dnode flags: USED_BYTES 
+	dnode maxblkid: 1
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+        -1    1   128K    512     8K     512    512  100.00  ZFS user/group/project used
+	dnode flags: USED_BYTES 
+	dnode maxblkid: 0
+	microzap: 512 bytes, 1 entries
+
+		0 = 1252864 
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+        -2    1   128K    512     8K     512    512  100.00  ZFS user/group/project used
+	dnode flags: USED_BYTES 
+	dnode maxblkid: 0
+	microzap: 512 bytes, 1 entries
+
+		0 = 1252864 
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+         1    1   128K     1K     8K     512     1K  100.00  ZFS master node
+	dnode flags: USED_BYTES USERUSED_ACCOUNTED 
+	dnode maxblkid: 0
+	microzap: 1024 bytes, 13 entries
+
+		VERSION = 5 
+		SA_ATTRS = 32 
+		normalization = 0 
+		casesensitivity = 0 
+		defaultprojectobjquota = 0 
+		ROOT = 34 
+		defaultuserobjquota = 0 
+		defaultgroupobjquota = 0 
+		defaultuserquota = 0 
+		defaultprojectquota = 0 
+		defaultgroupquota = 0 
+		DELETE_QUEUE = 33 
+		utf8only = 0 
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+         2    1   128K    512     4K     512    512  100.00  ZFS plain file
+                                               176   bonus  System attributes
+	dnode flags: USED_BYTES USERUSED_ACCOUNTED 
+	dnode maxblkid: 0
+	uid     0
+	gid     0
+	atime	Tue Oct 27 05:36:19 2026
+	mtime	Tue Oct 27 05:36:19 2026
+	ctime	Tue Oct 27 05:36:19 2026
+	crtime	Tue Oct 27 05:36:19 2026
+	gen	128
+	mode	100666
+	size	27
+	parent	34
+	links	1
+	pflags	40800000004
+	xattr	3
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+         3    1   128K    512     8K     512    512  100.00  ZFS directory
+                                               168   bonus  System attributes
+	dnode flags: USED_BYTES USERUSED_ACCOUNTED 
+	dnode maxblkid: 0
+	uid     0
+	gid     0
+	atime	Tue Oct 27 05:36:19 2026
+	mtime	Tue Oct 27 05:36:19 2026
+	ctime	Tue Oct 27 05:36:19 2026
+	crtime	Tue Oct 27 05:36:19 2026
+	gen	128
+	mode	41777
+	size	3
+	parent	2
+	links	2
+	pflags	40800000145
+	microzap: 512 bytes, 1 entries
+
+		system.aros.protection = 4 (type: Regular File)
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+         4    1   128K    512     4K     512    512  100.00  ZFS plain file
+                                               168   bonus  System attributes
+	dnode flags: USED_BYTES USERUSED_ACCOUNTED 
+	dnode maxblkid: 0
+	uid     0
+	gid     0
+	atime	Tue Oct 27 05:36:19 2026
+	mtime	Tue Oct 27 05:36:19 2026
+	ctime	Tue Oct 27 05:36:19 2026
+	crtime	Tue Oct 27 05:36:19 2026
+	gen	128
+	mode	100644
+	size	8
+	parent	3
+	links	1
+	pflags	40800000005
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+         5    3   128K   128K    64K     512  4.00G    0.01  ZFS plain file
+                                               176   bonus  System attributes
+	dnode flags: USED_BYTES USERUSED_ACCOUNTED 
+	dnode maxblkid: 32768
+	uid     0
+	gid     0
+	atime	Tue Oct 27 05:36:19 2026
+	mtime	Tue Oct 27 05:36:19 2026
+	ctime	Tue Oct 27 05:36:19 2026
+	crtime	Tue Oct 27 05:36:19 2026
+	gen	132
+	mode	100666
+	size	4294971392
+	parent	34
+	links	1
+	pflags	40800000004
+	xattr	6
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+         6    1   128K    512     8K     512    512  100.00  ZFS directory
+                                               168   bonus  System attributes
+	dnode flags: USED_BYTES USERUSED_ACCOUNTED 
+	dnode maxblkid: 0
+	uid     0
+	gid     0
+	atime	Tue Oct 27 05:36:19 2026
+	mtime	Tue Oct 27 05:36:19 2026
+	ctime	Tue Oct 27 05:36:19 2026
+	crtime	Tue Oct 27 05:36:19 2026
+	gen	132
+	mode	41777
+	size	3
+	parent	5
+	links	2
+	pflags	40800000145
+	microzap: 512 bytes, 1 entries
+
+		system.aros.protection = 7 (type: Regular File)
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+         7    1   128K    512     4K     512    512  100.00  ZFS plain file
+                                               168   bonus  System attributes
+	dnode flags: USED_BYTES USERUSED_ACCOUNTED 
+	dnode maxblkid: 0
+	uid     0
+	gid     0
+	atime	Tue Oct 27 05:36:19 2026
+	mtime	Tue Oct 27 05:36:19 2026
+	ctime	Tue Oct 27 05:36:19 2026
+	crtime	Tue Oct 27 05:36:19 2026
+	gen	132
+	mode	100644
+	size	8
+	parent	6
+	links	1
+	pflags	40800000005
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+         8    1   128K    512     4K     512    512  100.00  ZFS plain file
+                                               176   bonus  System attributes
+	dnode flags: USED_BYTES USERUSED_ACCOUNTED 
+	dnode maxblkid: 0
+	uid     0
+	gid     0
+	atime	Tue Oct 27 05:36:19 2026
+	mtime	Tue Oct 27 05:36:19 2026
+	ctime	Tue Oct 27 05:36:19 2026
+	crtime	Tue Oct 27 05:36:19 2026
+	gen	135
+	mode	100666
+	size	28
+	parent	34
+	links	1
+	pflags	40800000004
+	xattr	9
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+         9    1   128K    512     8K     512    512  100.00  ZFS directory
+                                               168   bonus  System attributes
+	dnode flags: USED_BYTES USERUSED_ACCOUNTED 
+	dnode maxblkid: 0
+	uid     0
+	gid     0
+	atime	Tue Oct 27 05:36:19 2026
+	mtime	Tue Oct 27 05:36:19 2026
+	ctime	Tue Oct 27 05:36:19 2026
+	crtime	Tue Oct 27 05:36:19 2026
+	gen	135
+	mode	41777
+	size	3
+	parent	8
+	links	2
+	pflags	40800000145
+	microzap: 512 bytes, 1 entries
+
+		system.aros.protection = 10 (type: Regular File)
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+        10    1   128K    512     4K     512    512  100.00  ZFS plain file
+                                               168   bonus  System attributes
+	dnode flags: USED_BYTES USERUSED_ACCOUNTED 
+	dnode maxblkid: 0
+	uid     0
+	gid     0
+	atime	Tue Oct 27 05:36:19 2026
+	mtime	Tue Oct 27 05:36:19 2026
+	ctime	Tue Oct 27 05:36:19 2026
+	crtime	Tue Oct 27 05:36:19 2026
+	gen	135
+	mode	100644
+	size	8
+	parent	9
+	links	1
+	pflags	40800000005
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+        11    1   128K    512      0     512    512    0.00  ZFS plain file
+                                               200   bonus  System attributes
+	dnode flags: USERUSED_ACCOUNTED 
+	dnode maxblkid: 0
+	target	link-hard
+	uid     0
+	gid     0
+	atime	Tue Oct 27 05:36:19 2026
+	mtime	Tue Oct 27 05:36:19 2026
+	ctime	Tue Oct 27 05:36:19 2026
+	crtime	Tue Oct 27 05:36:19 2026
+	gen	141
+	mode	120777
+	size	9
+	parent	34
+	links	1
+	pflags	40800000104
+	xattr	12
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+        12    1   128K    512     8K     512    512  100.00  ZFS directory
+                                               168   bonus  System attributes
+	dnode flags: USED_BYTES USERUSED_ACCOUNTED 
+	dnode maxblkid: 0
+	uid     0
+	gid     0
+	atime	Tue Oct 27 05:36:19 2026
+	mtime	Tue Oct 27 05:36:19 2026
+	ctime	Tue Oct 27 05:36:19 2026
+	crtime	Tue Oct 27 05:36:19 2026
+	gen	141
+	mode	41777
+	size	3
+	parent	11
+	links	2
+	pflags	40800000145
+	microzap: 512 bytes, 1 entries
+
+		system.aros.protection = 13 (type: Regular File)
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+        13    1   128K    512     4K     512    512  100.00  ZFS plain file
+                                               168   bonus  System attributes
+	dnode flags: USED_BYTES USERUSED_ACCOUNTED 
+	dnode maxblkid: 0
+	uid     0
+	gid     0
+	atime	Tue Oct 27 05:36:19 2026
+	mtime	Tue Oct 27 05:36:19 2026
+	ctime	Tue Oct 27 05:36:19 2026
+	crtime	Tue Oct 27 05:36:19 2026
+	gen	141
+	mode	100644
+	size	8
+	parent	12
+	links	1
+	pflags	40800000005
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+        14    1   128K    512      0     512    512    0.00  ZFS plain file
+                                               200   bonus  System attributes
+	dnode flags: USERUSED_ACCOUNTED 
+	dnode maxblkid: 0
+	target	link-absent
+	uid     0
+	gid     0
+	atime	Tue Oct 27 05:36:19 2026
+	mtime	Tue Oct 27 05:36:19 2026
+	ctime	Tue Oct 27 05:36:19 2026
+	crtime	Tue Oct 27 05:36:19 2026
+	gen	144
+	mode	120777
+	size	11
+	parent	34
+	links	1
+	pflags	40800000104
+	xattr	15
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+        15    1   128K    512     8K     512    512  100.00  ZFS directory
+                                               168   bonus  System attributes
+	dnode flags: USED_BYTES USERUSED_ACCOUNTED 
+	dnode maxblkid: 0
+	uid     0
+	gid     0
+	atime	Tue Oct 27 05:36:19 2026
+	mtime	Tue Oct 27 05:36:19 2026
+	ctime	Tue Oct 27 05:36:19 2026
+	crtime	Tue Oct 27 05:36:19 2026
+	gen	144
+	mode	41777
+	size	3
+	parent	14
+	links	2
+	pflags	40800000145
+	microzap: 512 bytes, 1 entries
+
+		system.aros.protection = 16 (type: Regular File)
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+        16    1   128K    512     4K     512    512  100.00  ZFS plain file
+                                               168   bonus  System attributes
+	dnode flags: USED_BYTES USERUSED_ACCOUNTED 
+	dnode maxblkid: 0
+	uid     0
+	gid     0
+	atime	Tue Oct 27 05:36:19 2026
+	mtime	Tue Oct 27 05:36:19 2026
+	ctime	Tue Oct 27 05:36:19 2026
+	crtime	Tue Oct 27 05:36:19 2026
+	gen	144
+	mode	100644
+	size	8
+	parent	15
+	links	1
+	pflags	40800000005
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+        17    1   128K    512     4K     512    512  100.00  ZFS plain file
+                                               176   bonus  System attributes
+	dnode flags: USED_BYTES USERUSED_ACCOUNTED 
+	dnode maxblkid: 0
+	uid     0
+	gid     0
+	atime	Tue Oct 27 05:36:19 2026
+	mtime	Thu Jul 18 07:01:24 2024
+	ctime	Tue Oct 27 05:36:19 2026
+	crtime	Tue Oct 27 05:36:19 2026
+	gen	153
+	mode	100666
+	size	8
+	parent	34
+	links	1
+	pflags	40800000004
+	xattr	18
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+        18    1   128K    512     8K     512    512  100.00  ZFS directory
+                                               168   bonus  System attributes
+	dnode flags: USED_BYTES USERUSED_ACCOUNTED 
+	dnode maxblkid: 0
+	uid     0
+	gid     0
+	atime	Tue Oct 27 05:36:19 2026
+	mtime	Tue Oct 27 05:36:19 2026
+	ctime	Tue Oct 27 05:36:19 2026
+	crtime	Tue Oct 27 05:36:19 2026
+	gen	153
+	mode	41777
+	size	4
+	parent	17
+	links	2
+	pflags	40800000145
+	microzap: 512 bytes, 2 entries
+
+		system.aros.protection = 19 (type: Regular File)
+		system.aros.comment = 20 (type: Regular File)
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+        19    1   128K    512     4K     512    512  100.00  ZFS plain file
+                                               168   bonus  System attributes
+	dnode flags: USED_BYTES USERUSED_ACCOUNTED 
+	dnode maxblkid: 0
+	uid     0
+	gid     0
+	atime	Tue Oct 27 05:36:19 2026
+	mtime	Tue Oct 27 05:36:19 2026
+	ctime	Tue Oct 27 05:36:19 2026
+	crtime	Tue Oct 27 05:36:19 2026
+	gen	153
+	mode	100644
+	size	8
+	parent	18
+	links	1
+	pflags	40800000005
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+        20    1   128K    512     4K     512    512  100.00  ZFS plain file
+                                               168   bonus  System attributes
+	dnode flags: USED_BYTES USERUSED_ACCOUNTED 
+	dnode maxblkid: 0
+	uid     0
+	gid     0
+	atime	Tue Oct 27 05:36:19 2026
+	mtime	Tue Oct 27 05:36:19 2026
+	ctime	Tue Oct 27 05:36:19 2026
+	crtime	Tue Oct 27 05:36:19 2026
+	gen	156
+	mode	100644
+	size	23
+	parent	18
+	links	1
+	pflags	40800000005
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+        32    1   128K    512     8K     512    512  100.00  SA master node
+	dnode flags: USED_BYTES USERUSED_ACCOUNTED 
+	dnode maxblkid: 0
+	microzap: 512 bytes, 2 entries
+
+		REGISTRY = 35 
+		LAYOUTS = 36 
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+        33    1   128K    512     8K     512    512  100.00  ZFS delete queue
+	dnode flags: USED_BYTES USERUSED_ACCOUNTED 
+	dnode maxblkid: 0
+	microzap: 512 bytes, 0 entries
+
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+        34    1   128K     1K     8K     512     1K  100.00  ZFS directory
+                                               168   bonus  System attributes
+	dnode flags: USED_BYTES USERUSED_ACCOUNTED 
+	dnode maxblkid: 0
+	uid     0
+	gid     0
+	atime	Tue Oct 27 05:36:16 2026
+	mtime	Tue Oct 27 05:36:36 2026
+	ctime	Tue Oct 27 05:36:36 2026
+	crtime	Tue Oct 27 05:36:16 2026
+	gen	59
+	mode	40755
+	size	9
+	parent	34
+	links	2
+	pflags	40800000144
+	microzap: 1024 bytes, 7 entries
+
+		resilver.bin = 37 (type: Regular File)
+		hello.txt = 2 (type: Regular File)
+		link-soft = 11 (type: Symbolic Link)
+		metadata.txt = 17 (type: Regular File)
+		link-hard = 8 (type: Regular File)
+		large-sparse.bin = 5 (type: Regular File)
+		link-dangling = 14 (type: Symbolic Link)
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+        35    1   128K  1.50K     8K     512  1.50K  100.00  SA attr registration
+	dnode flags: USED_BYTES USERUSED_ACCOUNTED 
+	dnode maxblkid: 0
+	microzap: 1536 bytes, 22 entries
+
+		ZPL_XATTR =  8000009 : [8:0:9]
+		ZPL_RDEV =  800000a : [8:0:10]
+		ZPL_SCANSTAMP =  20030012 : [32:3:18]
+		ZPL_GEN =  8000004 : [8:0:4]
+		ZPL_UID =  800000c : [8:0:12]
+		ZPL_FLAGS =  800000b : [8:0:11]
+		ZPL_ZNODE_ACL =  5803000f : [88:3:15]
+		ZPL_CTIME =  10000002 : [16:0:2]
+		ZPL_MTIME =  10000001 : [16:0:1]
+		ZPL_PROJID =  8000015 : [8:0:21]
+		ZPL_DACL_ACES =  40013 : [0:4:19]
+		ZPL_PAD =  2000000e : [32:0:14]
+		ZPL_PARENT =  8000007 : [8:0:7]
+		ZPL_SIZE =  8000006 : [8:0:6]
+		ZPL_MODE =  8000005 : [8:0:5]
+		ZPL_CRTIME =  10000003 : [16:0:3]
+		ZPL_SYMLINK =  30011 : [0:3:17]
+		ZPL_LINKS =  8000008 : [8:0:8]
+		ZPL_ATIME =  10000000 : [16:0:0]
+		ZPL_DXATTR =  30014 : [0:3:20]
+		ZPL_GID =  800000d : [8:0:13]
+		ZPL_DACL_COUNT =  8000010 : [8:0:16]
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+        36    1   128K    16K    16K     512    32K  100.00  SA attr layouts
+	dnode flags: USED_BYTES USERUSED_ACCOUNTED 
+	dnode maxblkid: 1
+	Fat ZAP stats:
+		Pointer table:
+			1024 elements
+			zt_blk: 0
+			zt_numblks: 0
+			zt_shift: 10
+			zt_blks_copied: 0
+			zt_nextblk: 0
+		ZAP entries: 4
+		Leaf blocks: 1
+		Total blocks: 2
+		zap_block_type: 0x8000000000000001
+		zap_magic: 0x2f52ab2ab
+		zap_salt: 0x11ec629
+		Leafs with 2^n pointers:
+			  9:      1 *
+		Blocks with n*5 entries:
+			  0:      1 *
+		Blocks n/10 full:
+			  1:      1 *
+		Entries with n chunks:
+			  4:      4 ****
+		Buckets with n entries:
+			  0:    508 ****************************************
+			  1:      4 *
+
+		4 = [ 5  6  4  12  13  7  11  0  1  2  3  8  16  19  17 ]
+		3 = [ 5  6  4  12  13  7  11  0  1  2  3  8  16  19  9 ]
+		2 = [ 5  6  4  12  13  7  11  0  1  2  3  8  16  19 ]
+		5 = [ 5  6  4  12  13  7  11  0  1  2  3  8  16  19  17  9 ]
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+        37    2   128K   128K  1.02M     512     1M  100.00  ZFS plain file
+                                               176   bonus  System attributes
+	dnode flags: USED_BYTES USERUSED_ACCOUNTED 
+	dnode maxblkid: 7
+	uid     0
+	gid     0
+	atime	Tue Oct 27 05:36:21 2026
+	mtime	Tue Oct 27 05:36:21 2026
+	ctime	Tue Oct 27 05:36:21 2026
+	crtime	Tue Oct 27 05:36:21 2026
+	gen	220
+	mode	100666
+	size	1048576
+	parent	34
+	links	1
+	pflags	40800000004
+	xattr	38
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+        38    1   128K    512     8K     512    512  100.00  ZFS directory
+                                               168   bonus  System attributes
+	dnode flags: USED_BYTES USERUSED_ACCOUNTED 
+	dnode maxblkid: 0
+	uid     0
+	gid     0
+	atime	Tue Oct 27 05:36:21 2026
+	mtime	Tue Oct 27 05:36:21 2026
+	ctime	Tue Oct 27 05:36:21 2026
+	crtime	Tue Oct 27 05:36:21 2026
+	gen	220
+	mode	41777
+	size	3
+	parent	37
+	links	2
+	pflags	40800000145
+	microzap: 512 bytes, 1 entries
+
+		system.aros.protection = 39 (type: Regular File)
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+        39    1   128K    512     4K     512    512  100.00  ZFS plain file
+                                               168   bonus  System attributes
+	dnode flags: USED_BYTES USERUSED_ACCOUNTED 
+	dnode maxblkid: 0
+	uid     0
+	gid     0
+	atime	Tue Oct 27 05:36:21 2026
+	mtime	Tue Oct 27 05:36:21 2026
+	ctime	Tue Oct 27 05:36:21 2026
+	crtime	Tue Oct 27 05:36:21 2026
+	gen	220
+	mode	100644
+	size	8
+	parent	38
+	links	1
+	pflags	40800000005
+
+    Dnode slots:
+	Total used:            28
+	Max used:              39
+	Percent empty:  28.205128
+
+Dataset public_mirror/defer_pending/child [ZPL], ID 193, cr_txg 260, 176K, 6 objects, rootbp DVA[0]=<0:5a9000:1000> DVA[1]=<0:136f000:1000> [L0 DMU objset] fletcher4 uncompressed unencrypted LE contiguous unique double size=1000L/1000P birth=260L/260P fill=6 cksum=00000008883c77d6:00001a1b90bc9d5d:0029c0445c7d21e3:2e5c88256b8380d4
+
+    Deadlist: 0 (0/0 comp), 1 entries
+
+mintxg 0 -> obj 203
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+         0    6   128K    16K    96K     512    32K    9.38  DMU dnode
+	dnode flags: USED_BYTES 
+	dnode maxblkid: 1
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+        -1    1   128K    512     8K     512    512  100.00  ZFS user/group/project used
+	dnode flags: USED_BYTES 
+	dnode maxblkid: 0
+	microzap: 512 bytes, 1 entries
+
+		0 = 8704 
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+        -2    1   128K    512     8K     512    512  100.00  ZFS user/group/project used
+	dnode flags: USED_BYTES 
+	dnode maxblkid: 0
+	microzap: 512 bytes, 1 entries
+
+		0 = 8704 
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+         1    1   128K     1K     8K     512     1K  100.00  ZFS master node
+	dnode flags: USED_BYTES USERUSED_ACCOUNTED 
+	dnode maxblkid: 0
+	microzap: 1024 bytes, 13 entries
+
+		utf8only = 0 
+		defaultuserquota = 0 
+		defaultuserobjquota = 0 
+		ROOT = 34 
+		defaultprojectquota = 0 
+		defaultprojectobjquota = 0 
+		defaultgroupobjquota = 0 
+		defaultgroupquota = 0 
+		normalization = 0 
+		VERSION = 5 
+		SA_ATTRS = 32 
+		DELETE_QUEUE = 33 
+		casesensitivity = 0 
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+        32    1   128K    512     8K     512    512  100.00  SA master node
+	dnode flags: USED_BYTES USERUSED_ACCOUNTED 
+	dnode maxblkid: 0
+	microzap: 512 bytes, 2 entries
+
+		LAYOUTS = 36 
+		REGISTRY = 35 
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+        33    1   128K    512     8K     512    512  100.00  ZFS delete queue
+	dnode flags: USED_BYTES USERUSED_ACCOUNTED 
+	dnode maxblkid: 0
+	microzap: 512 bytes, 0 entries
+
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+        34    1   128K    512     8K     512    512  100.00  ZFS directory
+                                               168   bonus  System attributes
+	dnode flags: USED_BYTES USERUSED_ACCOUNTED 
+	dnode maxblkid: 0
+	uid     0
+	gid     0
+	atime	Tue Oct 27 05:36:25 2026
+	mtime	Tue Oct 27 05:36:25 2026
+	ctime	Tue Oct 27 05:36:25 2026
+	crtime	Tue Oct 27 05:36:25 2026
+	gen	260
+	mode	40755
+	size	2
+	parent	34
+	links	2
+	pflags	40800000144
+	microzap: 512 bytes, 0 entries
+
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+        35    1   128K  1.50K     8K     512  1.50K  100.00  SA attr registration
+	dnode flags: USED_BYTES USERUSED_ACCOUNTED 
+	dnode maxblkid: 0
+	microzap: 1536 bytes, 22 entries
+
+		ZPL_SCANSTAMP =  20030012 : [32:3:18]
+		ZPL_DACL_COUNT =  8000010 : [8:0:16]
+		ZPL_UID =  800000c : [8:0:12]
+		ZPL_GEN =  8000004 : [8:0:4]
+		ZPL_MODE =  8000005 : [8:0:5]
+		ZPL_ATIME =  10000000 : [16:0:0]
+		ZPL_SYMLINK =  30011 : [0:3:17]
+		ZPL_LINKS =  8000008 : [8:0:8]
+		ZPL_SIZE =  8000006 : [8:0:6]
+		ZPL_ZNODE_ACL =  5803000f : [88:3:15]
+		ZPL_GID =  800000d : [8:0:13]
+		ZPL_PARENT =  8000007 : [8:0:7]
+		ZPL_XATTR =  8000009 : [8:0:9]
+		ZPL_DACL_ACES =  40013 : [0:4:19]
+		ZPL_PROJID =  8000015 : [8:0:21]
+		ZPL_MTIME =  10000001 : [16:0:1]
+		ZPL_CTIME =  10000002 : [16:0:2]
+		ZPL_DXATTR =  30014 : [0:3:20]
+		ZPL_FLAGS =  800000b : [8:0:11]
+		ZPL_PAD =  2000000e : [32:0:14]
+		ZPL_RDEV =  800000a : [8:0:10]
+		ZPL_CRTIME =  10000003 : [16:0:3]
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+        36    1   128K    16K    16K     512    32K  100.00  SA attr layouts
+	dnode flags: USED_BYTES USERUSED_ACCOUNTED 
+	dnode maxblkid: 1
+	Fat ZAP stats:
+		Pointer table:
+			1024 elements
+			zt_blk: 0
+			zt_numblks: 0
+			zt_shift: 10
+			zt_blks_copied: 0
+			zt_nextblk: 0
+		ZAP entries: 1
+		Leaf blocks: 1
+		Total blocks: 2
+		zap_block_type: 0x8000000000000001
+		zap_magic: 0x2f52ab2ab
+		zap_salt: 0xac7829
+		Leafs with 2^n pointers:
+			  9:      1 *
+		Blocks with n*5 entries:
+			  0:      1 *
+		Blocks n/10 full:
+			  1:      1 *
+		Entries with n chunks:
+			  4:      1 *
+		Buckets with n entries:
+			  0:    511 ****************************************
+			  1:      1 *
+
+		2 = [ 5  6  4  12  13  7  11  0  1  2  3  8  16  19 ]
+
+    Dnode slots:
+	Total used:             6
+	Max used:              36
+	Percent empty:  83.333333
+
+Dataset public_mirror/defer_pending [ZPL], ID 186, cr_txg 258, 176K, 6 objects, rootbp DVA[0]=<0:582000:1000> DVA[1]=<0:135c000:1000> [L0 DMU objset] fletcher4 uncompressed unencrypted LE contiguous unique double size=1000L/1000P birth=258L/258P fill=6 cksum=000000079ecc7bc6:000017a5ae26fe0d:0026478f1178f7f3:2aee1a3e0fe046f1
+
+    Deadlist: 0 (0/0 comp), 1 entries
+
+mintxg 0 -> obj 199
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+         0    6   128K    16K    96K     512    32K    9.38  DMU dnode
+	dnode flags: USED_BYTES 
+	dnode maxblkid: 1
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+        -1    1   128K    512     8K     512    512  100.00  ZFS user/group/project used
+	dnode flags: USED_BYTES 
+	dnode maxblkid: 0
+	microzap: 512 bytes, 1 entries
+
+		0 = 8704 
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+        -2    1   128K    512     8K     512    512  100.00  ZFS user/group/project used
+	dnode flags: USED_BYTES 
+	dnode maxblkid: 0
+	microzap: 512 bytes, 1 entries
+
+		0 = 8704 
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+         1    1   128K     1K     8K     512     1K  100.00  ZFS master node
+	dnode flags: USED_BYTES USERUSED_ACCOUNTED 
+	dnode maxblkid: 0
+	microzap: 1024 bytes, 13 entries
+
+		SA_ATTRS = 32 
+		normalization = 0 
+		VERSION = 5 
+		defaultuserobjquota = 0 
+		defaultuserquota = 0 
+		defaultprojectobjquota = 0 
+		defaultgroupquota = 0 
+		DELETE_QUEUE = 33 
+		defaultprojectquota = 0 
+		ROOT = 34 
+		casesensitivity = 0 
+		defaultgroupobjquota = 0 
+		utf8only = 0 
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+        32    1   128K    512     8K     512    512  100.00  SA master node
+	dnode flags: USED_BYTES USERUSED_ACCOUNTED 
+	dnode maxblkid: 0
+	microzap: 512 bytes, 2 entries
+
+		LAYOUTS = 36 
+		REGISTRY = 35 
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+        33    1   128K    512     8K     512    512  100.00  ZFS delete queue
+	dnode flags: USED_BYTES USERUSED_ACCOUNTED 
+	dnode maxblkid: 0
+	microzap: 512 bytes, 0 entries
+
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+        34    1   128K    512     8K     512    512  100.00  ZFS directory
+                                               168   bonus  System attributes
+	dnode flags: USED_BYTES USERUSED_ACCOUNTED 
+	dnode maxblkid: 0
+	uid     0
+	gid     0
+	atime	Tue Oct 27 05:36:24 2026
+	mtime	Tue Oct 27 05:36:24 2026
+	ctime	Tue Oct 27 05:36:24 2026
+	crtime	Tue Oct 27 05:36:24 2026
+	gen	258
+	mode	40755
+	size	2
+	parent	34
+	links	2
+	pflags	40800000144
+	microzap: 512 bytes, 0 entries
+
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+        35    1   128K  1.50K     8K     512  1.50K  100.00  SA attr registration
+	dnode flags: USED_BYTES USERUSED_ACCOUNTED 
+	dnode maxblkid: 0
+	microzap: 1536 bytes, 22 entries
+
+		ZPL_GID =  800000d : [8:0:13]
+		ZPL_CRTIME =  10000003 : [16:0:3]
+		ZPL_ZNODE_ACL =  5803000f : [88:3:15]
+		ZPL_DXATTR =  30014 : [0:3:20]
+		ZPL_LINKS =  8000008 : [8:0:8]
+		ZPL_ATIME =  10000000 : [16:0:0]
+		ZPL_PROJID =  8000015 : [8:0:21]
+		ZPL_RDEV =  800000a : [8:0:10]
+		ZPL_SYMLINK =  30011 : [0:3:17]
+		ZPL_PARENT =  8000007 : [8:0:7]
+		ZPL_SCANSTAMP =  20030012 : [32:3:18]
+		ZPL_PAD =  2000000e : [32:0:14]
+		ZPL_CTIME =  10000002 : [16:0:2]
+		ZPL_MTIME =  10000001 : [16:0:1]
+		ZPL_UID =  800000c : [8:0:12]
+		ZPL_FLAGS =  800000b : [8:0:11]
+		ZPL_SIZE =  8000006 : [8:0:6]
+		ZPL_GEN =  8000004 : [8:0:4]
+		ZPL_DACL_ACES =  40013 : [0:4:19]
+		ZPL_DACL_COUNT =  8000010 : [8:0:16]
+		ZPL_XATTR =  8000009 : [8:0:9]
+		ZPL_MODE =  8000005 : [8:0:5]
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+        36    1   128K    16K    16K     512    32K  100.00  SA attr layouts
+	dnode flags: USED_BYTES USERUSED_ACCOUNTED 
+	dnode maxblkid: 1
+	Fat ZAP stats:
+		Pointer table:
+			1024 elements
+			zt_blk: 0
+			zt_numblks: 0
+			zt_shift: 10
+			zt_blks_copied: 0
+			zt_nextblk: 0
+		ZAP entries: 1
+		Leaf blocks: 1
+		Total blocks: 2
+		zap_block_type: 0x8000000000000001
+		zap_magic: 0x2f52ab2ab
+		zap_salt: 0xe27169
+		Leafs with 2^n pointers:
+			  9:      1 *
+		Blocks with n*5 entries:
+			  0:      1 *
+		Blocks n/10 full:
+			  1:      1 *
+		Entries with n chunks:
+			  4:      1 *
+		Buckets with n entries:
+			  0:    511 ****************************************
+			  1:      1 *
+
+		2 = [ 5  6  4  12  13  7  11  0  1  2  3  8  16  19 ]
+
+    Dnode slots:
+	Total used:             6
+	Max used:              36
+	Percent empty:  83.333333
+
+Dataset public_mirror/passphrase [ZPL], ID 351, cr_txg 494, 200K, 9 objects, rootbp DVA[0]=<0:5004000:1000> DVA[1]=<0:6004000:1000> [L0 DMU objset] fletcher4 uncompressed authenticated LE contiguous unique double size=1000L/1000P birth=531L/531P fill=9 cksum=0000001bf7803ad2:000056c14ef8ad82:008a172c89b54d4f:95fc0861eccb3b3b
+
+    ZIL header: claim_txg 531, claim_blk_seq 3, claim_lr_seq 0 replay_seq 0, flags 0x2
+
+	Block seqno 3, already claimed
+
+
+    Deadlist: 0 (0/0 comp), 1 entries
+
+mintxg 0 -> obj 354
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+         0    6   128K    16K   104K     512    32K   14.06  DMU dnode
+	dnode flags: USED_BYTES 
+	dnode maxblkid: 1
+		(object encrypted)
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+        -1    1   128K    512     8K     512    512  100.00  ZFS user/group/project used
+	dnode flags: USED_BYTES 
+	dnode maxblkid: 0
+		(object encrypted)
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+        -2    1   128K    512     8K     512    512  100.00  ZFS user/group/project used
+	dnode flags: USED_BYTES 
+	dnode maxblkid: 0
+		(object encrypted)
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+         1    1   128K     1K     8K     512     1K  100.00  ZFS master node
+	dnode flags: USED_BYTES USERUSED_ACCOUNTED 
+	dnode maxblkid: 0
+	microzap: 1024 bytes, 13 entries
+
+		VERSION = 5 
+		SA_ATTRS = 32 
+		defaultuserquota = 0 
+		ROOT = 34 
+		defaultprojectquota = 0 
+		defaultprojectobjquota = 0 
+		defaultgroupquota = 0 
+		normalization = 0 
+		defaultuserobjquota = 0 
+		DELETE_QUEUE = 33 
+		utf8only = 0 
+		casesensitivity = 0 
+		defaultgroupobjquota = 0 
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+         2    1   128K    512     4K     512    512  100.00  ZFS plain file
+                                               176   bonus  System attributes
+	dnode flags: USED_BYTES USERUSED_ACCOUNTED 
+	dnode maxblkid: 0
+		(bonus encrypted)
+		(object encrypted)
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+         3    1   128K    512     8K     512    512  100.00  ZFS directory
+                                               168   bonus  System attributes
+	dnode flags: USED_BYTES USERUSED_ACCOUNTED 
+	dnode maxblkid: 0
+		(bonus encrypted)
+		(object encrypted)
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+         4    1   128K    512     4K     512    512  100.00  ZFS plain file
+                                               168   bonus  System attributes
+	dnode flags: USED_BYTES USERUSED_ACCOUNTED 
+	dnode maxblkid: 0
+		(bonus encrypted)
+		(object encrypted)
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+        32    1   128K    512     8K     512    512  100.00  SA master node
+	dnode flags: USED_BYTES USERUSED_ACCOUNTED 
+	dnode maxblkid: 0
+		(object encrypted)
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+        33    1   128K    512     8K     512    512  100.00  ZFS delete queue
+	dnode flags: USED_BYTES USERUSED_ACCOUNTED 
+	dnode maxblkid: 0
+		(object encrypted)
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+        34    1   128K    512     8K     512    512  100.00  ZFS directory
+                                               168   bonus  System attributes
+	dnode flags: USED_BYTES USERUSED_ACCOUNTED 
+	dnode maxblkid: 0
+		(bonus encrypted)
+		(object encrypted)
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+        35    1   128K  1.50K     8K     512  1.50K  100.00  SA attr registration
+	dnode flags: USED_BYTES USERUSED_ACCOUNTED 
+	dnode maxblkid: 0
+		(object encrypted)
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+        36    1   128K    16K    16K     512    32K  100.00  SA attr layouts
+	dnode flags: USED_BYTES USERUSED_ACCOUNTED 
+	dnode maxblkid: 1
+		(object encrypted)
+
+    Dnode slots:
+	Total used:             9
+	Max used:              36
+	Percent empty:  75.000000
+
+Dataset public_mirror/encrypted [ZPL], ID 295, cr_txg 328, 216K, 12 objects, rootbp DVA[0]=<0:5002000:1000> DVA[1]=<0:6002000:1000> [L0 DMU objset] fletcher4 uncompressed authenticated LE contiguous unique double size=1000L/1000P birth=531L/531P fill=12 cksum=0000001b74184ed4:00005664bc897059:008b3db935b89154:98cf6b14cef488cd
+
+    ZIL header: claim_txg 531, claim_blk_seq 3, claim_lr_seq 0 replay_seq 0, flags 0x2
+
+	Block seqno 3, already claimed
+
+
+    Deadlist: 0 (0/0 comp), 1 entries
+
+mintxg 0 -> obj 320
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+         0    6   128K    16K   104K     512    32K   18.75  DMU dnode
+	dnode flags: USED_BYTES 
+	dnode maxblkid: 1
+		(object encrypted)
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+        -1    1   128K    512     8K     512    512  100.00  ZFS user/group/project used
+	dnode flags: USED_BYTES 
+	dnode maxblkid: 0
+		(object encrypted)
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+        -2    1   128K    512     8K     512    512  100.00  ZFS user/group/project used
+	dnode flags: USED_BYTES 
+	dnode maxblkid: 0
+		(object encrypted)
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+         1    1   128K     1K     8K     512     1K  100.00  ZFS master node
+	dnode flags: USED_BYTES USERUSED_ACCOUNTED 
+	dnode maxblkid: 0
+	microzap: 1024 bytes, 13 entries
+
+		defaultprojectquota = 0 
+		defaultgroupquota = 0 
+		defaultgroupobjquota = 0 
+		SA_ATTRS = 32 
+		ROOT = 34 
+		utf8only = 0 
+		VERSION = 5 
+		defaultuserquota = 0 
+		DELETE_QUEUE = 33 
+		normalization = 0 
+		casesensitivity = 0 
+		defaultuserobjquota = 0 
+		defaultprojectobjquota = 0 
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+         2    1   128K    512     4K     512    512  100.00  ZFS plain file
+                                               176   bonus  System attributes
+	dnode flags: USED_BYTES USERUSED_ACCOUNTED 
+	dnode maxblkid: 0
+		(bonus encrypted)
+		(object encrypted)
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+         3    1   128K    512     8K     512    512  100.00  ZFS directory
+                                               168   bonus  System attributes
+	dnode flags: USED_BYTES USERUSED_ACCOUNTED 
+	dnode maxblkid: 0
+		(bonus encrypted)
+		(object encrypted)
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+         4    1   128K    512     4K     512    512  100.00  ZFS plain file
+                                               168   bonus  System attributes
+	dnode flags: USED_BYTES USERUSED_ACCOUNTED 
+	dnode maxblkid: 0
+		(bonus encrypted)
+		(object encrypted)
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+         5    1   128K    512     4K     512    512  100.00  ZFS plain file
+                                               176   bonus  System attributes
+	dnode flags: USED_BYTES USERUSED_ACCOUNTED 
+	dnode maxblkid: 0
+		(bonus encrypted)
+		(object encrypted)
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+         6    1   128K    512     8K     512    512  100.00  ZFS directory
+                                               168   bonus  System attributes
+	dnode flags: USED_BYTES USERUSED_ACCOUNTED 
+	dnode maxblkid: 0
+		(bonus encrypted)
+		(object encrypted)
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+         7    1   128K    512     4K     512    512  100.00  ZFS plain file
+                                               168   bonus  System attributes
+	dnode flags: USED_BYTES USERUSED_ACCOUNTED 
+	dnode maxblkid: 0
+		(bonus encrypted)
+		(object encrypted)
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+        32    1   128K    512     8K     512    512  100.00  SA master node
+	dnode flags: USED_BYTES USERUSED_ACCOUNTED 
+	dnode maxblkid: 0
+		(object encrypted)
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+        33    1   128K    512     8K     512    512  100.00  ZFS delete queue
+	dnode flags: USED_BYTES USERUSED_ACCOUNTED 
+	dnode maxblkid: 0
+		(object encrypted)
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+        34    1   128K    512     8K     512    512  100.00  ZFS directory
+                                               168   bonus  System attributes
+	dnode flags: USED_BYTES USERUSED_ACCOUNTED 
+	dnode maxblkid: 0
+		(bonus encrypted)
+		(object encrypted)
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+        35    1   128K  1.50K     8K     512  1.50K  100.00  SA attr registration
+	dnode flags: USED_BYTES USERUSED_ACCOUNTED 
+	dnode maxblkid: 0
+		(object encrypted)
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+        36    1   128K    16K    16K     512    32K  100.00  SA attr layouts
+	dnode flags: USED_BYTES USERUSED_ACCOUNTED 
+	dnode maxblkid: 1
+		(object encrypted)
+
+    Dnode slots:
+	Total used:            12
+	Max used:              36
+	Percent empty:  66.666667
+
+Dataset public_mirror/check_hex [ZPL], ID 341, cr_txg 441, 200K, 9 objects, rootbp DVA[0]=<0:5005000:1000> DVA[1]=<0:6005000:1000> [L0 DMU objset] fletcher4 uncompressed authenticated LE contiguous unique double size=1000L/1000P birth=531L/531P fill=9 cksum=0000001b5f75e79e:000055215a3f806d:008779454e26ee39:92c14e6f85a6ef64
+
+    ZIL header: claim_txg 531, claim_blk_seq 3, claim_lr_seq 0 replay_seq 0, flags 0x2
+
+	Block seqno 3, already claimed
+
+
+    Deadlist: 0 (0/0 comp), 1 entries
+
+mintxg 0 -> obj 344
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+         0    6   128K    16K   104K     512    32K   14.06  DMU dnode
+	dnode flags: USED_BYTES 
+	dnode maxblkid: 1
+		(object encrypted)
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+        -1    1   128K    512     8K     512    512  100.00  ZFS user/group/project used
+	dnode flags: USED_BYTES 
+	dnode maxblkid: 0
+		(object encrypted)
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+        -2    1   128K    512     8K     512    512  100.00  ZFS user/group/project used
+	dnode flags: USED_BYTES 
+	dnode maxblkid: 0
+		(object encrypted)
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+         1    1   128K     1K     8K     512     1K  100.00  ZFS master node
+	dnode flags: USED_BYTES USERUSED_ACCOUNTED 
+	dnode maxblkid: 0
+	microzap: 1024 bytes, 13 entries
+
+		defaultuserquota = 0 
+		SA_ATTRS = 32 
+		defaultgroupobjquota = 0 
+		defaultuserobjquota = 0 
+		defaultgroupquota = 0 
+		ROOT = 34 
+		normalization = 0 
+		casesensitivity = 0 
+		DELETE_QUEUE = 33 
+		defaultprojectobjquota = 0 
+		VERSION = 5 
+		defaultprojectquota = 0 
+		utf8only = 0 
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+         2    1   128K    512     4K     512    512  100.00  ZFS plain file
+                                               176   bonus  System attributes
+	dnode flags: USED_BYTES USERUSED_ACCOUNTED 
+	dnode maxblkid: 0
+		(bonus encrypted)
+		(object encrypted)
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+         3    1   128K    512     8K     512    512  100.00  ZFS directory
+                                               168   bonus  System attributes
+	dnode flags: USED_BYTES USERUSED_ACCOUNTED 
+	dnode maxblkid: 0
+		(bonus encrypted)
+		(object encrypted)
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+         4    1   128K    512     4K     512    512  100.00  ZFS plain file
+                                               168   bonus  System attributes
+	dnode flags: USED_BYTES USERUSED_ACCOUNTED 
+	dnode maxblkid: 0
+		(bonus encrypted)
+		(object encrypted)
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+        32    1   128K    512     8K     512    512  100.00  SA master node
+	dnode flags: USED_BYTES USERUSED_ACCOUNTED 
+	dnode maxblkid: 0
+		(object encrypted)
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+        33    1   128K    512     8K     512    512  100.00  ZFS delete queue
+	dnode flags: USED_BYTES USERUSED_ACCOUNTED 
+	dnode maxblkid: 0
+		(object encrypted)
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+        34    1   128K    512     8K     512    512  100.00  ZFS directory
+                                               168   bonus  System attributes
+	dnode flags: USED_BYTES USERUSED_ACCOUNTED 
+	dnode maxblkid: 0
+		(bonus encrypted)
+		(object encrypted)
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+        35    1   128K  1.50K     8K     512  1.50K  100.00  SA attr registration
+	dnode flags: USED_BYTES USERUSED_ACCOUNTED 
+	dnode maxblkid: 0
+		(object encrypted)
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+        36    1   128K    16K    16K     512    32K  100.00  SA attr layouts
+	dnode flags: USED_BYTES USERUSED_ACCOUNTED 
+	dnode maxblkid: 1
+		(object encrypted)
+
+    Dnode slots:
+	Total used:             9
+	Max used:              36
+	Percent empty:  75.000000
+
+Dataset public_mirror/public_volume [ZVOL], ID 139, cr_txg 210, 112K, 2 objects, rootbp DVA[0]=<0:402d000:1000> DVA[1]=<0:1028000:1000> [L0 DMU objset] fletcher4 uncompressed unencrypted LE contiguous unique double size=1000L/1000P birth=536L/536P fill=2 cksum=000000055b124522:00001330e2484bc0:00228e17a618de5e:29b02afad6d10265
+
+    ZIL header: claim_txg 0, claim_blk_seq 0, claim_lr_seq 0 replay_seq 0, flags 0x0
+
+	Block seqno 1, won't claim
+
+
+    Deadlist: 0 (0/0 comp), 1 entries
+
+mintxg 0 -> obj 142
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+         0    6   128K    16K    88K     512    16K    6.25  DMU dnode
+	dnode flags: USED_BYTES 
+	dnode maxblkid: 0
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+         1    1   128K     8K     8K     512    24K   66.67  zvol object
+	dnode flags: USED_BYTES 
+	dnode maxblkid: 2
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+         2    1   128K    512     8K     512    512  100.00  zvol prop
+	dnode flags: USED_BYTES 
+	dnode maxblkid: 0
+	microzap: 512 bytes, 1 entries
+
+		size = 2097152 
+
+    Dnode slots:
+	Total used:             2
+	Max used:               2
+	Percent empty:   0.000000
+
+Dataset public_mirror [ZPL], ID 54, cr_txg 1, 192K, 9 objects, rootbp DVA[0]=<0:5000000:1000> DVA[1]=<0:6000000:1000> [L0 DMU objset] fletcher4 uncompressed unencrypted LE contiguous unique double size=1000L/1000P birth=531L/531P fill=9 cksum=0000000957a2c6be:00001d9bb982ffa7:0030897d162fef4c:36a10272102560b9
+
+    ZIL header: claim_txg 531, claim_blk_seq 3, claim_lr_seq 0 replay_seq 0, flags 0x2
+
+	Block seqno 3, already claimed
+
+
+    Deadlist: 0 (0/0 comp), 1 entries
+
+mintxg 0 -> obj 81
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+         0    6   128K    16K    96K     512    32K   14.06  DMU dnode
+	dnode flags: USED_BYTES 
+	dnode maxblkid: 1
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+        -1    1   128K    512     8K     512    512  100.00  ZFS user/group/project used
+	dnode flags: USED_BYTES 
+	dnode maxblkid: 0
+	microzap: 512 bytes, 1 entries
+
+		0 = 26624 
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+        -2    1   128K    512     8K     512    512  100.00  ZFS user/group/project used
+	dnode flags: USED_BYTES 
+	dnode maxblkid: 0
+	microzap: 512 bytes, 1 entries
+
+		0 = 26624 
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+         1    1   128K    512     8K     512    512  100.00  ZFS master node
+	dnode flags: USED_BYTES USERUSED_ACCOUNTED 
+	dnode maxblkid: 0
+	microzap: 512 bytes, 4 entries
+
+		ROOT = 34 
+		VERSION = 5 
+		SA_ATTRS = 32 
+		DELETE_QUEUE = 33 
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+         2    1   128K    512     4K     512    512  100.00  ZFS plain file
+                                               176   bonus  System attributes
+	dnode flags: USED_BYTES USERUSED_ACCOUNTED 
+	dnode maxblkid: 0
+	uid     0
+	gid     0
+	atime	Tue Oct 27 05:36:15 2026
+	mtime	Tue Oct 27 05:36:15 2026
+	ctime	Tue Oct 27 05:36:15 2026
+	crtime	Tue Oct 27 05:36:15 2026
+	gen	5
+	mode	100666
+	size	27
+	parent	34
+	links	1
+	pflags	40800000004
+	xattr	3
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+         3    1   128K    512     8K     512    512  100.00  ZFS directory
+                                               168   bonus  System attributes
+	dnode flags: USED_BYTES USERUSED_ACCOUNTED 
+	dnode maxblkid: 0
+	uid     0
+	gid     0
+	atime	Tue Oct 27 05:36:15 2026
+	mtime	Tue Oct 27 05:36:15 2026
+	ctime	Tue Oct 27 05:36:15 2026
+	crtime	Tue Oct 27 05:36:15 2026
+	gen	5
+	mode	41777
+	size	3
+	parent	2
+	links	2
+	pflags	40800000145
+	microzap: 512 bytes, 1 entries
+
+		system.aros.protection = 4 (type: Regular File)
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+         4    1   128K    512     4K     512    512  100.00  ZFS plain file
+                                               168   bonus  System attributes
+	dnode flags: USED_BYTES USERUSED_ACCOUNTED 
+	dnode maxblkid: 0
+	uid     0
+	gid     0
+	atime	Tue Oct 27 05:36:15 2026
+	mtime	Tue Oct 27 05:36:15 2026
+	ctime	Tue Oct 27 05:36:15 2026
+	crtime	Tue Oct 27 05:36:15 2026
+	gen	5
+	mode	100644
+	size	8
+	parent	3
+	links	1
+	pflags	40800000005
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+        32    1   128K    512     8K     512    512  100.00  SA master node
+	dnode flags: USED_BYTES USERUSED_ACCOUNTED 
+	dnode maxblkid: 0
+	microzap: 512 bytes, 2 entries
+
+		LAYOUTS = 36 
+		REGISTRY = 35 
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+        33    1   128K    512     8K     512    512  100.00  ZFS delete queue
+	dnode flags: USED_BYTES USERUSED_ACCOUNTED 
+	dnode maxblkid: 0
+	microzap: 512 bytes, 0 entries
+
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+        34    1   128K    512     8K     512    512  100.00  ZFS directory
+                                               168   bonus  System attributes
+	dnode flags: USED_BYTES USERUSED_ACCOUNTED 
+	dnode maxblkid: 0
+	uid     0
+	gid     0
+	atime	Tue Oct 27 05:36:15 2026
+	mtime	Tue Oct 27 05:36:15 2026
+	ctime	Tue Oct 27 05:36:15 2026
+	crtime	Tue Oct 27 05:36:15 2026
+	gen	4
+	mode	40755
+	size	3
+	parent	34
+	links	2
+	pflags	40800000144
+	microzap: 512 bytes, 1 entries
+
+		payload = 2 (type: Regular File)
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+        35    1   128K  1.50K     8K     512  1.50K  100.00  SA attr registration
+	dnode flags: USED_BYTES USERUSED_ACCOUNTED 
+	dnode maxblkid: 0
+	microzap: 1536 bytes, 22 entries
+
+		ZPL_PROJID =  8000015 : [8:0:21]
+		ZPL_PARENT =  8000007 : [8:0:7]
+		ZPL_UID =  800000c : [8:0:12]
+		ZPL_ZNODE_ACL =  5803000f : [88:3:15]
+		ZPL_RDEV =  800000a : [8:0:10]
+		ZPL_CRTIME =  10000003 : [16:0:3]
+		ZPL_LINKS =  8000008 : [8:0:8]
+		ZPL_ATIME =  10000000 : [16:0:0]
+		ZPL_SCANSTAMP =  20030012 : [32:3:18]
+		ZPL_GEN =  8000004 : [8:0:4]
+		ZPL_DXATTR =  30014 : [0:3:20]
+		ZPL_MODE =  8000005 : [8:0:5]
+		ZPL_XATTR =  8000009 : [8:0:9]
+		ZPL_SIZE =  8000006 : [8:0:6]
+		ZPL_GID =  800000d : [8:0:13]
+		ZPL_SYMLINK =  30011 : [0:3:17]
+		ZPL_FLAGS =  800000b : [8:0:11]
+		ZPL_PAD =  2000000e : [32:0:14]
+		ZPL_DACL_COUNT =  8000010 : [8:0:16]
+		ZPL_DACL_ACES =  40013 : [0:4:19]
+		ZPL_MTIME =  10000001 : [16:0:1]
+		ZPL_CTIME =  10000002 : [16:0:2]
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+        36    1   128K    16K    16K     512    32K  100.00  SA attr layouts
+	dnode flags: USED_BYTES USERUSED_ACCOUNTED 
+	dnode maxblkid: 1
+	Fat ZAP stats:
+		Pointer table:
+			1024 elements
+			zt_blk: 0
+			zt_numblks: 0
+			zt_shift: 10
+			zt_blks_copied: 0
+			zt_nextblk: 0
+		ZAP entries: 2
+		Leaf blocks: 1
+		Total blocks: 2
+		zap_block_type: 0x8000000000000001
+		zap_magic: 0x2f52ab2ab
+		zap_salt: 0x584ae9
+		Leafs with 2^n pointers:
+			  9:      1 *
+		Blocks with n*5 entries:
+			  0:      1 *
+		Blocks n/10 full:
+			  1:      1 *
+		Entries with n chunks:
+			  4:      2 **
+		Buckets with n entries:
+			  0:    510 ****************************************
+			  1:      2 *
+
+		2 = [ 5  6  4  12  13  7  11  0  1  2  3  8  16  19 ]
+		3 = [ 5  6  4  12  13  7  11  0  1  2  3  8  16  19  9 ]
+
+    Dnode slots:
+	Total used:             9
+	Max used:              36
+	Percent empty:  75.000000
+
+
+    Deadlist: 0 (0/0 comp), 1 entries
+
+mintxg 0 -> obj 50
+
+    Deadlist: 0 (0/0 comp), 0 entries
+
+Verified encryption feature refcount of 3 is correct
+Verified device_removal feature refcount of 0 is correct
+Verified indirect_refcount feature refcount of 0 is correct
