@@ -1,0 +1,12 @@
+{"time": 1793137384.828191, "action": "capture", "args": ["guard-initial.png"]}
+{"time": 1793137498.9541855, "action": "click", "args": ["356", "205", "1280", "800"]}
+{"time": 1793137499.2229898, "action": "click", "args": ["800", "210", "1280", "800"]}
+{"time": 1793137501.5524836, "action": "type", "args": ["public_mirror"]}
+{"time": 1793137501.8223624, "action": "click", "args": ["875", "224", "1280", "800"]}
+{"time": 1793137501.9739091, "action": "capture", "args": ["guard-health.png"]}
+{"time": 1793137628.9197226, "action": "click", "args": ["910", "253", "1280", "800"]}
+{"time": 1793137629.040494, "action": "capture", "args": ["guard-saved.png"]}
+{"time": 1793137629.3104362, "action": "click", "args": ["112", "90", "1280", "800"]}
+{"time": 1793137629.4323275, "action": "capture", "args": ["guard-drawer-closed.png"]}
+{"time": 1793137757.7623174, "action": "click", "args": ["291", "144", "1280", "800"]}
+{"time": 1793137757.9067433, "action": "capture", "args": ["guard-manager-closed.png"]}
