@@ -65,3 +65,26 @@ failed GPT runs. Only inactive generated ISOs are pruned after hash recording;
 serial logs, source recipes, fixtures, overlays and results remain available.
 Native L2ARC, complete public packaging and physical durability are not proven
 by these tests. The full port remains incomplete.
+
+## Debugger packaging gate follow-up
+
+The MetaMake stager now selects C/zdb, requires the vector-6 shared engine,
+and reevaluates native debugger transcripts before packaging. The first live
+gate attempt (`stage-native-zdb-real.log`) rejected ambiguous basename-only
+provenance: both the native launcher and host verifier are named zdb. This
+was a gate failure, not a new runtime failure or missing engine implementation.
+
+Run `6Y7sxTkv` repeats the full eight-vCPU MBR qualification with a new explicit
+`native-debugger.sha256` recording launcher then library. Both role entries
+also occur in the original full input manifest. The real gate accepts this
+run and exact selected binaries (`stage-native-zdb-real-role.log`). The 14-test
+staging suite also rejects swapped/untested engines, missing or altered roles,
+changed accounting, wrong user identity, missing lifecycle markers, faults,
+changed disks and incomplete input-preservation evidence. Staging evaluates
+verifiers in a temporary copy, leaving retained run data unchanged.
+
+This validates the debugger sub-gate only. Full staging still requires the
+same engine and runtime to satisfy existing GUI, cold-boot, encrypted-root,
+companion-tool, source-snapshot and changed-pool gates. No newly qualified
+release archive is claimed. The legacy stage.sh path has not yet been brought
+up to the new debugger evidence contract.

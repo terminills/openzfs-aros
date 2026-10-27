@@ -5,6 +5,7 @@ import pathlib
 import json
 import tempfile
 import unittest
+import shutil
 
 spec = importlib.util.spec_from_file_location("stage", pathlib.Path(__file__).with_name("stage-mmake.py"))
 stage = importlib.util.module_from_spec(spec)
@@ -12,6 +13,48 @@ spec.loader.exec_module(stage)
 
 
 class EvidenceTests(unittest.TestCase):
+    def test_native_debugger_gate_rechecks_reports_and_binary_pair(self):
+        evidence = pathlib.Path(__file__).resolve().parents[1] / 'tests/evidence/native-zdb-gpt-20261027/LRQP52DN'
+        with tempfile.TemporaryDirectory() as directory:
+            root = pathlib.Path(directory)
+            run = root / 'run'
+            shutil.copytree(evidence, run)
+            launcher, engine = root / 'zdb', root / 'openzfs.library'
+            launcher.write_bytes(b'test launcher')
+            engine.write_bytes(b'test engine')
+            manifest = run / 'inputs.sha256'
+            lines = manifest.read_text().splitlines()
+            roles = []
+            for i, line in enumerate(lines):
+                _, name = line.split(maxsplit=1)
+                if name.endswith('/stage/C/zdb') or pathlib.Path(name).name == 'openzfs.library':
+                    lines[i] = stage.digest(root / pathlib.Path(name).name) + '  ' + name
+                    roles.append(lines[i])
+            manifest.write_text('\n'.join(lines) + '\n')
+            (run / 'native-debugger.sha256').write_text('\n'.join(roles) + '\n')
+            stage.require_native_debugger(run, launcher, engine)
+            engine.write_bytes(b'untested engine')
+            with self.assertRaisesRegex(ValueError, 'differs from tested'):
+                stage.require_native_debugger(run, launcher, engine)
+            engine.write_bytes(b'test engine')
+            for filename, transform in (
+                ('serial.log', lambda s: s.replace('cycle=1 invalid=5', 'cycle=9 invalid=5')),
+                ('serial.log', lambda s: s.replace('uid=77 gid=88', 'uid=0 gid=0')),
+                ('serial.log', lambda s: s + '\n[PF-DBG] fault\n'),
+                ('host-blocks.log', lambda s: s.replace('90', '91')),
+                ('mode.txt', lambda s: s.replace('native_pool=1', 'native_pool=0')),
+                ('device-unchanged.log', lambda s: 'Images differ.\n'),
+                ('unchanged.log', lambda s: s.replace(': OK', ': FAILED', 1)),
+                ('native-debugger.sha256', lambda s: s + s.splitlines()[0] + '\n'),
+                ('native-debugger.sha256', lambda s: s.replace('/stage/C/zdb', '/untested/zdb')),
+            ):
+                path = run / filename
+                original = path.read_text()
+                path.write_text(transform(original))
+                with self.subTest(filename=filename), self.assertRaises(ValueError):
+                    stage.require_native_debugger(run, launcher, engine)
+                path.write_text(original)
+
     def test_guest_failures_cannot_be_masked_by_terminal_pass(self):
         for failure in ('00000012 | 000 | ASSERT at source.c:10',
                         '[PF-DBG] CR2=60', 'RESULT native FAIL line=42',

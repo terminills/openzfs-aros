@@ -8,6 +8,13 @@ before mounting an imported dataset. Do not replace a running resident engine;
 export pools and restart AROS after binary changes. No installer or automatic
 pool creation is included. Never guess a physical device's unit or partition.
 
+`C/zdb` is the real upstream debugger through version 2 of `openzfs.library`.
+It is an offline inspection tool: stop the service before using its shared
+engine entry. Explicit native `-p` paths require configured security and a root
+caller and are opened read-only. This does not exclude other raw-device writers.
+The staging gate binds the launcher/library pair to native pool, label,
+permission, lifetime, failure-recovery and unchanged-disk evidence.
+
 Keep `Tools/OpenZFS/ExecHelper` at that exact SYS: location. The upstream CLI
 process adapter launches this native child-process trampoline; omitting it
 breaks external-command execution even when ordinary pool queries work.

@@ -983,7 +983,8 @@ qualification and is not inferred from QEMU success.
 For a MetaMake development bundle, `aros/distribution/stage-mmake.py` accepts
 the private build directory, a completed GUI public-service run, a completed
 cold public-service run, `--output-parent`, `--encrypted-root-run` pointing
-to a completed native encrypted-root regression, and explicit `--fat-handler`
+to a completed native encrypted-root regression, `--native-zdb-run` pointing
+to a completed native shared-debugger pool/label/lifetime run, and explicit `--fat-handler`
 and `--dos-package` prerequisite paths. It binds selected application
 and POSIX runtime bytes to both runs' input hashes (Manager to the GUI run),
 checks full shared-engine symbols and release options, and creates a new
@@ -993,6 +994,16 @@ bound to persistent-test input hashes; the DOS package must match all three
 runs. The changed-pool healthy/degraded/restored cold suite and all five member
 hashes are also required. Four companion utilities are bound to their native
 startup/host-identity/runtime acceptance evidence.
+
+The bundle includes `C/zdb` and requires the matching version-2 shared engine
+with debugger vector 6. Staging rechecks its native label and full-pool reports,
+damaged-label recovery, permission denial, library lifetime and unchanged-disk
+evidence, rather than trusting saved comparison verdicts alone. The debugger
+run must use the selected launcher, engine, POSIX runtime and DOS boot package.
+Its `native-debugger.sha256` records launcher and library roles in order, with
+both entries required in the original input manifest; basename-only matching
+would confuse native `zdb` with the independent host verifier of the same name.
+This additional gate does not waive GUI, cold boot or encrypted-root testing.
 
 The pool-root-fix development archive `mmake-bundle.knv27h5n.tar.xz` has SHA256
 `091b410750703c3bb60ef96d2534b1859191186975caf2bfda25a1a0f985fa39`.

@@ -12,6 +12,7 @@ import pathlib
 import re
 import shutil
 import subprocess
+import sys
 import tempfile
 
 
@@ -219,6 +220,55 @@ def require_changed_pool(run):
     require_zdb_integrity(run, "reuse-zdb-objects.log", objects=True)
 
 
+def require_native_debugger(run, launcher, engine):
+    """Re-evaluate native transcripts and bind both sides of vector 6."""
+    roles = (run / "native-debugger.sha256").read_text().splitlines()
+    inputs = (run / "inputs.sha256").read_text().splitlines()
+    if len(roles) != 2 or any(line not in inputs for line in roles):
+        raise ValueError("Missing/ambiguous debugger role provenance")
+    for path, role in zip((launcher, engine), roles):
+        fields = role.split(maxsplit=1)
+        if len(fields) != 2 or fields[0] != digest(path):
+            raise ValueError("Selected debugger differs from tested role")
+    modes = set((run / "mode.txt").read_text().splitlines())
+    if not {"shared_library=1", "pool_traversal=1", "native_pool=1",
+            "native_device=1", "native_partitions=1", "damaged_labels=1"} <= modes:
+        raise ValueError("Incomplete native debugger qualification modes")
+    if "unconfigured_security=1" in modes:
+        raise ValueError("Debugger packaging requires configured-user denial evidence")
+    serial = (run / "serial.log").read_text()
+    if guest_failed(serial):
+        raise ValueError("Failed native debugger guest")
+    for marker in [*(f"RESULT shared zdb lifecycle PASS cycle={i} invalid=5 repeated=10 service=10"
+                      for i in range(2)), "RESULT shared zdb caller exit PASS status=7"]:
+        if len(re.findall(r"(?:^| \| )" + re.escape(marker) + "$", serial, re.M)) != 1:
+            raise ValueError("Missing/duplicate debugger lifetime acceptance")
+    if (run / "device-unchanged.log").read_text().strip() != "Images are identical.":
+        raise ValueError("Debugger changed its native disk")
+    unchanged = (run / "unchanged.log").read_text().splitlines()
+    if (len(unchanged) != len((run / "inputs.sha256").read_text().splitlines())
+            or not unchanged or any(not line.endswith(": OK") for line in unchanged)):
+        raise ValueError("Incomplete debugger input preservation")
+    helpers = pathlib.Path(__file__).resolve().parents[1] / "cli"
+    # The pool verifier emits decoded reports. Use a private scratch copy so
+    # staging never mutates the user's retained acceptance evidence.
+    with tempfile.TemporaryDirectory(prefix="openzfs-stage-zdb-") as directory:
+        scratch = pathlib.Path(directory)
+        for path in run.iterdir():
+            if path.is_file() and (path.suffix in (".log", ".status") or path.name == "mode.txt"):
+                shutil.copy2(path, scratch / path.name)
+        for name, arguments in (
+            ("verify-zdb-labels.py", [scratch / "serial.log", scratch / "host-labels.log"]),
+            ("verify-zdb-pool.py", [scratch]),
+            ("verify-zdb-bad-labels.py", [scratch]),
+            ("verify-zdb-device.py", [scratch]),
+        ):
+            result = subprocess.run([sys.executable, str(helpers / name), *map(str, arguments)],
+                                    capture_output=True, text=True)
+            if result.returncode:
+                raise ValueError(f"Native debugger evidence rejected by {name}: {result.stderr or result.stdout}")
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("build", type=pathlib.Path)
@@ -226,6 +276,7 @@ def main():
     parser.add_argument("cold_run", type=pathlib.Path)
     parser.add_argument("--output-parent", type=pathlib.Path, required=True)
     parser.add_argument("--encrypted-root-run", type=pathlib.Path, required=True)
+    parser.add_argument("--native-zdb-run", type=pathlib.Path, required=True)
     parser.add_argument("--fat-handler", type=pathlib.Path, required=True)
     parser.add_argument("--fat-source-snapshot", type=pathlib.Path, required=True)
     parser.add_argument("--dos-package", type=pathlib.Path, required=True)
@@ -237,6 +288,7 @@ def main():
                         (args.build, args.gui_run, args.cold_run))
     stage = build / "stage"
     encrypted = args.encrypted_root_run.resolve(strict=True)
+    debugger = args.native_zdb_run.resolve(strict=True)
     require_encrypted_root(encrypted)
     # Require terminal guest acceptance, not merely an opened window or link.
     for run in (gui, cold):
@@ -258,6 +310,7 @@ def main():
             raise ValueError(f"Missing or failed unchanged-member evidence: {path}")
     selected = {
         "C/zfs": stage / "C/zfs", "C/zpool": stage / "C/zpool",
+        "C/zdb": stage / "C/zdb",
         "C/OpenZFSServiceNative": build / "package/OpenZFSServiceNative",
         "C/OpenZFSDevice": stage / "C/OpenZFSDevice",
         "Libs/openzfs.library": build / "package/openzfs.library",
@@ -268,8 +321,9 @@ def main():
     }
     for destination, source in selected.items():
         name = pathlib.Path(destination).name
-        require_match(source, gui, name)
-        if name != "OpenZFSManagerNative":
+        if name != "zdb":
+            require_match(source, gui, name)
+        if name not in ("OpenZFSManagerNative", "zdb"):
             require_match(source, cold, name)
             require_match(source, encrypted, name)
         description = subprocess.check_output(["file", "-b", str(source)], text=True)
@@ -278,9 +332,15 @@ def main():
     symbols = subprocess.check_output(["nm", str(selected["Libs/openzfs.library"])], text=True)
     if any(marker in symbols for marker in ("__wrap_", "oz_test_admission_hold", "oz_dos_test_calloc")):
         raise ValueError("Diagnostic engine cannot be staged")
-    for symbol in ("zfsdev_ioctl_common", "oz_service_main", "OpenZFS_5_OpenZFSRunService"):
+    for symbol in ("zfsdev_ioctl_common", "oz_service_main", "OpenZFS_5_OpenZFSRunService",
+                   "oz_zdb_main", "OpenZFS_6_OpenZFSRunDebugger"):
         if not any(line.endswith(" T " + symbol) for line in symbols.splitlines()):
             raise ValueError(f"Missing full shared-engine symbol: {symbol}")
+    require_native_debugger(debugger, selected["C/zdb"], selected["Libs/openzfs.library"])
+    require_match(selected["Platform/Libs/posixc.library"], debugger)
+    launcher_symbols = subprocess.check_output(["nm", str(selected["C/zdb"])], text=True)
+    if any(marker in launcher_symbols for marker in (" T zfsdev_ioctl_common", " T oz_zdb_main", "__wrap_")):
+        raise ValueError("Debugger launcher embeds an engine or diagnostic wrapper")
     options = (build / "package/service-build-options.txt").read_text().splitlines()
     for value in ("service_test_modes=0", "full_dispatcher=1", "shared_engine=1", "status_trace=0"):
         if value not in options:
@@ -295,7 +355,7 @@ def main():
     fat_snapshot = args.fat_source_snapshot.resolve(strict=True)
     fat_sources = require_fat_snapshot(fat_snapshot, fat)
     dos = args.dos_package.resolve(strict=True)
-    for run in (gui, cold, encrypted):
+    for run in (gui, cold, encrypted, debugger):
         require_match(dos, run, "aros-base.pkg.xz")
     dos_snapshot = args.dos_source_snapshot.resolve(strict=True)
     dos_sources = require_dos_snapshot(dos_snapshot, dos)
@@ -344,16 +404,17 @@ def main():
     require_posix_snapshot(sources, output / "Platform/Libs/posixc.library")
     record = {"packaging_commit": subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=repo, text=True).strip(),
               "gui_run": str(gui), "cold_run": str(cold), "encrypted_root_run": str(encrypted), "build": str(build),
+              "native_zdb_run": str(debugger),
               "build_only_utilities": [], "native_companion_utilities": list(companions),
               "inputs": {name: {"path": str(path), "sha256": selected_hashes[name]} for name, path in selected.items()}}
     (metadata / "qualification.json").write_text(json.dumps(record, indent=2) + "\n")
     (metadata / "packaging.patch").write_bytes(subprocess.check_output(["git", "diff", "--binary"], cwd=repo))
     shutil.copy2(__file__, metadata / "stage-mmake.py")
-    for label, run in (("gui", gui), ("cold", cold), ("encrypted-root", encrypted)):
+    for label, run in (("gui", gui), ("cold", cold), ("encrypted-root", encrypted), ("native-zdb", debugger)):
         target = metadata / label
         target.mkdir()
         for path in run.iterdir():
-            if path.suffix in (".log", ".sha256") or path.name in ("source.txt", "source.patch", "base-platform.txt"):
+            if path.suffix in (".log", ".sha256", ".status") or path.name in ("source.txt", "source.patch", "base-platform.txt", "mode.txt"):
                 shutil.copy2(path, target / path.name)
     docs = output / "Docs"
     docs.mkdir()

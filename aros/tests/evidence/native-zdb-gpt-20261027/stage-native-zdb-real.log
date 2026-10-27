@@ -1,0 +1,10 @@
+Traceback (most recent call last):
+  File "<stdin>", line 7, in <module>
+  File "/mnt/short-term/openzfs-bootenv-candidate-20261025/aros/distribution/stage-mmake.py", line 225, in require_native_debugger
+    require_match(launcher, run, "zdb")
+  File "/mnt/short-term/openzfs-bootenv-candidate-20261025/aros/distribution/stage-mmake.py", line 107, in require_match
+    if digest(path) != recorded_hash(run, name or path.name):
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/mnt/short-term/openzfs-bootenv-candidate-20261025/aros/distribution/stage-mmake.py", line 102, in recorded_hash
+    raise ValueError(f"Missing or ambiguous evidence for {name}: {run}")
+ValueError: Missing or ambiguous evidence for zdb: build-audit/zdb-label-run.LRQP52DN

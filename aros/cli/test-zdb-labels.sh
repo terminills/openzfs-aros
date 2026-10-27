@@ -53,6 +53,9 @@ fi
 if [[ -n ${AROS_TEST_ZDB_LIBRARY:-} ]];then
     : "${AROS_TEST_ZDB_INCLUDE:?matching generated library headers required}"
     sha256sum "$AROS_TEST_ZDB_LIBRARY" >>"$run/inputs.sha256"
+    # The independent host verifier is also named zdb. Retain exact roles,
+    # rather than requiring consumers to infer them from basename collisions.
+    sha256sum "$AROS_TEST_ZDB_BINARY" "$AROS_TEST_ZDB_LIBRARY" >"$run/native-debugger.sha256"
     library_maps=(-map "$AROS_TEST_ZDB_LIBRARY" /Libs/openzfs.library)
     test_flags=(-DOZ_ZDB_SHARED)
     "$AROS_CC" --sysroot="$AROS_SDK" -B"$AROS_SDK/lib/" -O2 -Wall -Wextra \
