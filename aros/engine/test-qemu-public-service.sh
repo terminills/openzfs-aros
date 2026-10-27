@@ -643,6 +643,9 @@ while :;do
            { [[ ${AROS_TEST_LOADER_POLICY:-0} != 1 ]] ||
              rg -q '^RESULT native loader execution policy PASS' "$run/serial-results.log"; } &&
            { [[ -z $cli_dir ]] || {
+             { [[ ${AROS_TEST_REQUIRE_MANAGER_CLEAR:-0} != 1 ]] || {
+               rg -q '^Public Manager clear recovery PASS unconfirmed=1 force-refused=1 malformed=1 recent=1 extreme=1 assessments=2' "$run/serial-results.log" &&
+               rg -q '^Public Manager clear mounted refusal PASS assessment=1 recovery=1' "$run/serial-results.log"; }; } &&
              rg -q '^Public packaged CLI PASS' "$run/serial-results.log" &&
              { [[ ${AROS_TEST_REQUIRE_TRIM:-0} != 1 ]] ||
                rg -q '^Public CLI TRIM unsupported PASS start=1 suspend=1 cancel=1 upstream-device-errors=1' "$run/serial-results.log"; } &&

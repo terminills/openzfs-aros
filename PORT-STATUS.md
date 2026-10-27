@@ -390,8 +390,12 @@ selected dependencies, not a newly qualified official or bootstrap release.
   unauthorized, mounted and readonly requests are refused. AROS libzfs no
   longer decodes an absent recovery response after admission refusal.
   See `aros/tests/evidence/clear-rewind-policy-20261026`. Healthy SPA loads
-  do not exercise selection of an older transaction group; that recovery
-  qualification and a corresponding management UI workflow remain open.
+  do not exercise selection of an older transaction group; that damaged-clear
+  recovery qualification remains open. Manager now routes explicit recent or
+  extreme clear recovery/assessment options through the upstream command worker,
+  with confirmation and distinct loss warnings. Healthy unmounted execution,
+  mounted refusal, and native UI preview/confirmation/error presentation pass;
+  see `aros/tests/evidence/manager-clear-recovery-20261026`.
   Separately, a real damaged-pool readonly `import -FX` test now passes:
   both mirror members have all three newest MOS-root copies corrupted,
   ordinary import fails, and extreme readonly recovery exposes exact file

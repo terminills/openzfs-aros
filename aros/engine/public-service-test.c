@@ -830,11 +830,35 @@ done:
     return error;
 #undef UPGRADE_CHECK
 }
+static int manager_clear_request(ULONG flags,const char *options,ULONG expected)
+{
+    struct oz_message request={0};struct oz_project_worker *worker=NULL;
+    request.magic=OZ_MAGIC;request.version=OZ_VERSION;request.msg.mn_Length=sizeof(request);
+    request.operation=17;request.flags=flags;
+    strcpy(request.target,"public_mirror");
+    snprintf(request.options,sizeof(request.options),"%s",options);
+    int error=oz_project_worker_start(&request,&worker);
+    if(error)return error;
+    do{error=oz_project_worker_poll(worker,&request);if(error==EAGAIN)Delay(1);}while(error==EAGAIN);
+    int released=oz_project_worker_free(worker);
+    if(!error)error=released;
+    if(!error&&request.status!=expected)error=EIO;
+    note(request.detail);note("\n");
+    return error;
+}
 static int cli_clear_rewind_unmounted(void)
 {
     BPTR marker=Lock((CONST_STRPTR)"SYS:openzfs-cli-package-test",SHARED_LOCK);
     if(!marker)return 0;
     UnLock(marker);
+    if(manager_clear_request(0,"recovery=safe",OZ_ENGINE_ERROR)||
+       manager_clear_request(OZ_CONFIRMED|OZ_FORCE,"recovery=safe",OZ_ENGINE_ERROR)||
+       manager_clear_request(OZ_CONFIRMED,"recovery=safe;recovery=extreme",OZ_ENGINE_ERROR))return EIO;
+    const char *options[]={"recovery=safe;assessment=on","recovery=safe",
+        "recovery=extreme;assessment=on","recovery=extreme"};
+    for(unsigned i=0;i<sizeof(options)/sizeof(*options);i++)
+        if(manager_clear_request(OZ_CONFIRMED,options[i],OZ_OK))return EIO;
+    note("Public Manager clear recovery PASS unconfirmed=1 force-refused=1 malformed=1 recent=1 extreme=1 assessments=2\n");
     const char *commands[]={"C:zpool clear -nF public_mirror",
         "C:zpool clear -F public_mirror","C:zpool clear -nFX public_mirror",
         "C:zpool clear -FX public_mirror"};
@@ -845,6 +869,9 @@ static int cli_clear_rewind_unmounted(void)
 }
 static int cli_clear_rewind_busy(void)
 {
+    if(manager_clear_request(OZ_CONFIRMED,"recovery=safe;assessment=on",OZ_ENGINE_ERROR)||
+       manager_clear_request(OZ_CONFIRMED,"recovery=safe",OZ_ENGINE_ERROR))return EIO;
+    note("Public Manager clear mounted refusal PASS assessment=1 recovery=1\n");
     char *commands[][5]={{"C:zpool","clear","-nF","public_mirror",NULL},
         {"C:zpool","clear","-F","public_mirror",NULL}};
     for(unsigned i=0;i<sizeof(commands)/sizeof(*commands);i++) {

@@ -1,4 +1,5 @@
 #include "api.h"
+#include "clear-policy.h"
 #include <proto/exec.h>
 #include <exec/memory.h>
 #include <stdio.h>
@@ -100,10 +101,12 @@ enum oz_route oz_request_route(const struct oz_message *m) {
         return !strncmp(m->target,"/AROS/",6)?OZ_ROUTE_AUTHENTICATED:OZ_ROUTE_PROJECT;
     case 52:
         return m->options[0]?OZ_ROUTE_PROJECT:OZ_ROUTE_AUTHENTICATED;
+    case 17:
+        return m->options[0]?OZ_ROUTE_PROJECT:OZ_ROUTE_AUTHENTICATED;
     case 38:
         return (m->flags&OZ_DRYRUN)?OZ_ROUTE_PROJECT:OZ_ROUTE_AUTHENTICATED;
     case 5: case 6: case 8: case 9: case 10: case 11: case 12: case 13:
-    case 14: case 15: case 16: case 17: case 18: case 19: case 20: case 21:
+    case 14: case 15: case 16: case 18: case 19: case 20: case 21:
     case 22: case 23: case 24: case 26: case 32: case 33: case 37:
     case 39: case 41: case 42: case 43: case 44: case 50: case 51:
     case 53: case 54: case 55: case 56: case 60: case 61: case 62: case 63:
@@ -145,6 +148,13 @@ ULONG oz_validate(const struct oz_message *m,char *why,unsigned size) {
     else if(op->argument_label[0] && !m->argument[0] && !(m->operation==64 && !strcmp(m->options,"inherit=on")) && m->operation!=58 && m->operation!=23 && m->operation!=17 && !(m->operation==5 && m->topology.group_count) && !(m->operation==7 && m->topology.device_count)) error="Argument is required";
     else if(oz_request_mutates(m->operation,m->argument) && !(m->flags&OZ_CONFIRMED)) error="Change requires explicit confirmation";
     if(error) {snprintf(why,size,"%s",error);return status;}
+    if(m->operation==17&&m->options[0]) {
+        struct oz_clear_policy policy;
+        if(!oz_parse_clear_policy(m->options,&policy)||m->argument[0]||m->flags!=OZ_CONFIRMED||m->cursor||m->job_id) {
+            snprintf(why,size,"Clear recovery requires recovery=safe|extreme, optional assessment=on|off, confirmation and no device GUID or extra flags");
+            return OZ_BAD_REQUEST;
+        }
+    }
     if(m->operation==9)return oz_validate_add_topology(&m->topology,why,size);
     if(m->operation==11||m->operation==13) {
         if(m->options[0]&&strcmp(m->options,"rebuild=on")){

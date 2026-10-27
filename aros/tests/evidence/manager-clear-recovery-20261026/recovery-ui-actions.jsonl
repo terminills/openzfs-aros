@@ -1,0 +1,31 @@
+{"time": 1793070142.289139, "action": "capture", "args": ["initial"]}
+{"time": 1793070236.0456843, "action": "guest-click", "args": ["420", "134"]}
+{"time": 1793070236.3811207, "action": "guest-click", "args": ["264", "164"]}
+{"time": 1793070236.5382922, "action": "capture", "args": ["pools"]}
+{"time": 1793070341.2038746, "action": "guest-click", "args": ["300", "299"]}
+{"time": 1793070341.5293655, "action": "guest-click", "args": ["790", "186"]}
+{"time": 1793070343.5618713, "action": "type", "args": ["public_mirror"]}
+{"time": 1793070343.8939528, "action": "guest-click", "args": ["790", "220"]}
+{"time": 1793070345.1765153, "action": "type", "args": ["recovery"]}
+{"time": 1793070345.2400553, "action": "key", "args": ["equal"]}
+{"time": 1793070346.3640866, "action": "type", "args": ["extreme"]}
+{"time": 1793070346.4324982, "action": "key", "args": ["semicolon"]}
+{"time": 1793070348.0100737, "action": "type", "args": ["assessment"]}
+{"time": 1793070348.072375, "action": "key", "args": ["equal"]}
+{"time": 1793070348.44104, "action": "type", "args": ["on"]}
+{"time": 1793070348.7692192, "action": "guest-click", "args": ["635", "281"]}
+{"time": 1793070348.8975923, "action": "capture", "args": ["assessment-preview"]}
+{"time": 1793070454.3049433, "action": "guest-click", "args": ["890", "281"]}
+{"time": 1793070454.4327972, "action": "capture", "args": ["assessment-confirm"]}
+{"time": 1793070556.3815336, "action": "guest-click", "args": ["400", "450"]}
+{"time": 1793070556.5146608, "action": "capture", "args": ["assessment-result"]}
+{"time": 1793070556.8473833, "action": "guest-click", "args": ["920", "220"]}
+{"time": 1793070556.9234753, "action": "key", "args": ["end"]}
+{"time": 1793070556.9904668, "action": "key", "args": ["backspace"]}
+{"time": 1793070557.0558803, "action": "key", "args": ["backspace"]}
+{"time": 1793070557.578772, "action": "type", "args": ["off"]}
+{"time": 1793070557.9115367, "action": "guest-click", "args": ["635", "281"]}
+{"time": 1793070558.246218, "action": "guest-click", "args": ["890", "281"]}
+{"time": 1793070558.409305, "action": "capture", "args": ["recovery-confirm"]}
+{"time": 1793070748.4850335, "action": "guest-click", "args": ["855", "450"]}
+{"time": 1793070748.8213305, "action": "guest-click", "args": ["254", "117"]}

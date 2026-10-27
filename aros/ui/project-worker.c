@@ -1,5 +1,6 @@
 /* SPDX-License-Identifier: CDDL-1.0 */
 #include "project-worker.h"
+#include "clear-policy.h"
 #include "admission-api.h"
 #include "../cli/process.h"
 #include <errno.h>
@@ -211,6 +212,18 @@ static int labelclear_execute(struct oz_message *m)
        m->argument[0]||m->options[0])return EINVAL;
     char *args[6]={"C:zpool","labelclear"};unsigned count=2;
     if(m->flags&OZ_FORCE)args[count++]="-f";
+    args[count++]="--";args[count++]=m->target;args[count]=NULL;
+    return command_capture(m,args);
+}
+
+static int clear_recovery_execute(struct oz_message *m)
+{
+    char why[256];struct oz_clear_policy policy;
+    if(!m||oz_validate(m,why,sizeof(why))!=OZ_OK||m->operation!=17||
+       !oz_parse_clear_policy(m->options,&policy))return EINVAL;
+    char *args[9]={"C:zpool","clear","-F"};unsigned count=3;
+    if(policy.assessment)args[count++]="-n";
+    if(policy.extreme)args[count++]="-X";
     args[count++]="--";args[count++]=m->target;args[count]=NULL;
     return command_capture(m,args);
 }
@@ -499,6 +512,7 @@ static void *project_run(void *arg)
         w->response.operation==52?oz_clone_execute(&w->response):
         w->response.operation==38?oz_destroy_preview_execute(&w->response):
         w->response.operation==25?upgrade_execute(&w->response):
+        w->response.operation==17?clear_recovery_execute(&w->response):
         w->response.operation==47?dataset_upgrade_execute(&w->response):
         w->response.operation==48?dataset_rewrite_execute(&w->response):
         w->response.operation==34?events_execute(&w->response):

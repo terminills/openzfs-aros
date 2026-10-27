@@ -66,6 +66,16 @@ int main(void)
     if(oz_request_route(&m)!=OZ_ROUTE_AUTHENTICATED)failures++;
     strcpy(m.target,"Work:pools/file.vdev");
     if(oz_request_route(&m)!=OZ_ROUTE_PROJECT)failures++;
+    memset(&m,0,sizeof(m));m.magic=OZ_MAGIC;m.version=OZ_VERSION;
+    m.msg.mn_Length=sizeof(m);m.operation=17;m.flags=OZ_CONFIRMED;
+    strcpy(m.target,"example");
+    if(oz_request_route(&m)!=OZ_ROUTE_AUTHENTICATED)failures++;
+    strcpy(m.options,"recovery=safe;assessment=on");
+    if(oz_request_route(&m)!=OZ_ROUTE_PROJECT||oz_validate(&m,why,sizeof(why))!=OZ_OK)failures++;
+    strcpy(m.argument,"123");
+    if(oz_validate(&m,why,sizeof(why))==OZ_OK)failures++;
+    m.argument[0]=0;m.flags|=OZ_DRYRUN;
+    if(oz_validate(&m,why,sizeof(why))==OZ_OK)failures++;
     printf("RESULT field schema failures=%d\n",failures);
     bug("RESULT native operation catalogue %s unavailable=6 snapshot=implemented\n",
         failures?"FAIL":"PASS");

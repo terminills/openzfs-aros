@@ -1,6 +1,7 @@
 #include "api.h"
 #include "admission-worker.h"
 #include "project-worker.h"
+#include "clear-policy.h"
 #include "preferences.h"
 #include <errno.h>
 #include <exec/memory.h>
@@ -327,6 +328,15 @@ static void send_request(ULONG operation,int preview_only) {
     if(m.operation==47) {
         size_t n=strlen(text);
         snprintf(text+n,sizeof(text)-n,"\nFilesystem version upgrades are irreversible.\nOlder systems may lose access; this does not upgrade the pool format.");
+    }
+    if(m.operation==17&&m.options[0]) {
+        struct oz_clear_policy policy;
+        if(oz_parse_clear_policy(m.options,&policy)) {
+            size_t n=strlen(text);
+            snprintf(text+n,sizeof(text)-n,"\n%s\n%s\nClose all pool files and unmount datasets first; no automatic retry.",
+                policy.assessment?"Assess recovery only; no rewind is committed. Device probes may write unchanged data.":"Recovery may permanently discard recent transactions. Preserve backups first.",
+                policy.extreme?"Extreme recovery may expose inconsistent data; verify recovered files.":"Recent transaction recovery requested.");
+        }
     }
     if(m.operation==48) {
         size_t n=strlen(text);
