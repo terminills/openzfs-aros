@@ -95,3 +95,62 @@ done:
     for(unsigned i=0;i<32;i++)nvlist_free(selected[i]);
     return error;
 }
+
+int oz_split_config_admit(nvlist_t *source,nvlist_t *request,nvlist_t **out)
+{
+    nvlist_t *tree=NULL,**children=NULL,*clean=NULL,**expected=NULL;
+    unsigned count=0,n=0,selected=0;uint64_t guids[32];const char *type;
+    if(!out)return EINVAL;
+    *out=NULL;
+    if(!source||!request||nvlist_lookup_nvlist(request,ZPOOL_CONFIG_VDEV_TREE,&tree)||
+        nvlist_lookup_string(tree,ZPOOL_CONFIG_TYPE,&type)||strcmp(type,VDEV_TYPE_ROOT)||
+        nvlist_exists(tree,ZPOOL_CONFIG_SPARES)||nvlist_exists(tree,ZPOOL_CONFIG_L2CACHE)||
+        nvlist_lookup_nvlist_array(tree,ZPOOL_CONFIG_CHILDREN,&children,&count)||!count||count>32)
+        return EINVAL;
+    for(unsigned i=0;i<count;i++){
+        if(nvlist_lookup_string(children[i],ZPOOL_CONFIG_TYPE,&type))return EINVAL;
+        if(!strcmp(type,VDEV_TYPE_HOLE)||!strcmp(type,VDEV_TYPE_INDIRECT)){
+            if(nvlist_exists(children[i],ZPOOL_CONFIG_PATH))return EINVAL;
+        }else if(!strcmp(type,VDEV_TYPE_FILE)||!strcmp(type,VDEV_TYPE_DISK)){
+            if(nvlist_lookup_uint64(children[i],ZPOOL_CONFIG_GUID,&guids[selected++]))return EINVAL;
+        }else return EINVAL;
+        const char *arrays[]={ZPOOL_CONFIG_CHILDREN,ZPOOL_CONFIG_SPARES,ZPOOL_CONFIG_L2CACHE};
+        for(unsigned a=0;a<3;a++)if(nvlist_exists(children[i],arrays[a])){
+            nvlist_t **nested;unsigned size;
+            if(nvlist_lookup_nvlist_array(children[i],arrays[a],&nested,&size)||size)return EINVAL;
+        }
+    }
+    int error=oz_split_config(source,guids,selected,&clean);
+    if(error)return error;
+    tree=fnvlist_lookup_nvlist(clean,ZPOOL_CONFIG_VDEV_TREE);
+    error=nvlist_lookup_nvlist_array(tree,ZPOOL_CONFIG_CHILDREN,&expected,&n);
+    if(error)goto done;
+    if(n!=count){error=EINVAL;goto done;}
+    for(unsigned i=0;i<n;i++){
+        const char *want=fnvlist_lookup_string(expected[i],ZPOOL_CONFIG_TYPE);
+        type=fnvlist_lookup_string(children[i],ZPOOL_CONFIG_TYPE);
+        if(strcmp(type,want)){error=EINVAL;goto done;}
+        if(!strcmp(type,VDEV_TYPE_HOLE)){
+            uint64_t hole;
+            if(nvlist_lookup_uint64(children[i],ZPOOL_CONFIG_IS_HOLE,&hole)||hole!=1){error=EINVAL;goto done;}
+        }else{
+            uint64_t guid,expected_guid;
+            if(nvlist_lookup_uint64(children[i],ZPOOL_CONFIG_GUID,&guid)||
+                nvlist_lookup_uint64(expected[i],ZPOOL_CONFIG_GUID,&expected_guid)||guid!=expected_guid){error=EINVAL;goto done;}
+            if(strcmp(type,VDEV_TYPE_INDIRECT)){
+                const char *path,*expected_path;
+                if(nvlist_lookup_string(children[i],ZPOOL_CONFIG_PATH,&path)||
+                    nvlist_lookup_string(expected[i],ZPOOL_CONFIG_PATH,&expected_path)||strcmp(path,expected_path)){
+                    error=EINVAL;goto done;
+                }
+            }
+        }
+        /* Volatile statistics are not persisted and need not consume the
+         * caller's bounded config buffer. Keep trusted indirect object IDs. */
+        (void)nvlist_remove_all(expected[i],ZPOOL_CONFIG_VDEV_STATS);
+        (void)nvlist_remove_all(expected[i],ZPOOL_CONFIG_VDEV_STATS_EX);
+    }
+    *out=clean;clean=NULL;
+done:
+    nvlist_free(clean);return error;
+}

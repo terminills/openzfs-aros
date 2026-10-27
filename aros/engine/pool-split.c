@@ -29,7 +29,7 @@ int oz_pool_split_source_busy(const char *source)
  * identities against the live source before authorizing the new pool name.
  * Existing source bindings remain retained; this admits no new backing. */
 int oz_cli_split_begin(const char *source,const char *destination,
-    const void *bytes,size_t size,cred_t *caller,void **out)
+    void *bytes,size_t *size,cred_t *caller,void **out)
 {
     *out=NULL;
     int error=oz_cli_pool_export_check(source,caller);
@@ -42,20 +42,26 @@ int oz_cli_split_begin(const char *source,const char *destination,
     spa_namespace_enter(FTAG);
     if(!error&&spa_lookup(destination))error=EEXIST;
     spa_namespace_exit(FTAG);
-    if(!error)error=nvlist_unpack((char *)bytes,size,&config,0);
+    if(!error)error=nvlist_unpack((char *)bytes,*size,&config,0);
+    spa_config_enter(spa,SCL_CONFIG,FTAG,RW_READER);
+    if(!error){
+        nvlist_t *source_config=spa_config_generate(spa,NULL,-1ULL,B_TRUE),*clean=NULL;
+        nvlist_t *source_tree=fnvlist_lookup_nvlist(source_config,ZPOOL_CONFIG_VDEV_TREE);
+        error=oz_split_config_admit(source_tree,config,&clean);
+        nvlist_free(source_config);
+        if(!error){nvlist_free(config);config=clean;}
+    }
     if(!error)error=nvlist_lookup_nvlist(config,ZPOOL_CONFIG_VDEV_TREE,&tree);
     nvlist_t **children=NULL;unsigned count=0,path_count=0;char *paths[32];
     if(!error)error=nvlist_lookup_nvlist_array(tree,ZPOOL_CONFIG_CHILDREN,&children,&count);
     if(!error&&(!count||count>32||nvlist_exists(tree,ZPOOL_CONFIG_SPARES)||
         nvlist_exists(tree,ZPOOL_CONFIG_L2CACHE)))error=EINVAL;
-    spa_config_enter(spa,SCL_CONFIG,FTAG,RW_READER);
     for(unsigned i=0;!error&&i<count;i++) {
         const char *type,*path;uint64_t guid;
         if(nvlist_lookup_string(children[i],ZPOOL_CONFIG_TYPE,&type)){error=EINVAL;break;}
         if(!strcmp(type,VDEV_TYPE_HOLE)||!strcmp(type,VDEV_TYPE_INDIRECT)) {
-            /* These require their own exact topology validation, not a
-             * caller-supplied object silently excluded from path admission. */
-            error=ENOTSUP;break;
+            /* Reconstructed from the matching live source slot above. */
+            continue;
         }
         if((strcmp(type,VDEV_TYPE_FILE)&&strcmp(type,VDEV_TYPE_DISK))||
             nvlist_exists(children[i],ZPOOL_CONFIG_CHILDREN)||
@@ -71,6 +77,17 @@ int oz_cli_split_begin(const char *source,const char *destination,
     spa_config_exit(spa,SCL_CONFIG,FTAG);
     struct oz_import_paths allowed={.paths=paths,.count=path_count};
     if(!error)error=oz_import_config_check(&allowed,config);
+    if(!error){
+        size_t needed=0;error=nvlist_size(config,&needed,NV_ENCODE_NATIVE);
+        if(!error&&needed>*size)error=EOVERFLOW;
+        if(!error){
+            char *packed=bytes;
+            error=nvlist_pack(config,&packed,&needed,NV_ENCODE_NATIVE,0);
+            /* Packing into an existing buffer does not shorten its supplied
+             * length. Publish the measured config extent, not old tail bytes. */
+            if(!error)*size=needed;
+        }
+    }
     if(!error){guard=calloc(1,sizeof(*guard));if(!guard)error=ENOMEM;}
     if(!error){strlcpy(guard->name,destination,sizeof(guard->name));
         strlcpy(guard->source,source,sizeof(guard->source));

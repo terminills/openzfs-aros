@@ -301,7 +301,12 @@ writer and separate cold reader verify both resulting pools' exact DOS files,
 readonly refusal and exports; reader images remain unchanged and both pools
 pass independent host zdb. See `aros/tests/evidence/native-manager-split-20261027`.
 Mixed-backing secondary-channel ATA timeout runs are preserved as failures,
-not full-suite passes. CLI hole/indirect split admission remains restricted.
+not full-suite passes. Subsequent CLI hole/indirect admission qualification is
+recorded in `aros/tests/evidence/split-topology-20261027`: the config is rebuilt
+from trusted live source topology, with bounded repacking and retained leaf
+admission. Actual native CLI hole, indirect-after-removal and plain split runs
+pass separate readonly imports and exact DOS readback. These use guest-RAM
+files and are not cold-persistence or physical-power-loss proof.
 
 Damaged-pool CLEAR update (2026-10-27): actual upstream `clear -nF/-F` and
 `clear -nFX/-FX` pass on separately prepared damaged mirror fixtures through

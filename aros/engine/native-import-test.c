@@ -451,6 +451,9 @@ static int namespace_property(const char *name,const char *expected)
 #ifdef OZ_NATIVE_MANAGER_SPLIT
 #include "native-manager-split-test.h"
 #endif
+#ifdef OZ_NATIVE_SPLIT_TOPOLOGY
+#include "native-split-topology-test.h"
+#endif
 int main(void)
 {
     int error=0;BPTR file=0;struct Library *secBase=NULL;
@@ -501,6 +504,10 @@ int main(void)
 #endif
         ,TAG_DONE)==0);
     for(unsigned i=0;i<1500;i++){Forbid();int ready=FindPort((CONST_STRPTR)OZ_ADMISSION_PORT)!=NULL;Permit();if(ready)break;Delay(1);}
+#ifdef OZ_NATIVE_SPLIT_TOPOLOGY
+    CHECK(!native_split_topology_test(OZ_NATIVE_SPLIT_TOPOLOGY));
+    goto done;
+#endif
 #ifdef OZ_NATIVE_MANAGER_SPLIT
     CHECK(!native_split_test());
     goto done;
@@ -1345,7 +1352,9 @@ done:
     if(file)Close(file);
     if(secBase)CloseLibrary(secBase);
     char line[160];snprintf(line,sizeof(line),
-#if defined(OZ_NATIVE_MANAGER_SPLIT)
+#if defined(OZ_NATIVE_SPLIT_TOPOLOGY)
+        "RESULT native CLI split topology test %s line=%d",
+#elif defined(OZ_NATIVE_MANAGER_SPLIT)
         "RESULT native Manager split test %s line=%d",
 #elif defined(OZ_NATIVE_IMPORT_REWIND)
         "RESULT native damaged rewind test %s line=%d",

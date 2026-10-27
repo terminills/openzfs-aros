@@ -464,8 +464,12 @@ static int execute(void *storage,size_t length,const struct oz_packet_security *
                 (char *)storage+conf,&clean_size,cred,security,&import_scope);
             if(!w->engine_error)command.zc_nvlist_conf_size=clean_size;
         }
-        if(splitting)w->engine_error=oz_cli_split_begin(command.zc_name,command.zc_string,
-            (char *)storage+conf,w->conf_size,cred,&import_scope);
+        if(splitting){
+            size_t clean_size=w->conf_size;
+            w->engine_error=oz_cli_split_begin(command.zc_name,command.zc_string,
+                (char *)storage+conf,&clean_size,cred,&import_scope);
+            if(!w->engine_error)command.zc_nvlist_conf_size=clean_size;
+        }
         if(importing) {
             size_t clean_size=w->conf_size;
             w->engine_error=oz_cli_import_begin(command.zc_name,command.zc_guid,command.zc_cookie,

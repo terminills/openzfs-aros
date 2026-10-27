@@ -149,6 +149,12 @@ usb_inflight=${AROS_TEST_USB_INFLIGHT_WRITE:-0}
 usb_cli_clear=${AROS_TEST_USB_CLI_CLEAR:-0}
 import_rewind=${AROS_TEST_IMPORT_REWIND:-0}
 manager_split=${AROS_TEST_MANAGER_SPLIT:-none}
+split_topology=${AROS_TEST_SPLIT_TOPOLOGY:-none}
+[[ $split_topology == none || $split_topology == hole || $split_topology == indirect || $split_topology == plain ]]
+if [[ $split_topology != none ]];then
+    [[ $manager_split == none && $native_bus == ide && $members == both && $layout == mirror && $writable == 0 && $gui == 0 && $gpt == 0 && $import_rewind == 0 && -z ${AROS_TEST_WHOLE_CLI_LINK:-} ]]
+    [[ -f ${AROS_TEST_CLI_DIR:?split topology needs packaged CLI}/zpool && -f $AROS_TEST_CLI_DIR/zfs ]]
+fi
 [[ $manager_split == none || $manager_split == write || $manager_split == cold ]]
 if [[ $manager_split != none ]];then
     [[ $native_bus == ide && $members == both && $layout == mirror && $writable == 0 && $gui == 0 && $gpt == 0 && $import_rewind == 0 && -z ${AROS_TEST_WHOLE_CLI_LINK:-} ]]
@@ -401,6 +407,16 @@ if [[ $gpt == 1 || $gpt == 3 ]];then gui_flags+=(-DOZ_NATIVE_GPT_TEST);fi
 if [[ $gpt == 2 ]];then gui_flags+=(-DOZ_NATIVE_GPT_READONLY);fi
 if [[ $members != both ]];then gui_flags+=(-DOZ_NATIVE_IMPORT_DEGRADED);fi
 run=$(mktemp -d "$artifact_root/native-import-run.XXXXXXXX")
+if [[ $split_topology != none ]];then
+    topology_mode=1
+    if [[ $split_topology == indirect ]];then topology_mode=2;fi
+    if [[ $split_topology == plain ]];then topology_mode=3;fi
+    gui_flags+=(-DOZ_NATIVE_SPLIT_TOPOLOGY=$topology_mode)
+    cp aros/engine/native-split-topology-test.h "$run/"
+    cp "$AROS_TEST_CLI_DIR/zpool" "$AROS_TEST_CLI_DIR/zfs" "$run/"
+    sha256sum "$run/zpool" "$run/zfs" aros/engine/native-split-topology-test.h >"$run/split-topology-inputs.sha256"
+    gui_maps+=(-map "$run/zpool" /C/zpool -map "$run/zfs" /C/zfs)
+fi
 if [[ $manager_split != none ]];then
     cp aros/engine/native-manager-split-test.h "$run/"
     sha256sum aros/engine/native-manager-split-test.h >"$run/manager-split-source.sha256"
@@ -1407,6 +1423,14 @@ done
 printf 'quit\n' | socat - "UNIX-CONNECT:$run/monitor" >/dev/null
 wait "$pid"
 trap - EXIT
+if [[ $split_topology != none ]];then
+    rg -q "^RESULT native CLI split topology PASS kind=$split_topology line=0 separate-imports=2 exact-payload=1 readonly=1" "$run/serial.log"
+    rg -q '^RESULT native CLI split topology test PASS line=0' "$run/serial.log"
+    sha256sum -c "$run/backing.sha256"
+    sha256sum -c "$run/overlays.sha256"
+    echo "PASS: native CLI split topology $split_topology: $run"
+    exit 0
+fi
 if [[ $manager_split != none ]];then
     rg -q '^RESULT native Manager all-disk split PASS line=0 pools=2 cycles=2 exact-files=2 readonly=1' "$run/serial.log"
     rg -q '^RESULT native Manager split test PASS line=0' "$run/serial.log"

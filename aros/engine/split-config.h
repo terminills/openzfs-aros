@@ -6,4 +6,7 @@
  * implicit last-member selection. Input tree is never modified. */
 int oz_split_guids(const char *, uint64_t *, unsigned *);
 int oz_split_config(nvlist_t *, const uint64_t *, unsigned, nvlist_t **);
+/* Validate CLI selection/order against the live source and reconstruct its
+ * configuration. Caller-supplied indirect metadata is never propagated. */
+int oz_split_config_admit(nvlist_t *, nvlist_t *, nvlist_t **);
 #endif
