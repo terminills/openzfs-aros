@@ -1307,12 +1307,16 @@ static int companion_import_test(int write)
 cleanup:
     if(file)Close(file);
     if(published&OZ_STARTUP_PUBLISHED_ENV){
+        note("Public startup cleanup begin phase=environment-record\n");
         snprintf(path,sizeof(path),"ENV:OpenZFS-%016llx.prefs",(unsigned long long)record.guid);
         if(!DeleteFile((CONST_STRPTR)path)&&!error)error=__LINE__;
     }
+    note("Public startup cleanup begin phase=restore-assign\n");
     if(assigned){if(AssignLock((CONST_STRPTR)"ENVARC",saved))saved=0;else if(!error)error=__LINE__;}
     if(saved)UnLock(saved);
+    note("Public startup cleanup begin phase=archive-inhibit\n");
     if(archive&&!Inhibit((CONST_STRPTR)"OZARCH:",DOSTRUE)&&!error)error=__LINE__;
+    note("Public startup cleanup end\n");
     if(error){char line[100];snprintf(line,sizeof(line),"Public startup import command FAIL write=%d line=%d DOS=%ld\n",write,error,(long)IoErr());note(line);}
 #undef CI_CHECK
     return error;

@@ -1,0 +1,565 @@
+[bootstrap:multiboot2] smartfb: using VBE mode 0x417a (1280x800x32, fb=0xFD000000)
+[bootstrap:multiboot2] smartfb: KRN_FBAddr=0x00000000FD000000
+0000000000000000 0x0000000000000000 | 000 | AROS64 - The AROS Research OS
+0000000000000000 0x0000000000000000 | 000 | 64-bit SMP build. Compiled Oct 21 2026
+0000000000000000 0x0000000000000000 | 000 | [Kernel] Local APIC: x2APIC
+000000014593be44 0x0000000000000000 | 000 | ACPI: RSDP 0x00000000000F52E0 000014 (v00 BOCHS )
+000000014614e18b 0x0000000000000000 | 000 | ACPI: RSDT 0x000000007FFE25C5 000034 (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+0000000146b49555 0x0000000000000000 | 000 | ACPI: FACP 0x000000007FFE2441 000074 (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+000000014754eb3b 0x0000000000000000 | 000 | ACPI: DSDT 0x000000007FFE0040 002401 (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+0000000147f43510 0x0000000000000000 | 000 | ACPI: FACS 0x000000007FFE0000 000040
+000000014862abad 0x0000000000000000 | 000 | ACPI: APIC 0x000000007FFE24B5 0000B0 (v03 BOCHS  BXPC     00000001 BXPC 00000001)
+000000014901b478 0x0000000000000000 | 000 | ACPI: HPET 0x000000007FFE2565 000038 (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+0000000149a80346 0x0000000000000000 | 000 | ACPI: WAET 0x000000007FFE259D 000028 (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+000000014a4f197e 0x0000000000000000 | 000 | [HPET] 2 units total
+000000014b04ea06 0x00000000013d2020 | 000 | ACPI: 1 ACPI AML tables successfully acquired and loaded
+000000014bb0a78d 0x00000000013b0130 | 000 | [Kernel:ACPI-IOAPIC] Registering IO-APIC #1 [ID=000] @ 00000000fec00000 [GSI = 0]
+000000014c527793 0x00000000013b0130 | 000 | [Kernel:ACPI] System Total APICs: 8, 8 usable
+000000014d0b8166 0x00000000013b0130 | 000 | [Kernel:APIC-IA32] MSI Interrupts Allocatable
+000000014d889d54 0x00000000013b0130 | 000 | [Kernel:APIC-IA32]     start = 16
+000000014df2e8da 0x00000000013b0130 | 000 | [Kernel:APIC-IA32]     total = 198
+000000016c1c771d 0x00000000013b0130 | 000 | [Kernel:APIC-IA32] Heartbeat timer: TSC deadline
+000000016e1dd4b2 0x00000000013dbe80 | 001 | [Kernel:APIC-IA32.001] core_APIC_Calibrate: TSC freq inherited from BSP (2496015 kHz) [hypervisor]
+000000016fb3929e 0x00000000013dbe80 | 001 | [Kernel:APIC-IA32.001] core_APIC_Calibrate: LAPIC timer freq inherited from BSP (1000408640 Hz) [hypervisor]
+0000000172f27894 0x00000000013dc4c0 | 002 | [Kernel:APIC-IA32.002] core_APIC_Calibrate: TSC freq inherited from BSP (2496015 kHz) [hypervisor]
+000000017486d353 0x00000000013dc4c0 | 002 | [Kernel:APIC-IA32.002] core_APIC_Calibrate: LAPIC timer freq inherited from BSP (1000408640 Hz) [hypervisor]
+0000000177c3a767 0x000000000145c4b0 | 003 | [Kernel:APIC-IA32.003] core_APIC_Calibrate: TSC freq inherited from BSP (2496015 kHz) [hypervisor]
+00000001795c7c25 0x000000000145c4b0 | 003 | [Kernel:APIC-IA32.003] core_APIC_Calibrate: LAPIC timer freq inherited from BSP (1000408640 Hz) [hypervisor]
+000000017caa676b 0x0000000001497100 | 004 | [Kernel:APIC-IA32.004] core_APIC_Calibrate: TSC freq inherited from BSP (2496015 kHz) [hypervisor]
+000000017e407e4e 0x0000000001497100 | 004 | [Kernel:APIC-IA32.004] core_APIC_Calibrate: LAPIC timer freq inherited from BSP (1000408640 Hz) [hypervisor]
+00000001817fb61a 0x00000000014d1db0 | 005 | [Kernel:APIC-IA32.005] core_APIC_Calibrate: TSC freq inherited from BSP (2496015 kHz) [hypervisor]
+0000000182634ce5 0x00000000014d1db0 | 005 | [Kernel:APIC-IA32.005] core_APIC_Calibrate: LAPIC timer freq inherited from BSP (1000408640 Hz) [hypervisor]
+0000000184af4d1e 0x000000000150ca60 | 006 | [Kernel:APIC-IA32.006] core_APIC_Calibrate: TSC freq inherited from BSP (2496015 kHz) [hypervisor]
+000000018645c87e 0x000000000150ca60 | 006 | [Kernel:APIC-IA32.006] core_APIC_Calibrate: LAPIC timer freq inherited from BSP (1000408640 Hz) [hypervisor]
+0000000189905143 0x0000000001547710 | 007 | [Kernel:APIC-IA32.007] core_APIC_Calibrate: TSC freq inherited from BSP (2496015 kHz) [hypervisor]
+000000018b2d2cc4 0x0000000001547710 | 007 | [Kernel:APIC-IA32.007] core_APIC_Calibrate: LAPIC timer freq inherited from BSP (1000408640 Hz) [hypervisor]
+000000018d98f0a1 0x00000000013b0130 | 000 | [PCIPC:Driver] PCIPC_InitClass: No ACPI MCFG table
+00000001917adeb9 0x00000000013b0130 | 000 | [Timer] clock: PIT (no invariant TSC)
+000000029aeb4979 0x000000000185efd0 | 000 | [ATI] Init
+000000029b343012 0x000000000185efd0 | 000 | [ATI] No supported cards found
+00000002b362b505 0x00000000018c0420 | 000 | [HW] HW__HW__AddDriver: Failed to instantiate Driver Object
+00000002c4d235db 0x00000000018fe5e0 | 000 | RESULT pre-storage errno PASS
+Writable startup denied: configured security.library and system task identity required.
+00000002f27cf935 0x00000000018fe5e0 | 000 | RESULT shared engine lifecycle cycle=1 PASS
+Writable startup denied: configured security.library and system task identity required.
+00000003135bab51 0x00000000018fe5e0 | 000 | RESULT shared engine lifecycle cycle=2 PASS
+Writable startup denied: configured security.library and system task identity required.
+0000000334fd018d 0x00000000018fe5e0 | 000 | RESULT shared engine lifecycle cycle=3 PASS
+Writable startup denied: configured security.library and system task identity required.
+0000000355d1fbde 0x00000000018fe5e0 | 000 | RESULT shared engine lifecycle cycle=4 PASS
+Writable startup denied: configured security.library and system task identity required.
+0000000377404bcc 0x00000000018fe5e0 | 000 | RESULT shared engine lifecycle cycle=5 PASS
+Writable startup denied: configured security.library and system task identity required.
+0000000397ffe1d8 0x00000000018fe5e0 | 000 | RESULT shared engine lifecycle cycle=6 PASS
+Writable startup denied: configured security.library and system task identity required.
+00000003b9c17bd8 0x00000000018fe5e0 | 000 | RESULT shared engine lifecycle cycle=7 PASS
+Writable startup denied: configured security.library and system task identity required.
+00000003db601038 0x00000000018fe5e0 | 000 | RESULT shared engine lifecycle cycle=8 PASS
+00000003dbd302fa 0x00000000018fe5e0 | 000 | RESULT shared engine denied return PASS status=20 repeated=10 caller-exit=7
+00000003dc6a620d 0x00000000018fe5e0 | 000 | RESULT shared engine library lifecycle PASS invalid-mode=2 nested-open=1 foreign-refused=1 reload-other-task=1
+Native authenticated admission ready
+OpenZFS management API 3 ready; engine initialized
+0000000402b6f764 0x00000000018fe5e0 | 000 | Public service op=1 status=0 engine=1 rows=0
+0000000408afc6fa 0x00000000018fe5e0 | 000 | Public service op=2 status=0 engine=1 rows=0
+000000040ea7329b 0x00000000018fe5e0 | 000 | Public service op=3 status=0 engine=1 rows=0
+00000004149f6416 0x00000000018fe5e0 | 000 | Public mutation requires authenticated admission PASS
+OpenZFS service engine shutdown complete
+00000004bbc19b15 0x00000000018fe5e0 | 000 | Public service test line=0
+RESULT public service lifecycle PASS
+Native authenticated admission ready
+OpenZFS management API 3 ready; engine initialized
+00000004df8f18ce 0x00000000018fe5e0 | 000 | Public service op=1 status=0 engine=1 rows=0
+00000004e58732f2 0x00000000018fe5e0 | 000 | Public service op=2 status=0 engine=1 rows=0
+00000004eb7efec4 0x00000000018fe5e0 | 000 | Public service op=3 status=0 engine=1 rows=0
+00000004f1771dca 0x00000000018fe5e0 | 000 | Public mutation requires authenticated admission PASS
+OpenZFS service engine shutdown complete
+00000005035ebe49 0x00000000018fe5e0 | 000 | Public service test line=0
+RESULT public service lifecycle PASS
+Writable startup denied: configured security.library and system task identity required.
+00000005115c3ea4 0x00000000018fe5e0 | 000 | Public configuration created-directory owner=65535:65535 protection=8800 type=2
+0000000512416fb0 0x00000000018fe5e0 | 000 | Public CLI command result=0 ioerr=0: C:OpenZFSHostIdentity 5a465301 SAVE >T:companion-identity.log
+000000051302db37 0x00000000018fe5e0 | 000 | Public diagnostic begin T:companion-identity.log
+00000005137f8a42 0x00000000018fe5e0 | 000 | Host identity 5A465301 saved to ENVARC and ENV. Start OpenZFS to use it.
+00000005141c7dd9 0x00000000018fe5e0 | 000 | 
+Public diagnostic end
+00000005175c07ad 0x00000000018fe5e0 | 000 | Public CLI command result=0 ioerr=0: C:OpenZFSStartup 5a46530000000001 CHECK
+000000051aadc3b5 0x00000000018fe5e0 | 000 | Public CLI command result=0 ioerr=0: C:OpenZFSStartup 5a46530000000001
+000000051dfd2678 0x00000000018fe5e0 | 000 | Public diagnostic begin T:public-cli-errors.log
+000000051e720425 0x00000000018fe5e0 | 000 | Startup check: errno=2; no import attempted
+000000051ee1aba4 0x00000000018fe5e0 | 000 | 
+Public diagnostic end
+000000051f39a4d5 0x00000000018fe5e0 | 000 | Public CLI command result=1 ioerr=209: C:OpenZFSStartup 5a46530000000001 CHECK
+0000000522a09d4a 0x00000000018fe5e0 | 000 | Public CLI command result=0 ioerr=0: C:OpenZFSStartup 5a46530000000001 PREPARE
+000000052608a3c4 0x00000000018fe5e0 | 000 | Public CLI command result=0 ioerr=0: C:OpenZFSStartup 5a46530000000001 RESTORE
+0000000526a62b80 0x00000000018fe5e0 | 000 | Public companion configuration PASS hostid-save=1 iff-readback=2 trusted-check=1 prepare=1 disabled-restore=1 assigns-restored=1
+0000000527b2968a 0x00000000018fe5e0 | 000 | Public CLI command result=0 ioerr=0: C:Mount SYS:OZARCH
+000000052a102c85 0x00000000018fe5e0 | 000 | Public CLI command result=0 ioerr=0: C:OpenZFSHostIdentity 5a465302 SAVE >T:persistent-identity.log
+000000052ac5a141 0x00000000018fe5e0 | 000 | Public diagnostic begin T:persistent-identity.log
+000000052b3d9aa2 0x00000000018fe5e0 | 000 | Host identity 5A465302 saved to ENVARC and ENV. Start OpenZFS to use it.
+000000052bd14f3b 0x00000000018fe5e0 | 000 | 
+Public diagnostic end
+000000052cc7f5cf 0x00000000018fe5e0 | 000 | Public persistent publish errno=0 published=3 DOS=0
+000000053006a948 0x00000000018fe5e0 | 000 | Public diagnostic begin T:public-cli-errors.log
+00000005307b914f 0x00000000018fe5e0 | 000 | Startup check: errno=2; no import attempted
+0000000530ebc32f 0x00000000018fe5e0 | 000 | 
+Public diagnostic end
+0000000531429f38 0x00000000018fe5e0 | 000 | Public CLI command result=1 ioerr=209: C:OpenZFSStartup 5a46530000000002 CHECK
+0000000534a615ba 0x00000000018fe5e0 | 000 | Public CLI command result=0 ioerr=0: C:OpenZFSStartup 5a46530000000002 PREPARE >T:persistent-prepare.log
+0000000535620685 0x00000000018fe5e0 | 000 | Public diagnostic begin T:persistent-prepare.log
+0000000535d7e378 0x00000000018fe5e0 | 000 | Startup ENV record prepared; no pool import
+000000053647e100 0x00000000018fe5e0 | 000 | 
+Public diagnostic end
+00000005396bf268 0x00000000018fe5e0 | 000 | Public CLI command result=0 ioerr=0: C:OpenZFSStartup 5a46530000000002 RESTORE
+000000053a66472c 0x00000000018fe5e0 | 000 | Public DOS rename collision=1 rename=1 rename-DOS=0 destination=1 open-DOS=0 exact=1
+000000053b907942 0x00000000018fe5e0 | 000 | Public DOS rename collision=0 rename=1 rename-DOS=0 destination=1 open-DOS=0 exact=1
+000000053cfcf8e1 0x00000000018fe5e0 | 000 | Public GUID split format=58240c24e63dee45 expected=58240c24e63dee45 published=3 errno=0
+000000053da46072 0x00000000018fe5e0 | 000 | Public startup archive inventory phase=guid-writer guid=58240c24e63dee45 root=1
+000000053e429265 0x00000000018fe5e0 | 000 | Public startup archive entry name=OpenZFSHost.prefs size=42 owner=65535
+000000053ed51eff 0x00000000018fe5e0 | 000 | Public startup archive entry name=OpenZFS-58240c24e63dee45.prefs size=562 owner=65535
+000000053f797cd4 0x00000000018fe5e0 | 000 | Public startup archive entry name=OpenZFS-5a46530000000002.prefs size=562 owner=65535
+0000000542ee8f58 0x00000000018fe5e0 | 000 | Public CLI command result=0 ioerr=0: C:OpenZFSStartup 58240c24e63dee45 PREPARE
+00000005465705a3 0x00000000018fe5e0 | 000 | Public CLI command result=0 ioerr=0: C:OpenZFSStartup 58240c24e63dee45 RESTORE
+0000000546f369de 0x00000000018fe5e0 | 000 | Public persistent GUID 58240c24e63dee45 cold=0 errno=0
+00000005481135bc 0x00000000018fe5e0 | 000 | Public GUID split format=8000000000000001 expected=8000000000000001 published=3 errno=0
+0000000548b805bd 0x00000000018fe5e0 | 000 | Public startup archive inventory phase=guid-writer guid=8000000000000001 root=1
+000000054954e536 0x00000000018fe5e0 | 000 | Public startup archive entry name=OpenZFSHost.prefs size=42 owner=65535
+0000000549e79d77 0x00000000018fe5e0 | 000 | Public startup archive entry name=OpenZFS-58240c24e63dee45.prefs size=562 owner=65535
+000000054a8cbdbb 0x00000000018fe5e0 | 000 | Public startup archive entry name=OpenZFS-8000000000000001.prefs size=562 owner=65535
+000000054b310614 0x00000000018fe5e0 | 000 | Public startup archive entry name=OpenZFS-5a46530000000002.prefs size=562 owner=65535
+000000054e9ac628 0x00000000018fe5e0 | 000 | Public CLI command result=0 ioerr=0: C:OpenZFSStartup 8000000000000001 PREPARE
+00000005520912c9 0x00000000018fe5e0 | 000 | Public CLI command result=0 ioerr=0: C:OpenZFSStartup 8000000000000001 RESTORE
+0000000552a47d68 0x00000000018fe5e0 | 000 | Public persistent GUID 8000000000000001 cold=0 errno=0
+0000000553c4aa29 0x00000000018fe5e0 | 000 | Public GUID split format=0000000080000000 expected=0000000080000000 published=3 errno=0
+00000005546b60f8 0x00000000018fe5e0 | 000 | Public startup archive inventory phase=guid-writer guid=0000000080000000 root=1
+00000005550a56d1 0x00000000018fe5e0 | 000 | Public startup archive entry name=OpenZFSHost.prefs size=42 owner=65535
+00000005559c792b 0x00000000018fe5e0 | 000 | Public startup archive entry name=OpenZFS-58240c24e63dee45.prefs size=562 owner=65535
+00000005564069a0 0x00000000018fe5e0 | 000 | Public startup archive entry name=OpenZFS-8000000000000001.prefs size=562 owner=65535
+0000000556e508fc 0x00000000018fe5e0 | 000 | Public startup archive entry name=OpenZFS-5a46530000000002.prefs size=562 owner=65535
+00000005578891ed 0x00000000018fe5e0 | 000 | Public startup archive entry name=OpenZFS-0000000080000000.prefs size=562 owner=65535
+000000055af57e4f 0x00000000018fe5e0 | 000 | Public CLI command result=0 ioerr=0: C:OpenZFSStartup 0000000080000000 PREPARE
+000000055e69bf5a 0x00000000018fe5e0 | 000 | Public CLI command result=0 ioerr=0: C:OpenZFSStartup 0000000080000000 RESTORE
+000000055f050f9b 0x00000000018fe5e0 | 000 | Public persistent GUID 0000000080000000 cold=0 errno=0
+000000056023c368 0x00000000018fe5e0 | 000 | Public GUID split format=ffffffffffffffff expected=ffffffffffffffff published=3 errno=0
+0000000560cb101e 0x00000000018fe5e0 | 000 | Public startup archive inventory phase=guid-writer guid=ffffffffffffffff root=1
+000000056167667b 0x00000000018fe5e0 | 000 | Public startup archive entry name=OpenZFSHost.prefs size=42 owner=65535
+0000000561f96c51 0x00000000018fe5e0 | 000 | Public startup archive entry name=OpenZFS-ffffffffffffffff.prefs size=562 owner=65535
+00000005629d9bc3 0x00000000018fe5e0 | 000 | Public startup archive entry name=OpenZFS-58240c24e63dee45.prefs size=562 owner=65535
+0000000563431e2c 0x00000000018fe5e0 | 000 | Public startup archive entry name=OpenZFS-8000000000000001.prefs size=562 owner=65535
+0000000563e71991 0x00000000018fe5e0 | 000 | Public startup archive entry name=OpenZFS-5a46530000000002.prefs size=562 owner=65535
+00000005648b457f 0x00000000018fe5e0 | 000 | Public startup archive entry name=OpenZFS-0000000080000000.prefs size=562 owner=65535
+0000000567f5f9b7 0x00000000018fe5e0 | 000 | Public CLI command result=0 ioerr=0: C:OpenZFSStartup ffffffffffffffff PREPARE
+000000056b5f30fa 0x00000000018fe5e0 | 000 | Public CLI command result=0 ioerr=0: C:OpenZFSStartup ffffffffffffffff RESTORE
+000000056bfaf571 0x00000000018fe5e0 | 000 | Public persistent GUID ffffffffffffffff cold=0 errno=0
+000000056c899aec 0x00000000018fe5e0 | 000 | Public persistent settings PASS write=1 archive-mufs=1 hostid-iff=1 trusted-prepare=1 disabled-restore=1
+000000056d5f08d0 0x00000000018fe5e0 | 000 | Public startup invalid-mode and non-root denial PASS
+Native authenticated admission ready
+OpenZFS management API 3 ready; engine initialized
+0000000584506e44 0x00000000018fe5e0 | 000 | Public service op=1 status=0 engine=1 rows=0
+000000058a461d12 0x00000000018fe5e0 | 000 | Public service op=2 status=0 engine=1 rows=0
+00000005903c4174 0x00000000018fe5e0 | 000 | Public service op=3 status=0 engine=1 rows=0
+Service remains resident: active client sessions or admitted operations.
+00000005ddd6b739 0x00000000018fe5e0 | 000 | Public native control descriptors PASS capacity=64 ownership=1 stale=1 session-cleanup=1
+00000005e3f07916 0x00000000018fe5e0 | 000 | Public task-exit session reclamation PASS cycles=4 sessions=32
+00000005e477d0d7 0x00000000018fe5e0 | 000 | Public authenticated sessions ownership, capacity, stale handles and shutdown guard PASS
+00000005e9be4e86 0x00000000018fe5e0 | 000 | Public mutation requires authenticated admission PASS
+OpenZFS service engine shutdown complete
+00000005fba57bb0 0x00000000018fe5e0 | 000 | Public service test line=0
+RESULT public service lifecycle PASS
+Writable startup denied: configured security.library and system task identity required.
+000000060913712b 0x00000000018fe5e0 | 000 | Public configuration created-directory owner=65535:65535 protection=8800 type=2
+0000000609ef93db 0x00000000018fe5e0 | 000 | Public CLI command result=0 ioerr=0: C:OpenZFSHostIdentity 5a465301 SAVE >T:companion-identity.log
+000000060aa51643 0x00000000018fe5e0 | 000 | Public diagnostic begin T:companion-identity.log
+000000060b1ad185 0x00000000018fe5e0 | 000 | Host identity 5A465301 saved to ENVARC and ENV. Start OpenZFS to use it.
+000000060bae2be2 0x00000000018fe5e0 | 000 | 
+Public diagnostic end
+000000060ef6f09a 0x00000000018fe5e0 | 000 | Public CLI command result=0 ioerr=0: C:OpenZFSStartup 5a46530000000001 CHECK
+0000000612513f2a 0x00000000018fe5e0 | 000 | Public CLI command result=0 ioerr=0: C:OpenZFSStartup 5a46530000000001
+00000006162fb1a8 0x00000000018fe5e0 | 000 | Public diagnostic begin T:public-cli-errors.log
+0000000616a7326e 0x00000000018fe5e0 | 000 | Startup check: errno=2; no import attempted
+000000061716e2e9 0x00000000018fe5e0 | 000 | 
+Public diagnostic end
+00000006176d2604 0x00000000018fe5e0 | 000 | Public CLI command result=1 ioerr=209: C:OpenZFSStartup 5a46530000000001 CHECK
+000000061b433971 0x00000000018fe5e0 | 000 | Public CLI command result=0 ioerr=0: C:OpenZFSStartup 5a46530000000001 PREPARE
+000000061f2b592e 0x00000000018fe5e0 | 000 | Public CLI command result=0 ioerr=0: C:OpenZFSStartup 5a46530000000001 RESTORE
+000000061fc9db03 0x00000000018fe5e0 | 000 | Public companion configuration PASS hostid-save=1 iff-readback=2 trusted-check=1 prepare=1 disabled-restore=1 assigns-restored=1
+0000000621c83661 0x00000000018fe5e0 | 000 | Public CLI command result=0 ioerr=0: C:OpenZFSHostIdentity 5a465302 SAVE >T:persistent-identity.log
+00000006227e9244 0x00000000018fe5e0 | 000 | Public diagnostic begin T:persistent-identity.log
+0000000622f69c26 0x00000000018fe5e0 | 000 | Host identity 5A465302 saved to ENVARC and ENV. Start OpenZFS to use it.
+00000006238ac0db 0x00000000018fe5e0 | 000 | 
+Public diagnostic end
+0000000624af39b5 0x00000000018fe5e0 | 000 | Public persistent publish errno=0 published=3 DOS=0
+0000000628240440 0x00000000018fe5e0 | 000 | Public diagnostic begin T:public-cli-errors.log
+000000062898a20f 0x00000000018fe5e0 | 000 | Startup check: errno=2; no import attempted
+0000000629096332 0x00000000018fe5e0 | 000 | 
+Public diagnostic end
+00000006295fabac 0x00000000018fe5e0 | 000 | Public CLI command result=1 ioerr=209: C:OpenZFSStartup 5a46530000000002 CHECK
+000000062cf6c183 0x00000000018fe5e0 | 000 | Public CLI command result=0 ioerr=0: C:OpenZFSStartup 5a46530000000002 PREPARE >T:persistent-prepare.log
+000000062db3290e 0x00000000018fe5e0 | 000 | Public diagnostic begin T:persistent-prepare.log
+000000062e29237f 0x00000000018fe5e0 | 000 | Startup ENV record prepared; no pool import
+000000062e990d98 0x00000000018fe5e0 | 000 | 
+Public diagnostic end
+00000006320f53d3 0x00000000018fe5e0 | 000 | Public CLI command result=0 ioerr=0: C:OpenZFSStartup 5a46530000000002 RESTORE
+000000063322b36e 0x00000000018fe5e0 | 000 | Public DOS rename collision=1 rename=1 rename-DOS=0 destination=1 open-DOS=0 exact=1
+0000000634665be0 0x00000000018fe5e0 | 000 | Public DOS rename collision=0 rename=1 rename-DOS=0 destination=1 open-DOS=0 exact=1
+000000063604a358 0x00000000018fe5e0 | 000 | Public GUID split format=58240c24e63dee45 expected=58240c24e63dee45 published=3 errno=0
+0000000636ad2d25 0x00000000018fe5e0 | 000 | Public startup archive inventory phase=guid-writer guid=58240c24e63dee45 root=1
+00000006374a15b3 0x00000000018fe5e0 | 000 | Public startup archive entry name=OpenZFSHost.prefs size=42 owner=65535
+0000000637e66873 0x00000000018fe5e0 | 000 | Public startup archive entry name=OpenZFS-ffffffffffffffff.prefs size=562 owner=65535
+00000006388bc9da 0x00000000018fe5e0 | 000 | Public startup archive entry name=OpenZFS-58240c24e63dee45.prefs size=562 owner=65535
+00000006392fccdd 0x00000000018fe5e0 | 000 | Public startup archive entry name=OpenZFS-8000000000000001.prefs size=562 owner=65535
+0000000639d42ecc 0x00000000018fe5e0 | 000 | Public startup archive entry name=OpenZFS-5a46530000000002.prefs size=562 owner=65535
+000000063a77d441 0x00000000018fe5e0 | 000 | Public startup archive entry name=OpenZFS-0000000080000000.prefs size=562 owner=65535
+000000063e384886 0x00000000018fe5e0 | 000 | Public CLI command result=0 ioerr=0: C:OpenZFSStartup 58240c24e63dee45 PREPARE
+0000000641de6812 0x00000000018fe5e0 | 000 | Public CLI command result=0 ioerr=0: C:OpenZFSStartup 58240c24e63dee45 RESTORE
+00000006427a2d51 0x00000000018fe5e0 | 000 | Public persistent GUID 58240c24e63dee45 cold=0 errno=0
+0000000643c44e67 0x00000000018fe5e0 | 000 | Public GUID split format=8000000000000001 expected=8000000000000001 published=3 errno=0
+00000006446af357 0x00000000018fe5e0 | 000 | Public startup archive inventory phase=guid-writer guid=8000000000000001 root=1
+000000064509ae66 0x00000000018fe5e0 | 000 | Public startup archive entry name=OpenZFSHost.prefs size=42 owner=65535
+00000006459d1093 0x00000000018fe5e0 | 000 | Public startup archive entry name=OpenZFS-ffffffffffffffff.prefs size=562 owner=65535
+0000000646416f30 0x00000000018fe5e0 | 000 | Public startup archive entry name=OpenZFS-58240c24e63dee45.prefs size=562 owner=65535
+0000000646e6ad3d 0x00000000018fe5e0 | 000 | Public startup archive entry name=OpenZFS-8000000000000001.prefs size=562 owner=65535
+00000006478b0f90 0x00000000018fe5e0 | 000 | Public startup archive entry name=OpenZFS-5a46530000000002.prefs size=562 owner=65535
+00000006483051b7 0x00000000018fe5e0 | 000 | Public startup archive entry name=OpenZFS-0000000080000000.prefs size=562 owner=65535
+000000064bd97cc1 0x00000000018fe5e0 | 000 | Public CLI command result=0 ioerr=0: C:OpenZFSStartup 8000000000000001 PREPARE
+000000064f873ab1 0x00000000018fe5e0 | 000 | Public CLI command result=0 ioerr=0: C:OpenZFSStartup 8000000000000001 RESTORE
+000000065023103f 0x00000000018fe5e0 | 000 | Public persistent GUID 8000000000000001 cold=0 errno=0
+00000006516c3bba 0x00000000018fe5e0 | 000 | Public GUID split format=0000000080000000 expected=0000000080000000 published=3 errno=0
+00000006521346d0 0x00000000018fe5e0 | 000 | Public startup archive inventory phase=guid-writer guid=0000000080000000 root=1
+0000000652b006f0 0x00000000018fe5e0 | 000 | Public startup archive entry name=OpenZFSHost.prefs size=42 owner=65535
+000000065343f734 0x00000000018fe5e0 | 000 | Public startup archive entry name=OpenZFS-ffffffffffffffff.prefs size=562 owner=65535
+0000000653e819c2 0x00000000018fe5e0 | 000 | Public startup archive entry name=OpenZFS-58240c24e63dee45.prefs size=562 owner=65535
+00000006548dcb0b 0x00000000018fe5e0 | 000 | Public startup archive entry name=OpenZFS-8000000000000001.prefs size=562 owner=65535
+000000065531f1fe 0x00000000018fe5e0 | 000 | Public startup archive entry name=OpenZFS-5a46530000000002.prefs size=562 owner=65535
+0000000655d57351 0x00000000018fe5e0 | 000 | Public startup archive entry name=OpenZFS-0000000080000000.prefs size=562 owner=65535
+0000000659730582 0x00000000018fe5e0 | 000 | Public CLI command result=0 ioerr=0: C:OpenZFSStartup 0000000080000000 PREPARE
+000000065d0a1163 0x00000000018fe5e0 | 000 | Public CLI command result=0 ioerr=0: C:OpenZFSStartup 0000000080000000 RESTORE
+000000065da76f3a 0x00000000018fe5e0 | 000 | Public persistent GUID 0000000080000000 cold=0 errno=0
+000000065ef6b09e 0x00000000018fe5e0 | 000 | Public GUID split format=ffffffffffffffff expected=ffffffffffffffff published=3 errno=0
+000000065f9ec266 0x00000000018fe5e0 | 000 | Public startup archive inventory phase=guid-writer guid=ffffffffffffffff root=1
+00000006603bb22e 0x00000000018fe5e0 | 000 | Public startup archive entry name=OpenZFSHost.prefs size=42 owner=65535
+0000000660cf8cdd 0x00000000018fe5e0 | 000 | Public startup archive entry name=OpenZFS-ffffffffffffffff.prefs size=562 owner=65535
+000000066175352a 0x00000000018fe5e0 | 000 | Public startup archive entry name=OpenZFS-58240c24e63dee45.prefs size=562 owner=65535
+0000000662199e3a 0x00000000018fe5e0 | 000 | Public startup archive entry name=OpenZFS-8000000000000001.prefs size=562 owner=65535
+0000000662bda525 0x00000000018fe5e0 | 000 | Public startup archive entry name=OpenZFS-5a46530000000002.prefs size=562 owner=65535
+00000006636192c5 0x00000000018fe5e0 | 000 | Public startup archive entry name=OpenZFS-0000000080000000.prefs size=562 owner=65535
+0000000666fbeb15 0x00000000018fe5e0 | 000 | Public CLI command result=0 ioerr=0: C:OpenZFSStartup ffffffffffffffff PREPARE
+000000066a94a348 0x00000000018fe5e0 | 000 | Public CLI command result=0 ioerr=0: C:OpenZFSStartup ffffffffffffffff RESTORE
+000000066b307313 0x00000000018fe5e0 | 000 | Public persistent GUID ffffffffffffffff cold=0 errno=0
+000000066bbf8959 0x00000000018fe5e0 | 000 | Public persistent settings PASS write=1 archive-mufs=1 hostid-iff=1 trusted-prepare=1 disabled-restore=1
+000000066c976a18 0x00000000018fe5e0 | 000 | Public startup invalid-mode and non-root denial PASS
+Native authenticated admission ready
+OpenZFS management API 3 ready; engine initialized
+00000006826fda5a 0x00000000018fe5e0 | 000 | Public service op=1 status=0 engine=1 rows=0
+0000000688653031 0x00000000018fe5e0 | 000 | Public service op=2 status=0 engine=1 rows=0
+000000068e5ff82c 0x00000000018fe5e0 | 000 | Public service op=3 status=0 engine=1 rows=0
+Service remains resident: active client sessions or admitted operations.
+00000006dc276e8c 0x00000000018fe5e0 | 000 | Public native control descriptors PASS capacity=64 ownership=1 stale=1 session-cleanup=1
+00000006e7c8f233 0x00000000018fe5e0 | 000 | Public task-exit session reclamation PASS cycles=4 sessions=32
+00000006e85455cb 0x00000000018fe5e0 | 000 | Public authenticated sessions ownership, capacity, stale handles and shutdown guard PASS
+00000006ee4cbc1b 0x00000000018fe5e0 | 000 | Public mutation requires authenticated admission PASS
+00000006eeea2113 0x00000000018fe5e0 | 000 | Public fixture directory: Ozfiles:OZPublicPool
+0000000c139f76d4 0x00000000018fe5e0 | 000 | Public pool alias identity PASS duplicate-refused=1
+0000000c14d5ab3b 0x00000000018fe5e0 | 000 | Public CLI command result=0 ioerr=0: C:OpenZFSRuntimeCheck >T:companion-runtime.log
+0000000c1579431d 0x00000000018fe5e0 | 000 | Public diagnostic begin T:companion-runtime.log
+0000000c15edcaa8 0x00000000018fe5e0 | 000 | OpenZFS runtime check (no pools or devices opened)
+PASS errno accessor and POSIX writer
+INFO posixc.library 0.43 available
+INFO stdcio.library 0.11 available
+INFO z1.library 1.10 available
+INFO iffparse.library 50.2 available
+INFO muimaster.library 19.81 available
+PASS security.library configured=10000000c17a2db6d 0x00000000018fe5e0 | 000 | 
+PASS redirected stdio: transport=0 child=0 stdout=1 stderr=1
+PASS ExecHelper subprocess: status=23 lines=1
+PASS LoadSeg execute=on loaded=1 DOS=0
+PASS NewLoadSeg execute=on loaded=1 DOS=0
+PASS LoadSeg execute=off loaded=0 DOS=224
+PASS NewLoadSeg execute=off loaded=0 DOS=224
+PASS LoadSeg execute=on0000000c195934cf 0x00000000018fe5e0 | 000 |  loaded=1 DOS=0
+PASS NewLoadSeg execute=on loaded=1 DOS=0
+Not tested: pipe disconnects, storage I/O, durability, GUI or pool operations.
+PASS checked runtime prerequisites only
+0000000c1a71f626 0x00000000018fe5e0 | 000 | 
+Public diagnostic end
+0000000c1d9e9773 0x00000000018fe5e0 | 000 | Public diagnostic begin T:public-cli-errors.log
+0000000c1e136a94 0x00000000018fe5e0 | 000 | Usage: OpenZFSStartup GUID-16-HEX [RESTORE|PREPARE|CHECK]
+0000000c1e95662a 0x00000000018fe5e0 | 000 | 
+Public diagnostic end
+0000000c1eec21e0 0x00000000018fe5e0 | 000 | Public CLI command result=1 ioerr=209: C:OpenZFSStartup INVALID
+0000000c224a8110 0x00000000018fe5e0 | 000 | Public diagnostic begin T:public-cli-errors.log
+0000000c22c15709 0x00000000018fe5e0 | 000 | 
+Public diagnostic end
+0000000c2317992a 0x00000000018fe5e0 | 000 | Public CLI command result=1 ioerr=209: C:OpenZFSStartup 0000000000000000 CHECK
+0000000c26786928 0x00000000018fe5e0 | 000 | Public diagnostic begin T:public-cli-errors.log
+0000000c26eceb22 0x00000000018fe5e0 | 000 | Usage: OpenZFSStartupMount POOL GUID-16-HEX
+0000000c275cba92 0x00000000018fe5e0 | 000 | 
+Public diagnostic end
+0000000c27b2cc8e 0x00000000018fe5e0 | 000 | Public CLI command result=1 ioerr=209: C:OpenZFSStartupMount public_mirror INVALID
+0000000c28caf02e 0x00000000018fe5e0 | 000 | Public diagnostic begin T:public-cli-errors.log
+0000000c2940a28d 0x00000000018fe5e0 | 000 | 
+Public diagnostic end
+0000000c2996dffe 0x00000000018fe5e0 | 000 | Public CLI command result=20 ioerr=0: C:OpenZFSHostIdentity 00000000 SAVE
+0000000c2a40fb74 0x00000000018fe5e0 | 000 | Public diagnostic begin T:public-cli-errors.log
+0000000c2ab60fea 0x00000000018fe5e0 | 000 | 
+Public diagnostic end
+0000000c2b0d1736 0x00000000018fe5e0 | 000 | Public CLI command result=20 ioerr=0: C:OpenZFSHostIdentity 12345678
+0000000c2b9bb2d4 0x00000000018fe5e0 | 000 | Public companion tools PASS runtime-prerequisites=1 invalid-arguments=1 no-identity-write=1
+0000000c63c0012e 0x00000000018fe5e0 | 000 | Public storage op=5 status=0 Authenticated pool creation returned errno=0
+0000000c78360630 0x00000000018fe5e0 | 000 | Public CLI command result=0 ioerr=0: C:zpool destroy public_file_reuse
+0000000c945a5e01 0x00000000018fe5e0 | 000 | Public storage op=5 status=9 Authenticated pool creation returned errno=4096
+0000000c9a1bbcd1 0x00000000018fe5e0 | 000 | Public diagnostic begin T:public-cli-errors.log
+0000000c9a991519 0x00000000018fe5e0 | 000 | cannot create 'public_file_refused': insufficient replicas
+0000000c9b2359ae 0x00000000018fe5e0 | 000 | 
+Public diagnostic end
+0000000c9b7f5f33 0x00000000018fe5e0 | 000 | Public CLI command result=1 ioerr=209: C:zpool create -f -o cachefile=none -O mountpoint=none public_file_refused mirror /RAM/OZFileReuse/disk0 /RAM/OZFileReuse/disk1
+0000000ca98a1212 0x00000000018fe5e0 | 000 | Public storage op=5 status=9 Authenticated pool creation returned errno=4096
+0000000caf08da34 0x00000000018fe5e0 | 000 | Public diagnostic begin T:public-cli-errors.log
+0000000caf84d4e0 0x00000000018fe5e0 | 000 | cannot create 'public_file_refused': insufficient replicas
+0000000cb00f75a5 0x00000000018fe5e0 | 000 | 
+Public diagnostic end
+0000000cb06adf80 0x00000000018fe5e0 | 000 | Public CLI command result=1 ioerr=209: C:zpool create -f -o cachefile=none -O mountpoint=none public_file_refused mirror /RAM/OZFileReuse/disk0 /RAM/OZFileReuse/disk1
+0000000cbe50350a 0x00000000018fe5e0 | 000 | Public storage op=5 status=9 Authenticated pool creation returned errno=4096
+0000000cc39de2f5 0x00000000018fe5e0 | 000 | Public diagnostic begin T:public-cli-errors.log
+0000000cc41c7f8e 0x00000000018fe5e0 | 000 | cannot create 'public_file_refused': insufficient replicas
+0000000cc4a8c6fb 0x00000000018fe5e0 | 000 | 
+Public diagnostic end
+0000000cc505ea89 0x00000000018fe5e0 | 000 | Public CLI command result=1 ioerr=209: C:zpool create -f -o cachefile=none -O mountpoint=none public_file_refused mirror /RAM/OZFileReuse/disk0 /RAM/OZFileReuse/disk1
+0000000cd35c8570 0x00000000018fe5e0 | 000 | Public storage op=5 status=9 Authenticated pool creation returned errno=4096
+0000000cd8ddf2d1 0x00000000018fe5e0 | 000 | Public diagnostic begin T:public-cli-errors.log
+0000000cd95b0a8c 0x00000000018fe5e0 | 000 | cannot create 'public_file_refused': insufficient replicas
+0000000cd9e611a9 0x00000000018fe5e0 | 000 | 
+Public diagnostic end
+0000000cda420342 0x00000000018fe5e0 | 000 | Public CLI command result=1 ioerr=209: C:zpool create -f -o cachefile=none -O mountpoint=none public_file_refused mirror /RAM/OZFileReuse/disk0 /RAM/OZFileReuse/disk1
+0000000ce82121af 0x00000000018fe5e0 | 000 | Public storage op=5 status=9 Authenticated pool creation returned errno=17
+0000000ced5aa97f 0x00000000018fe5e0 | 000 | Public diagnostic begin T:public-cli-errors.log
+0000000cedcfc930 0x00000000018fe5e0 | 000 | cannot create 'public_file_refused': pool already exists
+0000000cee4fa664 0x00000000018fe5e0 | 000 | 
+Public diagnostic end
+0000000ceea6a0cc 0x00000000018fe5e0 | 000 | Public CLI command result=1 ioerr=209: C:zpool create -f -o cachefile=none -O mountpoint=none public_file_refused mirror /RAM/OZFileReuse/disk0 /RAM/OZFileReuse/disk1
+0000000cfcfc2c82 0x00000000018fe5e0 | 000 | Public storage op=5 status=9 Authenticated pool creation returned errno=17
+0000000d023b0dc1 0x00000000018fe5e0 | 000 | Public diagnostic begin T:public-cli-errors.log
+0000000d02afe272 0x00000000018fe5e0 | 000 | cannot create 'public_file_refused': pool already exists
+0000000d03301e2e 0x00000000018fe5e0 | 000 | 
+Public diagnostic end
+0000000d0386253a 0x00000000018fe5e0 | 000 | Public CLI command result=1 ioerr=209: C:zpool create -f -o cachefile=none -O mountpoint=none public_file_refused mirror /RAM/OZFileReuse/disk0 /RAM/OZFileReuse/disk1
+0000000d1177a263 0x00000000018fe5e0 | 000 | Public storage op=5 status=9 Authenticated pool creation returned errno=17
+0000000d16c09351 0x00000000018fe5e0 | 000 | Public diagnostic begin T:public-cli-errors.log
+0000000d173798a7 0x00000000018fe5e0 | 000 | cannot create 'public_file_refused': pool already exists
+0000000d17b7d7ce 0x00000000018fe5e0 | 000 | 
+Public diagnostic end
+0000000d180e0522 0x00000000018fe5e0 | 000 | Public CLI command result=1 ioerr=209: C:zpool create -f -o cachefile=none -O mountpoint=none public_file_refused mirror /RAM/OZFileReuse/disk0 /RAM/OZFileReuse/disk1
+0000000d261cdc42 0x00000000018fe5e0 | 000 | Public storage op=5 status=9 Authenticated pool creation returned errno=17
+0000000d2b85b735 0x00000000018fe5e0 | 000 | Public diagnostic begin T:public-cli-errors.log
+0000000d2bfa8d76 0x00000000018fe5e0 | 000 | cannot create 'public_file_refused': pool already exists
+0000000d2c7a5353 0x00000000018fe5e0 | 000 | 
+Public diagnostic end
+0000000d2cd284ab 0x00000000018fe5e0 | 000 | Public CLI command result=1 ioerr=209: C:zpool create -f -o cachefile=none -O mountpoint=none public_file_refused mirror /RAM/OZFileReuse/disk0 /RAM/OZFileReuse/disk1
+0000000d3a8f692e 0x00000000018fe5e0 | 000 | Public storage op=5 status=9 Authenticated pool creation returned errno=4096
+0000000d3fbf677d 0x00000000018fe5e0 | 000 | Public diagnostic begin T:public-cli-errors.log
+0000000d4034893b 0x00000000018fe5e0 | 000 | cannot create 'public_file_refused': insufficient replicas
+0000000d40b9a35a 0x00000000018fe5e0 | 000 | 
+Public diagnostic end
+0000000d411019ec 0x00000000018fe5e0 | 000 | Public CLI command result=1 ioerr=209: C:zpool create -f -o cachefile=none -O mountpoint=none public_file_refused mirror /RAM/OZFileReuse/disk0 /RAM/OZFileReuse/disk1
+0000000d4ee6dfd3 0x00000000018fe5e0 | 000 | Public storage op=5 status=9 Authenticated pool creation returned errno=4096
+0000000d542a6d75 0x00000000018fe5e0 | 000 | Public diagnostic begin T:public-cli-errors.log
+0000000d54a046b2 0x00000000018fe5e0 | 000 | cannot create 'public_file_refused': insufficient replicas
+0000000d5523269a 0x00000000018fe5e0 | 000 | 
+Public diagnostic end
+0000000d5579866b 0x00000000018fe5e0 | 000 | Public CLI command result=1 ioerr=209: C:zpool create -f -o cachefile=none -O mountpoint=none public_file_refused mirror /RAM/OZFileReuse/disk0 /RAM/OZFileReuse/disk1
+0000000d636afbc4 0x00000000018fe5e0 | 000 | Public storage op=5 status=9 Authenticated pool creation returned errno=4096
+0000000d68c70f3b 0x00000000018fe5e0 | 000 | Public diagnostic begin T:public-cli-errors.log
+0000000d693e17ca 0x00000000018fe5e0 | 000 | cannot create 'public_file_refused': insufficient replicas
+0000000d69c0b757 0x00000000018fe5e0 | 000 | 
+Public diagnostic end
+0000000d6a178e01 0x00000000018fe5e0 | 000 | Public CLI command result=1 ioerr=209: C:zpool create -f -o cachefile=none -O mountpoint=none public_file_refused mirror /RAM/OZFileReuse/disk0 /RAM/OZFileReuse/disk1
+0000000d7823df54 0x00000000018fe5e0 | 000 | Public storage op=5 status=9 Authenticated pool creation returned errno=4096
+0000000d7df752c1 0x00000000018fe5e0 | 000 | Public diagnostic begin T:public-cli-errors.log
+0000000d7e6c84e7 0x00000000018fe5e0 | 000 | cannot create 'public_file_refused': insufficient replicas
+0000000d7ef0f6aa 0x00000000018fe5e0 | 000 | 
+Public diagnostic end
+0000000d7f471a53 0x00000000018fe5e0 | 000 | Public CLI command result=1 ioerr=209: C:zpool create -f -o cachefile=none -O mountpoint=none public_file_refused mirror /RAM/OZFileReuse/disk0 /RAM/OZFileReuse/disk1
+0000000d8cf384c5 0x00000000018fe5e0 | 000 | Public file label denial PASS corrupt=4 conflicting-member=4 checksum=4 manager-denied=12 forced-cli-denied=12 whole-members-unchanged=12 restored=12
+0000000d8ded5d1f 0x00000000018fe5e0 | 000 | Public file conflicting label offsets PASS same-position=4
+0000000d9ec93591 0x00000000018fe5e0 | 000 | Public CLI command result=0 ioerr=0: C:zpool create -o cachefile=none -O mountpoint=none public_file_reuse mirror /RAM/OZFileReuse/disk0 /RAM/OZFileReuse/disk1
+0000000db8755268 0x00000000018fe5e0 | 000 | Public CLI command result=0 ioerr=0: C:zpool export public_file_reuse
+0000000db928ae3a 0x00000000018fe5e0 | 000 | Public storage op=5 status=9 Authenticated pool creation returned errno=17
+0000000dbe7671a1 0x00000000018fe5e0 | 000 | Public diagnostic begin T:public-cli-errors.log
+0000000dbeebfd22 0x00000000018fe5e0 | 000 | invalid vdev specification
+use '-f' to override the following errors:
+/RAM Disk/OZFileReuse/disk0 is part of exported pool 'public_file_reuse'
+/RAM Disk/OZFileReuse/disk1 is part of exported pool 'public_file_reuse'
+0000000dc03661fe 0x00000000018fe5e0 | 000 | 
+Public diagnostic end
+0000000dc08c8b6a 0x00000000018fe5e0 | 000 | Public CLI command result=1 ioerr=209: C:zpool create -o cachefile=none -O mountpoint=none public_file_refused mirror /RAM/OZFileReuse/disk0 /RAM/OZFileReuse/disk1
+0000000ddc868316 0x00000000018fe5e0 | 000 | Public storage op=7 status=0 Authenticated pool import returned errno=0
+0000000dedc493de 0x00000000018fe5e0 | 000 | Public CLI command result=0 ioerr=0: C:zpool destroy public_file_reuse
+0000000df71c6eb6 0x00000000018fe5e0 | 000 | Public storage op=5 status=0 Authenticated pool creation returned errno=0
+0000000e0e944aeb 0x00000000018fe5e0 | 000 | Public CLI command result=0 ioerr=0: C:zpool destroy public_file_reuse
+000000146237c1c7 0x00000000018fe5e0 | 000 | Public CLI command result=0 ioerr=0: C:zpool create -o cachefile=none -o ashift=12 -O mountpoint=none public_reuse_source mirror /OZBACK/OZReuseChanges/disk0 /OZBACK/OZReuseChanges/disk1
+00000014f6e5fb77 0x00000000018fe5e0 | 000 | Public CLI command result=0 ioerr=0: C:zpool create -o cachefile=none -o ashift=12 -O mountpoint=none public_reuse_target /OZBACK/OZReuseChanges/disk2
+000000161e199ffe 0x00000000018fe5e0 | 000 | Public CLI command result=0 ioerr=0: C:zpool create -o cachefile=none -o ashift=12 -O mountpoint=none public_reuse_donor mirror /OZBACK/OZReuseChanges/disk3 /OZBACK/OZReuseChanges/disk4
+0000001635559763 0x00000000018fe5e0 | 000 | Public diagnostic begin T:public-cli-errors.log
+0000001635d3cfe3 0x00000000018fe5e0 | 000 | invalid vdev specification
+the following errors must be manually repaired:
+/Ozfiles/OZReuseChanges/disk0 is part of active pool 'public_reuse_source'
+0000001636d99689 0x00000000018fe5e0 | 000 | 
+Public diagnostic end
+00000016373525fd 0x00000000018fe5e0 | 000 | Public CLI command result=1 ioerr=209: C:zpool attach -f public_reuse_target 6944383090511149315 /OZBACK/OZReuseChanges/disk0
+000000163f437f38 0x00000000018fe5e0 | 000 | Public diagnostic begin T:public-cli-errors.log
+000000163fbfb657 0x00000000018fe5e0 | 000 | invalid vdev specification
+the following errors must be manually repaired:
+/Ozfiles/OZReuseChanges/disk0 is part of active pool 'public_reuse_source'
+0000001640c4d4d3 0x00000000018fe5e0 | 000 | 
+Public diagnostic end
+00000016411de311 0x00000000018fe5e0 | 000 | Public CLI command result=1 ioerr=209: C:zpool replace -f public_reuse_target 6944383090511149315 /OZBACK/OZReuseChanges/disk0
+000000164943080a 0x00000000018fe5e0 | 000 | Public diagnostic begin T:public-cli-errors.log
+0000001649b7ebf7 0x00000000018fe5e0 | 000 | invalid vdev specification
+the following errors must be manually repaired:
+/Ozfiles/OZReuseChanges/disk0 is part of active pool 'public_reuse_source'
+/Ozfiles/OZReuseChanges/disk1 is part of active pool 'public_reuse_source'
+000000164b0e20f2 0x00000000018fe5e0 | 000 | 
+Public diagnostic end
+000000164b644838 0x00000000018fe5e0 | 000 | Public CLI command result=1 ioerr=209: C:zpool add -f public_reuse_target mirror /OZBACK/OZReuseChanges/disk0 /OZBACK/OZReuseChanges/disk1
+00000016650e62cd 0x00000000018fe5e0 | 000 | Public CLI command result=0 ioerr=0: C:zpool export public_reuse_source
+000000166a75de17 0x00000000018fe5e0 | 000 | Public diagnostic begin T:public-cli-errors.log
+000000166aeb0fa7 0x00000000018fe5e0 | 000 | invalid vdev specification
+use '-f' to override the following errors:
+/Ozfiles/OZReuseChanges/disk0 is part of exported pool 'public_reuse_source'
+000000166bddc10c 0x00000000018fe5e0 | 000 | 
+Public diagnostic end
+000000166c3573ed 0x00000000018fe5e0 | 000 | Public CLI command result=1 ioerr=209: C:zpool attach  public_reuse_target 6944383090511149315 /OZBACK/OZReuseChanges/disk0
+0000001672dda7ce 0x00000000018fe5e0 | 000 | Public diagnostic begin T:public-cli-errors.log
+000000167352aa01 0x00000000018fe5e0 | 000 | invalid vdev specification
+use '-f' to override the following errors:
+/Ozfiles/OZReuseChanges/disk0 is part of exported pool 'public_reuse_source'
+0000001674452b28 0x00000000018fe5e0 | 000 | 
+Public diagnostic end
+00000016749b584a 0x00000000018fe5e0 | 000 | Public CLI command result=1 ioerr=209: C:zpool replace  public_reuse_target 6944383090511149315 /OZBACK/OZReuseChanges/disk0
+000000167b65fd74 0x00000000018fe5e0 | 000 | Public diagnostic begin T:public-cli-errors.log
+000000167bdc32e1 0x00000000018fe5e0 | 000 | invalid vdev specification
+use '-f' to override the following errors:
+/Ozfiles/OZReuseChanges/disk0 is part of exported pool 'public_reuse_source'
+/Ozfiles/OZReuseChanges/disk1 is part of exported pool 'public_reuse_source'
+000000167d2fc572 0x00000000018fe5e0 | 000 | 
+Public diagnostic end
+000000167d85e7d6 0x00000000018fe5e0 | 000 | Public CLI command result=1 ioerr=209: C:zpool add  public_reuse_target mirror /OZBACK/OZReuseChanges/disk0 /OZBACK/OZReuseChanges/disk1
+00000016b85d2e78 0x00000000018fe5e0 | 000 | Public CLI command result=0 ioerr=0: C:zpool import -N -o cachefile=none -d /OZBACK/OZReuseChanges/disk0 -d /OZBACK/OZReuseChanges/disk1 public_reuse_source
+00000016c9e6ddd8 0x00000000018fe5e0 | 000 | Public CLI command result=0 ioerr=0: C:zpool destroy public_reuse_source
+00000016ea135820 0x00000000018fe5e0 | 000 | Public CLI command result=0 ioerr=0: C:zpool attach  public_reuse_target 6944383090511149315 /OZBACK/OZReuseChanges/disk0
+00000017034358b3 0x00000000018fe5e0 | 000 | Public CLI command result=0 ioerr=0: C:zpool wait -t resilver public_reuse_target
+0000001735f77131 0x00000000018fe5e0 | 000 | Public CLI command result=0 ioerr=0: C:zpool replace  public_reuse_target 16554521308970882499 /OZBACK/OZReuseChanges/disk1
+000000176bc74679 0x00000000018fe5e0 | 000 | Public CLI command result=0 ioerr=0: C:zpool wait -t resilver,replace public_reuse_target
+00000017849ee84b 0x00000000018fe5e0 | 000 | Public CLI command result=0 ioerr=0: C:zpool destroy public_reuse_donor
+00000017b9e67037 0x00000000018fe5e0 | 000 | Public CLI command result=0 ioerr=0: C:zpool add  public_reuse_target mirror /OZBACK/OZReuseChanges/disk3 /OZBACK/OZReuseChanges/disk4
+00000017dd61e366 0x00000000018fe5e0 | 000 | Public CLI command result=0 ioerr=0: C:zpool destroy public_reuse_target
+00000017df1cfc9a 0x00000000018fe5e0 | 000 | Public destroyed changes CLI PASS attach=1 replace=1 add=1 active-force-refused=3 exported-refused=3 add-without-force=1 exact-read=5 cleanup=1
+0000001e2e01a6ca 0x00000000018fe5e0 | 000 | Public CLI command result=0 ioerr=0: C:zpool create -o cachefile=none -o ashift=12 -O mountpoint=none public_reuse_source mirror /OZBACK/OZReuseChanges/disk0 /OZBACK/OZReuseChanges/disk1
+0000001ec5de036c 0x00000000018fe5e0 | 000 | Public CLI command result=0 ioerr=0: C:zpool create -o cachefile=none -o ashift=12 -O mountpoint=none public_reuse_target /OZBACK/OZReuseChanges/disk2
+0000001fef658367 0x00000000018fe5e0 | 000 | Public CLI command result=0 ioerr=0: C:zpool create -o cachefile=none -o ashift=12 -O mountpoint=none public_reuse_donor mirror /OZBACK/OZReuseChanges/disk3 /OZBACK/OZReuseChanges/disk4
+0000002020146ea1 0x00000000018fe5e0 | 000 | Public CLI command result=0 ioerr=0: C:zpool export public_reuse_source
+0000002065d325a9 0x00000000018fe5e0 | 000 | Public CLI command result=0 ioerr=0: C:zpool import -N -o cachefile=none -d /OZBACK/OZReuseChanges/disk0 -d /OZBACK/OZReuseChanges/disk1 public_reuse_source
+0000002078c7be81 0x00000000018fe5e0 | 000 | Public CLI command result=0 ioerr=0: C:zpool destroy public_reuse_source
+00000020b070ae3d 0x00000000018fe5e0 | 000 | Public CLI command result=0 ioerr=0: C:zpool wait -t resilver public_reuse_target
+0000002113c4107e 0x00000000018fe5e0 | 000 | Public CLI command result=0 ioerr=0: C:zpool wait -t resilver,replace public_reuse_target
+000000212e01f31b 0x00000000018fe5e0 | 000 | Public CLI command result=0 ioerr=0: C:zpool destroy public_reuse_donor
+0000002185821b57 0x00000000018fe5e0 | 000 | Public CLI command result=0 ioerr=0: C:zpool export public_reuse_target
+00000021861b55b5 0x00000000018fe5e0 | 000 | Public destroyed changes Manager PASS attach=1 replace=1 add=1 active-refused=3 exported-refused=3 exact-read=5 retained=1
+0000002186f4d3bc 0x00000000018fe5e0 | 000 | Public file destroyed reuse PASS cli=1 manager-api=1 old-payload-absent=2 exact-read=3 exported-refused=2 cleanup=1
+0000002187c793fb 0x00000000018fe5e0 | 000 | Public native engine version value=zfs-2.4.4-1
+00000021883e74cb 0x00000000018fe5e0 | 000 | Public native engine version PASS query=1 upstream=1 bounds=1 missing=1
+0000002188d916bb 0x00000000018fe5e0 | 000 | Public native supported tables PASS feature=1 properties=3 unknown=1 missing=1
+00000023c0a0a143 0x00000000018fe5e0 | 000 | Public storage op=5 status=0 Authenticated pool creation returned errno=0
+00000023c13d1f2d 0x00000000018fe5e0 | 000 | Public pool assign PASS op=5 kind=0 removed=1
+00000023d56afaa6 0x00000000018fe5e0 | 000 | Public pool root payload PASS written=1 flushed=1 detached=1
+00000023d9ac6fa0 0x00000000018fe5e0 | 000 | Request failed before command execution: errno=22
+00000023dfa287b4 0x00000000018fe5e0 | 000 | Request failed before command execution: errno=22
+00000023e5996124 0x00000000018fe5e0 | 000 | Request failed before command execution: errno=22
+00000023eb9085ad 0x00000000018fe5e0 | 000 | Upstream zpool clear: exit=0, DOS=0, capture errno=0
+00000023ec0ec7f1 0x00000000018fe5e0 | 000 | 
+00000023fd73878e 0x00000000018fe5e0 | 000 | Upstream zpool clear: exit=0, DOS=0, capture errno=0
+00000023fdf216ad 0x00000000018fe5e0 | 000 | 
+00000024096093d4 0x00000000018fe5e0 | 000 | Upstream zpool clear: exit=0, DOS=0, capture errno=0
+0000002409df01d8 0x00000000018fe5e0 | 000 | 
+00000024154f4050 0x00000000018fe5e0 | 000 | Upstream zpool clear: exit=0, DOS=0, capture errno=0
+0000002415d081f6 0x00000000018fe5e0 | 000 | 
+00000024160a921f 0x00000000018fe5e0 | 000 | Public Manager clear recovery PASS unconfirmed=1 force-refused=1 malformed=1 recent=1 extreme=1 assessments=2
+000000241fbd3f10 0x00000000018fe5e0 | 000 | Public CLI command result=0 ioerr=0: C:zpool clear -nF public_mirror
+00000024282b5c1d 0x00000000018fe5e0 | 000 | Public CLI command result=0 ioerr=0: C:zpool clear -F public_mirror
+00000024309a8842 0x00000000018fe5e0 | 000 | Public CLI command result=0 ioerr=0: C:zpool clear -nFX public_mirror
+0000002438e6d66d 0x00000000018fe5e0 | 000 | Public CLI command result=0 ioerr=0: C:zpool clear -FX public_mirror
+0000002439797324 0x00000000018fe5e0 | 000 | Public CLI clear rewind healthy PASS preview=1 commit=1 extreme-preview=1 extreme-commit=1
+Public native clear ioctl PASS invalid-guid=1 pool-clear=1
+Public clear rewind wire PASS flat=1 nested=1 mismatched=1 flags=1 missing=1 capacity=1 ambiguous=1 type=1 unknown=1
+RESULT native event cursor PASS tiny-retry=1 seek-start-eid=1 seek-end-empty=1 bad-handle=1
+Public upstream snapshot ioctls PASS create=1 hold=1 onexit=1 release=1 destroy=1 schema=1
+Public clear rewind authorization PASS changed-user=1 own-session-denied=1
+Public upstream snapshot authorization PASS changed-user=1 own-session-denied=1 no-mutation=1
+Public upstream bootenv authorization PASS changed-user=1 own-session-denied=1 reader-get=1 unchanged=1
+Public upstream libzfs_core PASS snapshot=1 temporary-hold=1 destroy=1 reopen=1
+Public upstream bootenv PASS get=1 set=1 invalid-preserved=1 restored=1
+Public upstream enumeration PASS dataset=1 snapshot=1 properties=1 end=1 snapshot-growth=1
+Public upstream dataset ioctls PASS create=1 clone=1 rollback=1 volume=1 handler-ready=1
+Public accounting upgrade authorization PASS changed-user=1 own-session-denied=1
+Public accounting upgrade authorization PASS changed-user=1 own-session-denied=1
+Public accounting upgrade delegation PASS denied=1 granted=1 revoked=1
+Public accounting upgrade PASS writable=1 repeat=1 malformed=1 absent=1
+Public upstream ioctl transport PASS stats=1 configs=1 resize=1 bounds=1 stale=1
+Public upstream bootenv persistence PASS write=1 readback=1
+00000024e2c8e9e6 0x00000000018fe5e0 | 000 | Public exec helper PASS real-zpool=1 captured-output=1 missing-executable=1
+00000024e7f0b28c 0x00000000018fe5e0 | 000 | Public CLI command result=0 ioerr=0: C:zpool get -H -p -o value guid public_mirror >T:companion-guid.txt
+00000024f30edd1a 0x00000000018fe5e0 | 000 | Public CLI command result=0 ioerr=0: C:zfs set canmount=off public_mirror
+00000025002a2c7a 0x00000000018fe5e0 | 000 | Public CLI command result=0 ioerr=0: C:zfs set mountpoint=OZSTARTUP: public_mirror/files
+000000250a6f0a9d 0x00000000018fe5e0 | 000 | Public CLI command result=0 ioerr=0: C:zfs unmount public_mirror/files
+000000250ecd2e8f 0x00000000018fe5e0 | 000 | Public diagnostic begin T:public-cli-errors.log
+000000250f438fa3 0x00000000018fe5e0 | 000 | Startup mount pool identity unavailable or mismatched
+000000250fc0daee 0x00000000018fe5e0 | 000 | 
+Public diagnostic end
+000000251017f289 0x00000000018fe5e0 | 000 | Public CLI command result=1 ioerr=209: C:OpenZFSStartupMount public_mirror 1e459b76ba2fb7df
+0000002516c070a2 0x00000000018fe5e0 | 000 | Public CLI command result=0 ioerr=0: C:OpenZFSStartupMount public_mirror 1e459b76ba2fb7de >T:companion-mount.log
+000000251787917d 0x00000000018fe5e0 | 000 | Public diagnostic begin T:companion-mount.log
+0000002517fab914 0x00000000018fe5e0 | 000 | Startup mounts: mounted=1 already=0 skipped=1 failed=0
+000000251879e923 0x00000000018fe5e0 | 000 | 
+Public diagnostic end
+000000251da21533 0x00000000018fe5e0 | 000 | Public CLI command result=0 ioerr=0: C:OpenZFSStartupMount public_mirror 1e459b76ba2fb7de >T:companion-mount.log
+000000251e6a7a91 0x00000000018fe5e0 | 000 | Public diagnostic begin T:companion-mount.log
+000000251eddb8d0 0x00000000018fe5e0 | 000 | Startup mounts: mounted=0 already=1 skipped=1 failed=0
+000000251f5bfb14 0x00000000018fe5e0 | 000 | 
+Public diagnostic end
+0000002529deae1f 0x00000000018fe5e0 | 000 | Public CLI command result=0 ioerr=0: C:zfs set canmount=on public_mirror
+00000025371af075 0x00000000018fe5e0 | 000 | Public CLI command result=0 ioerr=0: C:zfs inherit mountpoint public_mirror/files
+0000002537be23a8 0x00000000018fe5e0 | 000 | Public companion mount PASS guid-bound=1 wrong-guid-refused=1 parent-skipped=1 child-mounted=1 repeat-idempotent=1 detached=1
+0000002554fb1a3e 0x00000000018fe5e0 | 000 | Public CLI command result=0 ioerr=0: C:zfs create -u -o version=3 -o mountpoint=OZVERSION: public_mirror/upgradecheck
+000000255b75d854 0x00000000018fe5e0 | 000 | Public CLI command result=0 ioerr=0: C:zfs get -H -o value version public_mirror/upgradecheck >T:cli-package-output.txt
+00000025617a743a 0x00000000018fe5e0 | 000 | Public CLI command result=0 ioerr=0: C:zfs mount public_mirror/upgradecheck
+0000002576374c63 0x00000000018fe5e0 | 000 | Public CLI command result=0 ioerr=0: C:zfs upgrade -V 5 public_mirror/upgradecheck
+000000257afe95e9 0x00000000018fe5e0 | 000 | Public CLI command result=0 ioerr=0: C:zfs get -H -o value version public_mirror/upgradecheck >T:cli-package-output.txt
+0000002588829daf 0x00000000018fe5e0 | 000 | Public CLI command result=0 ioerr=0: C:zfs unmount public_mirror/upgradecheck
+000000258e5ce29e 0x00000000018fe5e0 | 000 | Public CLI command result=0 ioerr=0: C:zfs mount public_mirror/upgradecheck
+000000259a75e229 0x00000000018fe5e0 | 000 | Public CLI command result=0 ioerr=0: C:zfs unmount public_mirror/upgradecheck
+00000025af9cccd0 0x00000000018fe5e0 | 000 | Public CLI command result=0 ioerr=0: C:zfs destroy public_mirror/upgradecheck
+00000025b0390af5 0x00000000018fe5e0 | 000 | Public CLI filesystem upgrade PASS version3=1 version5=1 remount=1 exact-data=1 cleanup=1
+00000025cd353c4b 0x00000000018fe5e0 | 000 | Public CLI command result=0 ioerr=0: C:zfs create -u -o version=3 -o mountpoint=OZVERSION: public_mirror/upgradecheck
+00000025d3aa72a8 0x00000000018fe5e0 | 000 | Public CLI command result=0 ioerr=0: C:zfs get -H -o value version public_mirror/upgradecheck >T:cli-package-output.txt
+00000025d9b00d0c 0x00000000018fe5e0 | 000 | Public CLI command result=0 ioerr=0: C:zfs mount public_mirror/upgradecheck
+00000025ef584575 0x00000000018fe5e0 | 000 | Request failed before command execution: errno=22
+00000025f550c7b3 0x00000000018fe5e0 | 000 | Request failed before command execution: errno=22
+00000025fa03860b 0x00000000018fe5e0 | 000 | Public CLI command result=0 ioerr=0: C:zfs get -H -o value version public_mirror/upgradecheck >T:cli-package-output.txt
+000000260141b4d8 0x00000000018fe5e0 | 000 | Upstream zfs upgrade: exit=0, DOS=0, capture errno=0
+1 filesystems upgraded
+0000002601dad8f2 0x00000000018fe5e0 | 000 | 
+000000260637e967 0x00000000018fe5e0 | 000 | Public CLI command result=0 ioerr=0: C:zfs get -H -o value version public_mirror/upgradecheck >T:cli-package-output.txt
+000000261641ccba 0x00000000018fe5e0 | 000 | Public CLI command result=0 ioerr=0: C:zfs unmount public_mirror/upgradecheck
+000000261c0e4a1f 0x00000000018fe5e0 | 000 | Public CLI command result=0 ioerr=0: C:zfs mount public_mirror/upgradecheck
+0000002628f28aac 0x00000000018fe5e0 | 000 | Public CLI command result=0 ioerr=0: C:zfs unmount public_mirror/upgradecheck
+000000263e4fb80c 0x00000000018fe5e0 | 000 | Public CLI command result=0 ioerr=0: C:zfs destroy public_mirror/upgradecheck
+000000263eea0790 0x00000000018fe5e0 | 000 | Public Manager upgrade worker PASS unconfirmed=1 invalid=1 unchanged=1 version5=1 remount=1 exact-data=1 cleanup=1
+0000002644387f24 0x00000000018fe5e0 | 000 | Public CLI command result=0 ioerr=0: C:zpool get -H -p -o value guid public_mirror >T:companion-guid.txt
+0000002645d71a66 0x00000000018fe5e0 | 000 | Public startup archive inventory phase=writer guid=1e459b76ba2fb7de root=1
+00000026467731b3 0x00000000018fe5e0 | 000 | Public startup archive entry name=OpenZFSHost.prefs size=42 owner=65535
+000000264709b1e6 0x00000000018fe5e0 | 000 | Public startup archive entry name=OpenZFS-ffffffffffffffff.prefs size=562 owner=65535
+0000002647ad30fa 0x00000000018fe5e0 | 000 | Public startup archive entry name=OpenZFS-1e459b76ba2fb7de.prefs size=818 owner=65535
+00000026485103bf 0x00000000018fe5e0 | 000 | Public startup archive entry name=OpenZFS-58240c24e63dee45.prefs size=562 owner=65535
+0000002648f4af10 0x00000000018fe5e0 | 000 | Public startup archive entry name=OpenZFS-8000000000000001.prefs size=562 owner=65535
+00000026499a564a 0x00000000018fe5e0 | 000 | Public startup archive entry name=OpenZFS-5a46530000000002.prefs size=562 owner=65535
+000000264a408542 0x00000000018fe5e0 | 000 | Public startup archive entry name=OpenZFS-0000000080000000.prefs size=562 owner=65535
+000000264ae484da 0x00000000018fe5e0 | 000 | Public startup import record PASS persisted-fixture=1 readonly=1 enabled=1

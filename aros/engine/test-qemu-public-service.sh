@@ -485,7 +485,7 @@ if [[ $ahci_query == 1 ]];then
         -device ide-hd,drive=ahci-query,bus=ozahci.0)
 fi
 cp -a aros/engine/security-fixture "$run/security-fixture"
-if [[ $zvol_ffs == 1 ]];then
+if [[ $zvol_ffs == 1 || ( $startup_archive == 1 && -n ${AROS_TEST_AFS_HANDLER:-} ) ]];then
     cp "${AROS_TEST_AFS_HANDLER:?explicit AFS handler required}" "$run/afs-handler"
     sha256sum "$run/afs-handler" >"$run/afs-handler.sha256"
     extra_maps+=(-map "$run/afs-handler" /L/afs-handler)
@@ -666,7 +666,7 @@ while :;do
              rg -q '^Public packaged handler PASS' "$run/serial-results.log"; } &&
            rg -q '^RESULT public service storage PASS' "$run/serial-results.log";then break;fi
     fi
-    if ! kill -0 "$pid" 2>/dev/null || ((SECONDS>=deadline));then echo "Timeout/exit: $run" >&2;exit 1;fi
+    if ! kill -0 "$pid" 2>/dev/null || ((SECONDS>=deadline));then capture_failure;echo "Timeout/exit: $run" >&2;exit 1;fi
     sleep 1
 done
 if [[ -n $label_source ]];then

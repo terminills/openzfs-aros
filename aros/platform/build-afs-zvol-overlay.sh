@@ -10,7 +10,9 @@ objects="$gen/rom/filesys/afs/afs"
 cc=${AROS_CC:?explicit AROS cross compiler required}
 available=$(df -Pk "$repo" | awk 'NR==2 {print $4}')
 (( available >= 104857600 )) || { echo '100 GiB workspace reserve required' >&2; exit 2; }
-out=$(mktemp -d "$repo/build-aros/afs-zvol.XXXXXXXX")
+source "$repo/aros/engine/storage-preflight.sh"
+root=$(oz_artifact_root "$repo/build-aros" "${AROS_ARTIFACT_ROOT:?}")
+out=$(mktemp -d "$root/afs-zvol.XXXXXXXX")
 echo "Evidence: $out"
 exec > >(tee "$out/build.log") 2>&1
 mkdir "$out/source" "$out/objects"
@@ -19,12 +21,23 @@ cp "$objects"/*.o "$out/objects/"
 cp "$repo/aros/platform/afs-single-die-reply.patch" "$0" "$out/"
 sha256sum "$source"/*.[ch] "$objects"/*.o "$objects/include/afs_deflibdefs.h" >"$out/inputs.sha256"
 patch --batch --fuzz=0 -d "$out/source" -p0 <"$out/afs-single-die-reply.patch"
+if [[ ${AROS_AFS_RENAME_FIX:-0} == 1 ]];then
+    cp "$repo/aros/platform/afs-rename-pinned-link.patch" "$out/"
+    patch --batch --fuzz=0 -d "$out/source" -p0 <"$out/afs-rename-pinned-link.patch"
+fi
 flags=(--sysroot "$sdk" -m64 -mcmodel=large -mno-red-zone -mno-ms-bitfields)
 "$cc" "${flags[@]}" -iquote "$out/source" -O2 -fno-asynchronous-unwind-tables \
     -fno-omit-frame-pointer -Wno-pointer-sign -Wno-parentheses \
     -DAROS_BUILD_TYPE=AROS_BUILD_TYPE_PERSONAL -DUSE_EXEC_DEBUG -DDEBUG=0 \
     -D__INTUITION_NOLIBBASE__ -I"$objects/include" -include "$objects/include/afs_deflibdefs.h" \
     '-D__SRCFILENAME__="rom/filesys/afs/main.c"' -c "$out/source/main.c" -o "$out/objects/main.o"
+if [[ ${AROS_AFS_RENAME_FIX:-0} == 1 ]];then
+    "$cc" "${flags[@]}" -iquote "$out/source" -O2 -fno-asynchronous-unwind-tables \
+        -fno-omit-frame-pointer -Wno-pointer-sign -Wno-parentheses \
+        -DAROS_BUILD_TYPE=AROS_BUILD_TYPE_PERSONAL -DUSE_EXEC_DEBUG -DDEBUG=0 \
+        -D__INTUITION_NOLIBBASE__ -I"$objects/include" -include "$objects/include/afs_deflibdefs.h" \
+        '-D__SRCFILENAME__="rom/filesys/afs/filehandles2.c"' -c "$out/source/filehandles2.c" -o "$out/objects/filehandles2.o"
+fi
 parts=()
 for object in "$out/objects"/*.o;do
     case "$object" in */afs_start.o|*/afs_end.o) continue;; esac

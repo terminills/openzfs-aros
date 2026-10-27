@@ -1,0 +1,43 @@
+--- filehandles2.c
++++ filehandles2.c
+@@ -382,7 +382,8 @@
+                 struct AFSBase *afsbase,
+                 struct Volume *volume,
+                 struct BlockCache *dir,
+-                struct BlockCache *file
++                struct BlockCache *file,
++                struct BlockCache *pinned
+         )
+ {
+ ULONG key; /* parent; */
+@@ -400,7 +401,12 @@
+                         (dir->buffer[key] != 0) &&
+                         (OS_BE2LONG(dir->buffer[key]) < file->blocknum))
+         {
+-                dir = getBlock(afsbase, volume, OS_BE2LONG(dir->buffer[key]));
++                /* Rename may already pin this chain link. Re-reading a
++                 * non-root BCF_USED block obtains a second cache buffer;
++                 * writing the older pinned buffer would lose this link. */
++                ULONG next = OS_BE2LONG(dir->buffer[key]);
++                dir = pinned && pinned->blocknum == next ? pinned :
++                        getBlock(afsbase, volume, next);
+                 if (dir == NULL)
+                         return NULL;
+                 key = BLK_HASHCHAIN(volume);
+@@ -409,7 +415,9 @@
+                                         (OS_BE2LONG(dir->buffer[key]) < file->blocknum)
+                                 )
+                 {
+-                        dir = getBlock(afsbase, volume, OS_BE2LONG(dir->buffer[key]));
++                        ULONG next = OS_BE2LONG(dir->buffer[key]);
++                        dir = pinned && pinned->blocknum == next ? pinned :
++                                getBlock(afsbase, volume, next);
+                         if (dir == NULL)
+                                 return NULL;
+                 }
+@@ -581,1 +589,1 @@
+-        dirblock = linkNewBlock(afsbase, dirah->volume, dirblock, oldfile);
++        dirblock = linkNewBlock(afsbase, dirah->volume, dirblock, oldfile, lastlink);
+@@ -707,1 +715,1 @@
+-        dirblock = linkNewBlock(afsbase, volume, dirblock, newblock);
++        dirblock = linkNewBlock(afsbase, volume, dirblock, newblock, NULL);
