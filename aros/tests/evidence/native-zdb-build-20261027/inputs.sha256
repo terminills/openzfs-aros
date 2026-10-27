@@ -1,0 +1,8 @@
+40f47a17941457f7db185c29e73b3d7eeea0595a8a53355457cab8e071b6a404  /mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/zdb-probe.d7YtgofI/cmd_zdb_zdb.c.o
+62e2387d033046eef3938313a418f9380b89263a5496bb216cc19a6ca6857763  /mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/zdb-probe.d7YtgofI/cmd_zdb_zdb_il.c.o
+ea7092e72ffc496c14e4e9cd640d0611ab07a1215c1ae6329191a9c37410201f  /mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/zdb-probe.d7YtgofI/lib_libzdb_libzdb.c.o
+80b9f4f156866f418bd1e7de2e5d6bcc3cdc73267701846f0de8e497c50a27a1  /mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/shared-engine.5HkSG7Ab/engine.o
+d7a996ca6f08f6ebbe1e4a2196207c762a016755ef0854bce87da202a228b634  /mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/dependencies.YF6P1Tca/nvpair/libnvpair.a
+65f7c97346dec9f45354c0d56c41c4df0382d15806c3a5c6d0b799117bb31057  /mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/dependencies.YF6P1Tca/crypto-source.VqJJuapK/build/crypto/libcrypto.a
+5aa4625a78449c5a2d10fd2ab6ec3bd6a6b6ee9c739e81a7c98aa440afac7198  /mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/dependencies.YF6P1Tca/pthread-consistent.zxUBt8mH/libpthread.a
+83caa552705b961c2503e331ae961cbfe1470a9dc8e5ff19279ad833e0295fe7  /home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/lib/libz.static.a

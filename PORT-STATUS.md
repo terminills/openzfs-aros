@@ -2,6 +2,16 @@
 
 Experimental development snapshot; not production-qualified storage software.
 
+## Native zdb build audit (2026-10-27)
+
+All three upstream `zdb`/`libzdb` translation units now cross-compile against
+the recorded private SDK. AROS maps `open64` to native `open`, guarded by a
+compile-time 64-bit `off_t` assertion. This is not native debugger qualification:
+the dependency-only link audit still fails on five symbols, and production
+shared-engine integration and read-only storage admission remain unfinished.
+See `aros/tests/evidence/native-zdb-build-20261027`. Existing pool-integrity
+results continue to use the independent **host** zdb, not this native candidate.
+
 ## Compiler input drift checks (2026-10-27)
 
 The MetaMake engine target now includes SDK/system headers in its compiler

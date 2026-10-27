@@ -1,0 +1,6 @@
+There are undefined symbols in '/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/zdb-link-probe.6SrlUNyq/zdb-link-audit':
+                 U dump_nvlist
+                 U libzfs_core_fini
+                 U libzfs_core_init
+                 U lzc_get_props
+                 U zfs_dev_is_whole_disk

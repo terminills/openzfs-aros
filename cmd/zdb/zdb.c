@@ -98,6 +98,11 @@
 
 #include "zdb.h"
 
+#ifdef __AROS__
+/* AROS uses native 64-bit offsets rather than a separate open64 interface. */
+_Static_assert(sizeof (off_t) == 8, "zdb requires 64-bit native file offsets");
+#define open64 open
+#endif
 
 extern int reference_tracking_enable;
 extern int zfs_recover;
