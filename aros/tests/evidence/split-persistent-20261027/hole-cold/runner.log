@@ -1,0 +1,18 @@
+Native members attached: both
+Native pool layout: mirror
+Native storage bus: ide
+QEMU acceleration: kvm CPU: host
+Guest virtual CPUs: 8
+OS runtime profile: dos-posix-ata
+Additional explicit runtime overlay: persistent split FAT handler (hash recorded)
+Formatting '/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/native-import-run.LUP8slct/disk0.qcow2', fmt=qcow2 cluster_size=65536 extended_l2=off compression_type=zlib size=536870912 backing_file=/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/qemu-run.clear-cut-repaired.KTpzJcSo/disk0.raw backing_fmt=raw lazy_refcounts=off refcount_bits=16
+Formatting '/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/native-import-run.LUP8slct/disk1.qcow2', fmt=qcow2 cluster_size=65536 extended_l2=off compression_type=zlib size=536870912 backing_file=/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/qemu-run.clear-cut-repaired.KTpzJcSo/disk1.raw backing_fmt=raw lazy_refcounts=off refcount_bits=16
+Guest memory MiB: 2048
+Guest completion deadline: 600 seconds
+/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/qemu-run.clear-cut-repaired.KTpzJcSo/disk0.raw: OK
+/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/qemu-run.clear-cut-repaired.KTpzJcSo/disk1.raw: OK
+/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/native-import-run.LUP8slct/disk0.qcow2: OK
+/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/native-import-run.LUP8slct/disk1.qcow2: OK
+/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/native-import-run.onz1rv0G/topology.raw: OK
+PASS: persistent split topology cold kind=hole unchanged-members=1 independent-zdb=2
+PASS: native CLI split topology hole: /mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/native-import-run.LUP8slct

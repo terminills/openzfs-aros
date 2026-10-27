@@ -307,6 +307,15 @@ from trusted live source topology, with bounded repacking and retained leaf
 admission. Actual native CLI hole, indirect-after-removal and plain split runs
 pass separate readonly imports and exact DOS readback. These use guest-RAM
 files and are not cold-persistence or physical-power-loss proof.
+Subsequent persistent fixtures exposed an omitted-log metadata leak in the
+split destination despite successful guest readback. Split now frees inherited
+log space maps, metaslab arrays and flush-state objects only in the destination
+MOS. Fresh hole and indirect writers plus separate cold readers pass exact DOS
+readback, readonly refusal, unchanged member hashes, clean FAT, and independent
+block and metadata-object checks. See `aros/tests/evidence/split-persistent-20261027`
+for the failed old engine, first-candidate lock assertion, corrected build and
+general public regression. This qualifies those private file-backed layouts,
+not concurrent workload stress, every topology, or physical power loss.
 
 Damaged-pool CLEAR update (2026-10-27): actual upstream `clear -nF/-F` and
 `clear -nFX/-FX` pass on separately prepared damaged mirror fixtures through

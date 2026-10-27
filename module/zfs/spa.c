@@ -9124,10 +9124,19 @@ spa_vdev_trim(spa_t *spa, nvlist_t *nv, uint64_t cmd_type, uint64_t rate,
 	return (total_errors);
 }
 
+typedef struct spa_split_log_objects {
+	uint64_t sslo_array;
+	uint64_t sslo_count;
+	uint64_t sslo_flush;
+	uint64_t sslo_top_zap;
+} spa_split_log_objects_t;
+
 typedef struct spa_split_dtl_arg {
 	spa_t		*ssda_spa;	/* the new pool */
 	uint64_t	*ssda_objs;	/* original DTL space map objects */
 	uint_t		ssda_count;	/* nitems in ssda_objs */
+	spa_split_log_objects_t *ssda_logs;
+	uint_t		ssda_nlogs;
 } spa_split_dtl_arg_t;
 
 /*
@@ -9162,6 +9171,26 @@ spa_split_dtl_free_sync(void *arg, dmu_tx_t *tx)
 
 	for (uint_t i = 0; i < ssda->ssda_count; i++)
 		space_map_free_obj(mos, ssda->ssda_objs[i], tx);
+
+	/* Log vdevs become holes in the destination. Their inherited MOS
+	 * objects are not referenced by the new topology. Free only the new
+	 * pool's copies; never call vdev_destroy_spacemaps on a source vdev. */
+	for (uint_t i = 0; i < ssda->ssda_nlogs; i++) {
+		spa_split_log_objects_t *log = &ssda->ssda_logs[i];
+		if (log->sslo_array != 0) {
+			for (uint64_t m = 0; m < log->sslo_count; m++) {
+				uint64_t object;
+				VERIFY0(dmu_read(mos, log->sslo_array,
+				    m * sizeof (object), sizeof (object),
+				    &object, 0));
+				if (object != 0)
+					space_map_free_obj(mos, object, tx);
+			}
+			VERIFY0(dmu_object_free(mos, log->sslo_array, tx));
+		}
+		if (log->sslo_flush != 0)
+			VERIFY0(dmu_object_free(mos, log->sslo_flush, tx));
+	}
 }
 
 /*
@@ -9181,6 +9210,8 @@ spa_vdev_split_mirror(spa_t *spa, const char *newname, nvlist_t *config,
 	vdev_t *rvd, **vml = NULL;	/* vdev modify list */
 	uint64_t *dtl_objs = NULL;	/* DTL objs from original pool */
 	uint_t ndtl = 0, nleaves;
+	spa_split_log_objects_t *log_objs = NULL;
+	uint_t nlogs = 0, ntops = 0;
 	boolean_t activate_slog;
 
 	ASSERT(spa_writeable(spa));
@@ -9332,6 +9363,18 @@ spa_vdev_split_mirror(spa_t *spa, const char *newname, nvlist_t *config,
 	nleaves = vdev_count_leaves(spa);
 	dtl_objs = kmem_zalloc(nleaves * sizeof (uint64_t), KM_SLEEP);
 	spa_split_collect_dtl(spa->spa_root_vdev, dtl_objs, &ndtl);
+	ntops = rvd->vdev_children;
+	log_objs = kmem_zalloc(ntops * sizeof (*log_objs), KM_SLEEP);
+	for (c = 0; c < ntops; c++) {
+		vdev_t *vd = rvd->vdev_child[c];
+		if (!vd->vdev_islog)
+			continue;
+		spa_split_log_objects_t *log = &log_objs[nlogs++];
+		log->sslo_array = vd->vdev_ms_array;
+		if (log->sslo_array != 0)
+			log->sslo_count = vd->vdev_asize >> vd->vdev_ms_shift;
+		log->sslo_top_zap = vd->vdev_top_zap;
+	}
 
 	/* stop writers from using the disks */
 	for (c = 0; c < children; c++) {
@@ -9374,6 +9417,17 @@ spa_vdev_split_mirror(spa_t *spa, const char *newname, nvlist_t *config,
 
 	/* release the spa config lock, retaining the namespace lock */
 	spa_vdev_config_exit(spa, NULL, txg, 0, FTAG);
+	/* DMU reads are forbidden while holding the config lock as writer.
+	 * The namespace lock still prevents log removal during this split. */
+	for (c = 0; c < nlogs; c++) {
+		spa_split_log_objects_t *log = &log_objs[c];
+		if (log->sslo_top_zap != 0) {
+			int err = zap_lookup(spa_meta_objset(spa),
+			    log->sslo_top_zap, VDEV_TOP_ZAP_MS_UNFLUSHED_PHYS_TXGS,
+			    sizeof (uint64_t), 1, &log->sslo_flush);
+			VERIFY(err == 0 || err == ENOENT);
+		}
+	}
 
 	if (zio_injection_enabled)
 		zio_handle_panic_injection(spa, FTAG, 1);
@@ -9434,12 +9488,14 @@ spa_vdev_split_mirror(spa_t *spa, const char *newname, nvlist_t *config,
 	 * Free the DTL space map objects inherited from the original pool
 	 * MOS so we won't leak them.
 	 */
-	if (ndtl != 0) {
+	if (ndtl != 0 || nlogs != 0) {
 		spa_split_dtl_arg_t ssda;
 
 		ssda.ssda_spa = newspa;
 		ssda.ssda_objs = dtl_objs;
 		ssda.ssda_count = ndtl;
+		ssda.ssda_logs = log_objs;
+		ssda.ssda_nlogs = nlogs;
 		VERIFY0(dsl_sync_task(spa_name(newspa), NULL,
 		    spa_split_dtl_free_sync, &ssda, 0, ZFS_SPACE_CHECK_NONE));
 	}
@@ -9543,6 +9599,7 @@ spa_vdev_split_mirror(spa_t *spa, const char *newname, nvlist_t *config,
 	kmem_free(vml, children * sizeof (vdev_t *));
 	if (dtl_objs != NULL)
 		kmem_free(dtl_objs, nleaves * sizeof (uint64_t));
+	kmem_free(log_objs, ntops * sizeof (*log_objs));
 
 	/* if we're not going to mount the filesystems in userland, export */
 	if (exp)
@@ -9578,6 +9635,7 @@ out:
 	kmem_free(vml, children * sizeof (vdev_t *));
 	if (dtl_objs != NULL)
 		kmem_free(dtl_objs, nleaves * sizeof (uint64_t));
+	kmem_free(log_objs, ntops * sizeof (*log_objs));
 
 	return (error);
 }

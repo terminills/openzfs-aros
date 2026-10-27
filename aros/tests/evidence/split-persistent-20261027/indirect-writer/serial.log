@@ -1,0 +1,81 @@
+[bootstrap:multiboot2] smartfb: using VBE mode 0x417a (1280x800x32, fb=0xFD000000)
+[bootstrap:multiboot2] smartfb: KRN_FBAddr=0x00000000FD000000
+0000000000000000 0x0000000000000000 | 000 | AROS64 - The AROS Research OS
+0000000000000000 0x0000000000000000 | 000 | 64-bit SMP build. Compiled Oct 21 2026
+0000000000000000 0x0000000000000000 | 000 | [Kernel] Local APIC: x2APIC
+0000000094851d2d 0x0000000000000000 | 000 | ACPI: RSDP 0x00000000000F52C0 000014 (v00 BOCHS )
+0000000094fe3271 0x0000000000000000 | 000 | ACPI: RSDT 0x00000000BFFE25BF 000034 (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+00000000959db54e 0x0000000000000000 | 000 | ACPI: FACP 0x00000000BFFE243B 000074 (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+00000000963d4a87 0x0000000000000000 | 000 | ACPI: DSDT 0x00000000BFFE0040 0023FB (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+0000000096e43b58 0x0000000000000000 | 000 | ACPI: FACS 0x00000000BFFE0000 000040
+00000000974ac490 0x0000000000000000 | 000 | ACPI: APIC 0x00000000BFFE24AF 0000B0 (v03 BOCHS  BXPC     00000001 BXPC 00000001)
+0000000097eaa753 0x0000000000000000 | 000 | ACPI: HPET 0x00000000BFFE255F 000038 (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+000000009889b9e2 0x0000000000000000 | 000 | ACPI: WAET 0x00000000BFFE2597 000028 (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+000000009929e421 0x0000000000000000 | 000 | [HPET] 2 units total
+0000000099e2a06a 0x00000001003d33f0 | 000 | ACPI: 1 ACPI AML tables successfully acquired and loaded
+000000009a80cdc6 0x00000001003b1500 | 000 | [Kernel:ACPI-IOAPIC] Registering IO-APIC #1 [ID=000] @ 00000000fec00000 [GSI = 0]
+000000009b203f5a 0x00000001003b1500 | 000 | [Kernel:ACPI] System Total APICs: 8, 8 usable
+000000009bcdc7ab 0x00000001003b1500 | 000 | [Kernel:APIC-IA32] MSI Interrupts Allocatable
+000000009c419e5b 0x00000001003b1500 | 000 | [Kernel:APIC-IA32]     start = 16
+000000009ca44a06 0x00000001003b1500 | 000 | [Kernel:APIC-IA32]     total = 198
+00000000bacfec1f 0x00000001003b1500 | 000 | [Kernel:APIC-IA32] Heartbeat timer: TSC deadline
+00000000bcdd5a79 0x00000001003dd250 | 001 | [Kernel:APIC-IA32.001] core_APIC_Calibrate: TSC freq inherited from BSP (2496002 kHz) [hypervisor]
+00000000be745f59 0x00000001003dd250 | 001 | [Kernel:APIC-IA32.001] core_APIC_Calibrate: LAPIC timer freq inherited from BSP (1000388160 Hz) [hypervisor]
+00000000c1b8b7a5 0x00000001003dd890 | 002 | [Kernel:APIC-IA32.002] core_APIC_Calibrate: TSC freq inherited from BSP (2496002 kHz) [hypervisor]
+00000000c34ff092 0x00000001003dd890 | 002 | [Kernel:APIC-IA32.002] core_APIC_Calibrate: LAPIC timer freq inherited from BSP (1000388160 Hz) [hypervisor]
+00000000c68ca1b0 0x000000010045d880 | 003 | [Kernel:APIC-IA32.003] core_APIC_Calibrate: TSC freq inherited from BSP (2496002 kHz) [hypervisor]
+00000000c82d88ef 0x000000010045d880 | 003 | [Kernel:APIC-IA32.003] core_APIC_Calibrate: LAPIC timer freq inherited from BSP (1000388160 Hz) [hypervisor]
+00000000cb6a9cfa 0x00000001004984d0 | 004 | [Kernel:APIC-IA32.004] core_APIC_Calibrate: TSC freq inherited from BSP (2496002 kHz) [hypervisor]
+00000000cd1ec2e2 0x00000001004984d0 | 004 | [Kernel:APIC-IA32.004] core_APIC_Calibrate: LAPIC timer freq inherited from BSP (1000388160 Hz) [hypervisor]
+00000000d07c3ab9 0x00000001004d3180 | 005 | [Kernel:APIC-IA32.005] core_APIC_Calibrate: TSC freq inherited from BSP (2496002 kHz) [hypervisor]
+00000000d216b651 0x00000001004d3180 | 005 | [Kernel:APIC-IA32.005] core_APIC_Calibrate: LAPIC timer freq inherited from BSP (1000388160 Hz) [hypervisor]
+00000000d551a524 0x000000010050de30 | 006 | [Kernel:APIC-IA32.006] core_APIC_Calibrate: TSC freq inherited from BSP (2496002 kHz) [hypervisor]
+00000000d6e6351c 0x000000010050de30 | 006 | [Kernel:APIC-IA32.006] core_APIC_Calibrate: LAPIC timer freq inherited from BSP (1000388160 Hz) [hypervisor]
+00000000da2b4ac3 0x0000000100548ae0 | 007 | [Kernel:APIC-IA32.007] core_APIC_Calibrate: TSC freq inherited from BSP (2496002 kHz) [hypervisor]
+00000000dbc72a1e 0x0000000100548ae0 | 007 | [Kernel:APIC-IA32.007] core_APIC_Calibrate: LAPIC timer freq inherited from BSP (1000388160 Hz) [hypervisor]
+00000000de2374f2 0x00000001003b1500 | 000 | [PCIPC:Driver] PCIPC_InitClass: No ACPI MCFG table
+00000000e0948415 0x00000001003b1500 | 000 | [Timer] clock: PIT (no invariant TSC)
+00000001cdec16ab 0x000000000109bf60 | 000 | [ATI] Init
+00000001ce356289 0x000000000109bf60 | 000 | [ATI] No supported cards found
+00000001e86c4cad 0x000000000109c240 | 000 | [HW] HW__HW__AddDriver: Failed to instantiate Driver Object
+Writable startup denied: configured security.library and system task identity required.
+RESULT native service release startup PASS diagnostic-modes-refused=3 malformed-refused=2 unauthorized-writable-refused=1 no-ports=1
+Native authenticated admission ready
+OpenZFS management API 3 ready; engine initialized
+C:zpool create -o cachefile=none -O mountpoint=none topo_source mirror "/Ozfiles/split-topology-0" "/Ozfiles/split-topology-1" mirror "/Ozfiles/split-topology-2" "/Ozfiles/split-topology-3"
+AROS OpenZFS: no native NFS/SMB export provider is installed.
+AROS OpenZFS: no native NFS/SMB export provider is installed.
+
+Split CLI result=0
+C:zfs create -u topo_source/files
+Split CLI result=0
+C:zpool sync topo_source
+Split CLI result=0
+C:zpool remove topo_source mirror-0
+Split CLI result=0
+C:zpool wait -t remove topo_source
+Split CLI result=0
+C:zpool split topo_source topo_split "/Ozfiles/split-topology-3"
+Split CLI result=0
+C:zpool export topo_source
+AROS OpenZFS: no native NFS/SMB export provider is installed.
+AROS OpenZFS: no native NFS/SMB export provider is installed.
+
+Split CLI result=0
+C:zpool import -N -o cachefile=none -o readonly=on -d "/Ozfiles/split-topology-2" topo_source
+Split CLI result=0
+C:zpool export topo_source
+AROS OpenZFS: no native NFS/SMB export provider is installed.
+AROS OpenZFS: no native NFS/SMB export provider is installed.
+
+Split CLI result=0
+C:zpool import -N -o cachefile=none -o readonly=on -d "/Ozfiles/split-topology-3" topo_split
+Split CLI result=0
+C:zpool export topo_split
+AROS OpenZFS: no native NFS/SMB export provider is installed.
+AROS OpenZFS: no native NFS/SMB export provider is installed.
+
+Split CLI result=0
+RESULT split topology backing clean detach PASS
+RESULT native CLI split topology PASS kind=indirect line=0 separate-imports=2 exact-payload=1 readonly=1
+RESULT native CLI split topology test PASS line=0

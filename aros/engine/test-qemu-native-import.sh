@@ -68,6 +68,9 @@ if [[ $runtime_profile != private ]];then
     for override in AROS_TEST_DOS_OVERLAY AROS_TEST_ATA_OVERLAY AROS_TEST_POSIX_LIBRARY \
         AROS_TEST_PARTITION_LIBRARY AROS_TEST_FS_PACKAGE AROS_TEST_PIPE_POLICY_HANDLER \
         AROS_TEST_AFS_HANDLER AROS_TEST_FAT_HANDLER AROS_TEST_STDCIO_LIBRARY;do
+        # Persistent split fixtures explicitly add a recorded FAT container
+        # handler; this is not qualification of the unmodified ISO runtime.
+        if [[ $runtime_profile == dos-posix-ata && $override == AROS_TEST_FAT_HANDLER && ${AROS_TEST_SPLIT_PERSISTENT:-0} == 1 && ${AROS_TEST_SPLIT_TOPOLOGY:-none} != none ]];then continue;fi
         if [[ $runtime_profile == dos-posix-ata && ( $override == AROS_TEST_DOS_OVERLAY || $override == AROS_TEST_ATA_OVERLAY || $override == AROS_TEST_POSIX_LIBRARY ) ]];then continue;fi
         if [[ ( $runtime_profile == dos-only || $runtime_profile == dos-posix || $runtime_profile == dos-posix-pipe-stdio ) && $override == AROS_TEST_DOS_OVERLAY ]];then continue;fi
         if [[ ( $runtime_profile == posix-only || $runtime_profile == dos-posix || $runtime_profile == posix-pipe || $runtime_profile == posix-pipe-stdio || $runtime_profile == dos-posix-pipe-stdio ) && $override == AROS_TEST_POSIX_LIBRARY ]];then continue;fi
@@ -150,6 +153,10 @@ usb_cli_clear=${AROS_TEST_USB_CLI_CLEAR:-0}
 import_rewind=${AROS_TEST_IMPORT_REWIND:-0}
 manager_split=${AROS_TEST_MANAGER_SPLIT:-none}
 split_topology=${AROS_TEST_SPLIT_TOPOLOGY:-none}
+split_persistent=${AROS_TEST_SPLIT_PERSISTENT:-0}
+topology_cold_source=${AROS_TEST_SPLIT_COLD_SOURCE:-}
+[[ $split_persistent == 0 || ( $split_persistent == 1 && $split_topology != none ) ]]
+[[ -z $topology_cold_source || $split_persistent == 1 ]]
 [[ $split_topology == none || $split_topology == hole || $split_topology == indirect || $split_topology == plain ]]
 if [[ $split_topology != none ]];then
     [[ $manager_split == none && $native_bus == ide && $members == both && $layout == mirror && $writable == 0 && $gui == 0 && $gpt == 0 && $import_rewind == 0 && -z ${AROS_TEST_WHOLE_CLI_LINK:-} ]]
@@ -412,6 +419,19 @@ if [[ $split_topology != none ]];then
     if [[ $split_topology == indirect ]];then topology_mode=2;fi
     if [[ $split_topology == plain ]];then topology_mode=3;fi
     gui_flags+=(-DOZ_NATIVE_SPLIT_TOPOLOGY=$topology_mode)
+    if [[ $split_persistent == 1 ]];then
+        gui_flags+=(-DOZ_NATIVE_SPLIT_PERSISTENT)
+        [[ -f ${AROS_TEST_FAT_HANDLER:?explicit qualified FAT handler required} ]]
+        [[ -x ${AROS_TEST_HOST_ZDB:?explicit host zdb required} ]]
+        if [[ -n $topology_cold_source ]];then
+            topology_cold_source=$(realpath -e "$topology_cold_source")
+            [[ -f $topology_cold_source/topology.raw && ! -L $topology_cold_source/topology.raw ]]
+            [[ $(cat "$topology_cold_source/topology-kind.txt") == "$split_topology" ]]
+            rg -q '^PASS: persistent split topology writer' "$topology_cold_source/runner.log"
+            sha256sum -c "$topology_cold_source/topology-backing.sha256"
+            gui_flags+=(-DOZ_NATIVE_SPLIT_COLD)
+        fi
+    fi
     cp aros/engine/native-split-topology-test.h "$run/"
     cp "$AROS_TEST_CLI_DIR/zpool" "$AROS_TEST_CLI_DIR/zfs" "$run/"
     sha256sum "$run/zpool" "$run/zfs" aros/engine/native-split-topology-test.h >"$run/split-topology-inputs.sha256"
@@ -436,6 +456,7 @@ echo "Native storage bus: $native_bus"
 echo "QEMU acceleration: $accel CPU: $cpu"
 echo "Guest virtual CPUs: $smp"
 echo "OS runtime profile: $runtime_profile"
+if [[ $split_persistent == 1 ]];then echo 'Additional explicit runtime overlay: persistent split FAT handler (hash recorded)';fi
 if [[ -n $bundle ]];then
     echo "Native bundle: $bundle"
     cp "$bundle/SHA256SUMS" "$run/bundle.sha256"
@@ -1274,6 +1295,23 @@ if [[ -n ${AROS_TEST_ENGINE_LIBRARY:-} ]];then
         sha256sum "$run/OpenZFSLibraryTest" >>"$run/inputs.sha256"
     fi
 fi
+if [[ $split_persistent == 1 ]];then
+    # The generic native fixture is unused by this test. Attach only a new
+    # private FAT container on the primary channel; never a physical device.
+    if [[ -z $topology_cold_source ]];then
+        truncate -s 1536M "$run/topology.raw"
+        mkfs.vfat -F 16 -n OZFILES "$run/topology.raw" >"$run/topology-format.log" 2>&1
+    else
+        cp --reflink=auto --sparse=always "$topology_cold_source/topology.raw" "$run/topology.raw"
+    fi
+    printf '%s\n' "$split_topology" >"$run/topology-kind.txt"
+    sed 's/^HighCyl .*/HighCyl = 3145727/' aros/engine/OZBACK >"$run/OZBACK"
+    cp "$AROS_TEST_FAT_HANDLER" "$run/fat-handler"
+    sha256sum "$run/fat-handler" "$run/OZBACK" "$AROS_TEST_HOST_ZDB" >"$run/topology-platform.sha256"
+    sed -i '/^Stack /a Mount SYS:OZBACK' "$run/Startup-Native-Import"
+    gui_maps+=(-map "$run/fat-handler" /L/fat-handler -map "$run/OZBACK" /OZBACK)
+    drives=(-drive "file=$run/topology.raw,format=raw,if=ide,index=0")
+fi
 runtime_maps=()
 if [[ $runtime_profile == dos-posix-ata ]];then
     sha256sum "$dos/aros-base.pkg.xz" "$posix" "$ata/aros-bsp.pkg.xz" >>"$run/inputs.sha256"
@@ -1406,7 +1444,7 @@ while :;do
         fi
     fi
     if [[ -f "$run/serial.log" ]];then
-        if rg -q 'RESULT native (pool import|GPT readonly test|service CLI|zvol device|zvol transport|events follow) FAIL|\[PF-DBG\]|^ASSERT at|signal=6 default action=terminate' "$run/serial.log";then
+        if rg -q 'RESULT native (pool import|GPT readonly test|service CLI|zvol device|zvol transport|events follow) FAIL|\[PF-DBG\]|ASSERT at|signal=6 default action=terminate' "$run/serial.log";then
             echo "FAIL: guest failure diagnostic; see $run/serial.log";exit 1
         fi
     fi
@@ -1428,6 +1466,43 @@ if [[ $split_topology != none ]];then
     rg -q '^RESULT native CLI split topology test PASS line=0' "$run/serial.log"
     sha256sum -c "$run/backing.sha256"
     sha256sum -c "$run/overlays.sha256"
+    if [[ $split_persistent == 1 ]];then
+        rg -q '^RESULT split topology backing clean detach PASS' "$run/serial.log"
+        fsck.fat -n -v "$run/topology.raw" >"$run/topology-fat-check.log" 2>&1
+        mkdir "$run/topology-members" "$run/topology-source" "$run/topology-split"
+        count=4;if [[ $split_topology == hole ]];then count=5;fi
+        for ((i=0;i<count;i++));do
+            mcopy -i "$run/topology.raw" "::split-topology-$i" "$run/topology-members/member$i"
+            (cd "$run/topology-members";sha256sum "member$i") >>"$run/topology-members.sha256"
+        done
+        if [[ $split_topology == indirect ]];then
+            ln -s ../topology-members/member2 "$run/topology-source/member2"
+            ln -s ../topology-members/member3 "$run/topology-split/member3"
+        else
+            for i in 0 2;do ln -s "../topology-members/member$i" "$run/topology-source/member$i";done
+            for i in 1 3;do ln -s "../topology-members/member$i" "$run/topology-split/member$i";done
+            if [[ $split_topology == hole ]];then ln -s ../topology-members/member4 "$run/topology-source/member4";fi
+        fi
+        "$AROS_TEST_HOST_ZDB" -e -p "$run/topology-source" -bcc topo_source >"$run/topology-source-zdb.log" 2>&1
+        "$AROS_TEST_HOST_ZDB" -e -p "$run/topology-split" -bcc topo_split >"$run/topology-split-zdb.log" 2>&1
+        rg -q 'No leaks' "$run/topology-source-zdb.log"
+        rg -q 'No leaks' "$run/topology-split-zdb.log"
+        for pool in source split;do
+            "$AROS_TEST_HOST_ZDB" -e -p "$run/topology-$pool" -dddd "topo_$pool" >"$run/topology-$pool-objects.log" 2>&1
+            if rg -q 'MOS object .* leaked|refcount mismatch' "$run/topology-$pool-objects.log";then
+                echo "FAIL: split topology $pool metadata-object leak" >&2;exit 1
+            fi
+        done
+        (cd "$run/topology-members";sha256sum -c ../topology-members.sha256) >"$run/topology-zdb-unchanged.log"
+        sha256sum "$run/topology.raw" >"$run/topology-backing.sha256"
+        if [[ -n $topology_cold_source ]];then
+            cmp "$topology_cold_source/topology-members.sha256" "$run/topology-members.sha256"
+            sha256sum -c "$topology_cold_source/topology-backing.sha256"
+            echo "PASS: persistent split topology cold kind=$split_topology unchanged-members=1 independent-zdb=2"
+        else
+            echo "PASS: persistent split topology writer kind=$split_topology independent-zdb=2"
+        fi
+    fi
     echo "PASS: native CLI split topology $split_topology: $run"
     exit 0
 fi
