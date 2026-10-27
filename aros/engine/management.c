@@ -1833,8 +1833,8 @@ int oz_engine_start(int writes)
             fprintf(stderr,"OpenZFS native host identity rejected: %d\n",identity_error);
             return 0;
         }
-        /* Empty cache path cannot name any existing pool cache. Explicit
-         * import support must be added before the service opens storage. */
+        /* Disable startup cache loading. Pools enter the namespace only
+         * through the explicit import path and native backing admission. */
         spa_config_path = "";
         /* Upstream libzpool otherwise skips space maps on read-only import,
          * leaving allocation counters at zero. Management must report actual

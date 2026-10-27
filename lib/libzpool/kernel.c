@@ -944,6 +944,13 @@ umem_out_of_memory(void)
 static void
 spa_config_load(void)
 {
+#ifdef __AROS__
+	/* The resident service starts with an empty path until native backing
+	 * admission is available. Do not reinterpret that as a request to load
+	 * an unrelated boot cache into the SPA namespace. */
+	if (spa_config_path == NULL || spa_config_path[0] == '\0')
+		return;
+#endif
 	void *buf = NULL;
 	nvlist_t *nvlist, *child;
 	nvpair_t *nvpair;
@@ -961,8 +968,10 @@ spa_config_load(void)
 	(void) snprintf(pathname, MAXPATHLEN, "%s", spa_config_path);
 
 	err = zfs_file_open(pathname, O_RDONLY, 0, kcred, &fp);
+#ifndef __AROS__
 	if (err)
 		err = zfs_file_open(ZPOOL_CACHE_BOOT, O_RDONLY, 0, kcred, &fp);
+#endif
 
 	kmem_free(pathname, MAXPATHLEN);
 

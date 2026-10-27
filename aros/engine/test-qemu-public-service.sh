@@ -325,6 +325,15 @@ fi
 cp "$service" "$run/OpenZFSServiceNative"
 cp "$client" "$run/OpenZFSPublicServiceTest"
 cp "$startup" "$run/Startup-Sequence"
+if [[ -n ${AROS_TEST_BOOT_CACHE_FIXTURE:-} ]];then
+    [[ $persistent == 0 ]] || { echo 'Boot-cache probe requires nonpersistent startup' >&2; exit 2; }
+    cp "$AROS_TEST_BOOT_CACHE_FIXTURE" "$run/boot-cache.xdr"
+    cp "${AROS_TEST_BOOT_CACHE_PROBE:?cache visibility probe required}" "$run/OpenZFSBootCacheProbe"
+    sha256sum "$run/boot-cache.xdr" "$run/OpenZFSBootCacheProbe" >"$run/boot-cache-inputs.sha256"
+    extra_maps+=(-map "$run/boot-cache.xdr" /boot/zfs/zpool.cache
+        -map "$run/OpenZFSBootCacheProbe" /C/OpenZFSBootCacheProbe)
+    sed -i '/^Stack /a Assign BOOT: SYS:boot\nC:OpenZFSBootCacheProbe' "$run/Startup-Sequence"
+fi
 printf '%s\n' "$layout" >"$run/layout.txt"
 extra_maps+=(-map "$run/layout.txt" /openzfs-test-layout)
 if [[ $persistent == 1 ]];then
@@ -542,6 +551,7 @@ while :;do
         reaped=$(rg -c '^Public task-exit session reclamation PASS cycles=4 sessions=32' "$run/serial-results.log" || true)
         controls=$(rg -c '^Public native control descriptors PASS capacity=64 ownership=1 stale=1 session-cleanup=1' "$run/serial-results.log" || true)
         if [[ $count == 3 && $sessions == 2 && $reaped == 2 ]] &&
+           { [[ -z ${AROS_TEST_BOOT_CACHE_FIXTURE:-} ]] || rg -q '^RESULT boot cache probe PASS visible=1 decoded=1' "$run/serial-results.log"; } &&
            { [[ ${AROS_TEST_REQUIRE_ACCOUNTING_UPGRADE:-0} != 1 ]] || {
                rg -q '^Public accounting upgrade delegation PASS denied=1 granted=1 revoked=1' "$run/serial-results.log" &&
                rg -q '^Public accounting upgrade authorization PASS changed-user=1 own-session-denied=1' "$run/serial-results.log" &&

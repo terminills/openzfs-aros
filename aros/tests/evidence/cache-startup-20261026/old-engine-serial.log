@@ -1,0 +1,66 @@
+[bootstrap:multiboot2] smartfb: using VBE mode 0x417a (1280x800x32, fb=0xFD000000)
+[bootstrap:multiboot2] smartfb: KRN_FBAddr=0x00000000FD000000
+AROS64 - The AROS Research OS
+64-bit SMP build. Compiled Oct 21 2026
+[Kernel] Local APIC: x2APIC
+ACPI: RSDP 0x00000000000F52E0 000014 (v00 BOCHS )
+ACPI: RSDT 0x000000007FFE25C5 000034 (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+ACPI: FACP 0x000000007FFE2441 000074 (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+ACPI: DSDT 0x000000007FFE0040 002401 (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+ACPI: FACS 0x000000007FFE0000 000040
+ACPI: APIC 0x000000007FFE24B5 0000B0 (v03 BOCHS  BXPC     00000001 BXPC 00000001)
+ACPI: HPET 0x000000007FFE2565 000038 (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+ACPI: WAET 0x000000007FFE259D 000028 (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+[HPET] 2 units total
+ACPI: 1 ACPI AML tables successfully acquired and loaded
+[Kernel:ACPI-IOAPIC] Registering IO-APIC #1 [ID=000] @ 00000000fec00000 [GSI = 0]
+[Kernel:ACPI] System Total APICs: 8, 8 usable
+[Kernel:APIC-IA32] MSI Interrupts Allocatable
+[Kernel:APIC-IA32]     start = 16
+[Kernel:APIC-IA32]     total = 198
+[Kernel:APIC-IA32] Heartbeat timer: TSC deadline
+[Kernel:APIC-IA32.001] core_APIC_Calibrate: TSC freq inherited from BSP (2496044 kHz) [hypervisor]
+[Kernel:APIC-IA32.001] core_APIC_Calibrate: LAPIC timer freq inherited from BSP (1000406330 Hz) [hypervisor]
+[Kernel:APIC-IA32.002] core_APIC_Calibrate: TSC freq inherited from BSP (2496044 kHz) [hypervisor]
+[Kernel:APIC-IA32.002] core_APIC_Calibrate: LAPIC timer freq inherited from BSP (1000406330 Hz) [hypervisor]
+[Kernel:APIC-IA32.003] core_APIC_Calibrate: TSC freq inherited from BSP (2496044 kHz) [hypervisor]
+[Kernel:APIC-IA32.003] core_APIC_Calibrate: LAPIC timer freq inherited from BSP (1000406330 Hz) [hypervisor]
+[Kernel:APIC-IA32.004] core_APIC_Calibrate: TSC freq inherited from BSP (2496044 kHz) [hypervisor]
+[Kernel:APIC-IA32.004] core_APIC_Calibrate: LAPIC timer freq inherited from BSP (1000406330 Hz) [hypervisor]
+[Kernel:APIC-IA32.005] core_APIC_Calibrate: TSC freq inherited from BSP (2496044 kHz) [hypervisor]
+[Kernel:APIC-IA32.005] core_APIC_Calibrate: LAPIC timer freq inherited from BSP (1000406330 Hz) [hypervisor]
+[Kernel:APIC-IA32.006] core_APIC_Calibrate: TSC freq inherited from BSP (2496044 kHz) [hypervisor]
+[Kernel:APIC-IA32.006] core_APIC_Calibrate: LAPIC timer freq inherited from BSP (1000406330 Hz) [hypervisor]
+[Kernel:APIC-IA32.007] core_APIC_Calibrate: TSC freq inherited from BSP (2496044 kHz) [hypervisor]
+[Kernel:APIC-IA32.007] core_APIC_Calibrate: LAPIC timer freq inherited from BSP (1000406330 Hz) [hypervisor]
+[PCIPC:Driver] PCIPC_InitClass: No ACPI MCFG table
+[Timer] clock: PIT (no invariant TSC)
+[ATI] Init
+[ATI] No supported cards found
+[HW] HW__HW__AddDriver: Failed to instantiate Driver Object
+Writable startup denied: configured security.library and system task identity required.
+RESULT shared engine lifecycle cycle=1 PASS
+Writable startup denied: configured security.library and system task identity required.
+RESULT shared engine lifecycle cycle=2 PASS
+Writable startup denied: configured security.library and system task identity required.
+RESULT shared engine lifecycle cycle=3 PASS
+Writable startup denied: configured security.library and system task identity required.
+RESULT shared engine lifecycle cycle=4 PASS
+Writable startup denied: configured security.library and system task identity required.
+RESULT shared engine lifecycle cycle=5 PASS
+Writable startup denied: configured security.library and system task identity required.
+RESULT shared engine lifecycle cycle=6 PASS
+Writable startup denied: configured security.library and system task identity required.
+RESULT shared engine lifecycle cycle=7 PASS
+Writable startup denied: configured security.library and system task identity required.
+RESULT shared engine lifecycle cycle=8 PASS
+RESULT shared engine denied return PASS status=20 repeated=10 caller-exit=7
+RESULT shared engine library lifecycle PASS invalid-mode=2 nested-open=1 foreign-refused=1 reload-other-task=1
+RESULT boot cache probe PASS visible=1 decoded=1
+Native authenticated admission ready
+OpenZFS management API 3 ready; engine initialized
+Public service op=1 status=0 engine=1 rows=0
+Public service op=2 status=0 engine=1 rows=0
+Public service op=3 status=9 engine=1 rows=1
+Public service test line=4166
+RESULT public service lifecycle FAIL
