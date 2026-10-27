@@ -1,0 +1,3 @@
+shared_library=1
+launcher_stack=65536
+pool_traversal=1

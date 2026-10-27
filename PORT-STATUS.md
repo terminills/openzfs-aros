@@ -14,8 +14,12 @@ matching host zdb exactly. The following shared-library implementation replaces
 that diagnostic executable: version 2 adds a one-shot debugger entry and a
 small `C:zdb` launcher. Both standalone and generated MetaMake builds pass
 native label/lifetime tests with a 64-KiB caller stack; the library supplies
-the required 4-MiB stack. Full pool traversal, read-only raw-device admission
-and public release-bundle qualification remain unfinished.
+the required 4-MiB stack. Native block/MOS traversal now passes for an
+ISO-backed two-member pool with a special allocation class, matching host
+block accounting, dataset roots, feature checks and exact object rows.
+Read-only raw-device admission, broader diagnostic/corruption coverage and
+public release-bundle qualification remain unfinished. See
+`aros/tests/evidence/native-zdb-pool-20261027`.
 See `aros/tests/evidence/native-zdb-build-20261027`. Existing pool-integrity
 results continue to use the independent **host** zdb, not this native candidate.
 

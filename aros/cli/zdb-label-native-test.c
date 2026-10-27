@@ -6,6 +6,42 @@
 #include <stdio.h>
 #include <string.h>
 
+#ifdef OZ_ZDB_POOL
+static int check_pool(void)
+{
+    const char *commands[]={
+        "C:ZdbAudit -P -e -p /SYS/zdb-pool -bcc topo_source >RAM:zdb-pool.log",
+        "C:ZdbAudit -P -e -p /SYS/zdb-pool -dddd topo_source >RAM:zdb-pool.log"
+    };
+    for(unsigned pass=0;pass<2;pass++) {
+        bug("RESULT native zdb pool BEGIN pass=%u\n",pass);
+        LONG status=SystemTags((CONST_STRPTR)commands[pass],NP_StackSize,65536,TAG_DONE);
+        FILE *report=fopen("RAM:zdb-pool.log","r");
+        bug("RESULT native zdb pool exit pass=%u status=%ld\n",pass,(long)status);
+        if(!report){bug("RESULT native zdb labels FAIL missing-pool-report=%u\n",pass);return 20;}
+        unsigned char bytes[128];char hex[257];
+        unsigned long offset=0;size_t count;
+        static const char digits[]="0123456789abcdef";
+        while((count=fread(bytes,1,sizeof(bytes),report))!=0) {
+            for(size_t i=0;i<count;i++) {
+                hex[i*2]=digits[bytes[i]>>4];hex[i*2+1]=digits[bytes[i]&15];
+            }
+            hex[count*2]=0;
+            bug("ZDBDATA[%u] offset=%lu bytes=%lu %s\n",pass,offset,(unsigned long)count,hex);
+            offset+=count;
+        }
+        int failed=ferror(report)!=0;
+        fclose(report);
+        if(status||failed||!offset) {
+            bug("RESULT native zdb labels FAIL pool-pass=%u\n",pass);return 20;
+        }
+        bug("RESULT native zdb pool report pass=%u bytes=%lu\n",pass,offset);
+    }
+    bug("RESULT native zdb pool PASS block-and-objects=1\n");
+    return 0;
+}
+#endif
+
 int main(void)
 {
     bug("RESULT native zdb labels BEGIN\n");
@@ -48,6 +84,9 @@ int main(void)
         return 20;
     }
     bug("RESULT shared zdb caller exit PASS status=7\n");
+#endif
+#ifdef OZ_ZDB_POOL
+    if(check_pool())return 20;
 #endif
     bug("RESULT native zdb labels PASS runs=2 storage=readonly-iso\n");
     return 0;

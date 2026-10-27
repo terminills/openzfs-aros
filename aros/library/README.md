@@ -22,8 +22,12 @@ are restored before return. This ABI is not a memory-isolation boundary.
 
 Current native qualification covers ISO-backed label decoding, exact host
 comparison, repeated launches, invalid arguments, cross-entry refusal, reload
-and caller exit. Full native block/MOS traversal and production raw-device
-admission remain unqualified; do not infer them from label inspection.
+and caller exit. Native block/MOS traversal also passes on a two-member
+disposable pool with a special allocation class: block accounting, three
+datasets, 21 feature checks and 72 object rows agree with host zdb. Reports
+are retained losslessly; derived percentage rounding is not compared.
+Production raw-device admission and broader diagnostic-option/corruption
+coverage remain unqualified. See `aros/tests/evidence/native-zdb-pool-20261027`.
 
 ## Host ABI and lifetime
 

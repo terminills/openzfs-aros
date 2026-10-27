@@ -1,13 +1,19 @@
 #!/usr/bin/env bash
 # Read-only ISO fixture, no guest disks, network, service or host filesystem share.
 set -euo pipefail
-repo=$(cd -- "$(dirname -- "$0")/../.." && pwd)
+repo=${OZ_ZDB_SOURCE_ROOT:-$(cd -- "$(dirname -- "$0")/../.." && pwd)}
 cd "$repo"
 : "${AROS_CC:?}" "${AROS_SDK:?}" "${AROS_TEST_ISO:?}"
 : "${AROS_TEST_BASE_DOS_PACKAGE:?}" "${AROS_TEST_POSIX_LIBRARY:?}"
 : "${AROS_TEST_ZDB_BINARY:?}" "${AROS_TEST_ZDB_MEMBER:?}" "${AROS_TEST_HOST_ZDB:?}"
 source aros/engine/storage-preflight.sh
 root=$(oz_artifact_root "$repo/build-aros" "${AROS_ARTIFACT_ROOT:?}")
+if [[ ${OZ_ZDB_RUNNER_SNAPSHOT:-} != "$0" ]];then
+    snapshot=$(mktemp -d "$root/zdb-runner.XXXXXXXX")
+    cp "$0" "$snapshot/runner.sh"
+    exec env OZ_ZDB_SOURCE_ROOT="$repo" OZ_ZDB_RUNNER_SNAPSHOT="$snapshot/runner.sh" \
+        bash "$snapshot/runner.sh" "$@"
+fi
 run=$(mktemp -d "$root/zdb-label-run.XXXXXXXX")
 echo "Evidence: $run"
 cp "$0" aros/cli/zdb-label-native-test.c aros/cli/Startup-Zdb-Labels "$run/"
@@ -15,6 +21,7 @@ sha256sum "$AROS_TEST_ISO" "$AROS_TEST_BASE_DOS_PACKAGE" "$AROS_TEST_POSIX_LIBRA
     "$AROS_TEST_ZDB_BINARY" "$AROS_TEST_ZDB_MEMBER" "$AROS_TEST_HOST_ZDB" >"$run/inputs.sha256"
 library_maps=()
 test_flags=()
+pool_maps=()
 if [[ -n ${AROS_TEST_ZDB_LIBRARY:-} ]];then
     : "${AROS_TEST_ZDB_INCLUDE:?matching generated library headers required}"
     sha256sum "$AROS_TEST_ZDB_LIBRARY" >>"$run/inputs.sha256"
@@ -28,6 +35,20 @@ if [[ -n ${AROS_TEST_ZDB_LIBRARY:-} ]];then
 else
     printf 'shared_library=0\nlauncher_stack=4194304\n' >"$run/mode.txt"
 fi
+if [[ -n ${AROS_TEST_ZDB_POOL_SECOND:-} ]];then
+    [[ -n ${AROS_TEST_ZDB_LIBRARY:-} ]] || { echo 'Pool test requires shared debugger' >&2;exit 1; }
+    test_flags+=(-DOZ_ZDB_POOL)
+    first=$(realpath -e "$AROS_TEST_ZDB_MEMBER")
+    second=$(realpath -e "$AROS_TEST_ZDB_POOL_SECOND")
+    sha256sum "$second" >>"$run/inputs.sha256"
+    mkdir "$run/host-pool"
+    ln -s "$first" "$run/host-pool/member0"
+    ln -s "$second" "$run/host-pool/member2"
+    TZ=UTC "$AROS_TEST_HOST_ZDB" -P -e -p "$run/host-pool" -bcc topo_source >"$run/host-blocks.log" 2>&1
+    TZ=UTC "$AROS_TEST_HOST_ZDB" -P -e -p "$run/host-pool" -dddd topo_source >"$run/host-objects.log" 2>&1
+    pool_maps=(-map "$first" /zdb-pool/member0 -map "$second" /zdb-pool/member2)
+    printf 'pool_traversal=1\n' >>"$run/mode.txt"
+fi
 "$AROS_TEST_HOST_ZDB" -l "$AROS_TEST_ZDB_MEMBER" >"$run/host-labels.log" 2>&1
 grep -q "name: 'topo_source'" "$run/host-labels.log"
 grep -q 'labels = 0 1 2 3 ' "$run/host-labels.log"
@@ -38,6 +59,7 @@ xorriso -indev "$AROS_TEST_ISO" -outdev "$run/test.iso" \
     -map "$AROS_TEST_BASE_DOS_PACKAGE" /boot/aros-base.pkg.xz \
     -map "$AROS_TEST_POSIX_LIBRARY" /Libs/posixc.library \
     "${library_maps[@]}" \
+    "${pool_maps[@]}" \
     -map "$AROS_TEST_ZDB_BINARY" /C/ZdbAudit \
     -map "$AROS_TEST_ZDB_MEMBER" /zdb-member \
     -map "$run/OpenZFSZdbLabelsTest" /C/OpenZFSZdbLabelsTest \
@@ -73,4 +95,7 @@ if [[ -n ${AROS_TEST_ZDB_LIBRARY:-} ]];then
     done
     rg -q 'RESULT shared zdb caller exit PASS status=7' "$run/serial.log"
 fi
-echo 'PASS native zdb labels and selected lifecycle checks; full pool traversal remains unverified.'
+if [[ -n ${AROS_TEST_ZDB_POOL_SECOND:-} ]];then
+    python3 aros/cli/verify-zdb-pool.py "$run" >"$run/pool-comparison.log"
+fi
+echo 'PASS selected native zdb checks; consult mode.txt and comparison logs for scope.'

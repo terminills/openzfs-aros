@@ -139,8 +139,9 @@ AROS Contrib build and regenerate its metamake files. Available targets:
 - `contrib-openzfs-library`: `Libs/openzfs.library` and its generated import ABI.
 - `contrib-openzfs-service`: small `C/OpenZFSServiceNative` library launcher.
 - `contrib-openzfs-zdb`: small `C/zdb` launcher for version 2 of the shared engine;
-  native label/lifetime tests pass, but full pool traversal and raw-device
-  diagnostics are not yet qualified. See `aros/library/README.md`.
+  native label/lifetime tests and block/MOS inspection of a disposable
+  two-member file pool pass. Raw-device diagnostics remain unqualified.
+  See `aros/library/README.md`.
 - `contrib-openzfs-nvpair`: source-built `libnvpair.a` with memory XDR support.
 - `contrib-openzfs-nvpair-test`: native `C/OpenZFSNvpairTest` regression tool.
 - `contrib-openzfs-engine`: full normal engine object, compiled from source.
