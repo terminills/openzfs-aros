@@ -22,7 +22,13 @@ returns 1 with three labels decoded; all four invalid configurations return 2.
 Fresh healthy invocations following both errors return 0. The same eight-CPU
 guest passes block/MOS inspection; original and damaged-copy hashes remain
 unchanged. See `aros/tests/evidence/native-zdb-damage-20261027`.
-Read-only raw-device admission, broader diagnostic/corruption coverage and
+Native `zdb -l /AROS/ata.device/0` now uses read-only Exec device access with
+configured-security/root authorization, checked again for each read. An
+eight-CPU QEMU run matches host labels before/after an actual UID 77 caller's
+EACCES denial; its disposable ATA overlay is byte-identical to the backing
+fixture. See `aros/tests/evidence/native-zdb-device-20261027`. Partition paths,
+missing-security denial, native L2ARC and native whole-pool binding still need
+runtime qualification. Broader diagnostic/corruption coverage and
 public release-bundle qualification remain unfinished. See
 `aros/tests/evidence/native-zdb-pool-20261027`.
 See `aros/tests/evidence/native-zdb-build-20261027`. Existing pool-integrity

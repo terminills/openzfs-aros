@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-# Read-only ISO fixture, no guest disks, network, service or host filesystem share.
+# Read-only ISO fixtures; optional disposable native-device overlay. No network,
+# service or host filesystem share. Original pool files remain unchanged.
 set -euo pipefail
 repo=${OZ_ZDB_SOURCE_ROOT:-$(cd -- "$(dirname -- "$0")/../.." && pwd)}
 cd "$repo"
@@ -22,6 +23,14 @@ sha256sum "$AROS_TEST_ISO" "$AROS_TEST_BASE_DOS_PACKAGE" "$AROS_TEST_POSIX_LIBRA
 library_maps=()
 test_flags=()
 pool_maps=()
+device_args=()
+if [[ ${AROS_TEST_ZDB_DEVICE:-0} == 1 ]];then
+    [[ -n ${AROS_TEST_ZDB_LIBRARY:-} ]] || { echo 'Device test requires shared debugger' >&2;exit 1; }
+    qemu-img create -f qcow2 -F raw -b "$(realpath -e "$AROS_TEST_ZDB_MEMBER")" "$run/device.qcow2" >"$run/device-create.log"
+    device_args=(-drive "file=$run/device.qcow2,format=qcow2,if=ide,index=0")
+    cp -a aros/engine/security-fixture "$run/security-fixture"
+    pool_maps+=(-map "$run/security-fixture" /Security)
+fi
 if [[ -n ${AROS_TEST_ZDB_LIBRARY:-} ]];then
     : "${AROS_TEST_ZDB_INCLUDE:?matching generated library headers required}"
     sha256sum "$AROS_TEST_ZDB_LIBRARY" >>"$run/inputs.sha256"
@@ -46,7 +55,7 @@ if [[ -n ${AROS_TEST_ZDB_POOL_SECOND:-} ]];then
     ln -s "$second" "$run/host-pool/member2"
     TZ=UTC "$AROS_TEST_HOST_ZDB" -P -e -p "$run/host-pool" -bcc topo_source >"$run/host-blocks.log" 2>&1
     TZ=UTC "$AROS_TEST_HOST_ZDB" -P -e -p "$run/host-pool" -dddd topo_source >"$run/host-objects.log" 2>&1
-    pool_maps=(-map "$first" /zdb-pool/member0 -map "$second" /zdb-pool/member2)
+    pool_maps+=(-map "$first" /zdb-pool/member0 -map "$second" /zdb-pool/member2)
     printf 'pool_traversal=1\n' >>"$run/mode.txt"
 fi
 "$AROS_TEST_HOST_ZDB" -l "$AROS_TEST_ZDB_MEMBER" >"$run/host-labels.log" 2>&1
@@ -68,6 +77,15 @@ if [[ ${AROS_TEST_ZDB_BAD_LABELS:-0} == 1 ]];then
     test_flags+=(-DOZ_ZDB_BAD_LABELS)
     printf 'damaged_labels=1\n' >>"$run/mode.txt"
 fi
+if [[ ${AROS_TEST_ZDB_DEVICE:-0} == 1 ]];then
+    test_flags+=(-DOZ_ZDB_DEVICE)
+    printf 'native_device=1\n' >>"$run/mode.txt"
+    cp aros/cli/zdb-unprivileged-test.c aros/cli/verify-zdb-device.py "$run/"
+    "$AROS_CC" --sysroot="$AROS_SDK" -B"$AROS_SDK/lib/" -O2 -Wall -Wextra \
+        -I"$AROS_TEST_ZDB_INCLUDE" "$run/zdb-unprivileged-test.c" \
+        -o "$run/OpenZFSZdbUserTest" >"$run/user-build.log" 2>&1
+    pool_maps+=(-map "$run/OpenZFSZdbUserTest" /C/OpenZFSZdbUserTest)
+fi
 "$AROS_CC" --sysroot="$AROS_SDK" -B"$AROS_SDK/lib/" -O2 -Wall -Wextra \
     "${test_flags[@]}" aros/cli/zdb-label-native-test.c -o "$run/OpenZFSZdbLabelsTest" >"$run/build.log" 2>&1
 xorriso -indev "$AROS_TEST_ISO" -outdev "$run/test.iso" \
@@ -83,7 +101,7 @@ xorriso -indev "$AROS_TEST_ISO" -outdev "$run/test.iso" \
     -boot_image any discard -boot_image grub bin_path=/boot/grub/i386-pc/eltorito.img \
     -boot_image grub boot_info_table=on -boot_image grub grub2_boot_info=on >"$run/iso.log" 2>&1
 qemu-system-x86_64 -name "openzfs-zdb-labels-$$" -machine pc,accel=kvm \
-    -cpu host -smp 8 -m 2048 -cdrom "$run/test.iso" -boot d -nic none \
+    -cpu host -smp 8 -m 2048 -cdrom "$run/test.iso" "${device_args[@]}" -boot d -nic none \
     -display none -serial "file:$run/serial.log" \
     -monitor "unix:$run/monitor,server=on,wait=off" -no-reboot -no-shutdown >"$run/qemu.log" 2>&1 &
 pid=$!
@@ -116,5 +134,9 @@ if [[ -n ${AROS_TEST_ZDB_POOL_SECOND:-} ]];then
 fi
 if [[ ${AROS_TEST_ZDB_BAD_LABELS:-0} == 1 ]];then
     python3 "$run/verify-zdb-bad-labels.py" "$run" >"$run/damaged-comparison.log"
+fi
+if [[ ${AROS_TEST_ZDB_DEVICE:-0} == 1 ]];then
+    qemu-img compare -f qcow2 -F raw "$run/device.qcow2" "$AROS_TEST_ZDB_MEMBER" >"$run/device-unchanged.log"
+    python3 "$run/verify-zdb-device.py" "$run" >"$run/device-comparison.log"
 fi
 echo 'PASS selected native zdb checks; consult mode.txt and comparison logs for scope.'

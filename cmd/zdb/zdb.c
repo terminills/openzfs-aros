@@ -103,6 +103,7 @@
 _Static_assert(sizeof (off_t) == 8, "zdb requires 64-bit native file offsets");
 #define open64 open
 #endif
+#include "zdb_label_io.h"
 
 extern int reference_tracking_enable;
 extern int zfs_recover;
@@ -4920,7 +4921,7 @@ dump_l2arc_log_blkptr(const l2arc_log_blkptr_t *lbps)
 }
 
 static void
-dump_l2arc_log_blocks(int fd, const l2arc_dev_hdr_phys_t *l2dhdr,
+dump_l2arc_log_blocks(zdb_label_reader_t *reader, const l2arc_dev_hdr_phys_t *l2dhdr,
     l2arc_dev_hdr_phys_t *rebuild)
 {
 	l2arc_log_blk_phys_t this_lb;
@@ -4958,7 +4959,7 @@ dump_l2arc_log_blocks(int fd, const l2arc_dev_hdr_phys_t *l2dhdr,
 
 		/* L2BLK_GET_PSIZE returns aligned size for log blocks */
 		asize = L2BLK_GET_PSIZE((&lbps[0])->lbp_prop);
-		if (pread64(fd, &this_lb, asize, lbps[0].lbp_daddr) != asize) {
+		if (zdb_label_read(reader, &this_lb, asize, lbps[0].lbp_daddr) != asize) {
 			if (!dump_opt['q']) {
 				(void) printf("Error while reading next log "
 				    "block\n\n");
@@ -5040,12 +5041,12 @@ out:
 }
 
 static int
-dump_l2arc_header(int fd)
+dump_l2arc_header(zdb_label_reader_t *reader)
 {
 	l2arc_dev_hdr_phys_t l2dhdr = {0}, rebuild = {0};
 	int error = B_FALSE;
 
-	if (pread64(fd, &l2dhdr, sizeof (l2dhdr),
+	if (zdb_label_read(reader, &l2dhdr, sizeof (l2dhdr),
 	    VDEV_LABEL_START_SIZE) != sizeof (l2dhdr)) {
 		error = B_TRUE;
 	} else {
@@ -5095,7 +5096,7 @@ dump_l2arc_header(int fd)
 		    (u_longlong_t)l2dhdr.dh_trim_state);
 	}
 
-	dump_l2arc_log_blocks(fd, &l2dhdr, &rebuild);
+	dump_l2arc_log_blocks(reader, &l2dhdr, &rebuild);
 	/*
 	 * The total aligned size of log blocks and the number of log blocks
 	 * reported in the header of the device may be less than what zdb
@@ -5487,7 +5488,7 @@ dump_label(const char *dev)
 	avl_tree_t config_tree;
 	avl_tree_t uberblock_tree;
 	void *node, *cookie;
-	int fd;
+	zdb_label_reader_t reader;
 
 	/*
 	 * Check if we were given absolute path and use it as is.
@@ -5511,19 +5512,12 @@ dump_label(const char *dev)
 		}
 	}
 
-	if ((fd = open64(path, O_RDONLY)) < 0) {
+	if (zdb_label_open(&reader, path, &statbuf) != 0) {
 		(void) printf("cannot open '%s': %s\n", path, strerror(errno));
 		zdb_exit(1);
 	}
 
-	if (fstat64_blk(fd, &statbuf) != 0) {
-		(void) printf("failed to stat '%s': %s\n", path,
-		    strerror(errno));
-		(void) close(fd);
-		zdb_exit(1);
-	}
-
-	if (S_ISBLK(statbuf.st_mode) && zfs_dev_flush(fd) != 0)
+	if (S_ISBLK(statbuf.st_mode) && zdb_label_invalidate(&reader) != 0)
 		(void) printf("failed to invalidate cache '%s' : %s\n", path,
 		    strerror(errno));
 
@@ -5553,7 +5547,7 @@ dump_label(const char *dev)
 
 		label->label_offset = vdev_label_offset(psize, l, 0);
 
-		if (pread64(fd, &label->label, sizeof (label->label),
+		if (zdb_label_read(&reader, &label->label, sizeof (label->label),
 		    label->label_offset) != sizeof (label->label)) {
 			if (!dump_opt['q'])
 				(void) printf("failed to read label %d\n", l);
@@ -5642,7 +5636,7 @@ dump_label(const char *dev)
 	 * Dump the L2ARC header, if existent.
 	 */
 	if (read_l2arc_header)
-		error |= dump_l2arc_header(fd);
+		error |= dump_l2arc_header(&reader);
 
 	cookie = NULL;
 	while ((node = avl_destroy_nodes(&config_tree, &cookie)) != NULL)
@@ -5655,7 +5649,7 @@ dump_label(const char *dev)
 	avl_destroy(&config_tree);
 	avl_destroy(&uberblock_tree);
 
-	(void) close(fd);
+	zdb_label_close(&reader);
 
 	return (config_found == B_FALSE ? 2 :
 	    (error == B_TRUE ? 1 : 0));

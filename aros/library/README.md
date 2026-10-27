@@ -29,8 +29,17 @@ are retained losslessly; derived percentage rounding is not compared.
 Native damaged-label inspection matches host diagnostics and exit statuses
 (one damaged label: 1; all four: 2), with successful healthy reloads after each
 error. See `aros/tests/evidence/native-zdb-damage-20261027`.
-Production raw-device admission and broader diagnostic-option/corruption
-coverage remain unqualified. See `aros/tests/evidence/native-zdb-pool-20261027`.
+Native label reads now support canonical `/AROS/device/unit` and
+`/AROS/device/unit/partition/position` paths through read-only Exec handles.
+Configured security and current native root identity are required before open
+and on every read; no write or flush operation is exposed. The existing
+partition resolver supplies extent bounds. This is offline inspection, not an
+exclusive snapshot against other raw writers or partition-table replacement.
+An eight-CPU QEMU whole-device test passes root reads, actual UID 77 denial,
+then root reopening with an unchanged disk overlay. Partition/L2ARC runtime
+coverage, absent-security denial and native whole-pool import bindings remain
+open. See `aros/tests/evidence/native-zdb-device-20261027` and
+`aros/tests/evidence/native-zdb-pool-20261027`.
 
 ## Host ABI and lifetime
 

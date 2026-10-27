@@ -5,6 +5,47 @@
 #include <aros/debug.h>
 #include <stdio.h>
 #include <string.h>
+#ifdef OZ_ZDB_DEVICE
+#include <proto/exec.h>
+#include <proto/security.h>
+#include <libraries/security.h>
+static int check_device(void)
+{
+    struct Library *secBase=OpenLibrary((CONST_STRPTR)SECURITYNAME,SECURITYVERSION);
+    if(!secBase)return 20;
+    ULONG previous=secGetTaskOwner(FindTask(NULL));
+    struct TagItem root[]={{secT_UserID,(IPTR)"oztestroot"},{secT_Password,(IPTR)""},{TAG_DONE,0}};
+    struct TagItem logout[]={{secT_Quiet,TRUE},{TAG_DONE,0}};
+    int failed=0;
+    for(unsigned pass=0;pass<3&&!failed;pass++) {
+        ULONG expected=secOWNER_SYSTEM;
+        ULONG logged=secLoginA(root);
+        if(logged!=expected)failed=1;
+        if(!failed) {
+            const char *command=pass==1?
+                "C:OpenZFSZdbUserTest >RAM:zdb-device.log":
+                "C:ZdbAudit -l /AROS/ata.device/0 >RAM:zdb-device.log";
+            LONG status=SystemTags((CONST_STRPTR)command,NP_StackSize,65536,TAG_DONE);
+            bug("RESULT native zdb device pass=%u exit=%ld\n",pass,(long)status);
+            FILE *report=fopen("RAM:zdb-device.log","r");
+            if(!report)failed=1;
+            else {
+                char line[1024];unsigned lines=0;
+                while(fgets(line,sizeof(line),report)) {bug("ZDBDEV[%u] %s",pass,line);lines++;}
+                failed=ferror(report)||!lines;
+                fclose(report);
+            }
+            if(status!=(pass==1?1:0))failed=1;
+        }
+        if(logged&&secLogoutA(logout)!=previous)failed=1;
+        if(secGetTaskOwner(FindTask(NULL))!=previous)failed=1;
+    }
+    CloseLibrary(secBase);
+    if(failed)return 20;
+    bug("RESULT native zdb device PASS root-denied-root=1\n");
+    return 0;
+}
+#endif
 
 #ifdef OZ_ZDB_BAD_LABELS
 static int check_bad_labels(void)
@@ -119,6 +160,11 @@ int main(void)
 #ifdef OZ_ZDB_BAD_LABELS
     if(check_bad_labels()){
         bug("RESULT native zdb labels FAIL damaged-labels\n");return 20;
+    }
+#endif
+#ifdef OZ_ZDB_DEVICE
+    if(check_device()){
+        bug("RESULT native zdb labels FAIL native-device\n");return 20;
     }
 #endif
     bug("RESULT native zdb labels PASS runs=2 storage=readonly-iso\n");

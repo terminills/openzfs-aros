@@ -1,0 +1,1 @@
+PASS native device labels match host before/after unprivileged EACCES denial

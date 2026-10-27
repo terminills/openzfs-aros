@@ -8,6 +8,7 @@ CPPCHECKTARGETS += zdb
 zdb_SOURCES = \
 	%D%/zdb.c \
 	%D%/zdb.h \
+	%D%/zdb_label_io.h \
 	%D%/zdb_il.c
 
 zdb_LDADD = \
