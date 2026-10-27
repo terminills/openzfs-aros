@@ -338,6 +338,9 @@ members and independent integrity checks. See
 `aros/tests/evidence/split-allocation-classes-20261027`. These qualify existing
 production behavior; they are not new driver functionality or concurrent/power-loss
 qualification.
+The same layouts also pass authenticated Manager operation-14 split with GUIDs
+obtained from live pool-status rows and separate cold readers. This is API/backend
+coverage, not GUI click-through evidence; see that directory's `manager-api.md`.
 
 Damaged-pool CLEAR update (2026-10-27): actual upstream `clear -nF/-F` and
 `clear -nFX/-FX` pass on separately prepared damaged mirror fixtures through

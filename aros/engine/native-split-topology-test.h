@@ -14,6 +14,47 @@ static int split_topology_command(const char *command)
     char line[64];snprintf(line,sizeof(line),"Split CLI result=%ld",(long)result);note(line);
     return result||n<0||!closed?EIO:0;
 }
+#ifdef OZ_NATIVE_SPLIT_TOPOLOGY_MANAGER
+static int split_topology_manager(const char *first,const char *second)
+{
+    struct oz_client client;struct oz_message *m=calloc(1,sizeof(*m)),*out=NULL;
+    if(!m)return ENOMEM;
+    if(!oz_client_open(&client)){free(m);return EIO;}
+    m->operation=4;strcpy(m->target,"topo_source");
+    int error=oz_submit(&client,m)==OZ_OK?0:EIO;
+    if(!error)while(!(out=oz_poll(&client)))Delay(1);
+    unsigned found=0;unsigned long long guids[2]={0};
+    if(out&&out->status==OZ_OK)for(unsigned i=0;i<out->row_count;i++){
+        unsigned slot=!strcmp(out->rows[i].name,first)?0:
+            second&&!strcmp(out->rows[i].name,second)?1:2;
+        if(slot==2)continue;
+        const char *p=strstr(out->rows[i].value,"guid=");
+        if(!p||guids[slot]){error=EINVAL;break;}
+        char *end;errno=0;guids[slot]=strtoull(p+5,&end,10);
+        if(errno||!guids[slot]||end==p+5||(*end&&*end!=' ')){error=EINVAL;break;}
+        found++;
+    }
+    else error=EIO;
+    if(out)oz_message_free(out);
+    oz_client_close(&client);
+    if(found!=(second?2:1))error=EINVAL;
+    if(error){free(m);return error;}
+    memset(m,0,sizeof(*m));out=calloc(1,sizeof(*out));
+    if(!out){free(m);return ENOMEM;}
+    m->magic=OZ_MAGIC;m->version=OZ_VERSION;m->msg.mn_Length=sizeof(*m);
+    m->operation=14;m->flags=OZ_CONFIRMED;
+    strcpy(m->target,"topo_source");strcpy(m->argument,"topo_split");
+    if(second)snprintf(m->options,sizeof(m->options),"guids=%llu,%llu",guids[0],guids[1]);
+    else snprintf(m->options,sizeof(m->options),"guids=%llu",guids[0]);
+    struct oz_ticket ticket={0};error=oz_admission_submit(OZ_ADMISSION_PORT,m,&ticket);
+    if(!error)do{error=oz_admission_query(OZ_ADMISSION_PORT,&ticket,out);if(error==EAGAIN)Delay(1);}while(error==EAGAIN);
+    if(!error){note(out->detail);if(out->status!=OZ_OK)error=EIO;}
+    if(ticket.number){int released=oz_admission_release(OZ_ADMISSION_PORT,&ticket);if(!error)error=released;}
+    free(m);free(out);
+    if(!error)note("RESULT split topology authenticated Manager API PASS");
+    return error;
+}
+#endif
 static int native_split_topology_test(unsigned mode)
 {
     unsigned indirect=mode==2,hole=mode==1,trailing=mode==4,mirrorlog=mode==5;
@@ -80,7 +121,11 @@ static int native_split_topology_test(unsigned mode)
         TOPO_CHECK(!split_topology_command("C:zpool wait -t remove topo_source"));
         snprintf(command,sizeof(command),"C:zpool split topo_source topo_split \"%s\"",paths[3]);
     }else snprintf(command,sizeof(command),"C:zpool split topo_source topo_split \"%s\" \"%s\"",paths[1],paths[3]);
+#ifdef OZ_NATIVE_SPLIT_TOPOLOGY_MANAGER
+    TOPO_CHECK(!split_topology_manager(indirect?paths[3]:paths[1],indirect?NULL:paths[3]));
+#else
     TOPO_CHECK(!split_topology_command(command));
+#endif
     TOPO_CHECK(!split_topology_command("C:zpool export topo_source"));
     }
     for(unsigned pool=0;pool<2;pool++){

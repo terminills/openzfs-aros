@@ -1,0 +1,20 @@
+fsck.fat 4.2 (2021-01-31)
+Checking we can access the last sector of the filesystem
+Boot sector contents:
+System ID "mkfs.fat"
+Media byte 0xf8 (hard disk)
+       512 bytes per logical sector
+     32768 bytes per cluster
+        64 reserved sectors
+First FAT starts at byte 32768 (sector 64)
+         2 FATs, 16 bit entries
+     98304 bytes per FAT (= 192 sectors)
+Root directory starts at byte 229376 (sector 448)
+      1024 root directory entries
+Data area starts at byte 262144 (sector 512)
+     49143 data clusters (1610317824 bytes)
+63 sectors/track, 64 heads
+         0 hidden sectors
+   3145716 sectors total
+Checking for unused clusters.
+/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/native-import-run.jpKOHbi2/topology.raw: 5 files, 8192/49143 clusters

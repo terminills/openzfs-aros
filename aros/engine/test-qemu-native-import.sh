@@ -153,6 +153,8 @@ usb_cli_clear=${AROS_TEST_USB_CLI_CLEAR:-0}
 import_rewind=${AROS_TEST_IMPORT_REWIND:-0}
 manager_split=${AROS_TEST_MANAGER_SPLIT:-none}
 split_topology=${AROS_TEST_SPLIT_TOPOLOGY:-none}
+split_topology_manager=${AROS_TEST_SPLIT_TOPOLOGY_MANAGER:-0}
+[[ $split_topology_manager == 0 || ( $split_topology_manager == 1 && $split_topology != none ) ]]
 split_persistent=${AROS_TEST_SPLIT_PERSISTENT:-0}
 topology_cold_source=${AROS_TEST_SPLIT_COLD_SOURCE:-}
 [[ $split_persistent == 0 || ( $split_persistent == 1 && $split_topology != none ) ]]
@@ -423,6 +425,7 @@ if [[ $split_topology != none ]];then
     if [[ $split_topology == special ]];then topology_mode=6;fi
     if [[ $split_topology == dedup ]];then topology_mode=7;fi
     gui_flags+=(-DOZ_NATIVE_SPLIT_TOPOLOGY=$topology_mode)
+    if [[ $split_topology_manager == 1 ]];then gui_flags+=(-DOZ_NATIVE_SPLIT_TOPOLOGY_MANAGER);fi
     if [[ $split_persistent == 1 ]];then
         gui_flags+=(-DOZ_NATIVE_SPLIT_PERSISTENT)
         [[ -f ${AROS_TEST_FAT_HANDLER:?explicit qualified FAT handler required} ]]
@@ -432,6 +435,11 @@ if [[ $split_topology != none ]];then
             [[ -f $topology_cold_source/topology.raw && ! -L $topology_cold_source/topology.raw ]]
             [[ $(cat "$topology_cold_source/topology-kind.txt") == "$split_topology" ]]
             rg -q '^PASS: persistent split topology writer' "$topology_cold_source/runner.log"
+            if [[ $split_topology_manager == 1 ]];then
+                rg -q '^RESULT split topology authenticated Manager API PASS' "$topology_cold_source/serial.log" || {
+                    echo 'FAIL: requested Manager cold test needs a Manager API writer' >&2;exit 1;
+                }
+            fi
             sha256sum -c "$topology_cold_source/topology-backing.sha256"
             gui_flags+=(-DOZ_NATIVE_SPLIT_COLD)
         fi
@@ -1466,6 +1474,9 @@ printf 'quit\n' | socat - "UNIX-CONNECT:$run/monitor" >/dev/null
 wait "$pid"
 trap - EXIT
 if [[ $split_topology != none ]];then
+    if [[ $split_topology_manager == 1 && -z $topology_cold_source ]];then
+        rg -q '^RESULT split topology authenticated Manager API PASS' "$run/serial.log"
+    fi
     rg -q "^RESULT native CLI split topology PASS kind=$split_topology line=0 separate-imports=2 exact-payload=1 readonly=1" "$run/serial.log"
     rg -q '^RESULT native CLI split topology test PASS line=0' "$run/serial.log"
     sha256sum -c "$run/backing.sha256"
