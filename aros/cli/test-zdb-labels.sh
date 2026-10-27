@@ -83,6 +83,24 @@ fi
 "$AROS_TEST_HOST_ZDB" -l "$AROS_TEST_ZDB_MEMBER" >"$run/host-labels.log" 2>&1
 grep -q "name: 'topo_source'" "$run/host-labels.log"
 grep -q 'labels = 0 1 2 3 ' "$run/host-labels.log"
+if [[ -n ${AROS_TEST_ZDB_L2ARC_LIBNVPAIR:-} ]];then
+    sha256sum "$AROS_TEST_ZDB_L2ARC_LIBNVPAIR" >>"$run/inputs.sha256"
+    cp aros/cli/make-zdb-l2arc.py aros/cli/verify-zdb-l2arc.py "$run/"
+    python3 "$run/make-zdb-l2arc.py" "$AROS_TEST_ZDB_L2ARC_LIBNVPAIR" "$run/l2arc"
+    for fixture in little big missing;do
+        "$AROS_TEST_HOST_ZDB" -l "$run/l2arc/$fixture" >"$run/host-l2arc-$fixture.log" 2>&1
+        sha256sum "$run/l2arc/$fixture" >>"$run/inputs.sha256"
+    done
+    pool_maps+=(-map "$run/l2arc" /zdb-l2arc)
+    test_flags+=(-DOZ_ZDB_L2ARC)
+    printf 'l2arc_header_iso=1\n' >>"$run/mode.txt"
+    if [[ ${AROS_TEST_ZDB_DEVICE:-0} == 1 && ${AROS_TEST_ZDB_NO_SECURITY:-0} != 1 ]];then
+        qemu-img create -f qcow2 -F raw -b "$run/l2arc/little" "$run/l2arc-device.qcow2" >"$run/l2arc-device-create.log"
+        device_args+=(-drive "file=$run/l2arc-device.qcow2,format=qcow2,if=ide,index=1")
+        test_flags+=(-DOZ_ZDB_L2ARC_DEVICE)
+        printf 'l2arc_header_device=1\n' >>"$run/mode.txt"
+    fi
+fi
 if [[ ${AROS_TEST_ZDB_BAD_LABELS:-0} == 1 ]];then
     [[ -n ${AROS_TEST_ZDB_LIBRARY:-} ]] || { echo 'Damage test requires shared debugger' >&2;exit 1; }
     cp aros/cli/make-zdb-bad-labels.py aros/cli/verify-zdb-bad-labels.py "$run/"
@@ -182,5 +200,11 @@ fi
 if [[ ${AROS_TEST_ZDB_DEVICE:-0} == 1 ]];then
     qemu-img compare -f qcow2 -F raw "$run/device.qcow2" "$device_base" >"$run/device-unchanged.log"
     python3 "$run/verify-zdb-device.py" "$run" >"$run/device-comparison.log"
+fi
+if [[ -n ${AROS_TEST_ZDB_L2ARC_LIBNVPAIR:-} ]];then
+    if [[ -f $run/l2arc-device.qcow2 ]];then
+        qemu-img compare -f qcow2 -F raw "$run/l2arc-device.qcow2" "$run/l2arc/little" >"$run/l2arc-device-unchanged.log"
+    fi
+    python3 "$run/verify-zdb-l2arc.py" "$run" >"$run/l2arc-comparison.log"
 fi
 echo 'PASS selected native zdb checks; consult mode.txt and comparison logs for scope.'
