@@ -1,0 +1,67 @@
+[bootstrap:multiboot2] smartfb: using VBE mode 0x417a (1280x800x32, fb=0xFD000000)
+[bootstrap:multiboot2] smartfb: KRN_FBAddr=0x00000000FD000000
+0000000000000000 0x0000000000000000 | 000 | AROS64 - The AROS Research OS
+0000000000000000 0x0000000000000000 | 000 | 64-bit SMP build. Compiled Oct 21 2026
+0000000000000000 0x0000000000000000 | 000 | [Kernel] Local APIC: x2APIC
+0000000091a587e6 0x0000000000000000 | 000 | ACPI: RSDP 0x00000000000F52E0 000014 (v00 BOCHS )
+0000000092275f5a 0x0000000000000000 | 000 | ACPI: RSDT 0x000000007FFE25BF 000034 (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+0000000092c7676b 0x0000000000000000 | 000 | ACPI: FACP 0x000000007FFE243B 000074 (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+00000000936730b1 0x0000000000000000 | 000 | ACPI: DSDT 0x000000007FFE0040 0023FB (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+0000000094074286 0x0000000000000000 | 000 | ACPI: FACS 0x000000007FFE0000 000040
+00000000946ef327 0x0000000000000000 | 000 | ACPI: APIC 0x000000007FFE24AF 0000B0 (v03 BOCHS  BXPC     00000001 BXPC 00000001)
+00000000950ebf5b 0x0000000000000000 | 000 | ACPI: HPET 0x000000007FFE255F 000038 (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+0000000095aecf0a 0x0000000000000000 | 000 | ACPI: WAET 0x000000007FFE2597 000028 (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+00000000964f6212 0x0000000000000000 | 000 | [HPET] 2 units total
+00000000970a1d96 0x00000000013d33f0 | 000 | ACPI: 1 ACPI AML tables successfully acquired and loaded
+0000000097abfdd2 0x00000000013b1500 | 000 | [Kernel:ACPI-IOAPIC] Registering IO-APIC #1 [ID=000] @ 00000000fec00000 [GSI = 0]
+00000000984c76f9 0x00000000013b1500 | 000 | [Kernel:ACPI] System Total APICs: 8, 8 usable
+0000000098fc5be1 0x00000000013b1500 | 000 | [Kernel:APIC-IA32] MSI Interrupts Allocatable
+00000000997145aa 0x00000000013b1500 | 000 | [Kernel:APIC-IA32]     start = 16
+0000000099d446af 0x00000000013b1500 | 000 | [Kernel:APIC-IA32]     total = 198
+00000000b7fff804 0x00000000013b1500 | 000 | [Kernel:APIC-IA32] Heartbeat timer: TSC deadline
+00000000ba027d1b 0x00000000013dd250 | 001 | [Kernel:APIC-IA32.001] core_APIC_Calibrate: TSC freq inherited from BSP (2496012 kHz) [hypervisor]
+00000000bb99413c 0x00000000013dd250 | 001 | [Kernel:APIC-IA32.001] core_APIC_Calibrate: LAPIC timer freq inherited from BSP (1000427900 Hz) [hypervisor]
+00000000bed9fe63 0x00000000013dd890 | 002 | [Kernel:APIC-IA32.002] core_APIC_Calibrate: TSC freq inherited from BSP (2496012 kHz) [hypervisor]
+00000000c0724e9c 0x00000000013dd890 | 002 | [Kernel:APIC-IA32.002] core_APIC_Calibrate: LAPIC timer freq inherited from BSP (1000427900 Hz) [hypervisor]
+00000000c3b04a7d 0x000000000145d880 | 003 | [Kernel:APIC-IA32.003] core_APIC_Calibrate: TSC freq inherited from BSP (2496012 kHz) [hypervisor]
+00000000c54953c5 0x000000000145d880 | 003 | [Kernel:APIC-IA32.003] core_APIC_Calibrate: LAPIC timer freq inherited from BSP (1000427900 Hz) [hypervisor]
+00000000c883b161 0x00000000014984d0 | 004 | [Kernel:APIC-IA32.004] core_APIC_Calibrate: TSC freq inherited from BSP (2496012 kHz) [hypervisor]
+00000000ca1ba0ba 0x00000000014984d0 | 004 | [Kernel:APIC-IA32.004] core_APIC_Calibrate: LAPIC timer freq inherited from BSP (1000427900 Hz) [hypervisor]
+00000000cd58d2c0 0x00000000014d3180 | 005 | [Kernel:APIC-IA32.005] core_APIC_Calibrate: TSC freq inherited from BSP (2496012 kHz) [hypervisor]
+00000000ceee1041 0x00000000014d3180 | 005 | [Kernel:APIC-IA32.005] core_APIC_Calibrate: LAPIC timer freq inherited from BSP (1000427900 Hz) [hypervisor]
+00000000d2292b9c 0x000000000150de30 | 006 | [Kernel:APIC-IA32.006] core_APIC_Calibrate: TSC freq inherited from BSP (2496012 kHz) [hypervisor]
+00000000d3c151d7 0x000000000150de30 | 006 | [Kernel:APIC-IA32.006] core_APIC_Calibrate: LAPIC timer freq inherited from BSP (1000427900 Hz) [hypervisor]
+00000000d6fee233 0x0000000001548ae0 | 007 | [Kernel:APIC-IA32.007] core_APIC_Calibrate: TSC freq inherited from BSP (2496012 kHz) [hypervisor]
+00000000d894f033 0x0000000001548ae0 | 007 | [Kernel:APIC-IA32.007] core_APIC_Calibrate: LAPIC timer freq inherited from BSP (1000427900 Hz) [hypervisor]
+00000000daeae77f 0x00000000013b1500 | 000 | [PCIPC:Driver] PCIPC_InitClass: No ACPI MCFG table
+00000000dde0b6b7 0x00000000013b1500 | 000 | [Timer] clock: PIT (no invariant TSC)
+00000001cd17ca86 0x0000000001791f10 | 000 | [ATI] Init
+00000001cd60a9b3 0x0000000001791f10 | 000 | [ATI] No supported cards found
+00000001e64a352a 0x0000000001792780 | 000 | [HW] HW__HW__AddDriver: Failed to instantiate Driver Object
+Writable startup denied: configured security.library and system task identity required.
+RESULT native service release startup PASS diagnostic-modes-refused=3 malformed-refused=2 unauthorized-writable-refused=1 no-ports=1
+Native authenticated admission ready
+OpenZFS management API 3 ready; engine initialized
+C:zpool create -o cachefile=none -O mountpoint=none topo_source mirror "/Ozfiles/split-topology-0" "/Ozfiles/split-topology-1" mirror "/Ozfiles/split-topology-2" "/Ozfiles/split-topology-3"
+AROS OpenZFS: no native NFS/SMB export provider is installed.
+AROS OpenZFS: no native NFS/SMB export provider is installed.
+
+Split CLI result=0
+C:zpool add topo_source log "/Ozfiles/split-topology-4"
+Split CLI result=0
+C:zfs create -u topo_source/files
+Split CLI result=0
+C:zpool sync topo_source
+Split CLI result=0
+C:zpool split topo_source topo_split "/Ozfiles/split-topology-1" "/Ozfiles/split-topology-3"
+0000000d9273e052 0x00000000045e82e0 | 000 | [Kernel] core_IRQHandle(14): Exception error code 00000005
+0000000d92f81b65 0x00000000045e82e0 | 000 | [PF-DBG] CR2=0000000000000060 IP=0000000004edc1f0 SP=00000000045de748 CS=000000000000002b SS=0000000000000023 ERR=00000005
+0000000d93c920de 0x00000000045e82e0 | 000 | [PF-DBG] access=read mode=user present=protection rsvd=no ifetch=no
+0000000d945664bc 0x00000000045e82e0 | 000 | [PF-STK] +00 0000000004ec014c
+0000000d94b457b6 0x00000000045e82e0 | 000 | [PF-STK] +08 00000000045de790
+0000000d95118db9 0x00000000045e82e0 | 000 | [PF-STK] +10 0000000000001000
+0000000d956ef300 0x00000000045e82e0 | 000 | [PF-STK] +18 0000000000000338
+0000000d95ccd803 0x00000000045e82e0 | 000 | [PF-STK] +20 0000000000000000
+0000000d962a069a 0x00000000045e82e0 | 000 | [PF-STK] +28 000000004cc5a010
+0000000d9687fc37 0x00000000045e82e0 | 000 | [PF-STK] +30 0000000000000002
+0000000d96e55148 0x00000000045e82e0 | 000 | [PF-STK] +38 0000000000001000

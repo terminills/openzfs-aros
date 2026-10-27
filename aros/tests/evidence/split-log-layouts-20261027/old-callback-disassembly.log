@@ -1,0 +1,45 @@
+
+build-audit/shared-engine.fttbNbqO/openzfs.library:     file format elf64-x86-64
+
+
+Disassembly of section .text:
+
+0000000000278990 <spa_ld_log_sm_cb>:
+  278990:	55                   	push   %rbp
+  278991:	48 89 e5             	mov    %rsp,%rbp
+  278994:	41 57                	push   %r15
+  278996:	41 56                	push   %r14
+  278998:	41 55                	push   %r13
+  27899a:	41 54                	push   %r12
+  27899c:	49 89 f4             	mov    %rsi,%r12
+  27899f:	53                   	push   %rbx
+  2789a0:	48 89 fb             	mov    %rdi,%rbx
+  2789a3:	48 83 ec 18          	sub    $0x18,%rsp
+  2789a7:	4c 8b 3e             	mov    (%rsi),%r15
+  2789aa:	48 8b 47 10          	mov    0x10(%rdi),%rax
+  2789ae:	8b 77 04             	mov    0x4(%rdi),%esi
+  2789b1:	4c 8b 6f 08          	mov    0x8(%rdi),%r13
+  2789b5:	4c 89 ff             	mov    %r15,%rdi
+  2789b8:	48 89 45 c8          	mov    %rax,-0x38(%rbp)
+  2789bc:	e8 00 00 00 00       	callq  2789c1 <spa_ld_log_sm_cb+0x31>
+			2789bd: R_X86_64_PLT32	vdev_lookup_top-0x4
+  2789c1:	48 89 c7             	mov    %rax,%rdi
+  2789c4:	49 89 c6             	mov    %rax,%r14
+  2789c7:	e8 00 00 00 00       	callq  2789cc <spa_ld_log_sm_cb+0x3c>
+			2789c8: R_X86_64_PLT32	vdev_is_concrete-0x4
+  2789cc:	85 c0                	test   %eax,%eax
+  2789ce:	74 70                	je     278a40 <spa_ld_log_sm_cb+0xb0>
+  2789d0:	49 8b 8e 90 2b 00 00 	mov    0x2b90(%r14),%rcx
+  2789d7:	4c 89 e8             	mov    %r13,%rax
+  2789da:	48 d3 e8             	shr    %cl,%rax
+  2789dd:	48 89 c1             	mov    %rax,%rcx
+  2789e0:	49 8b 86 b0 2b 00 00 	mov    0x2bb0(%r14),%rax
+  2789e7:	4c 8b 34 c8          	mov    (%rax,%rcx,8),%r14
+  2789eb:	41 8b 86 a8 03 00 00 	mov    0x3a8(%r14),%eax
+  2789f2:	85 c0                	test   %eax,%eax
+  2789f4:	75 62                	jne    278a58 <spa_ld_log_sm_cb+0xc8>
+  2789f6:	4d 8b 64 24 08       	mov    0x8(%r12),%r12
+  2789fb:	4c 89 f7             	mov    %r14,%rdi
+  2789fe:	e8                   	.byte 0xe8
+	...
+			2789ff: R_X86_64_PLT32	metaslab_unflushed_txg-0x4

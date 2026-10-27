@@ -1085,6 +1085,8 @@ spa_ld_log_sm_cb(space_map_entry_t *sme, void *arg)
 	spa_t *spa = slls->slls_spa;
 
 	vdev_t *vd = vdev_lookup_top(spa, vdev_id);
+	if (vd == NULL)
+		return (SET_ERROR(EINVAL));
 
 	/*
 	 * If the vdev has been removed (i.e. it is indirect or a hole)

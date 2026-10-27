@@ -157,7 +157,7 @@ split_persistent=${AROS_TEST_SPLIT_PERSISTENT:-0}
 topology_cold_source=${AROS_TEST_SPLIT_COLD_SOURCE:-}
 [[ $split_persistent == 0 || ( $split_persistent == 1 && $split_topology != none ) ]]
 [[ -z $topology_cold_source || $split_persistent == 1 ]]
-[[ $split_topology == none || $split_topology == hole || $split_topology == indirect || $split_topology == plain ]]
+[[ $split_topology == none || $split_topology == hole || $split_topology == indirect || $split_topology == plain || $split_topology == trailing || $split_topology == mirrorlog ]]
 if [[ $split_topology != none ]];then
     [[ $manager_split == none && $native_bus == ide && $members == both && $layout == mirror && $writable == 0 && $gui == 0 && $gpt == 0 && $import_rewind == 0 && -z ${AROS_TEST_WHOLE_CLI_LINK:-} ]]
     [[ -f ${AROS_TEST_CLI_DIR:?split topology needs packaged CLI}/zpool && -f $AROS_TEST_CLI_DIR/zfs ]]
@@ -418,6 +418,8 @@ if [[ $split_topology != none ]];then
     topology_mode=1
     if [[ $split_topology == indirect ]];then topology_mode=2;fi
     if [[ $split_topology == plain ]];then topology_mode=3;fi
+    if [[ $split_topology == trailing ]];then topology_mode=4;fi
+    if [[ $split_topology == mirrorlog ]];then topology_mode=5;fi
     gui_flags+=(-DOZ_NATIVE_SPLIT_TOPOLOGY=$topology_mode)
     if [[ $split_persistent == 1 ]];then
         gui_flags+=(-DOZ_NATIVE_SPLIT_PERSISTENT)
@@ -1470,7 +1472,8 @@ if [[ $split_topology != none ]];then
         rg -q '^RESULT split topology backing clean detach PASS' "$run/serial.log"
         fsck.fat -n -v "$run/topology.raw" >"$run/topology-fat-check.log" 2>&1
         mkdir "$run/topology-members" "$run/topology-source" "$run/topology-split"
-        count=4;if [[ $split_topology == hole ]];then count=5;fi
+        count=4;if [[ $split_topology == hole || $split_topology == trailing ]];then count=5;fi
+        if [[ $split_topology == mirrorlog ]];then count=6;fi
         for ((i=0;i<count;i++));do
             mcopy -i "$run/topology.raw" "::split-topology-$i" "$run/topology-members/member$i"
             (cd "$run/topology-members";sha256sum "member$i") >>"$run/topology-members.sha256"
@@ -1481,7 +1484,8 @@ if [[ $split_topology != none ]];then
         else
             for i in 0 2;do ln -s "../topology-members/member$i" "$run/topology-source/member$i";done
             for i in 1 3;do ln -s "../topology-members/member$i" "$run/topology-split/member$i";done
-            if [[ $split_topology == hole ]];then ln -s ../topology-members/member4 "$run/topology-source/member4";fi
+            if ((count>=5));then ln -s ../topology-members/member4 "$run/topology-source/member4";fi
+            if ((count==6));then ln -s ../topology-members/member5 "$run/topology-source/member5";fi
         fi
         "$AROS_TEST_HOST_ZDB" -e -p "$run/topology-source" -bcc topo_source >"$run/topology-source-zdb.log" 2>&1
         "$AROS_TEST_HOST_ZDB" -e -p "$run/topology-split" -bcc topo_split >"$run/topology-split-zdb.log" 2>&1

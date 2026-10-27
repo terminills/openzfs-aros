@@ -9409,6 +9409,36 @@ spa_vdev_split_mirror(spa_t *spa, const char *newname, nvlist_t *config,
 	(void) nvlist_lookup_string(props,
 	    zpool_prop_to_name(ZPOOL_PROP_ALTROOT), &altroot);
 
+	/* Userland trims trailing log/hole slots from a split request. The
+	 * copied MOS can still contain log-spacemap entries for those IDs.
+	 * Preserve explicit holes while loading the destination, just as for
+	 * interior omitted logs, so those entries are recognized as retired
+	 * rather than resolving to a nonexistent top-level vdev. */
+	if (children < rvd->vdev_children) {
+		uint_t slots = rvd->vdev_children;
+		nvlist_t **expanded = kmem_zalloc(slots * sizeof (*expanded),
+		    KM_SLEEP);
+		for (c = 0; c < slots; c++) {
+			if (c < children) {
+				expanded[c] = fnvlist_dup(child[c]);
+			} else {
+				ASSERT(rvd->vdev_child[c]->vdev_islog ||
+				    !vdev_is_concrete(rvd->vdev_child[c]));
+				expanded[c] = fnvlist_alloc();
+				fnvlist_add_string(expanded[c], ZPOOL_CONFIG_TYPE,
+				    VDEV_TYPE_HOLE);
+				fnvlist_add_uint64(expanded[c],
+				    ZPOOL_CONFIG_IS_HOLE, 1);
+			}
+		}
+		fnvlist_add_nvlist_array(fnvlist_lookup_nvlist(config,
+		    ZPOOL_CONFIG_VDEV_TREE), ZPOOL_CONFIG_CHILDREN,
+		    (const nvlist_t * const *)expanded, slots);
+		for (c = 0; c < slots; c++)
+			fnvlist_free(expanded[c]);
+		kmem_free(expanded, slots * sizeof (*expanded));
+	}
+
 	/* add the new pool to the namespace */
 	newspa = spa_add(newname, config, altroot);
 	newspa->spa_avz_action = AVZ_ACTION_REBUILD;

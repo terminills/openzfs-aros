@@ -316,6 +316,12 @@ block and metadata-object checks. See `aros/tests/evidence/split-persistent-2026
 for the failed old engine, first-candidate lock assertion, corrected build and
 general public regression. This qualifies those private file-backed layouts,
 not concurrent workload stress, every topology, or physical power loss.
+Trailing single-log and interior mirrored-log layouts now have separate writer
+and cold-reader qualification too. The trailing case reproduced a null-vdev
+fault while replaying inherited log-space maps. Internal split construction
+now retains trailing hole slots; invalid unrelated vdev references fail with
+EINVAL. Both layouts pass unchanged cold-member hashes and independent block
+and MOS-object checks. See `aros/tests/evidence/split-log-layouts-20261027`.
 
 Damaged-pool CLEAR update (2026-10-27): actual upstream `clear -nF/-F` and
 `clear -nFX/-FX` pass on separately prepared damaged mirror fixtures through

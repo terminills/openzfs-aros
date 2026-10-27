@@ -1,0 +1,22 @@
+
+build-audit/shared-engine.fttbNbqO/openzfs.library:     file format elf64-x86-64
+
+
+Disassembly of section .text:
+
+0000000000294a70 <vdev_is_concrete>:
+  294a70:	48 8b 57 60          	mov    0x60(%rdi),%rdx
+  294a74:	48 81 fa 00 00 00 00 	cmp    $0x0,%rdx
+			294a77: R_X86_64_32S	vdev_hole_ops
+  294a7b:	0f 94 c0             	sete   %al
+  294a7e:	48 81 fa 00 00 00 00 	cmp    $0x0,%rdx
+			294a81: R_X86_64_32S	vdev_indirect_ops
+  294a85:	0f 94 c1             	sete   %cl
+  294a88:	09 c8                	or     %ecx,%eax
+  294a8a:	48 81 fa 00 00 00 00 	cmp    $0x0,%rdx
+			294a8d: R_X86_64_32S	vdev_missing_ops
+  294a91:	0f 94 c1             	sete   %cl
+  294a94:	09 c8                	or     %ecx,%eax
+  294a96:	48 81 fa 00 00 00 00 	cmp    $0x0,%rdx
+			294a99: R_X86_64_32S	vdev_root_ops
+  294a9d:	0f 94 c2             	sete   %dl

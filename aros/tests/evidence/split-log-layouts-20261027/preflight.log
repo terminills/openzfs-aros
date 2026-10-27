@@ -1,0 +1,2 @@
+PASS external snapshot=2 source-preserved=1 fixture-admission=1 unrelated-denied=1 system-denied=1 no-images=1
+Evidence: /mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/native-preflight.CkjeFaSo

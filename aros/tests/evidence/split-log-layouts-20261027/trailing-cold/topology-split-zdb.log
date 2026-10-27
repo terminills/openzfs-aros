@@ -1,0 +1,20 @@
+loading concrete vdev 0, metaslab 0 of 3 ...loading concrete vdev 0, metaslab 1 of 3 ...loading concrete vdev 0, metaslab 2 of 3 ...loading concrete vdev 1, metaslab 0 of 3 ...loading concrete vdev 1, metaslab 1 of 3 ...loading concrete vdev 1, metaslab 2 of 3 ...
+
+Traversing all blocks to verify checksums and verify nothing leaked ...
+
+
+	No leaks (block sum matches space maps exactly)
+
+	bp count:                    94
+	ganged count:                 0
+	bp logical:             3126272      avg:  33258
+	bp physical:              67584      avg:    718     compression:  46.26
+	bp allocated:            177664      avg:   1890     compression:  17.60
+	bp deduped:                   0    ref>1:      0   deduplication:   1.00
+	bp cloned:                    0    count:      0
+	Normal class:            180736     used:  0.18%
+	Embedded log class              0     used:  -nan%
+
+	additional, non-pointer bps of type 0:         43
+	Dittoed blocks on same vdev: 27
+
