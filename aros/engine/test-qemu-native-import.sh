@@ -160,7 +160,8 @@ clear_manager=${AROS_TEST_CLEAR_MANAGER:-0}
 [[ $clear_rewind == 0 || ( $clear_rewind == 1 && $import_rewind == 1 && $import_rewind_mode == commit ) ]]
 import_rewind_manager=${AROS_TEST_IMPORT_REWIND_MANAGER:-0}
 import_rewind_cut=${AROS_TEST_IMPORT_REWIND_CUT:-0}
-[[ $clear_rewind == 0 || ( $import_rewind_manager == 0 && $import_rewind_cut == 0 ) ]]
+[[ $clear_rewind == 0 || $import_rewind_manager == 0 ]]
+[[ $clear_rewind == 0 || $import_rewind_cut == 0 || ( $clear_assessment_only == 0 && $clear_manager == 0 && $clear_gui == 0 ) ]]
 [[ $import_rewind_cut == 0 || ( $import_rewind_cut == 1 && $import_rewind == 1 && $import_rewind_mode == commit ) ]]
 import_rewind_normal=${AROS_TEST_IMPORT_REWIND_NORMAL:-0}
 import_assessment=${AROS_TEST_IMPORT_ASSESSMENT:-0}
@@ -423,6 +424,7 @@ if [[ $import_rewind == 1 ]];then
     if [[ $clear_rewind == 1 ]];then gui_flags+=(-DOZ_NATIVE_CLEAR_REWIND);fi
     if [[ $clear_assessment_only == 1 ]];then gui_flags+=(-DOZ_NATIVE_CLEAR_ASSESSMENT_ONLY);fi
     if [[ $clear_gui == 1 ]];then gui_flags+=(-DOZ_NATIVE_CLEAR_GUI);fi
+    if [[ $clear_rewind == 1 && $import_rewind_cut == 1 ]];then gui_flags+=(-DOZ_NATIVE_CLEAR_CUT);fi
     if [[ $clear_manager == 1 ]];then gui_flags+=(-DOZ_NATIVE_CLEAR_MANAGER);fi
     if [[ $import_rewind_mode == seed ]];then gui_flags+=(-DOZ_NATIVE_IMPORT_REWIND_SEED);fi
     if [[ $import_rewind_normal == 1 ]];then gui_flags+=(-DOZ_NATIVE_IMPORT_REWIND_NORMAL);fi
@@ -1312,7 +1314,9 @@ timeout_seconds=${AROS_TEST_TIMEOUT_SECONDS:-$timeout_seconds}
 }
 echo "Guest completion deadline: $timeout_seconds seconds"
 if [[ $import_rewind_cut == 1 ]];then
-    python3 "$run/qmp-recovery-cut.py" "$run" "$pid" --timeout "$timeout_seconds" >"$run/recovery-cut.log" 2>&1
+    cut_args=()
+    if [[ $clear_rewind == 1 ]];then cut_args=(--clear-ready);fi
+    python3 "$run/qmp-recovery-cut.py" "$run" "$pid" --timeout "$timeout_seconds" "${cut_args[@]}" >"$run/recovery-cut.log" 2>&1
     cut_status=0
     wait "$pid" || cut_status=$?
     [[ $cut_status == 137 ]]

@@ -301,6 +301,11 @@ ordinary import, exact DOS readback, unchanged reader images and independent
 host zdb. This is not only healthy-clear acceptance. See
 `aros/tests/evidence/damaged-clear-rewind-20261027` for failed controls,
 authorization checks and the remaining Manager/assessment-only/crash gaps.
+Subsequent `clear-assessment-20261027` evidence closes normal/extreme
+assessment-only disk equality and visible Manager assessment/report checks.
+`interrupted-clear-20261027` adds one precise member-0 emulator flush cut,
+fresh recovery and separate cold exact readback; it is not general physical
+power-loss durability or all-boundary coverage.
 
 Current-source refresh (2026-10-26): all 248 upstream inventory units, service
 adapters and nvpair/XDR were rebuilt without old engine objects. Both the

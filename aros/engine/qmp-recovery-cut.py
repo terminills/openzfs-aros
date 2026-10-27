@@ -19,6 +19,8 @@ def main():
     parser.add_argument('pid', type=int)
     parser.add_argument('--timeout', type=int, default=600)
     parser.add_argument('--event', choices=('pwritev_done','flush_to_disk'), default='flush_to_disk')
+    parser.add_argument('--clear-ready', action='store_true',
+                        help='wait for the CLEAR client input barrier before arming')
     args = parser.parse_args()
     run = args.run.resolve(strict=True)
     if not run.name.startswith('native-import-run.') or not 60 <= args.timeout <= 14400:
@@ -64,10 +66,26 @@ def main():
             status = call('query-status')
             if status['running']:
                 raise RuntimeError('guest must start paused before the breakpoint is armed')
+            ready = ('READY native CLEAR commit boundary: waiting for armed host Return'
+                     if args.clear_ready else 'READY native writable recovery request')
+            if args.clear_ready:
+                call('cont')
+                while ready not in (run / 'serial.log').read_text(errors='replace'):
+                    verify_process()
+                    serial = (run / 'serial.log').read_text(errors='replace')
+                    if 'RESULT native damaged rewind test ' in serial:
+                        raise RuntimeError('guest finished before CLEAR input barrier')
+                    if time.monotonic() >= deadline:
+                        raise TimeoutError('CLEAR input barrier not reached')
+                    time.sleep(.1)
+                record('clear_input_barrier', {'ready': ready})
             result = call('human-monitor-command', {'command-line': f'qemu-io ozcut0 "break {args.event} recovery-cut"'})
             if result.strip():
                 raise RuntimeError(f'breakpoint setup failed: {result}')
-            call('cont')
+            if args.clear_ready:
+                call('human-monitor-command', {'command-line': 'sendkey ret'})
+            else:
+                call('cont')
             print(f'Recovery cut breakpoint armed on member 0 {args.event}', flush=True)
             marker = "blkdebug: Suspended request 'recovery-cut'"
             while marker not in (run / 'qemu.log').read_text(errors='replace'):
@@ -79,10 +97,12 @@ def main():
                     raise TimeoutError('write breakpoint not reached; not a crash diagnosis')
                 time.sleep(.1)
             serial = (run / 'serial.log').read_text(errors='replace')
-            if 'READY native writable recovery request' not in serial:
+            if ready not in serial:
                 raise RuntimeError('write occurred before the writable recovery request')
             if 'RESULT native damaged rewind commit PASS' in serial:
                 raise RuntimeError('cut was too late: full recovery already completed')
+            if args.clear_ready and 'RESULT native damaged clear rewind PASS' in serial:
+                raise RuntimeError('cut was too late: CLEAR already returned')
             # QMP stop may drain block I/O and wait forever on our deliberate
             # breakpoint. Do not request it, stats, shutdown or a flush here.
             record('boundary', {'member': 0, 'event': args.event, 'returned_to_guest': False})

@@ -638,6 +638,10 @@ int main(void)
     CHECK(clear_closed&&clear_assessment==0);
     CHECK(strstr(clear_report,"Would be able to return qemu_mirror to its state as of"));
 #ifndef OZ_NATIVE_CLEAR_ASSESSMENT_ONLY
+#ifdef OZ_NATIVE_CLEAR_CUT
+    note("READY native CLEAR commit boundary: waiting for armed host Return");
+    CHECK(FGetC(Input())=='\n');
+#endif
     CHECK(SystemTags((CONST_STRPTR)"C:zpool clear -" OZ_REWIND_FLAG " qemu_mirror",TAG_DONE)==0);
 #endif
 #endif

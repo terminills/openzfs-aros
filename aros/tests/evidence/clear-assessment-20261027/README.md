@@ -11,6 +11,7 @@ recovery implementation.
 | `native-import-run.sopWnp3k` | actual `zpool clear -nFX` | both identical |
 | `native-import-run.nOJodleo` | actual asynchronous Manager worker | both identical |
 | `native-import-run.IwGrGVIJ` | visible Manager preview, confirmation, submission and report; then automated CLI assessment | both identical |
+| `native-import-run.XJlS2fmF` | actual normal `zpool clear -nF` on the recent-damage fixture | both identical |
 
 Each run first demonstrates ordinary damaged-import refusal and readonly
 import recovery, refuses non-root and readonly verbatim admission, then
@@ -57,5 +58,7 @@ set `AROS_TEST_CLEAR_GUI=1`, `AROS_TEST_GUI=1` and the explicit matching
 GUI mode is allowed only with assessment-only mode, and does not count as
 pass until the subsequent disk checks succeed.
 
-Normal bounded `-nF` assessment-only equality, other topologies, interrupted
-CLEAR commits and physical-device durability remain separate tests.
+The fourth run extends unchanged-content proof to normal bounded `-nF`
+assessment. Other topologies and physical-device durability remain separate
+tests. The later `interrupted-clear-20261027` evidence covers one interrupted
+CLEAR commit boundary and independent cold recovery.

@@ -1,0 +1,10 @@
+{"time": 1793080568.3186264, "kind": "greeting", "value": {"QMP": {"version": {"qemu": {"micro": 94, "minor": 1, "major": 10}, "package": ""}, "capabilities": ["oob"]}}}
+{"time": 1793080568.3206003, "kind": "qmp_capabilities", "value": {"return": {}}}
+{"time": 1793080568.322496, "kind": "query-status", "value": {"return": {"status": "prelaunch", "running": false}}}
+{"time": 1793080568.3242376, "kind": "cont", "value": {"timestamp": {"seconds": 1793080568, "microseconds": 323775}, "event": "RESUME"}}
+{"time": 1793080568.3251545, "kind": "cont", "value": {"return": {}}}
+{"time": 1793080575.3583505, "kind": "clear_input_barrier", "value": {"ready": "READY native CLEAR commit boundary: waiting for armed host Return"}}
+{"time": 1793080575.3630087, "kind": "human-monitor-command", "value": {"return": ""}}
+{"time": 1793080575.380082, "kind": "human-monitor-command", "value": {"return": ""}}
+{"time": 1793080575.7833562, "kind": "boundary", "value": {"member": 0, "event": "flush_to_disk", "returned_to_guest": false}}
+{"time": 1793080575.7902374, "kind": "signal", "value": {"pid": 957459, "signal": "SIGKILL"}}
