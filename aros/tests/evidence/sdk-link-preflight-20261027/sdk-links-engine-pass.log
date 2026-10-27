@@ -1,0 +1,3 @@
+SDK prerequisite evidence: /mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/sdk-links.x0kppnz5
+PASS: SDK links pwrite
+Link prerequisites only: matching-runtime semantics still require native testing.

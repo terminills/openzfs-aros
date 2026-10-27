@@ -26,6 +26,10 @@ esac
 [[ -f $pthread_include/pthread.h && -f $pthread_archive ]]
 source "$repo/aros/engine/storage-preflight.sh"
 artifact_root=$(oz_artifact_root "$repo/build-aros" "${AROS_ARTIFACT_ROOT:-}")
+if [[ $pipe == - ]];then
+    python3 aros/platform/check-sdk-links.py --cc "$cc" --sdk "$sdk" \
+        --output-parent "$artifact_root" --profile cli
+fi
 out=$(mktemp -d "$artifact_root/cli-link.XXXXXXXX")
 echo "Evidence: $out"
 cp "$0" "$out/"

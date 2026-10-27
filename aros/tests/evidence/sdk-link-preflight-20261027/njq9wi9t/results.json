@@ -1,0 +1,38 @@
+{
+  "sdk": "/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer",
+  "profile": "cli",
+  "probe_sha256": "501cd0bdb9cb6189fbf25c1b459c3fb88f87b6b359bbb2f4333370c8dcca9234",
+  "results": [
+    {
+      "symbol": "pwrite",
+      "command": [
+        "/home/terminills/Documents/GitHub/aros-adt-crosstools/x86_64-aros-gcc",
+        "--sysroot=/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer",
+        "-B/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/lib/",
+        "-nix",
+        "-O0",
+        "-DOZ_PROBE_PWRITE",
+        "/mnt/short-term/openzfs-bootenv-candidate-20261025/aros/platform/sdk-link-probe.c",
+        "-o",
+        "/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/sdk-links.njq9wi9t/pwrite"
+      ],
+      "status": 0
+    },
+    {
+      "symbol": "pipe2",
+      "command": [
+        "/home/terminills/Documents/GitHub/aros-adt-crosstools/x86_64-aros-gcc",
+        "--sysroot=/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer",
+        "-B/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/lib/",
+        "-nix",
+        "-O0",
+        "-DOZ_PROBE_PIPE2",
+        "/mnt/short-term/openzfs-bootenv-candidate-20261025/aros/platform/sdk-link-probe.c",
+        "-o",
+        "/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/sdk-links.njq9wi9t/pipe2"
+      ],
+      "status": 1
+    }
+  ],
+  "runtime_verified": false
+}

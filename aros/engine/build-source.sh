@@ -24,6 +24,8 @@ case ${AROS_PTHREAD_BACKEND:-private} in
 esac
 source "$repo/aros/engine/storage-preflight.sh"
 artifact_root=$(oz_artifact_root "$repo/build-aros" "${AROS_ARTIFACT_ROOT:-}")
+python3 aros/platform/check-sdk-links.py --cc "${AROS_CC:?explicit AROS compiler required}" \
+    --sdk "$AROS_SDK" --output-parent "$artifact_root" --profile engine
 run=$(mktemp -d "$artifact_root/source-engine.XXXXXXXX")
 echo "Evidence: $run"
 mkdir "$run/engine" "$run/include" "$run/logs"

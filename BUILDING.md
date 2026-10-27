@@ -2,6 +2,29 @@
 
 ## AROS build-system integration (in progress)
 
+### Check SDK link prerequisites first
+
+Before an expensive build against a different SDK, run:
+
+```sh
+python3 aros/platform/check-sdk-links.py --cc /path/to/x86_64-aros-gcc \
+  --sdk /path/to/Developer --output-parent /path/to/external/builds --profile cli
+```
+
+The `engine` profile requires `pwrite`; `cli` also requires `pipe2` and
+`O_CLOEXEC`. Each symbol is compiled/linked separately, retaining its command,
+result and diagnostics in a fresh directory. No target binary is run and no
+runtime is modified. Explicit declarations test link availability even when
+SDK headers omit extensions; they do not provide implementations or stubs.
+Passing is not native-runtime, ABI or semantic qualification.
+
+`build-source.sh` performs the engine check before allocating its full build.
+`aros/cli/probe-link.sh` performs the CLI check for SDK-only (`-`) imports;
+explicit matching pipe-overlay builds retain their existing qualification path.
+The recorded 20261023 public SDK fails both links. The selected private SDK
+links `pwrite` but still needs the explicit pipe overlay for CLI builds.
+No seek/write positional-I/O or pipe/fcntl atomic-creation fallback is provided.
+
 ### Current deferred-destruction development package
 
 Local archive `build-aros/mmake-bundle.7uo8g04u-verified.tar.xz` has SHA-256

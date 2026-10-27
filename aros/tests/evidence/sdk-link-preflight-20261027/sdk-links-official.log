@@ -1,0 +1,4 @@
+SDK prerequisite evidence: /mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/sdk-links.0fyt8btf
+FAIL: SDK links pwrite
+FAIL: SDK links pipe2
+Missing SDK prerequisite; inspect per-symbol logs. No fallback or runtime modification performed.
