@@ -17,6 +17,11 @@ native label/lifetime tests with a 64-KiB caller stack; the library supplies
 the required 4-MiB stack. Native block/MOS traversal now passes for an
 ISO-backed two-member pool with a special allocation class, matching host
 block accounting, dataset roots, feature checks and exact object rows.
+Damaged-label tests also match host output exactly: one invalid configuration
+returns 1 with three labels decoded; all four invalid configurations return 2.
+Fresh healthy invocations following both errors return 0. The same eight-CPU
+guest passes block/MOS inspection; original and damaged-copy hashes remain
+unchanged. See `aros/tests/evidence/native-zdb-damage-20261027`.
 Read-only raw-device admission, broader diagnostic/corruption coverage and
 public release-bundle qualification remain unfinished. See
 `aros/tests/evidence/native-zdb-pool-20261027`.

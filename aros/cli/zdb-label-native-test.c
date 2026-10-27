@@ -6,6 +6,34 @@
 #include <stdio.h>
 #include <string.h>
 
+#ifdef OZ_ZDB_BAD_LABELS
+static int check_bad_labels(void)
+{
+    const char *commands[]={
+        "C:ZdbAudit -l /SYS/zdb-bad/one-bad >RAM:zdb-bad.log",
+        "C:ZdbAudit -l /SYS/zdb-member >RAM:zdb-bad.log",
+        "C:ZdbAudit -l /SYS/zdb-bad/all-bad >RAM:zdb-bad.log",
+        "C:ZdbAudit -l /SYS/zdb-member >RAM:zdb-bad.log"
+    };
+    const LONG expected[]={1,0,2,0};
+    for(unsigned pass=0;pass<4;pass++) {
+        LONG status=SystemTags((CONST_STRPTR)commands[pass],NP_StackSize,65536,TAG_DONE);
+        bug("RESULT native zdb damaged pass=%u exit=%ld\n",pass,(long)status);
+        FILE *report=fopen("RAM:zdb-bad.log","r");
+        if(!report)return 20;
+        char line[1024];unsigned lines=0;
+        while(fgets(line,sizeof(line),report)) {
+            bug("ZDBBAD[%u] %s",pass,line);lines++;
+        }
+        int failed=ferror(report)!=0;
+        fclose(report);
+        if(status!=expected[pass]||failed||!lines)return 20;
+    }
+    bug("RESULT native zdb damaged PASS cases=4\n");
+    return 0;
+}
+#endif
+
 #ifdef OZ_ZDB_POOL
 static int check_pool(void)
 {
@@ -87,6 +115,11 @@ int main(void)
 #endif
 #ifdef OZ_ZDB_POOL
     if(check_pool())return 20;
+#endif
+#ifdef OZ_ZDB_BAD_LABELS
+    if(check_bad_labels()){
+        bug("RESULT native zdb labels FAIL damaged-labels\n");return 20;
+    }
 #endif
     bug("RESULT native zdb labels PASS runs=2 storage=readonly-iso\n");
     return 0;

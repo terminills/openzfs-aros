@@ -52,6 +52,22 @@ fi
 "$AROS_TEST_HOST_ZDB" -l "$AROS_TEST_ZDB_MEMBER" >"$run/host-labels.log" 2>&1
 grep -q "name: 'topo_source'" "$run/host-labels.log"
 grep -q 'labels = 0 1 2 3 ' "$run/host-labels.log"
+if [[ ${AROS_TEST_ZDB_BAD_LABELS:-0} == 1 ]];then
+    [[ -n ${AROS_TEST_ZDB_LIBRARY:-} ]] || { echo 'Damage test requires shared debugger' >&2;exit 1; }
+    cp aros/cli/make-zdb-bad-labels.py aros/cli/verify-zdb-bad-labels.py "$run/"
+    python3 "$run/make-zdb-bad-labels.py" "$AROS_TEST_ZDB_MEMBER" "$run/damaged"
+    for fixture in one-bad all-bad;do
+        expected=1;[[ $fixture != all-bad ]] || expected=2
+        status=0
+        "$AROS_TEST_HOST_ZDB" -l "$run/damaged/$fixture" >"$run/host-$fixture.log" 2>&1 || status=$?
+        [[ $status == "$expected" ]] || { echo "Unexpected host $fixture status=$status";exit 1; }
+        printf '%s\n' "$status" >"$run/host-$fixture.status"
+        sha256sum "$run/damaged/$fixture" >>"$run/inputs.sha256"
+    done
+    pool_maps+=(-map "$run/damaged/one-bad" /zdb-bad/one-bad -map "$run/damaged/all-bad" /zdb-bad/all-bad)
+    test_flags+=(-DOZ_ZDB_BAD_LABELS)
+    printf 'damaged_labels=1\n' >>"$run/mode.txt"
+fi
 "$AROS_CC" --sysroot="$AROS_SDK" -B"$AROS_SDK/lib/" -O2 -Wall -Wextra \
     "${test_flags[@]}" aros/cli/zdb-label-native-test.c -o "$run/OpenZFSZdbLabelsTest" >"$run/build.log" 2>&1
 xorriso -indev "$AROS_TEST_ISO" -outdev "$run/test.iso" \
@@ -97,5 +113,8 @@ if [[ -n ${AROS_TEST_ZDB_LIBRARY:-} ]];then
 fi
 if [[ -n ${AROS_TEST_ZDB_POOL_SECOND:-} ]];then
     python3 aros/cli/verify-zdb-pool.py "$run" >"$run/pool-comparison.log"
+fi
+if [[ ${AROS_TEST_ZDB_BAD_LABELS:-0} == 1 ]];then
+    python3 "$run/verify-zdb-bad-labels.py" "$run" >"$run/damaged-comparison.log"
 fi
 echo 'PASS selected native zdb checks; consult mode.txt and comparison logs for scope.'

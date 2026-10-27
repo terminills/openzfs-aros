@@ -26,6 +26,9 @@ and caller exit. Native block/MOS traversal also passes on a two-member
 disposable pool with a special allocation class: block accounting, three
 datasets, 21 feature checks and 72 object rows agree with host zdb. Reports
 are retained losslessly; derived percentage rounding is not compared.
+Native damaged-label inspection matches host diagnostics and exit statuses
+(one damaged label: 1; all four: 2), with successful healthy reloads after each
+error. See `aros/tests/evidence/native-zdb-damage-20261027`.
 Production raw-device admission and broader diagnostic-option/corruption
 coverage remain unqualified. See `aros/tests/evidence/native-zdb-pool-20261027`.
 

@@ -1,0 +1,17 @@
+{
+  "one-bad": {
+    "size": 67108864,
+    "zeroed_config_offsets": [
+      16384
+    ]
+  },
+  "all-bad": {
+    "size": 67108864,
+    "zeroed_config_offsets": [
+      16384,
+      278528,
+      66600960,
+      66863104
+    ]
+  }
+}
