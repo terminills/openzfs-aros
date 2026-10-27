@@ -52,3 +52,19 @@ L2ARC inspection, broad topology qualification or physical durability is
 claimed here. Public SDK/runtime and complete release qualification remain
 unfinished. The root/user fixture helpers are test-only, never installed
 with the production launcher.
+
+## Reproduction of this qualification run
+
+From the recorded qualification checkout (paths in the retained recipe are
+explicit private inputs, not public SDK defaults):
+
+```sh
+AROS_TEST_ZDB_BUILD="$PWD/build-audit/mmake-debugger.JLOOcjrH" \
+AROS_TEST_ZDB_PARTITIONS=1 AROS_TEST_ZDB_NATIVE_POOL=1 \
+bash aros/tests/evidence/native-zdb-bindings-20261027/run-zdb-device.sh
+```
+
+The recipe still has an older whole-device debugger default, so the explicit
+`AROS_TEST_ZDB_BUILD` override is required for the native-pool case. A new build
+must replace that path with its own generated MetaMake result, not reuse an
+unrelated binary with the same filename.
