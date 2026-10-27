@@ -7,6 +7,7 @@ service=$(realpath -e "${1:?qualified native service build required}")
 cli=$(realpath -e "${2:?whole CLI build required}")
 handler=${3:-}
 manager=${4:-$service/OpenZFSManagerNative}
+debugger_run=${5:-}
 rg -Fxq 'service_test_modes=0' "$service/service-build-options.txt"
 rg -Fxq 'full_dispatcher=1' "$service/service-build-options.txt"
 source "$repo/aros/engine/storage-preflight.sh"
@@ -113,6 +114,36 @@ for scenario in missing-manifest empty-manifest stale-hash;do
     ! rg -q '^Bundle:' "$candidate/result.log"
     echo "PASS manager-$scenario: $expected"
 done
+if [[ -n $debugger_run ]];then
+    debugger_run=$(realpath -e "$debugger_run")
+    sha256sum "$service/zdb" "$debugger_run/native-debugger.sha256" >>"$run/inputs.sha256"
+    for scenario in missing-run missing-binary stale-launcher incomplete-evidence;do
+        candidate="$run/debugger-$scenario";mkdir "$candidate"
+        cp "$service/OpenZFSServiceNative" "$service/openzfs.library" \
+            "$service/service-build.sha256" "$service/engine-library.sha256" \
+            "$service/service-build-options.txt" "$candidate/"
+        selected_run="$debugger_run"
+        expected='Refusing unqualified native debugger.'
+        case $scenario in
+            missing-run) cp "$service/zdb" "$candidate/"
+                selected_run=''
+                expected='Refusing bundle without native debugger and runtime evidence.' ;;
+            missing-binary) expected='Refusing bundle without native debugger and runtime evidence.' ;;
+            stale-launcher) cp "$service/OpenZFSServiceNative" "$candidate/zdb" ;;
+            incomplete-evidence) cp "$service/zdb" "$candidate/"
+                cp -a "$debugger_run" "$candidate/evidence"
+                mv "$candidate/evidence/native-debugger.sha256" "$candidate/saved-native-debugger.sha256"
+                selected_run="$candidate/evidence" ;;
+        esac
+        status=0
+        bash aros/distribution/stage.sh "$candidate" "$cli" "$manager" '' '' "$selected_run" \
+            >"$candidate/result.log" 2>&1 || status=$?
+        [[ $status == 2 ]]
+        rg -Fxq "$expected" "$candidate/result.log"
+        ! rg -q '^Bundle:' "$candidate/result.log"
+        echo "PASS debugger-$scenario: $expected"
+    done
+fi
 sha256sum -c "$run/inputs.sha256"
 echo 'PASS: staging policy diagnostic=1 status-trace=1 incomplete=1 missing-provenance=1 selected-hash=1 missing-hash=1 empty-hash=1 missing-binary=1 inputs-unchanged=1'
 if rg -Fxq 'shared_engine=1' "$service/service-build-options.txt";then echo 'PASS: shared engine staging policy missing-hash=1 empty-hash=1 missing-library=1 selected-hash=1';fi

@@ -1,5 +1,32 @@
 # AROS OpenZFS development bundle
 
+## Native debugger packaging (2026-10-27)
+
+The legacy `stage.sh` interface is:
+
+```sh
+bash aros/distribution/stage.sh SERVICE_BUILD CLI_BUILD MANAGER DEVICE_BUILD HANDLER_BUILD NATIVE_ZDB_RUN
+```
+
+Use empty strings for omitted optional device/handler builds. The selected
+service build must now contain the thin `zdb` launcher and a shared engine
+with debugger vector 6. The native debugger run is mandatory: both this
+builder and `stage-mmake.py` use the same role-bound runtime acceptance gate.
+The bundle installs the selected launcher at `C/zdb` and retains debugger
+logs, mode, status and hash evidence under `Metadata/native-zdb/`.
+
+This legacy builder remains a development assembly path, not the full public
+release gate. Its successful assembly does not substitute for the MetaMake
+builder's GUI, cold-boot, encrypted-root, companion-tool, matching platform
+runtime and source-snapshot requirements. In particular, do not treat a
+legacy CLI build as a current complete upstream-command package merely
+because its binaries link; external-command ExecHelper integration is gated
+by the MetaMake path.
+
+The debugger inspects offline pools through the shared engine. Stop the
+service first; it does not provide writer exclusion. Native paths require
+configured security and root authorization, and are opened read-only.
+
 ## Writable file-backing flush admission (2026-10-04)
 
 Commit `50622f48` requires a successful flush when opening an AROS writable

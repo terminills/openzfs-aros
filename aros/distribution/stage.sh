@@ -126,6 +126,25 @@ if [[ ${#engine_files[@]} != 0 ]];then
         echo 'Refusing instrumented or engine-embedded shared launcher.' >&2;exit 2
     fi
 fi
+if [[ ${#engine_files[@]} == 0 ]];then
+    echo 'Refusing bundle without shared debugger engine.' >&2;exit 2
+fi
+if [[ ! -f $service/zdb || -z ${6:-} ]];then
+    echo 'Refusing bundle without native debugger and runtime evidence.' >&2;exit 2
+fi
+debugger_run=$(realpath -e "$6")
+if [[ $symbols != *' T oz_zdb_main'* || $symbols != *' T OpenZFS_6_OpenZFSRunDebugger'* ]];then
+    echo 'Refusing shared engine without debugger vector 6.' >&2;exit 2
+fi
+debugger_symbols=$(nm "$service/zdb")
+if [[ $debugger_symbols == *'__wrap_'* || $debugger_symbols == *' T zfsdev_ioctl_common'* ||
+      $debugger_symbols == *' T oz_zdb_main'* ]];then
+    echo 'Refusing instrumented or engine-embedded debugger launcher.' >&2;exit 2
+fi
+if ! python3 aros/distribution/verify-native-debugger.py "$debugger_run" "$service/zdb" "$engine";then
+    echo 'Refusing unqualified native debugger.' >&2;exit 2
+fi
+cli_files+=("$service/zdb")
 if [[ -n $device ]];then
     for symbol in oz_zvol_open oz_zvol_io oz_zvol_info oz_zvol_flush oz_zvol_close;do
         [[ $symbols == *" T $symbol"* ]]
@@ -185,6 +204,10 @@ git diff --binary >"$out/Metadata/packaging-worktree.patch"
 sha256sum "$service/OpenZFSServiceNative" "$manager" "${cli_files[@]}" "${device_files[@]}" "${engine_files[@]}" "${handler_files[@]}" >"$out/Metadata/source-binaries.sha256"
 if [[ -f "$manager.inputs.sha256" ]];then cp "$manager.inputs.sha256" "$out/Metadata/manager-inputs.sha256";fi
 cp "$0" "$out/Metadata/stage.sh"
+mkdir "$out/Metadata/native-zdb"
+cp "$debugger_run"/*.log "$debugger_run"/*.sha256 "$debugger_run"/*.status \
+    "$debugger_run/mode.txt" "$out/Metadata/native-zdb/"
+cp aros/distribution/verify-native-debugger.py aros/distribution/stage-mmake.py "$out/Metadata/"
 (
     cd "$out"
     find "${bundle_dirs[@]}" -type f -print0 | LC_ALL=C sort -z | xargs -0 sha256sum >SHA256SUMS

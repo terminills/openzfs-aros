@@ -1,0 +1,31 @@
+Evidence: /mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/stage-policy.OXHjtG2L
+PASS diagnostic: Refusing service without diagnostic-modes-off provenance.
+PASS incomplete: Refusing service without full dispatcher provenance.
+PASS status-trace: Refusing status-trace diagnostic build.
+PASS missing-provenance: Refusing service without diagnostic-modes-off provenance.
+PASS stale-hash: Refusing service binary/build hash mismatch.
+PASS missing-hash: Refusing service without readable build hash.
+PASS empty-hash: Refusing service without readable build hash.
+PASS missing-binary: Refusing missing service binary.
+PASS shared-missing-hash: Refusing shared engine without readable library hash.
+PASS shared-empty-hash: Refusing shared engine without readable library hash.
+PASS shared-missing-library: Refusing missing shared engine library.
+PASS shared-stale-hash: Refusing shared engine library/build hash mismatch.
+PASS manager-missing-manifest: Refusing Manager without readable build manifest.
+PASS manager-empty-manifest: Refusing Manager without readable build manifest.
+PASS manager-stale-hash: Refusing Manager binary/build hash mismatch.
+PASS debugger-missing-run: Refusing bundle without native debugger and runtime evidence.
+PASS debugger-missing-binary: Refusing bundle without native debugger and runtime evidence.
+PASS debugger-stale-launcher: Refusing unqualified native debugger.
+PASS debugger-incomplete-evidence: Refusing unqualified native debugger.
+/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/debugger-service.0umlrjD3/OpenZFSServiceNative: OK
+/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/debugger-service.0umlrjD3/service-build-options.txt: OK
+/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/debugger-service.0umlrjD3/service-build.sha256: OK
+/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/debugger-service.0umlrjD3/openzfs.library: OK
+/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/debugger-service.0umlrjD3/engine-library.sha256: OK
+/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/source-engine.sa4fWOFY/service/OpenZFSManagerNative: OK
+/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/source-engine.sa4fWOFY/service/OpenZFSManagerNative.inputs.sha256: OK
+/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/debugger-service.0umlrjD3/zdb: OK
+/mnt/short-term/openzfs-bootenv-candidate-20261025/aros/tests/evidence/native-zdb-gpt-20261027/6Y7sxTkv/native-debugger.sha256: OK
+PASS: staging policy diagnostic=1 status-trace=1 incomplete=1 missing-provenance=1 selected-hash=1 missing-hash=1 empty-hash=1 missing-binary=1 inputs-unchanged=1
+PASS: shared engine staging policy missing-hash=1 empty-hash=1 missing-library=1 selected-hash=1
