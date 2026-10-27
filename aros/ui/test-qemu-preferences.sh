@@ -40,7 +40,7 @@ if [[ $gui == startup ]];then startup=aros/ui/Startup-Pool-Preferences-GUI;fi
 if [[ $gui == simple ]];then startup=aros/ui/Startup-Preferences-Simple;fi
 run=$(mktemp -d "$artifact_root/$prefix.XXXXXXXX")
 echo "Evidence: $run"
-cp build-aros/OpenZFSPreferencesTest "$run/"
+cp "${AROS_TEST_PREFERENCES_BINARY:-build-aros/OpenZFSPreferencesTest}" "$run/OpenZFSPreferencesTest"
 cp aros/ui/preferences.c aros/ui/preferences-file.c aros/ui/preferences.h aros/ui/preferences-test.c "$run/"
 cp aros/ui/startup-settings.c aros/ui/startup-settings.h aros/ui/startup-settings-test.c "$run/"
 cp aros/ui/startup-settings-file.c aros/ui/settings-file.h "$run/"

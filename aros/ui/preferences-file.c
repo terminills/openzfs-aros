@@ -173,7 +173,22 @@ int oz_settings_store(const char *path,const void *p,int *published,const struct
     }
     if(!error){
         if(!Rename((CONST_STRPTR)next,(CONST_STRPTR)path))error=file_error(IoErr());
-        else{committed=1;created=0;if(published)*published=1;}
+        else{
+            committed=1;created=0;
+            /* A successful DOS rename is not sufficient evidence that the
+             * destination is reachable. Verify before discarding recovery
+             * data or reporting publication to the caller. */
+            void *check=calloc(1,codec->size);
+            error=check?load_one(path,check,codec):ENOMEM;
+            if(!error&&!codec->equal(check,p))error=EIO;
+            free(check);
+            if(!error){
+                lock=Lock((CONST_STRPTR)path,SHARED_LOCK);
+                if(!lock)error=file_error(IoErr());
+                else{error=verify_lock(lock,codec,0);UnLock(lock);}
+            }
+            if(!error&&published)*published=1;
+        }
     }
     if(error&&moved&&!committed){
         /* A failed rollback retains the previous version in the transaction;
@@ -181,11 +196,14 @@ int oz_settings_store(const char *path,const void *p,int *published,const struct
         if(Rename((CONST_STRPTR)previous,(CONST_STRPTR)path))moved=0;
     }
     if(created&&!DeleteFile((CONST_STRPTR)next)&&!error)error=file_error(IoErr());
-    if(committed&&moved){
+    if(committed&&moved&&!error){
         if(!DeleteFile((CONST_STRPTR)previous)){if(!error)error=file_error(IoErr());}
         else moved=0;
     }
-    if(!moved&&!DeleteFile((CONST_STRPTR)stage)&&!error)error=file_error(IoErr());
+    /* Retain a transaction when publication cannot be verified, including
+     * an earlier version if one was moved there. Never erase the sole
+     * recoverable copy following an anomalous successful rename. */
+    if(!moved&&!(committed&&error)&&!DeleteFile((CONST_STRPTR)stage)&&!error)error=file_error(IoErr());
     return error;
 }
 static int pref_read(BPTR f,void *p){return oz_preferences_read(f,p);}

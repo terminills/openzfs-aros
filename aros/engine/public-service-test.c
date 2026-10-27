@@ -1010,6 +1010,46 @@ cleanup:
 #undef CONFIG_CHECK
     return error;
 }
+/* Fixed GUIDs exercise both 32-bit halves across independent writer/cold
+ * boots. Disabled records must never probe their deliberately invalid path. */
+static void companion_archive_inventory(const char *,uint64_t);
+static int companion_persistent_guid_cases(int cold)
+{
+    static const struct { uint64_t guid; const char *hex; } cases[]={
+        {UINT64_C(0x58240c24e63dee45),"58240c24e63dee45"},
+        {UINT64_C(0x8000000000000001),"8000000000000001"},
+        {UINT64_C(0x0000000080000000),"0000000080000000"},
+        {UINT64_C(0xffffffffffffffff),"ffffffffffffffff"}
+    };
+    for(unsigned i=0;i<sizeof(cases)/sizeof(cases[0]);i++){
+        struct oz_startup_settings record={0},loaded={0};unsigned published=0;
+        record.guid=cases[i].guid;record.count=1;
+        strcpy(record.pool,"guid_disabled");strcpy(record.paths[0],"RAM:must-not-be-opened");
+        char path[96],command[160],line[160];int error=0;
+        if(!cold)error=oz_startup_settings_apply_trusted(&record,1,&published);
+        snprintf(line,sizeof(line),"Public GUID split format=%08lx%08lx expected=%s published=%u errno=%d\n",
+            (unsigned long)(record.guid>>32),(unsigned long)(record.guid&UINT64_C(0xffffffff)),cases[i].hex,published,error);note(line);
+        companion_archive_inventory(cold?"guid-cold":"guid-writer",record.guid);
+        snprintf(path,sizeof(path),"ENVARC:OpenZFS-%s.prefs",cases[i].hex);
+        BPTR file=error?0:Open((CONST_STRPTR)path,MODE_OLDFILE);
+        if(!error&&!file)error=ENOENT;
+        if(file){error=oz_startup_settings_read(file,&loaded);if(!Close(file)&&!error)error=EIO;}
+        if(!error&&(loaded.guid!=record.guid||loaded.flags||loaded.count!=1))error=EINVAL;
+        snprintf(path,sizeof(path),"ENV:OpenZFS-%s.prefs",cases[i].hex);
+        if(!cold&&!error&&!DeleteFile((CONST_STRPTR)path))error=EIO;
+        snprintf(command,sizeof(command),"C:OpenZFSStartup %s PREPARE",cases[i].hex);
+        if(!error&&cli_command(command))error=EIO;
+        if(!error)error=oz_startup_settings_trusted(record.guid,&loaded);
+        if(!error&&(loaded.guid!=record.guid||loaded.flags))error=EINVAL;
+        snprintf(command,sizeof(command),"C:OpenZFSStartup %s RESTORE",cases[i].hex);
+        if(!error&&cli_command(command))error=EIO;
+        if(!error&&(present(OZ_PORT)||present(OZ_ADMISSION_PORT)))error=EIO;
+        if(!error&&!DeleteFile((CONST_STRPTR)path))error=EIO;
+        snprintf(line,sizeof(line),"Public persistent GUID %s cold=%d errno=%d\n",cases[i].hex,cold,error);note(line);
+        if(error)return error;
+    }
+    return 0;
+}
 static int companion_persistent_settings(int cold)
 {
     BPTR marker=Lock((CONST_STRPTR)"SYS:openzfs-startup-archive-test",SHARED_LOCK);
@@ -1068,6 +1108,7 @@ static int companion_persistent_settings(int cold)
         !loaded.flags&&loaded.count==1&&!strcmp(loaded.pool,record.pool)&&!strcmp(loaded.paths[0],record.paths[0]));
     PS_CHECK(!cli_command("C:OpenZFSStartup 5a46530000000002 RESTORE"));
     PS_CHECK(!present(OZ_PORT)&&!present(OZ_ADMISSION_PORT));
+    PS_CHECK(!companion_persistent_guid_cases(cold));
 cleanup:
     for(unsigned i=0;i<2;i++){
         if(assigned[i]){
