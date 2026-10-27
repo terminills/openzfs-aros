@@ -1,0 +1,2 @@
+Evidence: /mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/positioned-concurrent.uDHqQlPs
+PASS positioned concurrency: three eight-CPU executions; logs retained at /mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/positioned-concurrent.uDHqQlPs

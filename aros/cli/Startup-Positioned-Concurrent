@@ -1,0 +1,19 @@
+FailAt 21
+Stack 262144
+Mount DEVS:DOSDrivers/SER
+C:OpenZFSPositionedConcurrentTest
+If WARN
+  Echo "RESULT positioned shell FAIL" >SER:
+  Quit 20
+EndIf
+C:OpenZFSPositionedConcurrentTest
+If WARN
+  Echo "RESULT positioned shell FAIL" >SER:
+  Quit 20
+EndIf
+C:OpenZFSPositionedConcurrentTest
+If WARN
+  Echo "RESULT positioned shell FAIL" >SER:
+  Quit 20
+EndIf
+Echo "RESULT positioned shell PASS runs=3" >SER:

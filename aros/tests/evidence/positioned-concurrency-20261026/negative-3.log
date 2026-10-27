@@ -1,0 +1,5 @@
+Positioned worker=0 failed errno=0
+Positioned worker=1 failed errno=0
+Positioned worker=2 failed errno=0
+Positioned worker=3 failed errno=0
+RESULT positioned concurrency FAIL workers=4 iterations=1000 dup=1 ordinary-read=1 offset=1
