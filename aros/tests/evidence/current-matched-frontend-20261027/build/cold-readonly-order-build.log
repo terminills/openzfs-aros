@@ -1,0 +1,219 @@
+Client build: /mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/dependency-client.VYAAdBpI
+In file included from /mnt/short-term/openzfs-bootenv-candidate-20261025/include/sys/zfs_context.h:96,
+                 from /mnt/short-term/openzfs-bootenv-candidate-20261025/aros/cli/ioctl-public-test.c:3:
+/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/dependencies.YF6P1Tca/pthread-consistent.zxUBt8mH/source/pthread.h:57:9: warning: 'PTHREAD_KEYS_MAX' redefined
+   57 | #define PTHREAD_KEYS_MAX                      64
+      |         ^~~~~~~~~~~~~~~~
+In file included from /home/terminills/Documents/GitHub/aros-adt-crosstools/lib/gcc/x86_64-aros/15.2.0/include/limits.h:210,
+                 from /home/terminills/Documents/GitHub/aros-adt-crosstools/lib/gcc/x86_64-aros/15.2.0/include/syslimits.h:9,
+                 from /home/terminills/Documents/GitHub/aros-adt-crosstools/lib/gcc/x86_64-aros/15.2.0/include/limits.h:34,
+                 from /home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/sys/param.h:19,
+                 from /mnt/short-term/openzfs-bootenv-candidate-20261025/lib/libspl/include/os/linux/sys/param.h:31,
+                 from /mnt/short-term/openzfs-bootenv-candidate-20261025/lib/libspl/include/sys/types.h:55,
+                 from /mnt/short-term/openzfs-bootenv-candidate-20261025/aros/engine/include/sys/stat.h:4,
+                 from /home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/fcntl.h:14,
+                 from /mnt/short-term/openzfs-bootenv-candidate-20261025/include/sys/zfs_context.h:92:
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/limits.h:40:9: note: this is the location of the previous definition
+   40 | #define PTHREAD_KEYS_MAX                        _POSIX_THREAD_KEYS_MAX
+      |         ^~~~~~~~~~~~~~~~
+/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/dependencies.YF6P1Tca/pthread-consistent.zxUBt8mH/source/pthread.h:58:9: warning: 'PTHREAD_STACK_MIN' redefined
+   58 | #define PTHREAD_STACK_MIN                     40960
+      |         ^~~~~~~~~~~~~~~~~
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/limits.h:41:9: note: this is the location of the previous definition
+   41 | #define PTHREAD_STACK_MIN                       0
+      |         ^~~~~~~~~~~~~~~~~
+/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/dependencies.YF6P1Tca/pthread-consistent.zxUBt8mH/source/pthread.h:59:9: warning: 'PTHREAD_THREADS_MAX' redefined
+   59 | #define PTHREAD_THREADS_MAX                   2019
+      |         ^~~~~~~~~~~~~~~~~~~
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/limits.h:42:9: note: this is the location of the previous definition
+   42 | #define PTHREAD_THREADS_MAX                     _POSIX_THREAD_THREADS_MAX
+      |         ^~~~~~~~~~~~~~~~~~~
+/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/dependencies.YF6P1Tca/pthread-consistent.zxUBt8mH/source/pthread.h:60:9: warning: 'PTHREAD_DESTRUCTOR_ITERATIONS' redefined
+   60 | #define PTHREAD_DESTRUCTOR_ITERATIONS         4
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/limits.h:39:9: note: this is the location of the previous definition
+   39 | #define PTHREAD_DESTRUCTOR_ITERATIONS           _POSIX_THREAD_DESTRUCTOR_ITERATIONS
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In file included from /mnt/short-term/openzfs-bootenv-candidate-20261025/include/sys/zfs_context.h:96,
+                 from /mnt/short-term/openzfs-bootenv-candidate-20261025/aros/cli/control-client.c:3:
+/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/dependencies.YF6P1Tca/pthread-consistent.zxUBt8mH/source/pthread.h:57:9: warning: 'PTHREAD_KEYS_MAX' redefined
+   57 | #define PTHREAD_KEYS_MAX                      64
+      |         ^~~~~~~~~~~~~~~~
+In file included from /home/terminills/Documents/GitHub/aros-adt-crosstools/lib/gcc/x86_64-aros/15.2.0/include/limits.h:210,
+                 from /home/terminills/Documents/GitHub/aros-adt-crosstools/lib/gcc/x86_64-aros/15.2.0/include/syslimits.h:9,
+                 from /home/terminills/Documents/GitHub/aros-adt-crosstools/lib/gcc/x86_64-aros/15.2.0/include/limits.h:34,
+                 from /home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/sys/param.h:19,
+                 from /mnt/short-term/openzfs-bootenv-candidate-20261025/lib/libspl/include/os/linux/sys/param.h:31,
+                 from /mnt/short-term/openzfs-bootenv-candidate-20261025/lib/libspl/include/sys/types.h:55,
+                 from /mnt/short-term/openzfs-bootenv-candidate-20261025/aros/engine/include/sys/stat.h:4,
+                 from /home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/fcntl.h:14,
+                 from /mnt/short-term/openzfs-bootenv-candidate-20261025/include/sys/zfs_context.h:92:
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/limits.h:40:9: note: this is the location of the previous definition
+   40 | #define PTHREAD_KEYS_MAX                        _POSIX_THREAD_KEYS_MAX
+      |         ^~~~~~~~~~~~~~~~
+/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/dependencies.YF6P1Tca/pthread-consistent.zxUBt8mH/source/pthread.h:58:9: warning: 'PTHREAD_STACK_MIN' redefined
+   58 | #define PTHREAD_STACK_MIN                     40960
+      |         ^~~~~~~~~~~~~~~~~
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/limits.h:41:9: note: this is the location of the previous definition
+   41 | #define PTHREAD_STACK_MIN                       0
+      |         ^~~~~~~~~~~~~~~~~
+/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/dependencies.YF6P1Tca/pthread-consistent.zxUBt8mH/source/pthread.h:59:9: warning: 'PTHREAD_THREADS_MAX' redefined
+   59 | #define PTHREAD_THREADS_MAX                   2019
+      |         ^~~~~~~~~~~~~~~~~~~
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/limits.h:42:9: note: this is the location of the previous definition
+   42 | #define PTHREAD_THREADS_MAX                     _POSIX_THREAD_THREADS_MAX
+      |         ^~~~~~~~~~~~~~~~~~~
+/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/dependencies.YF6P1Tca/pthread-consistent.zxUBt8mH/source/pthread.h:60:9: warning: 'PTHREAD_DESTRUCTOR_ITERATIONS' redefined
+   60 | #define PTHREAD_DESTRUCTOR_ITERATIONS         4
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/limits.h:39:9: note: this is the location of the previous definition
+   39 | #define PTHREAD_DESTRUCTOR_ITERATIONS           _POSIX_THREAD_DESTRUCTOR_ITERATIONS
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In file included from /mnt/short-term/openzfs-bootenv-candidate-20261025/lib/libzfs_core/libzfs_core.c:88:
+/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/dependencies.YF6P1Tca/pthread-consistent.zxUBt8mH/source/pthread.h:57:9: warning: 'PTHREAD_KEYS_MAX' redefined
+   57 | #define PTHREAD_KEYS_MAX                      64
+      |         ^~~~~~~~~~~~~~~~
+In file included from /home/terminills/Documents/GitHub/aros-adt-crosstools/lib/gcc/x86_64-aros/15.2.0/include/limits.h:210,
+                 from /home/terminills/Documents/GitHub/aros-adt-crosstools/lib/gcc/x86_64-aros/15.2.0/include/syslimits.h:9,
+                 from /home/terminills/Documents/GitHub/aros-adt-crosstools/lib/gcc/x86_64-aros/15.2.0/include/limits.h:34,
+                 from /home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/sys/param.h:19,
+                 from /mnt/short-term/openzfs-bootenv-candidate-20261025/lib/libspl/include/os/linux/sys/param.h:31,
+                 from /mnt/short-term/openzfs-bootenv-candidate-20261025/lib/libspl/include/sys/types.h:55,
+                 from /mnt/short-term/openzfs-bootenv-candidate-20261025/include/sys/nvpair.h:30,
+                 from /mnt/short-term/openzfs-bootenv-candidate-20261025/include/libnvpair.h:30,
+                 from /mnt/short-term/openzfs-bootenv-candidate-20261025/include/libzfs_core.h:33,
+                 from /mnt/short-term/openzfs-bootenv-candidate-20261025/lib/libzfs_core/libzfs_core.c:78:
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/limits.h:40:9: note: this is the location of the previous definition
+   40 | #define PTHREAD_KEYS_MAX                        _POSIX_THREAD_KEYS_MAX
+      |         ^~~~~~~~~~~~~~~~
+/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/dependencies.YF6P1Tca/pthread-consistent.zxUBt8mH/source/pthread.h:58:9: warning: 'PTHREAD_STACK_MIN' redefined
+   58 | #define PTHREAD_STACK_MIN                     40960
+      |         ^~~~~~~~~~~~~~~~~
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/limits.h:41:9: note: this is the location of the previous definition
+   41 | #define PTHREAD_STACK_MIN                       0
+      |         ^~~~~~~~~~~~~~~~~
+/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/dependencies.YF6P1Tca/pthread-consistent.zxUBt8mH/source/pthread.h:59:9: warning: 'PTHREAD_THREADS_MAX' redefined
+   59 | #define PTHREAD_THREADS_MAX                   2019
+      |         ^~~~~~~~~~~~~~~~~~~
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/limits.h:42:9: note: this is the location of the previous definition
+   42 | #define PTHREAD_THREADS_MAX                     _POSIX_THREAD_THREADS_MAX
+      |         ^~~~~~~~~~~~~~~~~~~
+/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/dependencies.YF6P1Tca/pthread-consistent.zxUBt8mH/source/pthread.h:60:9: warning: 'PTHREAD_DESTRUCTOR_ITERATIONS' redefined
+   60 | #define PTHREAD_DESTRUCTOR_ITERATIONS         4
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/limits.h:39:9: note: this is the location of the previous definition
+   39 | #define PTHREAD_DESTRUCTOR_ITERATIONS           _POSIX_THREAD_DESTRUCTOR_ITERATIONS
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+aros/engine/public-service-test.c: In function 'desktop_directory':
+aros/engine/public-service-test.c:160:23: warning: pointer targets in passing argument 1 of 'strcmp' differ in signedness [-Wpointer-sign]
+  160 |         if(!strcmp(fib->fib_FileName,"hello.txt")&&fib->fib_DirEntryType<0&&
+      |                    ~~~^~~~~~~~~~~~~~
+      |                       |
+      |                       UBYTE * {aka unsigned char *}
+In file included from /home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/string.h:12,
+                 from aros/engine/../device/mountfile.h:7,
+                 from aros/engine/public-service-test.c:9:
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/stdc/string.h:36:26: note: expected 'const char *' but argument is of type 'UBYTE *' {aka 'unsigned char *'}
+   36 | int strcmp (const char * s1, const char * s2);
+      |             ~~~~~~~~~~~~~^~
+aros/engine/public-service-test.c:162:23: warning: pointer targets in passing argument 1 of 'strcmp' differ in signedness [-Wpointer-sign]
+  162 |         if(!strcmp(fib->fib_FileName,"large-sparse.bin")&&fib->fib_DirEntryType<0&&
+      |                    ~~~^~~~~~~~~~~~~~
+      |                       |
+      |                       UBYTE * {aka unsigned char *}
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/stdc/string.h:36:26: note: expected 'const char *' but argument is of type 'UBYTE *' {aka 'unsigned char *'}
+   36 | int strcmp (const char * s1, const char * s2);
+      |             ~~~~~~~~~~~~~^~
+aros/engine/public-service-test.c:222:51: warning: pointer targets in passing argument 1 of 'strnlen' differ in signedness [-Wpointer-sign]
+  222 |             if(name<low||name>=high||strnlen(entry->ed_Name,high-name)==high-name){error=EIO;goto done;}
+      |                                              ~~~~~^~~~~~~~~
+      |                                                   |
+      |                                                   UBYTE * {aka unsigned char *}
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/stdc/string.h:82:16: note: expected 'const char *' but argument is of type 'UBYTE *' {aka 'unsigned char *'}
+   82 | size_t strnlen(const char *, size_t);
+      |                ^~~~~~~~~~~~
+aros/engine/public-service-test.c:223:29: warning: pointer targets in passing argument 1 of 'strcmp' differ in signedness [-Wpointer-sign]
+  223 |             if(!strcmp(entry->ed_Name,"hello.txt")&&entry->ed_Type<0&&
+      |                        ~~~~~^~~~~~~~~
+      |                             |
+      |                             UBYTE * {aka unsigned char *}
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/stdc/string.h:36:26: note: expected 'const char *' but argument is of type 'UBYTE *' {aka 'unsigned char *'}
+   36 | int strcmp (const char * s1, const char * s2);
+      |             ~~~~~~~~~~~~~^~
+aros/engine/public-service-test.c:225:29: warning: pointer targets in passing argument 1 of 'strcmp' differ in signedness [-Wpointer-sign]
+  225 |             if(!strcmp(entry->ed_Name,"large-sparse.bin")&&entry->ed_Type<0&&
+      |                        ~~~~~^~~~~~~~~
+      |                             |
+      |                             UBYTE * {aka unsigned char *}
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/stdc/string.h:36:26: note: expected 'const char *' but argument is of type 'UBYTE *' {aka 'unsigned char *'}
+   36 | int strcmp (const char * s1, const char * s2);
+      |             ~~~~~~~~~~~~~^~
+aros/engine/public-service-test.c: In function 'storage_metadata':
+aros/engine/public-service-test.c:1629:35: warning: pointer targets in passing argument 1 of 'strcmp' differ in signedness [-Wpointer-sign]
+ 1629 |     int okay=examined&&!strcmp(fib->fib_Comment,comment)&&
+      |                                ~~~^~~~~~~~~~~~~
+      |                                   |
+      |                                   UBYTE * {aka unsigned char *}
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/stdc/string.h:36:26: note: expected 'const char *' but argument is of type 'UBYTE *' {aka 'unsigned char *'}
+   36 | int strcmp (const char * s1, const char * s2);
+      |             ~~~~~~~~~~~~~^~
+aros/engine/public-service-test.c:1630:28: warning: comparison of integer expressions of different signedness: 'LONG' {aka 'int'} and 'ULONG' {aka 'unsigned int'} [-Wsign-compare]
+ 1630 |         fib->fib_Protection==shown&&fib->fib_Size==8&&
+      |                            ^~
+aros/engine/public-service-test.c: In function 'storage_zvol_filesystem':
+aros/engine/public-service-test.c:1836:43: warning: pointer targets in passing argument 1 of 'strcmp' differ in signedness [-Wpointer-sign]
+ 1836 |     while(ExNext(root,&fib))if(!strcmp(fib.fib_FileName,"payload.bin")&&fib.fib_Size==131072)found++;
+      |                                        ~~~^~~~~~~~~~~~~
+      |                                           |
+      |                                           UBYTE * {aka unsigned char *}
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/stdc/string.h:36:26: note: expected 'const char *' but argument is of type 'UBYTE *' {aka 'unsigned char *'}
+   36 | int strcmp (const char * s1, const char * s2);
+      |             ~~~~~~~~~~~~~^~
+aros/engine/public-service-test.c: In function 'file_reuse_label_denials':
+aros/engine/public-service-test.c:2007:5: warning: this 'if' clause does not guard... [-Wmisleading-indentation]
+ 2007 |     if(check)FreeVec(check);if(saved)FreeVec(saved);if(replacement)FreeVec(replacement);
+      |     ^~
+aros/engine/public-service-test.c:2007:29: note: ...this statement, but the latter is misleadingly indented as if it were guarded by the 'if'
+ 2007 |     if(check)FreeVec(check);if(saved)FreeVec(saved);if(replacement)FreeVec(replacement);
+      |                             ^~
+aros/engine/public-service-test.c: In function 'storage_destroyed_changes':
+aros/engine/public-service-test.c:2116:27: warning: comparison of integer expressions of different signedness: 'int' and 'unsigned int' [-Wsign-compare]
+ 2116 |         if(native&&manager!=lane)continue;
+      |                           ^~
+aros/engine/public-service-test.c:2185:5: warning: this 'if' clause does not guard... [-Wmisleading-indentation]
+ 2185 |     if(file)Close(file);if(zeros)FreeVec(zeros);return error;
+      |     ^~
+aros/engine/public-service-test.c:2185:25: note: ...this statement, but the latter is misleadingly indented as if it were guarded by the 'if'
+ 2185 |     if(file)Close(file);if(zeros)FreeVec(zeros);return error;
+      |                         ^~
+aros/engine/public-service-test.c: In function 'storage_file_reuse':
+aros/engine/public-service-test.c:2263:5: warning: this 'if' clause does not guard... [-Wmisleading-indentation]
+ 2263 |     if(file)Close(file);if(zeros)FreeVec(zeros);
+      |     ^~
+aros/engine/public-service-test.c:2263:25: note: ...this statement, but the latter is misleadingly indented as if it were guarded by the 'if'
+ 2263 |     if(file)Close(file);if(zeros)FreeVec(zeros);
+      |                         ^~
+aros/engine/public-service-test.c: In function 'storage_force_create':
+aros/engine/public-service-test.c:2469:5: warning: this 'if' clause does not guard... [-Wmisleading-indentation]
+ 2469 |     if(file)Close(file);if(zeros)FreeVec(zeros);
+      |     ^~
+aros/engine/public-service-test.c:2469:25: note: ...this statement, but the latter is misleadingly indented as if it were guarded by the 'if'
+ 2469 |     if(file)Close(file);if(zeros)FreeVec(zeros);
+      |                         ^~
+aros/engine/public-service-test.c: In function 'native_reuse_corrupt_labels':
+aros/engine/public-service-test.c:2525:5: warning: this 'if' clause does not guard... [-Wmisleading-indentation]
+ 2525 |     if(before)FreeVec(before);if(check)FreeVec(check);
+      |     ^~
+aros/engine/public-service-test.c:2525:31: note: ...this statement, but the latter is misleadingly indented as if it were guarded by the 'if'
+ 2525 |     if(before)FreeVec(before);if(check)FreeVec(check);
+      |                               ^~
+aros/engine/public-service-test.c:2526:5: warning: this 'if' clause does not guard... [-Wmisleading-indentation]
+ 2526 |     if(saved)FreeVec(saved);if(replacement)FreeVec(replacement);
+      |     ^~
+aros/engine/public-service-test.c:2526:29: note: ...this statement, but the latter is misleadingly indented as if it were guarded by the 'if'
+ 2526 |     if(saved)FreeVec(saved);if(replacement)FreeVec(replacement);
+      |                             ^~
+aros/engine/../device/mountfile.h: At top level:
+aros/engine/../device/mountfile.h:9:12: warning: 'oz_mountfile_count' defined but not used [-Wunused-function]
+    9 | static int oz_mountfile_count(const char *s,UQUAD *out)
+      |            ^~~~~~~~~~~~~~~~~~

@@ -1,0 +1,104 @@
+xorriso 1.5.6 : RockRidge filesystem manipulator, libburnia project.
+
+xorriso : NOTE : Loading ISO image tree from LBA 0
+xorriso : UPDATE :   91275 nodes read in 1 seconds
+xorriso : NOTE : Detected El-Torito boot information which currently is set to be discarded
+Drive current: -indev '/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/distfiles/aros-smp-pc-x86_64-20261022-alpha18c5.iso'
+Media current: stdio file, overwriteable
+Media status : is written , is appendable
+Boot record  : El Torito , MBR protective-msdos-label grub2-mbr cyl-align-off GPT APM
+Media summary: 1 session, 2396343 data blocks, 4680m data,  558g free
+Volume id    : 'AROS Live CD'
+Drive current: -outdev '/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/public-service-run.f2muYonW/test.iso'
+Media current: stdio file, overwriteable
+Media status : is blank
+Media summary: 0 sessions, 0 data blocks, 0 data,  219g free
+xorriso : UPDATE :       1 files added in 1 seconds
+Added to ISO image: file '/boot/grub/grub.cfg'='/mnt/short-term/openzfs-bootenv-candidate-20261025/aros/engine/grub-qemu-test.cfg'
+xorriso : UPDATE :       1 files added in 1 seconds
+Added to ISO image: file '/boot/aros-base.pkg.xz'='/mnt/short-term/openzfs-qualification-20261024.aGFlVF7T/fat-replay.k72bijo1/aros-base.pkg.xz'
+xorriso : UPDATE :       1 files added in 1 seconds
+Added to ISO image: file '/Libs/posixc.library'='/mnt/short-term/openzfs-qualification-20261024.aGFlVF7T/posix-source.krrt6d62/posixc.library'
+xorriso : UPDATE :       3 files added in 1 seconds
+Added to ISO image: directory '/Security'='/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/public-service-run.f2muYonW/security-fixture'
+xorriso : UPDATE :       1 files added in 1 seconds
+Added to ISO image: file '/C/OpenZFSServiceNative'='/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/public-service-run.f2muYonW/OpenZFSServiceNative'
+xorriso : UPDATE :       1 files added in 1 seconds
+Added to ISO image: file '/C/OpenZFSPublicServiceTest'='/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/public-service-run.f2muYonW/OpenZFSPublicServiceTest'
+xorriso : UPDATE :       1 files added in 1 seconds
+Added to ISO image: file '/openzfs-startup-import-test'='/mnt/short-term/openzfs-bootenv-candidate-20261025/aros/engine/public-service-test-only'
+xorriso : UPDATE :       1 files added in 1 seconds
+Added to ISO image: file '/Libs/openzfs.library'='/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/debugger-service.0umlrjD3/openzfs.library'
+xorriso : UPDATE :       1 files added in 1 seconds
+Added to ISO image: file '/openzfs-test-layout'='/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/public-service-run.f2muYonW/layout.txt'
+xorriso : UPDATE :       1 files added in 1 seconds
+Added to ISO image: file '/L/fat-handler'='/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/public-service-run.f2muYonW/fat-handler'
+xorriso : UPDATE :       1 files added in 1 seconds
+Added to ISO image: file '/OZBACK'='/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/public-service-run.f2muYonW/OZBACK'
+xorriso : UPDATE :       1 files added in 1 seconds
+Added to ISO image: file '/openzfs-native-file-fixture'='/mnt/short-term/openzfs-bootenv-candidate-20261025/aros/engine/public-service-test-only'
+xorriso : UPDATE :       1 files added in 1 seconds
+Added to ISO image: file '/OZARCH'='/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/public-service-run.f2muYonW/OZARCH'
+xorriso : UPDATE :       1 files added in 1 seconds
+Added to ISO image: file '/openzfs-startup-archive-test'='/mnt/short-term/openzfs-bootenv-candidate-20261025/aros/engine/public-service-test-only'
+xorriso : UPDATE :       1 files added in 1 seconds
+Added to ISO image: file '/C/OpenZFSLibraryTest'='/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/public-service-run.f2muYonW/OpenZFSLibraryTest'
+xorriso : UPDATE :       1 files added in 1 seconds
+Added to ISO image: file '/C/zfs'='/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/public-service-run.f2muYonW/zfs'
+xorriso : UPDATE :       1 files added in 1 seconds
+Added to ISO image: file '/C/zpool'='/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/public-service-run.f2muYonW/zpool'
+xorriso : UPDATE :       1 files added in 1 seconds
+Added to ISO image: file '/openzfs-cli-package-test'='/mnt/short-term/openzfs-bootenv-candidate-20261025/aros/engine/public-service-test-only'
+xorriso : UPDATE :       1 files added in 1 seconds
+Added to ISO image: file '/Tools/OpenZFS/ExecHelper'='/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/public-service-run.f2muYonW/ExecHelper'
+xorriso : UPDATE :       1 files added in 1 seconds
+Added to ISO image: file '/C/OpenZFSStartup'='/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/public-service-run.f2muYonW/OpenZFSStartup'
+xorriso : UPDATE :       1 files added in 1 seconds
+Added to ISO image: file '/C/OpenZFSStartupMount'='/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/public-service-run.f2muYonW/OpenZFSStartupMount'
+xorriso : UPDATE :       1 files added in 1 seconds
+Added to ISO image: file '/C/OpenZFSRuntimeCheck'='/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/public-service-run.f2muYonW/OpenZFSRuntimeCheck'
+xorriso : UPDATE :       1 files added in 1 seconds
+Added to ISO image: file '/C/OpenZFSHostIdentity'='/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/public-service-run.f2muYonW/OpenZFSHostIdentity'
+xorriso : UPDATE :       1 files added in 1 seconds
+Added to ISO image: file '/openzfs-companion-tools-test'='/mnt/short-term/openzfs-bootenv-candidate-20261025/aros/engine/public-service-test-only'
+xorriso : UPDATE :       1 files added in 1 seconds
+Added to ISO image: file '/L/OpenZFS-Handler'='/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/public-service-run.f2muYonW/OpenZFS-Handler'
+xorriso : UPDATE :       1 files added in 1 seconds
+Added to ISO image: file '/OZPACKAGE'='/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/public-service-run.f2muYonW/OZPACKAGE'
+xorriso : UPDATE :       1 files added in 1 seconds
+Added to ISO image: file '/openzfs-handler-package-test'='/mnt/short-term/openzfs-bootenv-candidate-20261025/aros/engine/public-service-test-only'
+xorriso : UPDATE :       1 files added in 1 seconds
+Added to ISO image: file '/C/OpenZFSDevice'='/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/public-service-run.f2muYonW/OpenZFSDevice'
+xorriso : UPDATE :       1 files added in 1 seconds
+Added to ISO image: file '/openzfs-device-package-test'='/mnt/short-term/openzfs-bootenv-candidate-20261025/aros/engine/public-service-test-only'
+xorriso : UPDATE :       1 files added in 1 seconds
+Added to ISO image: file '/openzfs-service-test-only'='/mnt/short-term/openzfs-bootenv-candidate-20261025/aros/engine/public-service-test-only'
+xorriso : UPDATE :       1 files added in 1 seconds
+Added to ISO image: file '/S/Startup-Sequence'='/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/public-service-run.f2muYonW/Startup-Sequence'
+xorriso : UPDATE : Writing:       8192s    0.3%   fifo 100%  buf  50%
+xorriso : UPDATE : Writing:      24576s    1.0%   fifo 100%  buf  50%  121.0xD 
+xorriso : UPDATE : Writing:      90112s    3.8%   fifo 100%  buf  50%   96.8xD 
+xorriso : UPDATE : Writing:     155648s    6.6%   fifo 100%  buf  50%   96.8xD 
+xorriso : UPDATE : Writing:     212992s    9.0%   fifo 100%  buf  50%   84.7xD 
+xorriso : UPDATE : Writing:     278528s   11.8%   fifo 100%  buf  50%   96.8xD 
+xorriso : UPDATE : Writing:     344064s   14.5%   fifo 100%  buf  50%   96.8xD 
+xorriso : UPDATE : Writing:     417248s   17.6%   fifo  99%  buf  50%  108.1xD 
+xorriso : UPDATE : Writing:     466944s   19.7%   fifo 100%  buf  50%   73.4xD 
+xorriso : UPDATE : Writing:     516096s   21.8%   fifo 100%  buf  50%   72.6xD 
+xorriso : UPDATE : Writing:     648673s   27.4%   fifo  87%  buf  50%  195.9xD 
+xorriso : UPDATE : Writing:     791404s   33.4%   fifo  99%  buf  50%  210.9xD 
+xorriso : UPDATE : Writing:     933888s   39.4%   fifo 100%  buf  50%  210.5xD 
+xorriso : UPDATE : Writing:    1074912s   45.4%   fifo  99%  buf  50%  208.4xD 
+xorriso : UPDATE : Writing:    1220608s   51.5%   fifo 100%  buf  50%  215.2xD 
+xorriso : UPDATE : Writing:    1368064s   57.7%   fifo 100%  buf  50%  217.8xD 
+xorriso : UPDATE : Writing:    1507328s   63.6%   fifo 100%  buf  50%  205.7xD 
+xorriso : UPDATE : Writing:    1650784s   69.7%   fifo 100%  buf  50%  212.0xD 
+xorriso : UPDATE : Writing:    1794048s   75.7%   fifo 100%  buf  50%  211.6xD 
+xorriso : UPDATE : Writing:    1939942s   81.9%   fifo  99%  buf  50%  215.5xD 
+xorriso : UPDATE : Writing:    2080768s   87.8%   fifo 100%  buf  50%  208.0xD 
+xorriso : UPDATE : Writing:    2228224s   94.1%   fifo 100%  buf  50%  217.8xD 
+xorriso : UPDATE : Writing:    2366960s   99.9%   fifo  51%  buf  50%  204.9xD 
+ISO image produced: 2368986 sectors
+Written to medium : 2369152 sectors at LBA 32
+Writing to '/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/public-service-run.f2muYonW/test.iso' completed successfully.
+

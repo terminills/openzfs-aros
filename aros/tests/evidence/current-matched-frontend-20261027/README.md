@@ -30,5 +30,14 @@ under `build/`. Private DOS/POSIX runtime overlays remain required.
 
 The test now executes its strict read-only rewind assertions after cold
 handler data verification and detachment. Production safety policy is
-unchanged. This ordering correction still requires a successful full rerun;
-these failed runs do not constitute complete cold-boot qualification.
+unchanged.
+
+## Corrected full rerun
+
+`public-service-run.f2muYonW`, using rebuilt acceptance client
+`dependency-client.VYAAdBpI`, completed with runner exit zero. `cold-passed/`
+retains the writer, cold and writable-release logs, input hashes, independent
+zdb results and automatic image-pruning record. Healthy/degraded imports,
+exact DOS reads, strict EROFS rejection after unmount and persisted cold
+release/deletion passed. The original ENOENT attempt remains unresolved;
+this successful rerun is not evidence that its underlying cause is fixed.
