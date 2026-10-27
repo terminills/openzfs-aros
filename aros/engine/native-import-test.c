@@ -260,6 +260,14 @@ static int request_paths(unsigned op,const char *options,int expected,unsigned f
     struct oz_ticket ticket={0};int error=oz_admission_submit(OZ_ADMISSION_PORT,m,&ticket);
     if(!error)do{error=oz_admission_query(OZ_ADMISSION_PORT,&ticket,out);if(error==EAGAIN)Delay(1);}while(error==EAGAIN);
     if(!error){note(out->detail);char wanted[32];snprintf(wanted,sizeof(wanted),"errno=%d",expected);
+        if(!expected&&options&&strstr(options,"assessment=on")&&
+           (out->row_count!=1||strcmp(out->rows[0].kind,"recovery-assessment")||
+#ifdef OZ_NATIVE_IMPORT_ASSESS_HEALTHY
+            strcmp(out->rows[0].state,"CURRENT")
+#else
+            strcmp(out->rows[0].state,"RECOVERABLE")||!out->rows[0].used
+#endif
+           ))error=EIO;
         const char *reported=strstr(out->detail,"errno=");
         if(out->status!=(expected?OZ_ENGINE_ERROR:OZ_OK)||!reported||strcmp(reported,wanted))error=EIO;
         int released=oz_admission_release(OZ_ADMISSION_PORT,&ticket);
@@ -294,6 +302,20 @@ static int recovery_parser_test(void)
     if(oz_parse_import_identity("readonly=on;recovery=extreme",&ro,&destroyed,&checkpoint,&guid)||
         ro!=-1||destroyed!=-1||checkpoint!=-1||guid!=~0ULL)return EINVAL;
     note("RESULT native recovery parser PASS modes=3 guid=1 malformed=5 unchanged=1 legacy-refused=1");
+    static const char *invalid[]={"readonly=off;recovery=safe;assessment=on",
+        "readonly=on;assessment=on","readonly=on;rewind=on;assessment=on",
+        "readonly=on;recovery=extreme;assessment=on;assessment=off",
+        "readonly=on;recovery=safe;assessment=maybe"};
+    struct oz_import_policy assessment;
+    if(!oz_parse_import_policy("readonly=on;recovery=safe;assessment=on",&assessment)||
+       !assessment.assessment||assessment.recovery!=OZ_IMPORT_RECOVER)return EINVAL;
+    if(!oz_parse_import_policy("readonly=on;recovery=extreme;assessment=on",&assessment)||
+       !assessment.assessment||assessment.recovery!=OZ_IMPORT_EXTREME)return EINVAL;
+    for(unsigned i=0;i<sizeof(invalid)/sizeof(invalid[0]);i++) {
+        struct oz_import_policy before=assessment;
+        if(oz_parse_import_policy(invalid[i],&assessment)||memcmp(&before,&assessment,sizeof(before)))return EINVAL;
+    }
+    note("RESULT native assessment parser PASS modes=2 malformed=5 unchanged=1");
     return 0;
 }
 #endif
@@ -478,12 +500,27 @@ int main(void)
         struct TagItem reader[]={{secT_UserID,(IPTR)"ozreader"},{secT_Password,(IPTR)""},{TAG_DONE,0}};
         secLogoutA(quiet);CHECK(secLoginA(reader)==((77UL<<16)|88));
         int denied=request(7,"readonly=on;recovery=" OZ_REWIND_POLICY,EPERM);
+        int assessment_denied=request(7,"readonly=on;recovery=" OZ_REWIND_POLICY ";assessment=on",EPERM);
         secLogoutA(quiet);CHECK(secLoginA(login)==secOWNER_SYSTEM);
-        CHECK(!denied);
+        CHECK(!denied&&!assessment_denied);
         note("RESULT native Manager recovery authorization PASS nonroot-denied=1 root-restored=1");
     }
 #endif
 #ifndef OZ_NATIVE_IMPORT_REWIND_COLD
+#ifdef OZ_NATIVE_IMPORT_ASSESSMENT
+    CHECK(!request(7,"readonly=on;recovery=" OZ_REWIND_POLICY ";assessment=on;guid=0000000000000001",EINVAL));
+    CHECK(SystemTags((CONST_STRPTR)"C:zpool list -H qemu_mirror",TAG_DONE)>0);
+    note("RESULT native assessment identity PASS mismatch-refused=1 pool-absent=1");
+    for(unsigned assessment_cycle=0;assessment_cycle<2;assessment_cycle++) {
+        CHECK(!request(7,"readonly=on;recovery=" OZ_REWIND_POLICY ";assessment=on",0));
+        CHECK(SystemTags((CONST_STRPTR)"C:zpool list -H qemu_mirror",TAG_DONE)>0);
+    }
+    note("RESULT native Manager assessment PASS cycles=2 structured=2 pool-absent=2");
+#ifdef OZ_NATIVE_IMPORT_ASSESS_HEALTHY
+    note("RESULT native Manager healthy assessment PASS current=2 unloaded=2");
+    goto done;
+#endif
+#endif
 #ifdef OZ_NATIVE_IMPORT_REWIND_DRYRUN
     /* Upstream reports a recoverable dry-run through load-info while
      * returning failure: status alone cannot distinguish it from an error. */
@@ -504,6 +541,8 @@ int main(void)
      * promote it to extreme recovery. The later readonly extreme cycles
      * also verify that these refused imports did not commit repairs. */
     CHECK(!request(7,"readonly=on;recovery=safe",ENXIO));
+    /* TRY_REWIND preserves the original load error, unlike DO_REWIND. */
+    CHECK(!request(7,"readonly=on;recovery=safe;assessment=on",EIO));
     CHECK(SystemTags((CONST_STRPTR)"C:zpool list -H qemu_mirror",TAG_DONE)>0);
     file=Open((CONST_STRPTR)"T:normal-recovery-error",MODE_NEWFILE);CHECK(file);
     LONG normal_result=SystemTags((CONST_STRPTR)"C:zpool import -N -f -F -o cachefile=none -o readonly=on -d /AROS/ata.device/0/partition/0 -d /AROS/ata.device/1/partition/0 qemu_mirror",SYS_Error,file,TAG_DONE);

@@ -154,9 +154,14 @@ import_rewind_manager=${AROS_TEST_IMPORT_REWIND_MANAGER:-0}
 import_rewind_cut=${AROS_TEST_IMPORT_REWIND_CUT:-0}
 [[ $import_rewind_cut == 0 || ( $import_rewind_cut == 1 && $import_rewind == 1 && $import_rewind_mode == commit ) ]]
 import_rewind_normal=${AROS_TEST_IMPORT_REWIND_NORMAL:-0}
+import_assessment=${AROS_TEST_IMPORT_ASSESSMENT:-0}
+import_assess_healthy=${AROS_TEST_IMPORT_ASSESS_HEALTHY:-0}
+[[ $import_assessment == 0 || ( $import_assessment == 1 && $import_rewind_manager == 1 && $import_rewind == 1 && $import_rewind_mode == preview ) ]]
+[[ $import_assess_healthy == 0 || ( $import_assess_healthy == 1 && $import_assessment == 1 ) ]]
 import_rewind_dryrun=${AROS_TEST_IMPORT_REWIND_DRYRUN:-0}
 [[ $import_rewind_dryrun == 0 || ( $import_rewind_dryrun == 1 && $import_rewind == 1 && $import_rewind_mode == preview ) ]]
 import_rewind_refuse_normal=${AROS_TEST_IMPORT_REWIND_REFUSE_NORMAL:-0}
+[[ $import_assess_healthy == 0 || ( $import_rewind_dryrun == 0 && $import_rewind_refuse_normal == 0 ) ]]
 [[ $import_rewind_refuse_normal == 0 || ( $import_rewind_refuse_normal == 1 && $import_rewind == 1 && $import_rewind_mode != cold && $import_rewind_normal == 0 ) ]]
 [[ $import_rewind_normal == 0 || ( $import_rewind_normal == 1 && $import_rewind == 1 && $import_rewind_mode != cold ) ]]
 import_rewind_flag=FX
@@ -408,6 +413,8 @@ if [[ $import_rewind == 1 ]];then
     gui_flags+=(-DOZ_NATIVE_IMPORT_REWIND)
     if [[ $import_rewind_mode == seed ]];then gui_flags+=(-DOZ_NATIVE_IMPORT_REWIND_SEED);fi
     if [[ $import_rewind_normal == 1 ]];then gui_flags+=(-DOZ_NATIVE_IMPORT_REWIND_NORMAL);fi
+    if [[ $import_assessment == 1 ]];then gui_flags+=(-DOZ_NATIVE_IMPORT_ASSESSMENT);fi
+    if [[ $import_assess_healthy == 1 ]];then gui_flags+=(-DOZ_NATIVE_IMPORT_ASSESS_HEALTHY);fi
     if [[ $import_rewind_dryrun == 1 ]];then gui_flags+=(-DOZ_NATIVE_IMPORT_REWIND_DRYRUN);fi
     if [[ $import_rewind_refuse_normal == 1 ]];then gui_flags+=(-DOZ_NATIVE_IMPORT_REWIND_REFUSE_NORMAL);fi
     if [[ $import_rewind_manager == 1 ]];then gui_flags+=(-DOZ_NATIVE_IMPORT_REWIND_MANAGER);fi
@@ -1380,14 +1387,23 @@ if [[ $import_rewind == 1 ]];then
     if [[ $import_rewind_refuse_normal == 1 ]];then
         rg -q '^RESULT native normal recovery boundary PASS Manager-ENXIO=1 CLI-refused=1 diagnostic=1 absent=2 no-extreme-fallback=1' "$run/serial.log"
     fi
-    if [[ $import_rewind_mode != cold ]];then
+    if [[ $import_assessment == 1 ]];then
+        rg -q '^RESULT native assessment identity PASS mismatch-refused=1 pool-absent=1' "$run/serial.log"
+        rg -q '^RESULT native Manager assessment PASS cycles=2 structured=2 pool-absent=2' "$run/serial.log"
+    fi
+    if [[ $import_assess_healthy == 1 ]];then
+        rg -q '^RESULT native Manager healthy assessment PASS current=2 unloaded=2' "$run/serial.log"
+    elif [[ $import_rewind_mode != cold ]];then
         rg -q "^RESULT native damaged import rewind PASS cycles=2 ordinary-refused=2 absent-after-refusal=2 readonly-${import_rewind_flag}=2 exact-DOS=2 write-refused=2" "$run/serial.log"
     fi
     rg -q '^RESULT native damaged rewind test PASS line=0' "$run/serial.log"
     if [[ $import_rewind_manager == 1 ]];then
         rg -q '^RESULT native recovery parser PASS modes=3 guid=1 malformed=5 unchanged=1 legacy-refused=1' "$run/serial.log"
         rg -q '^RESULT native Manager recovery authorization PASS nonroot-denied=1 root-restored=1' "$run/serial.log"
-        rg -q '^RESULT native Manager recovery API PASS real-admission=1 upstream-rewind=1 exact-DOS=1' "$run/serial.log"
+        rg -q '^RESULT native assessment parser PASS modes=2 malformed=5 unchanged=1' "$run/serial.log"
+        if [[ $import_assess_healthy == 0 ]];then
+            rg -q '^RESULT native Manager recovery API PASS real-admission=1 upstream-rewind=1 exact-DOS=1' "$run/serial.log"
+        fi
     fi
     [[ -s "$run/overlays.sha256" ]]
     sha256sum -c "$run/backing.sha256"

@@ -283,7 +283,7 @@ int oz_admitted_execute(struct oz_admitted *job)
         dataset_create?dataset_create(&job->request,job->security):
         job->request.argument[0]?ENOTSUP:oz_zpl_dataset_create_options(job->request.target,job->request.options,job->caller);
     job->request.status = error ? OZ_ENGINE_ERROR : OZ_OK;
-    if((job->request.operation!=20&&job->request.operation!=21&&job->request.operation!=29&&job->request.operation!=66&&job->request.operation!=80&&!(job->request.operation>=67&&job->request.operation<=69)&&
+    if((job->request.operation!=7&&job->request.operation!=20&&job->request.operation!=21&&job->request.operation!=29&&job->request.operation!=66&&job->request.operation!=80&&!(job->request.operation>=67&&job->request.operation<=69)&&
         !(job->request.operation==38&&(job->request.flags&OZ_RECURSIVE)&&!strchr(job->request.target,'@'))&&
         !(job->request.operation==42&&(job->request.flags&OZ_RECURSIVE)))||!job->request.detail[0])
     snprintf(job->request.detail, sizeof(job->request.detail),

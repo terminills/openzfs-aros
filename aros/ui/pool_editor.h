@@ -11,7 +11,7 @@ static UQUAD draft_import_guid;
 static unsigned device_indices[OZ_MAX_DEVICES],device_visible;
 static const char *pool_roles[]={"data","log","cache","spare","special","dedup",NULL};
 static const char *pool_kinds[]={"stripe","mirror","raidz1","raidz2","raidz3","draid",NULL};
-static const char *pool_load_modes[]={"Current state","Checkpoint view","Recover recent transactions","Extreme transaction recovery",NULL};
+static const char *pool_load_modes[]={"Current state","Checkpoint view","Recover recent transactions","Extreme transaction recovery","Assess recent recovery","Assess extreme recovery",NULL};
 static int pool_number(Object *field,ULONG *out) {
     const char *s=string(field);unsigned n=0;
     if(!*s)return 0;
@@ -97,11 +97,11 @@ static void open_pool_editor(void) {
     if(draft_import) {
         set(poolreadonly,MUIA_Selected,policy.readonly);
         set(poolrecover,MUIA_Selected,policy.destroyed);
-        set(poolrewind,MUIA_Cycle_Active,policy.checkpoint?1:policy.recovery?policy.recovery+1:0);
+        set(poolrewind,MUIA_Cycle_Active,policy.assessment?policy.recovery+3:policy.checkpoint?1:policy.recovery?policy.recovery+1:0);
     }
     set(poolhint,MUIA_Text_Contents,draft_import?"List all member paths, including absent members.":"Select a group; add each device/file path separately (spaces preserved).");
     set(poolnote,MUIA_Text_Contents,draft_import?
-        "Read/write import may update storage. Writable rewind discards later changes.":
+        "Assessment requires read-only access and leaves the pool unimported.":
         "Draft only. dRAID fields apply to the next dRAID group added.");
     set(poolshift,MUIA_Cycle_Active,draft_layout.ashift?draft_layout.ashift-8:0);
     set(poolkind,MUIA_Cycle_Active,value(topology,MUIA_Cycle_Active)<=OZ_DRAID?value(topology,MUIA_Cycle_Active):0);
@@ -138,6 +138,9 @@ static void pool_event(IPTR event) {
         memset(&draft_layout.devices[--draft_layout.device_count],0,sizeof(draft_layout.devices[0]));refresh_devices();break;
     case EV_LAYOUT_CLEAR:memset(&draft_layout,0,sizeof(draft_layout));set(poolreadonly,MUIA_Selected,TRUE);set(poolrecover,MUIA_Selected,FALSE);set(poolrewind,MUIA_Cycle_Active,0);refresh_groups();break;
     case EV_LAYOUT_APPLY:
+        if(draft_import&&value(poolrewind,MUIA_Cycle_Active)>=4&&!value(poolreadonly,MUIA_Selected)) {
+            set(poolnote,MUIA_Text_Contents,"Select Read-only import for recovery assessment; no request submitted.");break;
+        }
         i=value(poolshift,MUIA_Cycle_Active);draft_layout.ashift=draft_import?0:i?i+8:0;
         if(!string(poolname)[0]){set(poolnote,MUIA_Text_Contents,"Pool name is required");break;}
         if((draft_import?oz_validate_import_files(&draft_layout,why,sizeof(why)):draft_add?oz_validate_add_topology(&draft_layout,why,sizeof(why)):oz_validate_topology(&draft_layout,why,sizeof(why)))!=OZ_OK){set(poolnote,MUIA_Text_Contents,why);break;}
@@ -151,7 +154,9 @@ static void pool_event(IPTR event) {
             value(poolrecover,MUIA_Selected)?";destroyed=on":"",
             value(poolrewind,MUIA_Cycle_Active)==1?";rewind=on":
             value(poolrewind,MUIA_Cycle_Active)==2?";recovery=safe":
-            value(poolrewind,MUIA_Cycle_Active)==3?";recovery=extreme":"");
+            value(poolrewind,MUIA_Cycle_Active)==3?";recovery=extreme":
+            value(poolrewind,MUIA_Cycle_Active)==4?";recovery=safe;assessment=on":
+            value(poolrewind,MUIA_Cycle_Active)==5?";recovery=extreme;assessment=on":"");
         /* Changing paths/access mode must not drop the pool identity guard.
          * Clear layout clears members, not the expected pool identity. */
         if(draft_import&&draft_import_guid) {
@@ -166,7 +171,10 @@ static void pool_event(IPTR event) {
             set(options,MUIA_String_Contents,opts);}
         set(category,MUIA_Cycle_Active,1);select_category();
         for(i=0;i<visible_count;i++)if(oz_operations[visible[i]].id==(draft_import?7:draft_add?9:5)){set(actions,MUIA_List_Active,i);select_operation();break;}
-        set(dryrun,MUIA_Selected,TRUE);set(poolwin,MUIA_Window_Open,FALSE);send_request(0,1);break;
+        /* Assessment has its own validated option; generic OZ_DRYRUN is not
+         * an import flag. Still show the request only, never auto-submit. */
+        set(dryrun,MUIA_Selected,!(draft_import&&value(poolrewind,MUIA_Cycle_Active)>=4));
+        set(poolwin,MUIA_Window_Open,FALSE);send_request(0,1);break;
     case EV_LAYOUT_CLOSE:set(poolwin,MUIA_Window_Open,FALSE);break;
     }
 }

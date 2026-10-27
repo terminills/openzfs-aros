@@ -288,9 +288,12 @@ static void send_request(ULONG operation,int preview_only) {
         show_response("Do not enter secrets in options. Use a keylocation reference; secure prompting belongs to the engine.");return;
     }
     if(result!=OZ_OK){set(status,MUIA_Text_Contents,oz_status(result));show_response(why);return;}
+    struct oz_import_policy import_policy;
+    int assessment=m.operation==7&&oz_parse_import_policy(m.options,&import_policy)&&import_policy.assessment;
     snprintf(text,sizeof(text),"API 3 / %s\nTarget: %s\nArgument: %s\nProperties/options: %s\nRecursive=%s Force=%s Dry-run=%s Raw=%s Resumable=%s\n%s",
         op->key,m.target[0]?m.target:"(none)",m.argument[0]?m.argument:"(none)",m.options[0]?m.options:"(defaults)",
         m.flags&OZ_RECURSIVE?"yes":"no",m.flags&OZ_FORCE?"yes":"no",m.flags&OZ_DRYRUN?"yes":"no",m.flags&OZ_RAW?"yes":"no",m.flags&OZ_RESUMABLE?"yes":"no",
+        assessment?"Read-only recovery assessment; no persistent storage changes.":
         m.operation==38&&(m.flags&OZ_DRYRUN)?"Destruction plan only; no storage changes.":
         m.operation==62&&(m.flags&OZ_DRYRUN)?"Verify key only; the dataset remains locked if locked now.":
         oz_request_mutates(m.operation,m.argument)?"This operation changes storage or configuration.":"Read/query or stream operation.");
@@ -377,7 +380,7 @@ static void send_request(ULONG operation,int preview_only) {
         struct oz_import_policy policy;
         if(oz_parse_import_policy(m.options,&policy)&&(policy.checkpoint||policy.recovery)) {
             size_t n=strlen(text);
-            const char *warning=policy.checkpoint?(policy.readonly?
+            const char *warning=policy.assessment?"Read-only recovery assessment: reports recoverability and leaves no imported pool.":policy.checkpoint?(policy.readonly?
                 "Read-only checkpoint view: later changes remain on disk.":
                 "WRITABLE CHECKPOINT REWIND PERMANENTLY DISCARDS ALL LATER POOL CHANGES."):
                 policy.readonly?"Read-only transaction recovery: inspect older data without committing recovery.":

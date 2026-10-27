@@ -18,7 +18,7 @@ const struct oz_operation oz_operations[] = {
 const unsigned oz_operation_count=sizeof(oz_operations)/sizeof(oz_operations[0]);
 int oz_parse_import_policy(const char *options,struct oz_import_policy *out)
 {
-    unsigned seen=0;int ro=0,recover=0,checkpoint=0;UQUAD guid=0;
+    unsigned seen=0;int ro=0,recover=0,checkpoint=0,assessment=0;UQUAD guid=0;
     enum oz_import_recovery recovery=OZ_IMPORT_CURRENT;
     if(!options||!out)return 0;
     for(const char *p=options;*p;) {
@@ -33,6 +33,8 @@ int oz_parse_import_policy(const char *options,struct oz_import_policy *out)
         else if(n==13&&!memcmp(p,"recovery=none",13)){field=16;recovery=OZ_IMPORT_CURRENT;}
         else if(n==13&&!memcmp(p,"recovery=safe",13)){field=16;recovery=OZ_IMPORT_RECOVER;}
         else if(n==16&&!memcmp(p,"recovery=extreme",16)){field=16;recovery=OZ_IMPORT_EXTREME;}
+        else if(n==13&&!memcmp(p,"assessment=on",13)){field=32;on=1;}
+        else if(n==14&&!memcmp(p,"assessment=off",14))field=32;
         else if(n==21&&!memcmp(p,"guid=",5)){
             field=8;guid=0;
             for(unsigned i=5;i<21;i++){
@@ -46,13 +48,14 @@ int oz_parse_import_policy(const char *options,struct oz_import_policy *out)
             if(!guid)return 0;
         }
         if(!field||(seen&field))return 0;
-        seen|=field;if(field==1)ro=on;else if(field==2)recover=on;else if(field==4)checkpoint=on;
+        seen|=field;if(field==1)ro=on;else if(field==2)recover=on;else if(field==4)checkpoint=on;else if(field==32)assessment=on;
         if(!end)break;
         p=end+1;if(!*p)return 0;
     }
     if(!(seen&1)||(checkpoint&&recovery!=OZ_IMPORT_CURRENT))return 0;
+    if(assessment&&(!ro||recovery==OZ_IMPORT_CURRENT))return 0;
     struct oz_import_policy parsed={.readonly=ro,.destroyed=recover,
-        .checkpoint=checkpoint,.recovery=recovery,.expected_guid=guid};
+        .checkpoint=checkpoint,.assessment=assessment,.recovery=recovery,.expected_guid=guid};
     *out=parsed;return 1;
 }
 int oz_parse_import_identity(const char *options,int *readonly,int *destroyed,int *rewind,UQUAD *expected_guid)

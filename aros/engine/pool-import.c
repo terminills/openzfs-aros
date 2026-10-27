@@ -877,11 +877,52 @@ int oz_pool_import_files(struct oz_message *m,cred_t *caller,const struct oz_pac
     stage="spa-import";
     if(policy.recovery!=OZ_IMPORT_CURRENT) {
         nvlist_t *load=fnvlist_alloc();
-        fnvlist_add_uint32(load,ZPOOL_LOAD_REWIND_POLICY,ZPOOL_DO_REWIND|
+        fnvlist_add_uint32(load,ZPOOL_LOAD_REWIND_POLICY,(policy.assessment?ZPOOL_TRY_REWIND:ZPOOL_DO_REWIND)|
             (policy.recovery==OZ_IMPORT_EXTREME?ZPOOL_EXTREME_REWIND:0));
         fnvlist_add_nvlist(config,ZPOOL_LOAD_POLICY,load);fnvlist_free(load);
     }
     error=spa_import(m->target,config,props,rewind?ZFS_IMPORT_CHECKPOINT:0);
+    if(policy.assessment) {
+        /* TRY_REWIND returns the original load error plus successful rewind
+         * info. A healthy pool instead imports normally: unload that readonly
+         * unmounted view before reporting assessment, never retain it silently. */
+        int load_error=error;uint64_t when=0;int64_t loss=0;
+        const char *result=NULL;
+        if(!error) {
+            stage="assessment-unload";
+            error=spa_export(m->target,NULL,B_FALSE,B_FALSE);
+            if(error) {
+                /* Export failure must retain bindings for the still-live SPA. */
+                p->next=imports;imports=p;p=NULL;
+                snprintf(m->detail,sizeof(m->detail),"Assessment could not unload the read-only pool; it remains imported. errno=%d",error);
+                goto done;
+            }
+            result="CURRENT";
+        } else {
+            nvlist_t *info=NULL,*recovery=NULL;
+            if(!nvlist_lookup_nvlist(config,ZPOOL_CONFIG_LOAD_INFO,&info)&&
+               !nvlist_lookup_nvlist(info,ZPOOL_CONFIG_REWIND_INFO,&recovery)&&
+               !nvlist_lookup_uint64(recovery,ZPOOL_CONFIG_LOAD_TIME,&when)) {
+                (void)nvlist_lookup_int64(recovery,ZPOOL_CONFIG_REWIND_TIME,&loss);
+                result="RECOVERABLE";error=0;
+            }
+        }
+        spa_namespace_enter(FTAG);exists=spa_lookup(m->target)!=NULL;
+        spa_namespace_exit(FTAG);
+        if(exists){error=EBUSY;p->next=imports;imports=p;p=NULL;goto done;}
+        if(!error&&result) {
+            struct oz_row *row=&m->rows[0];memset(row,0,sizeof(*row));
+            strcpy(row->kind,"recovery-assessment");
+            snprintf(row->name,sizeof(row->name),"%s",m->target);
+            strcpy(row->state,result);row->used=when;row->available=loss>0?loss:0;
+            snprintf(row->value,sizeof(row->value),"%s; read-only assessment; pool not imported",result);
+            m->row_count=1;
+            snprintf(m->detail,sizeof(m->detail),
+                "Recovery assessment: %s. Pool not imported; no recovery committed. Recovery time=%llu Unix seconds; estimated loss=%lld seconds; original load error=%d. errno=0",
+                result,(unsigned long long)when,(long long)loss,load_error);
+        }
+        goto done;
+    }
     if(!error){p->next=imports;imports=p;p=NULL;}
 done:
     if(error) {

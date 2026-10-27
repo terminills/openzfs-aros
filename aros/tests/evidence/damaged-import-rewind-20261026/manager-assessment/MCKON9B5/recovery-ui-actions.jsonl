@@ -1,0 +1,28 @@
+{"time": 1793060795.8426254, "action": "capture", "args": ["initial"]}
+{"time": 1793060892.4230986, "action": "guest-click", "args": ["420", "134"]}
+{"time": 1793060892.7514887, "action": "guest-click", "args": ["264", "164"]}
+{"time": 1793060893.0823562, "action": "guest-click", "args": ["300", "220"]}
+{"time": 1793060893.2263522, "action": "capture", "args": ["import-selected"]}
+{"time": 1793060988.488656, "action": "guest-click", "args": ["815", "249"]}
+{"time": 1793060988.818209, "action": "guest-click", "args": ["710", "196"]}
+{"time": 1793060991.6070583, "action": "type", "args": ["assessment_preview"]}
+{"time": 1793060991.93814, "action": "guest-click", "args": ["480", "575"]}
+{"time": 1793060994.2802575, "action": "type", "args": ["ram:preview.img"]}
+{"time": 1793060994.6034055, "action": "guest-click", "args": ["778", "575"]}
+{"time": 1793060994.9291942, "action": "guest-click", "args": ["564", "558"]}
+{"time": 1793060995.258743, "action": "guest-click", "args": ["564", "558"]}
+{"time": 1793060995.5872622, "action": "guest-click", "args": ["564", "558"]}
+{"time": 1793060995.9185233, "action": "guest-click", "args": ["564", "558"]}
+{"time": 1793060996.080621, "action": "capture", "args": ["assess-recent"]}
+{"time": 1793061111.0836082, "action": "guest-click", "args": ["571", "523"]}
+{"time": 1793061111.416703, "action": "guest-click", "args": ["640", "607"]}
+{"time": 1793061111.5346456, "action": "capture", "args": ["writable-assessment-refused"]}
+{"time": 1793061111.8588104, "action": "guest-click", "args": ["571", "523"]}
+{"time": 1793061112.1911476, "action": "guest-click", "args": ["640", "607"]}
+{"time": 1793061112.3393307, "action": "capture", "args": ["assessment-preview"]}
+{"time": 1793061211.8849041, "action": "guest-click", "args": ["815", "249"]}
+{"time": 1793061211.9970498, "action": "capture", "args": ["assessment-roundtrip"]}
+{"time": 1793061212.319937, "action": "guest-click", "args": ["564", "558"]}
+{"time": 1793061212.6537547, "action": "guest-click", "args": ["640", "607"]}
+{"time": 1793061212.7688131, "action": "capture", "args": ["extreme-assessment-preview"]}
+{"time": 1793061213.121198, "action": "guest-click", "args": ["254", "117"]}

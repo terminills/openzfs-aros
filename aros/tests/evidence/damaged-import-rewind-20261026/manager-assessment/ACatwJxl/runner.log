@@ -1,0 +1,11 @@
+Native members attached: both
+Native pool layout: mirror
+Native storage bus: ide
+QEMU acceleration: kvm CPU: host
+Guest virtual CPUs: 8
+OS runtime profile: dos-posix
+Formatting '/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/native-import-run.ACatwJxl/disk0.qcow2', fmt=qcow2 cluster_size=65536 extended_l2=off compression_type=zlib size=536870912 backing_file=/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/qemu-run.rewind-corrupt-20261026/disk0.raw backing_fmt=raw lazy_refcounts=off refcount_bits=16
+Formatting '/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/native-import-run.ACatwJxl/disk1.qcow2', fmt=qcow2 cluster_size=65536 extended_l2=off compression_type=zlib size=536870912 backing_file=/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/qemu-run.rewind-corrupt-20261026/disk1.raw backing_fmt=raw lazy_refcounts=off refcount_bits=16
+Guest memory MiB: 2048
+Guest completion deadline: 600 seconds
+FAIL: guest completion marker; see /mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/native-import-run.ACatwJxl/completion.log

@@ -410,6 +410,11 @@ selected dependencies, not a newly qualified official or bootstrap release.
   disks remain byte-identical. Writable upstream device probes can rewrite
   identical padding, so this is not zero-write-I/O proof. See
   `aros/tests/evidence/damaged-import-rewind-20261026/assessment.md`.
+  Native Manager/API now offers explicit read-only recovery assessment:
+  structured CURRENT/RECOVERABLE results, no pool left imported on success,
+  normal/extreme/healthy mirror tests and unchanged image hashes. See
+  `aros/tests/evidence/damaged-import-rewind-20261026/manager-assessment.md`
+  for tested authorization, identity, UI and error-path boundaries.
   One interrupted writable-recovery boundary is now qualified: a host-side
   block-debug cut at member 0's flush boundary leaves changed guest-visible
   bytes before import returns. A new guest recovers those disks and a third
