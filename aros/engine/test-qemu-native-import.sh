@@ -151,6 +151,10 @@ import_rewind=${AROS_TEST_IMPORT_REWIND:-0}
 [[ $import_rewind == 0 || $import_rewind == 1 ]]
 import_rewind_mode=${AROS_TEST_IMPORT_REWIND_MODE:-preview}
 clear_rewind=${AROS_TEST_CLEAR_REWIND:-0}
+clear_assessment_only=${AROS_TEST_CLEAR_ASSESSMENT_ONLY:-0}
+clear_gui=${AROS_TEST_CLEAR_GUI:-0}
+[[ $clear_gui == 0 || ( $clear_gui == 1 && $clear_assessment_only == 1 && $gui == 1 ) ]]
+[[ $clear_assessment_only == 0 || ( $clear_assessment_only == 1 && $clear_rewind == 1 ) ]]
 clear_manager=${AROS_TEST_CLEAR_MANAGER:-0}
 [[ $clear_manager == 0 || ( $clear_manager == 1 && $clear_rewind == 1 && -z ${AROS_TEST_WHOLE_CLI_LINK:-} ) ]]
 [[ $clear_rewind == 0 || ( $clear_rewind == 1 && $import_rewind == 1 && $import_rewind_mode == commit ) ]]
@@ -178,7 +182,7 @@ if [[ $import_rewind_mode == seed ]];then
 fi
 [[ $import_rewind == 1 || $import_rewind_mode == preview ]]
 if [[ $import_rewind == 1 ]];then
-    [[ $native_bus == ide && $members == both && $layout == mirror && $writable == 0 && $gpt == 0 && $gui == 0 && -z ${AROS_TEST_WHOLE_CLI_LINK:-} ]]
+    [[ $native_bus == ide && $members == both && $layout == mirror && $writable == 0 && $gpt == 0 && ( $gui == 0 || $clear_gui == 1 ) && -z ${AROS_TEST_WHOLE_CLI_LINK:-} ]]
     [[ -f ${AROS_TEST_CLI_DIR:?rewind test needs packaged CLI}/zpool ]]
 fi
 [[ $usb_cli_clear == 0 || $usb_cli_clear == 1 ]]
@@ -417,6 +421,8 @@ if [[ $import_rewind == 1 ]];then
     gui_maps+=(-map "$run/zpool" /C/zpool)
     gui_flags+=(-DOZ_NATIVE_IMPORT_REWIND)
     if [[ $clear_rewind == 1 ]];then gui_flags+=(-DOZ_NATIVE_CLEAR_REWIND);fi
+    if [[ $clear_assessment_only == 1 ]];then gui_flags+=(-DOZ_NATIVE_CLEAR_ASSESSMENT_ONLY);fi
+    if [[ $clear_gui == 1 ]];then gui_flags+=(-DOZ_NATIVE_CLEAR_GUI);fi
     if [[ $clear_manager == 1 ]];then gui_flags+=(-DOZ_NATIVE_CLEAR_MANAGER);fi
     if [[ $import_rewind_mode == seed ]];then gui_flags+=(-DOZ_NATIVE_IMPORT_REWIND_SEED);fi
     if [[ $import_rewind_normal == 1 ]];then gui_flags+=(-DOZ_NATIVE_IMPORT_REWIND_NORMAL);fi
@@ -1409,13 +1415,25 @@ if [[ $import_rewind == 1 ]];then
         rg -q "^RESULT native damaged import rewind PASS cycles=2 ordinary-refused=2 absent-after-refusal=2 readonly-${import_rewind_flag}=2 exact-DOS=2 write-refused=2" "$run/serial.log"
     fi
     rg -q '^RESULT native damaged rewind test PASS line=0' "$run/serial.log"
+    if [[ $clear_gui == 1 ]];then
+        rg -q '^RESULT native damaged clear GUI returned PASS' "$run/serial.log"
+    fi
     if [[ $clear_rewind == 1 ]];then
         rg -q '^RESULT native verbatim privilege PASS nonroot-refused=1 absent=1 root-restored=1' "$run/serial.log"
         rg -q '^RESULT native verbatim admission PASS readonly-refused=1 absent=1 writable-admitted=1' "$run/serial.log"
-        rg -q '^RESULT native damaged clear rewind PASS assessment=1 recoverable-report=1 commit=1' "$run/serial.log"
+        if [[ $clear_assessment_only == 1 ]];then
+            rg -q '^RESULT native damaged clear assessment only PASS report=1 commit=0' "$run/serial.log"
+            ! rg -q '^RESULT native damaged (clear rewind|rewind commit) PASS' "$run/serial.log"
+        else
+            rg -q '^RESULT native damaged clear rewind PASS assessment=1 recoverable-report=1 commit=1' "$run/serial.log"
+        fi
     fi
     if [[ $clear_manager == 1 ]];then
-        rg -q '^RESULT native Manager damaged clear PASS assessment=1 captured-report=1 commit=1 joined=2' "$run/serial.log"
+        if [[ $clear_assessment_only == 1 ]];then
+            rg -q '^RESULT native Manager damaged clear assessment PASS captured-report=1 joined=1 commit=0' "$run/serial.log"
+        else
+            rg -q '^RESULT native Manager damaged clear PASS assessment=1 captured-report=1 commit=1 joined=2' "$run/serial.log"
+        fi
     fi
     if [[ $import_rewind_manager == 1 ]];then
         rg -q '^RESULT native recovery parser PASS modes=3 guid=1 malformed=5 unchanged=1 legacy-refused=1' "$run/serial.log"
@@ -1427,14 +1445,14 @@ if [[ $import_rewind == 1 ]];then
     fi
     [[ -s "$run/overlays.sha256" ]]
     sha256sum -c "$run/backing.sha256"
-    if [[ $import_rewind_mode == commit ]];then
+    if [[ $import_rewind_mode == commit && $clear_assessment_only == 0 ]];then
         rg -q "^RESULT native damaged rewind commit PASS writable-${import_rewind_flag}=1 new-file=1 flushed=1 exported=1" "$run/serial.log"
         if sha256sum -c "$run/overlays.sha256" > "$run/rewind-overlay-change.log" 2>&1;then
             echo 'FAIL: committed recovery did not change either overlay';exit 1
         fi
         rg -Fqx "$run/disk0.qcow2: FAILED" "$run/rewind-overlay-change.log"
         rg -Fqx "$run/disk1.qcow2: FAILED" "$run/rewind-overlay-change.log"
-    elif [[ $import_rewind_dryrun == 1 ]];then
+    elif [[ $import_rewind_dryrun == 1 || $clear_assessment_only == 1 ]];then
         # A writable upstream vdev probe can rewrite identical label padding.
         # Container hashes therefore do not prove changed guest disk content.
         # Keep that diagnostic, but require exact equality of BOTH full disks;
@@ -1448,10 +1466,10 @@ if [[ $import_rewind == 1 ]];then
     else
         sha256sum -c "$run/overlays.sha256"
     fi
-    if [[ $import_rewind_mode != preview ]];then
+    if [[ $import_rewind_mode != preview && $clear_assessment_only == 0 ]];then
         rg -q '^RESULT native repaired pool readback PASS ordinary-import=1 original-file=1 post-recovery-file=1 readonly=1' "$run/serial.log"
     fi
-    echo "PASS: native damaged-pool rewind mode=$import_rewind_mode, exact DOS and verified image policy: $run"
+    echo "PASS: native damaged-pool rewind mode=$import_rewind_mode clear_assessment_only=$clear_assessment_only, exact DOS and verified image policy: $run"
     exit 0
 fi
 if [[ $labelclear_only == 1 ]];then

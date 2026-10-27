@@ -614,10 +614,19 @@ int main(void)
     CHECK(SystemTags((CONST_STRPTR)"C:zpool list -H qemu_mirror",TAG_DONE)>0);
     CHECK(SystemTags((CONST_STRPTR)"C:zpool import -N -V -f -o cachefile=none -d /AROS/ata.device/0/partition/0 -d /AROS/ata.device/1/partition/0 qemu_mirror",TAG_DONE)==0);
     note("RESULT native verbatim admission PASS readonly-refused=1 absent=1 writable-admitted=1");
+#ifdef OZ_NATIVE_CLEAR_GUI
+    note("READY native damaged clear GUI: admitted pool; assessment only; close Manager to verify disks");
+    CHECK(SystemTags((CONST_STRPTR)"C:OpenZFSManagerNative",TAG_DONE)==0);
+    note("RESULT native damaged clear GUI returned PASS");
+#endif
 #ifdef OZ_NATIVE_CLEAR_MANAGER
     CHECK(!manager_damaged_clear(1));
+#ifndef OZ_NATIVE_CLEAR_ASSESSMENT_ONLY
     CHECK(!manager_damaged_clear(0));
     note("RESULT native Manager damaged clear PASS assessment=1 captured-report=1 commit=1 joined=2");
+#else
+    note("RESULT native Manager damaged clear assessment PASS captured-report=1 joined=1 commit=0");
+#endif
 #else
     file=Open((CONST_STRPTR)"T:clear-assessment",MODE_NEWFILE);CHECK(file);
     LONG clear_assessment=SystemTags((CONST_STRPTR)"C:zpool clear -n" OZ_REWIND_FLAG " qemu_mirror",SYS_Output,file,SYS_Error,file,TAG_DONE);
@@ -628,7 +637,13 @@ int main(void)
     {char result[96];snprintf(result,sizeof(result),"Clear assessment exit=%ld close=%ld",clear_assessment,clear_closed);note(result);}
     CHECK(clear_closed&&clear_assessment==0);
     CHECK(strstr(clear_report,"Would be able to return qemu_mirror to its state as of"));
+#ifndef OZ_NATIVE_CLEAR_ASSESSMENT_ONLY
     CHECK(SystemTags((CONST_STRPTR)"C:zpool clear -" OZ_REWIND_FLAG " qemu_mirror",TAG_DONE)==0);
+#endif
+#endif
+#ifdef OZ_NATIVE_CLEAR_ASSESSMENT_ONLY
+    note("RESULT native damaged clear assessment only PASS report=1 commit=0");
+    goto done;
 #endif
     note("RESULT native damaged clear rewind PASS assessment=1 recoverable-report=1 commit=1");
 #else
