@@ -1,5 +1,9 @@
 include $(SRCDIR)/config/aros.cfg
 
+ifneq ($(strip $(OPENZFS_DEPENDENCIES)),)
+include $(OPENZFS_DEPENDENCIES)
+endif
+
 OZ_SOURCE := $(SRCDIR)/$(CURDIR)/../..
 OZ_NVPAIR_OBJ := $(GENDIR)/$(CURDIR)/nvpair
 OPENZFS_TIRPC_SOURCE ?=

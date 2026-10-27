@@ -60,6 +60,58 @@ The default nvpair build verifies the archive's
 pinned SHA256 and extracts it if absent. It can download the pinned archive
 if necessary. SDK, pthread, zlib and crypto are not bootstrapped here.
 
+### Coordinated dependency source build
+
+`build-dependencies.sh` coordinates the existing complete pthread, pinned
+BoringSSL, nvpair/XDR and PBKDF2-test builders. It never installs into the SDK
+or reuses a supplied compiled archive. Set these explicit inputs:
+
+```sh
+export AROS_CC=/path/to/x86_64-aros-gcc
+export AROS_CXX=/path/to/x86_64-aros-g++
+export AROS_SDK=/path/to/matched/AROS/Developer
+export AROS_PTHREAD_SOURCE=/path/to/matched/compiler/pthread
+export AROS_HOST_GO=/path/to/host/go
+export AROS_ARTIFACT_ROOT=/mounted/external/build-directory
+export AROS_BUILD_JOBS=8
+bash aros/engine/build-dependencies.sh --check
+bash aros/engine/build-dependencies.sh
+```
+
+The explicit MetaMake target `contrib-openzfs-dependencies` invokes the same
+builder using the exported environment. It is not an automatic nightly-build
+dependency. Host CMake/Ninja/Perl/Git/tar are required. The compiler, SDK and
+matching AROS runtime are still prerequisites; this does not bootstrap an OS
+or repair a mismatched ABI. `--check` performs no network access or build.
+Build paths must be free of spaces and make-special characters because the
+enclosing AROS make templates use unquoted path lists.
+
+Optional `AROS_BORINGSSL_REPOSITORY` selects a local source mirror while keeping
+the pinned upstream revision and reviewed patch. `AROS_TIRPC_ARCHIVE` supplies
+the checksum-verified upstream tarball for offline builds; otherwise the
+existing XDR builder fetches it. `AROS_PTHREAD_DOSTAGS` retains the explicit
+header-overlay option of the pthread builder. Source trees are read-only
+inputs; outputs and Go caches are private to the new `dependencies.*` directory.
+
+Only a completed build publishes `dependencies.env` for the shell builders,
+`dependencies.mk` for MetaMake, and `outputs.sha256`. Use the make fragment via
+`OPENZFS_DEPENDENCIES=/absolute/path/dependencies.mk` on subsequent OpenZFS
+builds. Root tools, engine, and shared-library makefiles consume the same
+include. The SDK's zlib/import archives and any required runtime compatibility
+objects remain separate explicit inputs. Preserve the dependency directory
+while its manifests or downstream builds reference it. No runtime acceptance
+is implied by a successful dependency build; run native tests and the complete
+engine/handler workload with these exact outputs before distributing binaries.
+
+The normal (non-quick) tools targets also invoke `contrib-openzfs-nvpair` and
+may rebuild the selected nvpair archive in `OPENZFS_NVPAIR_LIBDIR`. Do not run
+these concurrently with another consumer of the same dependency directory;
+recheck `outputs.sha256` and qualify any changed binary before packaging.
+
+`test-dependencies-preflight.sh` uses the same environment to check valid
+inputs and reject excessive jobs, missing source, root-filesystem output,
+unsupported path characters, and a wrong XDR archive without starting builds.
+
 ### Building the private pthread dependency
 
 `build-private-pthread.sh` can build the complete pthread source set from an

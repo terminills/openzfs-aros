@@ -1,5 +1,9 @@
 include $(SRCDIR)/config/aros.cfg
 
+ifneq ($(strip $(OPENZFS_DEPENDENCIES)),)
+include $(OPENZFS_DEPENDENCIES)
+endif
+
 # The engine object is produced by the full source engine build. This target
 # packages it as an AROS library, never into any client executable.
 OPENZFS_ENGINE_OBJECT ?= $(GENDIR)/$(CURDIR)/../engine/full/full-engine.o

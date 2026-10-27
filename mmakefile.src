@@ -1,6 +1,17 @@
 # OpenZFS AROS native tools. Scanned as part of an AROS Contrib source tree.
 include $(SRCDIR)/config/aros.cfg
 
+ifneq ($(strip $(OPENZFS_DEPENDENCIES)),)
+include $(OPENZFS_DEPENDENCIES)
+endif
+
+# Explicit preparation target; never downloads/builds dependencies implicitly
+# as part of the OS. The script requires a selected SDK and source/tool inputs.
+#MM contrib-openzfs-dependencies
+.PHONY: contrib-openzfs-dependencies
+contrib-openzfs-dependencies:
+	bash $(SRCDIR)/$(CURDIR)/aros/engine/build-dependencies.sh
+
 # Keep target-specific SDK and compiler selection in the enclosing AROS build.
 # A private pthread implementation can be selected explicitly for older SDKs.
 OPENZFS_PTHREAD_INCLUDE ?= $(AROS_INCLUDES)

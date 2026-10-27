@@ -1,0 +1,27 @@
+fsck.fat 4.2 (2021-01-31)
+Checking we can access the last sector of the filesystem
+Boot sector contents:
+System ID "mkfs.fat"
+Media byte 0xf8 (hard disk)
+       512 bytes per logical sector
+     16384 bytes per cluster
+        32 reserved sectors
+First FAT starts at byte 16384 (sector 32)
+         2 FATs, 16 bit entries
+    114688 bytes per FAT (= 224 sectors)
+Root directory starts at byte 245760 (sector 480)
+       512 root directory entries
+Data area starts at byte 262144 (sector 512)
+     57327 data clusters (939245568 bytes)
+63 sectors/track, 32 heads
+         0 hidden sectors
+   1835001 sectors total
+Cluster 57326 out of range (57329 > 57328). Setting to EOF.
+/OZReuseChanges/disk4
+  File size is 67108864 bytes, cluster chain length is 66813952 bytes.
+  Truncating file to 66813952 bytes.
+Checking for unused clusters.
+Reclaimed 17 unused clusters (278528 bytes).
+
+Leaving filesystem unchanged.
+/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/public-service-run.gPj87UkG/backing.raw: 10 files, 36848/57327 clusters

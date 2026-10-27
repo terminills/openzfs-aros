@@ -1,0 +1,3 @@
+/home/terminills/Documents/GitHub/openzfs-aros/build-aros/libtirpc-1.3.7.tar.bz2: OK
+Dependency build: /mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/dependencies.YF6P1Tca
+PASS dependency source builds; native acceptance still required: /mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/dependencies.YF6P1Tca

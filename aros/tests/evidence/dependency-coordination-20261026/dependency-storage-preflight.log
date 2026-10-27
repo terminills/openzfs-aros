@@ -1,0 +1,10 @@
+Insufficient storage: 104857599 KiB free at /; retain at least 104857600 KiB. Archive inactive artifacts to the designated external drive first.
+Cannot verify available storage for /; refusing test allocation
+PASS storage preflight: below-reserve denied; boundary and above allowed; malformed denied
+Cannot verify artifact filesystem identity
+realpath: /tmp/tmp.ipH5HCRBVn/missing: No such file or directory
+External artifact root must reside outside the system filesystem
+Insufficient storage: 104857599 KiB free at /tmp/tmp.ipH5HCRBVn/external; retain at least 104857600 KiB. Archive inactive artifacts to the designated external drive first.
+Insufficient storage: 104857599 KiB free at /tmp/tmp.ipH5HCRBVn/default; retain at least 104857600 KiB. Archive inactive artifacts to the designated external drive first.
+Insufficient storage: 104857599 KiB free at /; retain at least 104857600 KiB. Archive inactive artifacts to the designated external drive first.
+PASS artifact root: default, external destination and external checkout allowed; missing, system filesystem, identity failure and low reserve denied

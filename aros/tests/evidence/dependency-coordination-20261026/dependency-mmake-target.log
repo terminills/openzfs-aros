@@ -1,0 +1,6 @@
+/bin/sh: 1: /mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/mmake-cli.G78XLweV/source: Permission denied
+/bin/sh: 1: cmd/zpool/: Permission denied
+/bin/sh: 1: /mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/mmake-cli.G78XLweV/source: Permission denied
+/bin/sh: 1: aros/cli/: Permission denied
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/config/make.cfg:29: /home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/-/gen/host/config/host.cfg: No such file or directory
+make: *** No rule to make target '/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/-/gen/host/config/host.cfg'.  Stop.

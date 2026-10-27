@@ -5,7 +5,7 @@ oz_artifact_root()
     local default=$1 external=${2:-} destination=$1 system_device destination_device
     if [[ -n $external ]]; then
         destination=$(realpath -e "$external") || return 1
-        [[ -d $destination && -w $destination ]] || return 1
+        [[ -d $destination ]] || { echo 'Artifact root must be a directory' >&2; return 1; }
         system_device=$(stat -c %d /) || return 1
         destination_device=$(stat -c %d "$destination") || return 1
         if [[ ! $system_device =~ ^[0-9]+$ || ! $destination_device =~ ^[0-9]+$ ]]; then
@@ -19,6 +19,7 @@ oz_artifact_root()
             echo 'External artifact root must reside outside the system filesystem' >&2
             return 1
         fi
+        [[ -w $destination ]] || { echo 'External artifact root must be writable' >&2; return 1; }
         oz_storage_preflight / || return 1
     fi
     oz_storage_preflight "$default" || return 1
