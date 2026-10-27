@@ -73,9 +73,10 @@ int oz_split_config(nvlist_t *tree,const uint64_t *guids,unsigned count,
             if(nvlist_lookup_uint64(members[j],ZPOOL_CONFIG_GUID,&guid))goto done;
             for(unsigned k=0;k<count;k++)if(guids[k]==guid) {
                 if(selected[i]||(used&(1U<<k)))goto done;
-                /* The current adapter accepts file-backed leaves only. */
+                /* Admission checks the selected live leaf's path separately;
+                 * native disk leaves need the same topology selection. */
                 if(nvlist_lookup_string(members[j],ZPOOL_CONFIG_TYPE,&type)||
-                    strcmp(type,VDEV_TYPE_FILE)) {error=ENOTSUP;goto done;}
+                    (strcmp(type,VDEV_TYPE_FILE)&&strcmp(type,VDEV_TYPE_DISK))) {error=ENOTSUP;goto done;}
                 error=nvlist_dup(members[j],&selected[i],0);
                 if(error)goto done;
                 error=EINVAL;used|=1U<<k;

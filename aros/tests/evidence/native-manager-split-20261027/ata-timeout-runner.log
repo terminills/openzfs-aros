@@ -1,0 +1,13 @@
+Native members attached: both
+Native pool layout: mirror
+Native storage bus: ide
+QEMU acceleration: kvm CPU: host
+Guest virtual CPUs: 8
+OS runtime profile: dos-posix-ata
+Formatting '/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/native-import-run.jNLKMK1e/disk0.qcow2', fmt=qcow2 cluster_size=65536 extended_l2=off compression_type=zlib size=536870912 backing_file=/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/qemu-run.clear-cut-repaired.KTpzJcSo/disk0.raw backing_fmt=raw lazy_refcounts=off refcount_bits=16
+Formatting '/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/native-import-run.jNLKMK1e/disk1.qcow2', fmt=qcow2 cluster_size=65536 extended_l2=off compression_type=zlib size=536870912 backing_file=/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/qemu-run.clear-cut-repaired.KTpzJcSo/disk1.raw backing_fmt=raw lazy_refcounts=off refcount_bits=16
+Formatting '/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/native-import-run.jNLKMK1e/add-partition.raw', fmt=raw size=268435456
+Formatting '/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/native-import-run.jNLKMK1e/add-partition.qcow2', fmt=qcow2 cluster_size=65536 extended_l2=off compression_type=zlib size=268435456 backing_file=/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/native-import-run.jNLKMK1e/add-partition.raw backing_fmt=raw lazy_refcounts=off refcount_bits=16
+Guest memory MiB: 2048
+Guest completion deadline: 600 seconds
+INCOMPLETE: harness deadline before guest completion (GUI=0); stopping isolated QEMU. This alone does not establish a guest crash. Evidence: /mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/native-import-run.jNLKMK1e

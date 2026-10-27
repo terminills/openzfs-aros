@@ -294,6 +294,15 @@ results, not a fresh qualification of this public snapshot.
 
 ## Remaining boundaries
 
+Manager disk-leaf split update (2026-10-27): the topology selector no longer
+rejects admitted native disk leaves as file-only. Actual old-engine comparison
+refuses ENOTSUP; new authenticated Manager API succeeds. A fresh two-native-disk
+writer and separate cold reader verify both resulting pools' exact DOS files,
+readonly refusal and exports; reader images remain unchanged and both pools
+pass independent host zdb. See `aros/tests/evidence/native-manager-split-20261027`.
+Mixed-backing secondary-channel ATA timeout runs are preserved as failures,
+not full-suite passes. CLI hole/indirect split admission remains restricted.
+
 Damaged-pool CLEAR update (2026-10-27): actual upstream `clear -nF/-F` and
 `clear -nFX/-FX` pass on separately prepared damaged mirror fixtures through
 explicit native admission. The extreme result also passes a separate cold

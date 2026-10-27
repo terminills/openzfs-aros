@@ -148,6 +148,11 @@ usb_created=${AROS_TEST_USB_CREATED_RECOVERY:-0}
 usb_inflight=${AROS_TEST_USB_INFLIGHT_WRITE:-0}
 usb_cli_clear=${AROS_TEST_USB_CLI_CLEAR:-0}
 import_rewind=${AROS_TEST_IMPORT_REWIND:-0}
+manager_split=${AROS_TEST_MANAGER_SPLIT:-none}
+[[ $manager_split == none || $manager_split == write || $manager_split == cold ]]
+if [[ $manager_split != none ]];then
+    [[ $native_bus == ide && $members == both && $layout == mirror && $writable == 0 && $gui == 0 && $gpt == 0 && $import_rewind == 0 && -z ${AROS_TEST_WHOLE_CLI_LINK:-} ]]
+fi
 [[ $import_rewind == 0 || $import_rewind == 1 ]]
 import_rewind_mode=${AROS_TEST_IMPORT_REWIND_MODE:-preview}
 clear_rewind=${AROS_TEST_CLEAR_REWIND:-0}
@@ -383,6 +388,10 @@ if [[ $gui != 0 ]];then gui_devices=(-usb -device usb-tablet);fi
 if [[ $layout != mirror ]];then gui_flags+=(-DOZ_NATIVE_IMPORT_RAIDZ);fi
 if [[ $layout == raidz3 ]];then gui_flags+=(-DOZ_NATIVE_IMPORT_RAIDZ3);fi
 if [[ $writable == 1 ]];then gui_flags+=(-DOZ_NATIVE_WRITABLE_TEST);fi
+if [[ $manager_split != none ]];then
+    gui_flags+=(-DOZ_NATIVE_MANAGER_SPLIT)
+    if [[ $manager_split == cold ]];then gui_flags+=(-DOZ_NATIVE_MANAGER_SPLIT_COLD);fi
+fi
 if [[ $writable == 2 ]];then gui_flags+=(-DOZ_NATIVE_VERIFY_WRITES);fi
 if [[ $keep_names == 1 ]];then gui_flags+=(-DOZ_NATIVE_KEEP_NAMES);fi
 if [[ -n ${AROS_TEST_FS_PACKAGE:-} ]];then
@@ -392,6 +401,10 @@ if [[ $gpt == 1 || $gpt == 3 ]];then gui_flags+=(-DOZ_NATIVE_GPT_TEST);fi
 if [[ $gpt == 2 ]];then gui_flags+=(-DOZ_NATIVE_GPT_READONLY);fi
 if [[ $members != both ]];then gui_flags+=(-DOZ_NATIVE_IMPORT_DEGRADED);fi
 run=$(mktemp -d "$artifact_root/native-import-run.XXXXXXXX")
+if [[ $manager_split != none ]];then
+    cp aros/engine/native-manager-split-test.h "$run/"
+    sha256sum aros/engine/native-manager-split-test.h >"$run/manager-split-source.sha256"
+fi
 mkdir "$run/tmp"
 export TMPDIR="$run/tmp"
 if [[ -n ${AROS_TEST_STDCIO_LIBRARY:-} ]];then
@@ -983,6 +996,10 @@ if [[ -n ${AROS_TEST_WHOLE_CLI_LINK:-} ]];then
         [[ ${AROS_TEST_NATIVE_SPLIT:-0} == 1 ]]
         cli_flags+=(-DOZ_TEST_TYPED_NATIVE_ATTACH)
     fi
+    if [[ ${AROS_TEST_TYPED_NATIVE_SPLIT:-0} == 1 ]];then
+        [[ ${AROS_TEST_NATIVE_SPLIT:-0} == 1 ]]
+        cli_flags+=(-DOZ_TEST_TYPED_NATIVE_SPLIT)
+    fi
     if [[ ${AROS_TEST_CLI_TINY_REPLY:-0} == 1 ]];then
         [[ $writable == 2 ]]
         rg -Fxq 'import_tiny_reply=1' "$AROS_TEST_WHOLE_CLI_LINK/build-options.txt"
@@ -1390,6 +1407,22 @@ done
 printf 'quit\n' | socat - "UNIX-CONNECT:$run/monitor" >/dev/null
 wait "$pid"
 trap - EXIT
+if [[ $manager_split != none ]];then
+    rg -q '^RESULT native Manager all-disk split PASS line=0 pools=2 cycles=2 exact-files=2 readonly=1' "$run/serial.log"
+    rg -q '^RESULT native Manager split test PASS line=0' "$run/serial.log"
+    sha256sum -c "$run/backing.sha256"
+    if [[ $manager_split == cold ]];then
+        sha256sum -c "$run/overlays.sha256"
+    else
+        if sha256sum -c "$run/overlays.sha256" >"$run/split-overlay-change.log" 2>&1;then
+            echo 'FAIL: native split did not change overlays';exit 1
+        fi
+        rg -Fqx "$run/disk0.qcow2: FAILED" "$run/split-overlay-change.log"
+        rg -Fqx "$run/disk1.qcow2: FAILED" "$run/split-overlay-change.log"
+    fi
+    echo "PASS: native Manager all-disk split $manager_split: $run"
+    exit 0
+fi
 if [[ $import_rewind == 1 ]];then
     if [[ $import_rewind_mode == seed ]];then
         rg -q '^RESULT native recovery seed PASS generations=8 sync=8 exported=0' "$run/serial.log"
@@ -2042,7 +2075,11 @@ if [[ -n ${AROS_TEST_WHOLE_CLI_LINK:-} ]];then
             fi
         fi
         if [[ ${AROS_TEST_NATIVE_SPLIT:-0} == 1 ]];then
+            rg -q 'RESULT native CLI healthy clear recovery PASS modes=4' "$run/serial.log"
             rg -q 'RESULT native CLI partition-attach-split PASS mounted-denied=1 readonly-denied=1 unauthorized=1 dryrun-unchanged=1 destination-exported=1 separate-imports=2 payload-bytes=1048576' "$run/serial.log"
+            if [[ ${AROS_TEST_TYPED_NATIVE_SPLIT:-0} == 1 ]];then
+                rg -q 'RESULT native Manager partition split PASS mounted-denied=1 readonly-denied=1 unauthorized=1 destination-exported=1 separate-imports=2 payload-bytes=1048576' "$run/serial.log"
+            fi
             ! rg -q 'OpenZFS native I/O failure' "$run/serial.log"
             if [[ ${AROS_TEST_TYPED_NATIVE_ATTACH:-0} == 1 ]];then
                 rg -q 'RESULT native typed attach PASS readonly-denied=1 unauthorized=1 resilver-complete=1 payload-bytes=1048576' "$run/serial.log"

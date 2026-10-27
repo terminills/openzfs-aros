@@ -1,6 +1,6 @@
 # Damaged CLEAR assessment without recovery commit
 
-Three independent eight-CPU QEMU guests used the production engine
+Four independent eight-CPU QEMU guests used the production engine
 `shared-engine.VpiTT74c`, CLI `mmake-cli.JZ90tGIt`, the same original damaged
 mirror fixtures and fresh overlays. The engine is unchanged from the
 damaged CLEAR commit/cold tests; this extends qualification, not a new

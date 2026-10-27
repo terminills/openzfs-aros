@@ -4954,6 +4954,30 @@ static int attach_pool(int partition)
 #endif
     return 0;
 }
+#ifdef OZ_TEST_TYPED_NATIVE_SPLIT
+static int typed_native_split(const char *guid,int expected)
+{
+    struct oz_message *m=calloc(1,sizeof(*m)),*out=calloc(1,sizeof(*out));
+    if(!m||!out){free(m);free(out);return 20;}
+    m->magic=OZ_MAGIC;m->version=OZ_VERSION;m->msg.mn_Length=sizeof(*m);
+    m->operation=14;m->flags=OZ_CONFIRMED;
+    strcpy(m->target,"cli_split_source");strcpy(m->argument,"cli_split_new");
+    snprintf(m->options,sizeof(m->options),"guids=%s",guid);
+    struct oz_ticket ticket={0};int error=oz_admission_submit(OZ_ADMISSION_PORT,m,&ticket);
+    int failed=0;
+    if(!error) {
+        do{error=oz_admission_query(OZ_ADMISSION_PORT,&ticket,out);if(error==EAGAIN)Delay(1);}while(error==EAGAIN);
+        if(!error) {
+            char match[32];snprintf(match,sizeof(match),"errno=%d",expected);
+            const char *found=strstr(out->detail,"errno=");
+            bug("Typed native split expected=%d status=%u: %s\n",expected,(unsigned)out->status,out->detail);
+            failed=out->status!=(expected?OZ_ENGINE_ERROR:OZ_OK)||!found||strcmp(found,match);
+        }else failed=1;
+        if(oz_admission_release(OZ_ADMISSION_PORT,&ticket))failed=1;
+    }else failed=!expected||error!=expected;
+    free(m);free(out);return failed?20:0;
+}
+#endif
 static int split_pool(int partition)
 {
     const char *native[]={"RAM:cli-split-a.vdev","RAM:cli-split-b.vdev"};
@@ -5015,11 +5039,20 @@ static int split_pool(int partition)
         bug("RESULT native typed attach PASS readonly-denied=1 unauthorized=1 resilver-complete=1 payload-bytes=1048576\n");
 #endif
     }
+#ifdef OZ_TEST_TYPED_NATIVE_SPLIT
+    char split_guid[32];
+    if(partition) {
+        if(typed_vdev_guid("cli_split_source",paths[1],split_guid)||typed_native_split(split_guid,EBUSY))return 20;
+    }
+#endif
     RUN(1,"busy","C:zpool","split","cli_split_source","cli_split_new",paths[1]);
     RUN(0,NULL,"C:zfs","unmount","cli_split_source/files");
     RUN(0,NULL,"C:zpool","export","cli_split_source");
     RUN(0,NULL,"C:zpool","import","-N","-o","cachefile=none","-o","readonly=on","-d",paths[0],"-d",paths[1],"cli_split_source");
     RUN(1,"read-only","C:zpool","split","cli_split_source","cli_split_new",paths[1]);
+#ifdef OZ_TEST_TYPED_NATIVE_SPLIT
+    if(partition&&typed_native_split(split_guid,EROFS))return 20;
+#endif
     RUN(0,NULL,"C:zpool","export","cli_split_source");
     RUN(0,NULL,"C:zpool","import","-N","-o","cachefile=none","-d",paths[0],"-d",paths[1],"cli_split_source");
     struct Library *secBase=OpenLibrary((CONST_STRPTR)SECURITYNAME,SECURITYVERSION);
@@ -5031,6 +5064,9 @@ static int split_pool(int partition)
     /* Native geometry admission rejects the ordinary caller before the
      * split ioctl; file-backed selection reaches upstream's policy error. */
     RUN(1,partition?"Permission denied":"permission denied","C:zpool","split","cli_split_source","cli_split_new",paths[1]);
+#ifdef OZ_TEST_TYPED_NATIVE_SPLIT
+    if(partition&&typed_native_split(split_guid,EPERM))return 20;
+#endif
     secLogoutA(quiet);if(secLoginA(root)!=secOWNER_SYSTEM)return 20;
     CloseLibrary(secBase);
     RUN(0,paths[1],"C:zpool","split","-n","-P","cli_split_source","cli_split_new",paths[1]);
@@ -5048,6 +5084,10 @@ static int split_pool(int partition)
     RUN(0,NULL,"C:zpool","export","cli_split_new");
     bug("RESULT native CLI split retention PASS injected-error=1 destination-readable=1 source-export-denied=1 source-destroy-denied=1 destination-exported=1\n");
 #else
+#ifdef OZ_TEST_TYPED_NATIVE_SPLIT
+    if(partition){if(typed_native_split(split_guid,0))return 20;}
+    else
+#endif
     RUN(0,NULL,"C:zpool","split","cli_split_source","cli_split_new",paths[1]);
 #endif
     RUN(0,paths[0],"C:zpool","status","-P","cli_split_source");
@@ -5075,6 +5115,9 @@ static int split_pool(int partition)
         if((!partition||i==0)&&!DeleteFile((CONST_STRPTR)native[i]))return 20;
     }
     bug("RESULT native CLI %ssplit PASS mounted-denied=1 readonly-denied=1 unauthorized=1 dryrun-unchanged=1 destination-exported=1 separate-imports=2 payload-bytes=1048576\n",partition?"partition-attach-":"");
+#ifdef OZ_TEST_TYPED_NATIVE_SPLIT
+    if(partition)bug("RESULT native Manager partition split PASS mounted-denied=1 readonly-denied=1 unauthorized=1 destination-exported=1 separate-imports=2 payload-bytes=1048576\n");
+#endif
     return 0;
 }
 #ifdef OZ_TEST_TYPED_NATIVE_MIRROR
@@ -6494,7 +6537,13 @@ static int create_pool(void)
     }
     RUN(0,NULL,"C:zpool","clear","cli_created");
     RUN(0,NULL,"C:zpool","clear","cli_created",paths[0]);
-    RUN(1,NULL,"C:zpool","clear","-F","cli_created");
+    /* Healthy unmounted recovery is now supported. Damaged-TXG selection
+     * is qualified separately; these calls prove current CLI dispatch. */
+    RUN(0,NULL,"C:zpool","clear","-nF","cli_created");
+    RUN(0,NULL,"C:zpool","clear","-F","cli_created");
+    RUN(0,NULL,"C:zpool","clear","-nFX","cli_created");
+    RUN(0,NULL,"C:zpool","clear","-FX","cli_created");
+    bug("RESULT native CLI healthy clear recovery PASS modes=4\n");
     RUN(0,"state: ONLINE","C:zpool","status","cli_created");
     RUN(0,NULL,"C:zfs","create","-u","-o","mountpoint=OZCLI:",
         "-o","normalization=formC","-o","utf8only=on","-o","casesensitivity=insensitive",

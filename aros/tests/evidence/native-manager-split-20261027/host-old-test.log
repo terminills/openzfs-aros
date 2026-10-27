@@ -1,0 +1,12 @@
+ASSERT at aros/engine/split-config-test.c:86:main()
+!oz_split_config(tree,ids,2,&out)
+  PID: 1141995   COMM: old-test
+  TID: 1141995   NAME: old-test
+Call trace:
+/home/terminills/Documents/GitHub/openzfs-aros/build-control/.libs/libnvpair.so.3(libspl_backtrace+0x35) [0x7f9517830055]
+/home/terminills/Documents/GitHub/openzfs-aros/build-control/.libs/libnvpair.so.3(libspl_assertf+0x14f) [0x7f951782ffcf]
+build-audit/native-split-host/old-test(+0x1d6c) [0x55776c5edd6c]
+build-audit/native-split-host/old-test(+0x2bc9) [0x55776c5eebc9]
+/usr/lib/x86_64-linux-gnu/libc.so.6(+0x2a601) [0x7f951742a601]
+/usr/lib/x86_64-linux-gnu/libc.so.6(__libc_start_main+0x88) [0x7f951742a718]
+build-audit/native-split-host/old-test(+0x1305) [0x55776c5ed305]

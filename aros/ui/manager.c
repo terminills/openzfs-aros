@@ -384,7 +384,7 @@ static void send_request(ULONG operation,int preview_only) {
     }
     if(m.operation==14) {
         size_t n=strlen(text);
-        snprintf(text+n,sizeof(text)-n,"\nSplits the explicitly selected leaves into a separate pool.\nSource redundancy is reduced. Unmount source datasets first.\nThe destination stays exported; import it separately using its exact files.");
+        snprintf(text+n,sizeof(text)-n,"\nSplits the explicitly selected leaves into a separate pool.\nSource redundancy is reduced. Unmount source datasets first.\nThe destination stays exported; import it separately using its exact members.");
     }
     if(m.operation==7) {
         struct oz_import_policy policy;

@@ -77,7 +77,24 @@ int main(void)
     root=fnvlist_lookup_nvlist(out,ZPOOL_CONFIG_VDEV_TREE);
     assert(!nvlist_lookup_nvlist_array(root,ZPOOL_CONFIG_CHILDREN,&children,&count));
     assert(count==3&&!strcmp(fnvlist_lookup_string(children[1],ZPOOL_CONFIG_TYPE),VDEV_TYPE_INDIRECT));
-    nvlist_free(out);nvlist_free(tree);nvlist_free(indirect);nvlist_free(tops[3]);nvlist_free(log);
+    nvlist_free(out);out=NULL;
+    /* Native disk selection must preserve the exact admitted path and GUID. */
+    fnvlist_add_string(leaf[1],ZPOOL_CONFIG_TYPE,VDEV_TYPE_DISK);
+    fnvlist_add_string(leaf[1],ZPOOL_CONFIG_PATH,"/AROS/ata.device/1/partition/0");
+    fnvlist_add_nvlist_array(mirror[0],ZPOOL_CONFIG_CHILDREN,(const nvlist_t *const *)leaf,2);
+    fnvlist_add_nvlist_array(tree,ZPOOL_CONFIG_CHILDREN,(const nvlist_t *const *)tops,4);
+    assert(!oz_split_config(tree,ids,2,&out));
+    root=fnvlist_lookup_nvlist(out,ZPOOL_CONFIG_VDEV_TREE);
+    assert(!nvlist_lookup_nvlist_array(root,ZPOOL_CONFIG_CHILDREN,&children,&count));
+    assert(!strcmp(fnvlist_lookup_string(children[0],ZPOOL_CONFIG_TYPE),VDEV_TYPE_DISK));
+    assert(!strcmp(fnvlist_lookup_string(children[0],ZPOOL_CONFIG_PATH),"/AROS/ata.device/1/partition/0"));
+    assert(fnvlist_lookup_uint64(children[0],ZPOOL_CONFIG_GUID)==102);
+    nvlist_free(out);out=NULL;
+    fnvlist_add_string(leaf[1],ZPOOL_CONFIG_TYPE,VDEV_TYPE_RAIDZ);
+    fnvlist_add_nvlist_array(mirror[0],ZPOOL_CONFIG_CHILDREN,(const nvlist_t *const *)leaf,2);
+    fnvlist_add_nvlist_array(tree,ZPOOL_CONFIG_CHILDREN,(const nvlist_t *const *)tops,4);
+    assert(oz_split_config(tree,ids,2,&out)==ENOTSUP&&!out);
+    nvlist_free(tree);nvlist_free(indirect);nvlist_free(tops[3]);nvlist_free(log);
     for(unsigned i=0;i<4;i++)nvlist_free(leaf[i]);
     for(unsigned i=0;i<2;i++)nvlist_free(mirror[i]);
     puts("PASS explicit mirror split configuration and GUID validation");

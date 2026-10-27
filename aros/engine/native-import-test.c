@@ -448,6 +448,9 @@ static int namespace_property(const char *name,const char *expected)
     free(m);if(out)oz_message_free(out);oz_client_close(&client);return error;
 }
 #endif
+#ifdef OZ_NATIVE_MANAGER_SPLIT
+#include "native-manager-split-test.h"
+#endif
 int main(void)
 {
     int error=0;BPTR file=0;struct Library *secBase=NULL;
@@ -498,6 +501,10 @@ int main(void)
 #endif
         ,TAG_DONE)==0);
     for(unsigned i=0;i<1500;i++){Forbid();int ready=FindPort((CONST_STRPTR)OZ_ADMISSION_PORT)!=NULL;Permit();if(ready)break;Delay(1);}
+#ifdef OZ_NATIVE_MANAGER_SPLIT
+    CHECK(!native_split_test());
+    goto done;
+#endif
 #ifdef OZ_NATIVE_IMPORT_REWIND
 #ifdef OZ_NATIVE_IMPORT_REWIND_SEED
     /* Make adjacent dirty transaction roots on disposable good media.
@@ -1338,7 +1345,9 @@ done:
     if(file)Close(file);
     if(secBase)CloseLibrary(secBase);
     char line[160];snprintf(line,sizeof(line),
-#if defined(OZ_NATIVE_IMPORT_REWIND)
+#if defined(OZ_NATIVE_MANAGER_SPLIT)
+        "RESULT native Manager split test %s line=%d",
+#elif defined(OZ_NATIVE_IMPORT_REWIND)
         "RESULT native damaged rewind test %s line=%d",
 #elif defined(OZ_NATIVE_FILE_CORRUPTION)
         "RESULT native real file corruption %s line=%d",

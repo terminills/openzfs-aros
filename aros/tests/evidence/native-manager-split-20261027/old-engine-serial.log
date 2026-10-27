@@ -1,0 +1,625 @@
+[bootstrap:multiboot2] smartfb: using VBE mode 0x417a (1280x800x32, fb=0xFD000000)
+[bootstrap:multiboot2] smartfb: KRN_FBAddr=0x00000000FD000000
+0000000000000000 0x0000000000000000 | 000 | AROS64 - The AROS Research OS
+0000000000000000 0x0000000000000000 | 000 | 64-bit SMP build. Compiled Oct 21 2026
+0000000000000000 0x0000000000000000 | 000 | [Kernel] Local APIC: x2APIC
+000000009bea7b21 0x0000000000000000 | 000 | ACPI: RSDP 0x00000000000F52E0 000014 (v00 BOCHS )
+000000009c649442 0x0000000000000000 | 000 | ACPI: RSDT 0x000000007FFE25BF 000034 (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+000000009d04ce53 0x0000000000000000 | 000 | ACPI: FACP 0x000000007FFE243B 000074 (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+000000009da5b3e0 0x0000000000000000 | 000 | ACPI: DSDT 0x000000007FFE0040 0023FB (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+000000009e46e535 0x0000000000000000 | 000 | ACPI: FACS 0x000000007FFE0000 000040
+000000009ead8579 0x0000000000000000 | 000 | ACPI: APIC 0x000000007FFE24AF 0000B0 (v03 BOCHS  BXPC     00000001 BXPC 00000001)
+000000009f4e1f0c 0x0000000000000000 | 000 | ACPI: HPET 0x000000007FFE255F 000038 (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+000000009ffa68e8 0x0000000000000000 | 000 | ACPI: WAET 0x000000007FFE2597 000028 (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+00000000a0a15ab3 0x0000000000000000 | 000 | [HPET] 2 units total
+00000000a169b2c9 0x00000000013d33f0 | 000 | ACPI: 1 ACPI AML tables successfully acquired and loaded
+00000000a2087ddc 0x00000000013b1500 | 000 | [Kernel:ACPI-IOAPIC] Registering IO-APIC #1 [ID=000] @ 00000000fec00000 [GSI = 0]
+00000000a2a85c3a 0x00000000013b1500 | 000 | [Kernel:ACPI] System Total APICs: 8, 8 usable
+00000000a3562388 0x00000000013b1500 | 000 | [Kernel:APIC-IA32] MSI Interrupts Allocatable
+00000000a3cace9f 0x00000000013b1500 | 000 | [Kernel:APIC-IA32]     start = 16
+00000000a42dd38c 0x00000000013b1500 | 000 | [Kernel:APIC-IA32]     total = 198
+00000000c256ff14 0x00000000013b1500 | 000 | [Kernel:APIC-IA32] Heartbeat timer: TSC deadline
+00000000c461f165 0x00000000013dd250 | 001 | [Kernel:APIC-IA32.001] core_APIC_Calibrate: TSC freq inherited from BSP (2496021 kHz) [hypervisor]
+00000000c609143f 0x00000000013dd250 | 001 | [Kernel:APIC-IA32.001] core_APIC_Calibrate: LAPIC timer freq inherited from BSP (1000405830 Hz) [hypervisor]
+00000000c9635aff 0x00000000013dd890 | 002 | [Kernel:APIC-IA32.002] core_APIC_Calibrate: TSC freq inherited from BSP (2496021 kHz) [hypervisor]
+00000000cb07141e 0x00000000013dd890 | 002 | [Kernel:APIC-IA32.002] core_APIC_Calibrate: LAPIC timer freq inherited from BSP (1000405830 Hz) [hypervisor]
+00000000ce59c1d9 0x000000000145d880 | 003 | [Kernel:APIC-IA32.003] core_APIC_Calibrate: TSC freq inherited from BSP (2496021 kHz) [hypervisor]
+00000000cffc5d9e 0x000000000145d880 | 003 | [Kernel:APIC-IA32.003] core_APIC_Calibrate: LAPIC timer freq inherited from BSP (1000405830 Hz) [hypervisor]
+00000000d33adab2 0x00000000014984d0 | 004 | [Kernel:APIC-IA32.004] core_APIC_Calibrate: TSC freq inherited from BSP (2496021 kHz) [hypervisor]
+00000000d4eece36 0x00000000014984d0 | 004 | [Kernel:APIC-IA32.004] core_APIC_Calibrate: LAPIC timer freq inherited from BSP (1000405830 Hz) [hypervisor]
+00000000d83c65fd 0x00000000014d3180 | 005 | [Kernel:APIC-IA32.005] core_APIC_Calibrate: TSC freq inherited from BSP (2496021 kHz) [hypervisor]
+00000000d9e03f24 0x00000000014d3180 | 005 | [Kernel:APIC-IA32.005] core_APIC_Calibrate: LAPIC timer freq inherited from BSP (1000405830 Hz) [hypervisor]
+00000000dd302d10 0x000000000150de30 | 006 | [Kernel:APIC-IA32.006] core_APIC_Calibrate: TSC freq inherited from BSP (2496021 kHz) [hypervisor]
+00000000dedbac6b 0x000000000150de30 | 006 | [Kernel:APIC-IA32.006] core_APIC_Calibrate: LAPIC timer freq inherited from BSP (1000405830 Hz) [hypervisor]
+00000000e2254bb1 0x0000000001548ae0 | 007 | [Kernel:APIC-IA32.007] core_APIC_Calibrate: TSC freq inherited from BSP (2496021 kHz) [hypervisor]
+00000000e3c62bb6 0x0000000001548ae0 | 007 | [Kernel:APIC-IA32.007] core_APIC_Calibrate: LAPIC timer freq inherited from BSP (1000405830 Hz) [hypervisor]
+00000000e6257281 0x00000000013b1500 | 000 | [PCIPC:Driver] PCIPC_InitClass: No ACPI MCFG table
+00000000e8559d0b 0x00000000013b1500 | 000 | [Timer] clock: PIT (no invariant TSC)
+00000001d8a9b648 0x00000000017a37b0 | 000 | [ATI] Init
+00000001d8f1f246 0x00000000017a37b0 | 000 | [ATI] No supported cards found
+00000001f1eaed34 0x000000000179bb30 | 000 | [HW] HW__HW__AddDriver: Failed to instantiate Driver Object
+Writable startup denied: configured security.library and system task identity required.
+RESULT native service release startup PASS diagnostic-modes-refused=3 malformed-refused=2 unauthorized-writable-refused=1 no-ports=1
+Native authenticated admission ready
+OpenZFS management API 3 ready; engine initialized
+Authenticated pool import returned errno=0
+Pool list exact filter case=0 status=0 rows=1 error=0
+Pool list exact filter case=1 status=0 rows=1 error=0
+Pool list exact filter case=2 status=0 rows=0 error=0
+Pool list exact filter case=3 status=0 rows=0 error=0
+Pool list exact filter case=4 status=0 rows=0 error=0
+ONLINE
+Authenticated pool reguid returned errno=0
+Authenticated pool/device clear (query health afterward) returned errno=0
+Authenticated pool reopen (query status for health) returned errno=0
+Pool list exact filter case=0 status=0 rows=1 error=0
+Pool list exact filter case=1 status=0 rows=1 error=0
+Pool list exact filter case=2 status=0 rows=0 error=0
+Pool list exact filter case=3 status=0 rows=0 error=0
+Pool list exact filter case=4 status=0 rows=0 error=0
+ONLINE
+RESULT native reguid and reopen PASS
+00000003594ab620 0x000000004bcc2130 | 000 | RESULT native management API version PASS wire=3 advertised=3 old-version-rejected=1
+0000000359f94186 0x000000004bcc2130 | 000 | RESULT native management capability catalogue PASS supported=76 unavailable=6 exact=1
+000000035ad0135f 0x000000004bcc2130 | 000 | RESULT native I/O page refresh PASS options=1 cursor=1 edited-query-refused=1 clean-request=1
+000000035b886fc2 0x000000004bcc2130 | 000 | RESULT native I/O refresh editor PASS options=1 argument=1 pool=1 operation=1
+000000035c2b26a4 0x000000004bcc2130 | 000 | RESULT native I/O refresh scheduler PASS busy=1 rollback=1 no-catchup=1 stop=1
+000000035cd8baad 0x000000004bcc2130 | 000 | RESULT native I/O rate arithmetic PASS delta=1 reset=1 generation=1 unavailable=1 eviction=1 overflow=1
+0000000362d665ea 0x000000004bcc2130 | 000 | Live I/O sample 0 io-bytes qemu_mirror: interval baseline: sample again
+0000000363ebb539 0x000000004bcc2130 | 000 | Live I/O sample 0 io-ops qemu_mirror: interval baseline: sample again
+0000000364fa06e2 0x000000004bcc2130 | 000 | Live I/O sample 0 io-bytes mirror-0037705e1b147708: interval baseline: sample again
+00000003662bbd49 0x000000004bcc2130 | 000 | Live I/O sample 0 io-ops mirror-0037705e1b147708: interval baseline: sample again
+00000003671f7579 0x000000004bcc2130 | 000 | Live I/O sample 0 io-bytes /AROS/ata.device/0/partition/0: interval baseline: sample again
+0000000367d71a8f 0x000000004bcc2130 | 000 | Live I/O sample 0 io-ops /AROS/ata.device/0/partition/0: interval baseline: sample again
+000000036889c473 0x000000004bcc2130 | 000 | Live I/O sample 0 io-bytes /AROS/ata.device/1/partition/0: interval baseline: sample again
+00000003694044f5 0x000000004bcc2130 | 000 | Live I/O sample 0 io-ops /AROS/ata.device/1/partition/0: interval baseline: sample again
+00000003844aeda4 0x000000004bcc2130 | 000 | Service CLI argv[0]=C:zfs
+0000000384aa1ca2 0x000000004bcc2130 | 000 | Service CLI argv[1]=create
+00000003850a98a2 0x000000004bcc2130 | 000 | Service CLI argv[2]=-u
+00000003856602fa 0x000000004bcc2130 | 000 | Service CLI argv[3]=qemu_mirror/rate-sample
+0000000385dc9b22 0x000000004bcc2130 | 000 | Service CLI transport=0 status=0 dos=0 bytes=0
+
+00000003902e3315 0x000000004bcc2130 | 000 | Service CLI argv[0]=C:zpool
+000000039090f022 0x000000004bcc2130 | 000 | Service CLI argv[1]=sync
+0000000390ef0c39 0x000000004bcc2130 | 000 | Service CLI argv[2]=qemu_mirror
+00000003915573d9 0x000000004bcc2130 | 000 | Service CLI transport=0 status=0 dos=0 bytes=0
+
+0000000397cfa199 0x000000004bcc2130 | 000 | Live I/O sample 1 io-bytes qemu_mirror: interval read=58397.32 write=6236834.23 bytes/s; sample=350701000 ns
+0000000398938a0a 0x000000004bcc2130 | 000 | Live I/O sample 1 io-ops qemu_mirror: interval read=14.26 write=467.63 operations/s; sample=350701000 ns
+0000000399515f4e 0x000000004bcc2130 | 000 | Live I/O sample 1 io-bytes mirror-0037705e1b147708: interval read=58405.65 write=6237723.55 bytes/s; sample=350651000 ns
+000000039a23215a 0x000000004bcc2130 | 000 | Live I/O sample 1 io-ops mirror-0037705e1b147708: interval read=14.26 write=467.70 operations/s; sample=350651000 ns
+000000039af15b97 0x000000004bcc2130 | 000 | Live I/O sample 1 io-bytes /AROS/ata.device/0/partition/0: interval read=46725.59 write=3118932.93 bytes/s; sample=350643000 ns
+000000039bcca193 0x000000004bcc2130 | 000 | Live I/O sample 1 io-ops /AROS/ata.device/0/partition/0: interval read=11.41 write=233.86 operations/s; sample=350643000 ns
+000000039ca1edc6 0x000000004bcc2130 | 000 | Live I/O sample 1 io-bytes /AROS/ata.device/1/partition/0: interval read=11681.43 write=3118941.83 bytes/s; sample=350642000 ns
+000000039d7c8f80 0x000000004bcc2130 | 000 | Live I/O sample 1 io-ops /AROS/ata.device/1/partition/0: interval read=2.85 write=233.86 operations/s; sample=350642000 ns
+000000043eb24b29 0x000000004bcc2130 | 000 | Service CLI argv[0]=C:zfs
+000000043f0bd7ac 0x000000004bcc2130 | 000 | Service CLI argv[1]=destroy
+000000043f673ee4 0x000000004bcc2130 | 000 | Service CLI argv[2]=qemu_mirror/rate-sample
+000000043fd7f5f8 0x000000004bcc2130 | 000 | Service CLI transport=0 status=0 dos=0 bytes=0
+
+00000004404e0e64 0x000000004bcc2130 | 000 | RESULT native live I/O rates PASS rows=8 generation=1 paired-samples=1 positive-write-leaves=2
+0000000546ae0506 0x000000004bcc2130 | 000 | RESULT native latency histograms PASS rows=1628 pages=68 positive-leaf-buckets=87
+00000006ac86c9a7 0x000000004bcc2130 | 000 | RESULT native size histograms PASS rows=1400 pages=59 positive-leaf-buckets=30
+000000076b798890 0x000000004bcc2130 | 000 | Service CLI argv[0]=C:zpool
+000000076be3ddf3 0x000000004bcc2130 | 000 | Service CLI argv[1]=create
+000000076c4c4a2d 0x000000004bcc2130 | 000 | Service CLI argv[2]=-o
+000000076cae137a 0x000000004bcc2130 | 000 | Service CLI argv[3]=cachefile=none
+000000076d20cde3 0x000000004bcc2130 | 000 | Service CLI argv[4]=-O
+000000076d829730 0x000000004bcc2130 | 000 | Service CLI argv[5]=mountpoint=none
+000000076df67af6 0x000000004bcc2130 | 000 | Service CLI argv[6]=cli_split_source
+000000076e6bdb4d 0x000000004bcc2130 | 000 | Service CLI argv[7]=mirror
+000000076ed237e4 0x000000004bcc2130 | 000 | Service CLI argv[8]=/RAM Disk/cli-split-a.vdev
+000000076f5675cc 0x000000004bcc2130 | 000 | Service CLI argv[9]=/RAM Disk/cli-split-b.vdev
+000000076fda0838 0x000000004bcc2130 | 000 | Service CLI transport=0 status=0 dos=0 bytes=124
+AROS OpenZFS: no native NFS/SMB export provider is installed.
+AROS OpenZFS: no native NFS/SMB export provider is installed.
+
+00000007800342e2 0x000000004bcc2130 | 000 | Service CLI argv[0]=C:zfs
+00000007806945d3 0x000000004bcc2130 | 000 | Service CLI argv[1]=create
+0000000780cf3762 0x000000004bcc2130 | 000 | Service CLI argv[2]=-u
+0000000781304755 0x000000004bcc2130 | 000 | Service CLI argv[3]=-o
+0000000781925e2c 0x000000004bcc2130 | 000 | Service CLI argv[4]=mountpoint=OZCLI:
+00000007820f7600 0x000000004bcc2130 | 000 | Service CLI argv[5]=-o
+00000007827037ec 0x000000004bcc2130 | 000 | Service CLI argv[6]=normalization=formC
+0000000782ea4442 0x000000004bcc2130 | 000 | Service CLI argv[7]=-o
+000000078349c192 0x000000004bcc2130 | 000 | Service CLI argv[8]=utf8only=on
+0000000783b5b4a1 0x000000004bcc2130 | 000 | Service CLI argv[9]=-o
+00000007841c208d 0x000000004bcc2130 | 000 | Service CLI argv[10]=casesensitivity=insensitive
+00000007849e85e6 0x000000004bcc2130 | 000 | Service CLI argv[11]=cli_split_source/files
+00000007851bad73 0x000000004bcc2130 | 000 | Service CLI transport=0 status=0 dos=0 bytes=0
+
+000000078b88f9a4 0x000000004bcc2130 | 000 | Service CLI argv[0]=C:zfs
+000000078be459d4 0x000000004bcc2130 | 000 | Service CLI argv[1]=mount
+000000078c3e746e 0x000000004bcc2130 | 000 | Service CLI argv[2]=cli_split_source/files
+000000078cad1955 0x000000004bcc2130 | 000 | Service CLI transport=0 status=0 dos=0 bytes=124
+AROS OpenZFS: no native NFS/SMB export provider is installed.
+AROS OpenZFS: no native NFS/SMB export provider is installed.
+
+00000007a571a78f 0x000000004bcc2130 | 000 | Service CLI argv[0]=C:zpool
+00000007a5d05c62 0x000000004bcc2130 | 000 | Service CLI argv[1]=sync
+00000007a628261d 0x000000004bcc2130 | 000 | Service CLI argv[2]=cli_split_source
+00000007a68f2b74 0x000000004bcc2130 | 000 | Service CLI transport=0 status=0 dos=0 bytes=0
+
+00000007ab620842 0x000000004bcc2130 | 000 | Service CLI argv[0]=C:zpool
+00000007abbe2d52 0x000000004bcc2130 | 000 | Service CLI argv[1]=split
+00000007ac18193e 0x000000004bcc2130 | 000 | Service CLI argv[2]=cli_split_source
+00000007ac7f7de5 0x000000004bcc2130 | 000 | Service CLI argv[3]=cli_split_new
+00000007ace27a6c 0x000000004bcc2130 | 000 | Service CLI argv[4]=/RAM Disk/cli-split-b.vdev
+00000007ad5622d2 0x000000004bcc2130 | 000 | Service CLI transport=0 status=1 dos=0 bytes=47
+Unable to split cli_split_source: pool is busy
+
+00000007b55aa502 0x000000004bcc2130 | 000 | Service CLI argv[0]=C:zfs
+00000007b5b4dd01 0x000000004bcc2130 | 000 | Service CLI argv[1]=unmount
+00000007b610979f 0x000000004bcc2130 | 000 | Service CLI argv[2]=cli_split_source/files
+00000007b67f720a 0x000000004bcc2130 | 000 | Service CLI transport=0 status=0 dos=0 bytes=124
+AROS OpenZFS: no native NFS/SMB export provider is installed.
+AROS OpenZFS: no native NFS/SMB export provider is installed.
+
+00000007c45aee31 0x000000004bcc2130 | 000 | Service CLI argv[0]=C:zpool
+00000007c4b8dcc6 0x000000004bcc2130 | 000 | Service CLI argv[1]=export
+00000007c5139067 0x000000004bcc2130 | 000 | Service CLI argv[2]=cli_split_source
+00000007c57b6543 0x000000004bcc2130 | 000 | Service CLI transport=0 status=0 dos=0 bytes=124
+AROS OpenZFS: no native NFS/SMB export provider is installed.
+AROS OpenZFS: no native NFS/SMB export provider is installed.
+
+00000007e0031956 0x000000004bcc2130 | 000 | Service CLI argv[0]=C:zpool
+00000007e063948e 0x000000004bcc2130 | 000 | Service CLI argv[1]=import
+00000007e0beecd5 0x000000004bcc2130 | 000 | Service CLI argv[2]=-N
+00000007e1177788 0x000000004bcc2130 | 000 | Service CLI argv[3]=-o
+00000007e16f35a4 0x000000004bcc2130 | 000 | Service CLI argv[4]=cachefile=none
+00000007e1d62133 0x000000004bcc2130 | 000 | Service CLI argv[5]=-o
+00000007e22ca66b 0x000000004bcc2130 | 000 | Service CLI argv[6]=readonly=on
+00000007e28fbc6f 0x000000004bcc2130 | 000 | Service CLI argv[7]=-d
+00000007e2e68ecd 0x000000004bcc2130 | 000 | Service CLI argv[8]=/RAM Disk/cli-split-a.vdev
+00000007e35b6a3b 0x000000004bcc2130 | 000 | Service CLI argv[9]=-d
+00000007e3b18b28 0x000000004bcc2130 | 000 | Service CLI argv[10]=/RAM Disk/cli-split-b.vdev
+00000007e427cef0 0x000000004bcc2130 | 000 | Service CLI argv[11]=cli_split_source
+00000007e49440f3 0x000000004bcc2130 | 000 | Service CLI transport=0 status=0 dos=0 bytes=0
+
+00000007e93c68f1 0x000000004bcc2130 | 000 | Service CLI argv[0]=C:zpool
+00000007e999ccda 0x000000004bcc2130 | 000 | Service CLI argv[1]=split
+00000007e9f6fe5f 0x000000004bcc2130 | 000 | Service CLI argv[2]=cli_split_source
+00000007ea66721c 0x000000004bcc2130 | 000 | Service CLI argv[3]=cli_split_new
+00000007eac914fd 0x000000004bcc2130 | 000 | Service CLI argv[4]=/RAM Disk/cli-split-b.vdev
+00000007eb45ee83 0x000000004bcc2130 | 000 | Service CLI transport=0 status=1 dos=0 bytes=52
+Unable to split cli_split_source: pool is read-only
+
+00000007f1300a54 0x000000004bcc2130 | 000 | Service CLI argv[0]=C:zpool
+00000007f18da506 0x000000004bcc2130 | 000 | Service CLI argv[1]=export
+00000007f1e8a1b3 0x000000004bcc2130 | 000 | Service CLI argv[2]=cli_split_source
+00000007f253e590 0x000000004bcc2130 | 000 | Service CLI transport=0 status=0 dos=0 bytes=124
+AROS OpenZFS: no native NFS/SMB export provider is installed.
+AROS OpenZFS: no native NFS/SMB export provider is installed.
+
+000000081992b767 0x000000004bcc2130 | 000 | Service CLI argv[0]=C:zpool
+0000000819fadba8 0x000000004bcc2130 | 000 | Service CLI argv[1]=import
+000000081a562ce7 0x000000004bcc2130 | 000 | Service CLI argv[2]=-N
+000000081aac95e6 0x000000004bcc2130 | 000 | Service CLI argv[3]=-o
+000000081b0430da 0x000000004bcc2130 | 000 | Service CLI argv[4]=cachefile=none
+000000081b6af7b1 0x000000004bcc2130 | 000 | Service CLI argv[5]=-d
+000000081bc1ee18 0x000000004bcc2130 | 000 | Service CLI argv[6]=/RAM Disk/cli-split-a.vdev
+000000081c3692ef 0x000000004bcc2130 | 000 | Service CLI argv[7]=-d
+000000081c9451c3 0x000000004bcc2130 | 000 | Service CLI argv[8]=/RAM Disk/cli-split-b.vdev
+000000081d0920fc 0x000000004bcc2130 | 000 | Service CLI argv[9]=cli_split_source
+000000081d714763 0x000000004bcc2130 | 000 | Service CLI transport=0 status=0 dos=0 bytes=0
+
+00000008234b16d7 0x000000004bcc2130 | 000 | Service CLI argv[0]=C:zpool
+0000000823a8f9b4 0x000000004bcc2130 | 000 | Service CLI argv[1]=split
+000000082402bd64 0x000000004bcc2130 | 000 | Service CLI argv[2]=cli_split_source
+00000008246c3244 0x000000004bcc2130 | 000 | Service CLI argv[3]=cli_split_new
+0000000824d01543 0x000000004bcc2130 | 000 | Service CLI argv[4]=/RAM Disk/cli-split-b.vdev
+0000000825445827 0x000000004bcc2130 | 000 | Service CLI transport=0 status=1 dos=0 bytes=52
+Unable to split cli_split_source: permission denied
+
+000000082ad8f7ca 0x000000004bcc2130 | 000 | Service CLI argv[0]=C:zpool
+000000082b35a2ef 0x000000004bcc2130 | 000 | Service CLI argv[1]=split
+000000082b8f04ac 0x000000004bcc2130 | 000 | Service CLI argv[2]=-n
+000000082be4d4a4 0x000000004bcc2130 | 000 | Service CLI argv[3]=-P
+000000082c3a49b1 0x000000004bcc2130 | 000 | Service CLI argv[4]=cli_split_source
+000000082ca1b673 0x000000004bcc2130 | 000 | Service CLI argv[5]=cli_split_new
+000000082d05937d 0x000000004bcc2130 | 000 | Service CLI argv[6]=/RAM Disk/cli-split-b.vdev
+000000082d7a7977 0x000000004bcc2130 | 000 | Service CLI transport=0 status=0 dos=0 bytes=102
+would create 'cli_split_new' with the following layout:
+
+	cli_split_new
+	  /RAM Disk/cli-split-b.vdev
+
+000000083363633a 0x000000004bcc2130 | 000 | Service CLI argv[0]=C:zpool
+0000000833c1f436 0x000000004bcc2130 | 000 | Service CLI argv[1]=status
+00000008341d786f 0x000000004bcc2130 | 000 | Service CLI argv[2]=-P
+000000083473c7bf 0x000000004bcc2130 | 000 | Service CLI argv[3]=cli_split_source
+0000000834dbe31d 0x000000004bcc2130 | 000 | Service CLI transport=0 status=0 dos=0 bytes=379
+  pool: cli_split_source
+ state: ONLINE
+config:
+
+	NAME                            STATE     READ WRITE CKSUM
+	cli_split_source                ONLINE       0     0     0
+	  mirror-0                      ONLINE       0     0     0
+	    /RAM Disk/cli-split-a.vdev  ONLINE       0     0     0
+	    /RAM Disk/cli-split-b.vdev  ONLINE       0     0     0
+
+errors: No known data errors
+
+0000000b43e44f28 0x000000004bcc2130 | 000 | Service CLI argv[0]=C:zpool
+0000000b44534937 0x000000004bcc2130 | 000 | Service CLI argv[1]=split
+0000000b44b1dab0 0x000000004bcc2130 | 000 | Service CLI argv[2]=cli_split_source
+0000000b451f77d2 0x000000004bcc2130 | 000 | Service CLI argv[3]=cli_split_new
+0000000b458857de 0x000000004bcc2130 | 000 | Service CLI argv[4]=/RAM Disk/cli-split-b.vdev
+0000000b4607a24b 0x000000004bcc2130 | 000 | Service CLI transport=0 status=0 dos=0 bytes=0
+
+0000000b4bee66a4 0x000000004bcc2130 | 000 | Service CLI argv[0]=C:zpool
+0000000b4c4fe56e 0x000000004bcc2130 | 000 | Service CLI argv[1]=status
+0000000b4caf377b 0x000000004bcc2130 | 000 | Service CLI argv[2]=-P
+0000000b4d097795 0x000000004bcc2130 | 000 | Service CLI argv[3]=cli_split_source
+0000000b4d75ede4 0x000000004bcc2130 | 000 | Service CLI transport=0 status=0 dos=0 bytes=253
+  pool: cli_split_source
+ state: ONLINE
+config:
+
+	NAME                          STATE     READ WRITE CKSUM
+	cli_split_source              ONLINE       0     0     0
+	  /RAM Disk/cli-split-a.vdev  ONLINE       0     0     0
+
+errors: No known data errors
+
+0000000b54055c8f 0x000000004bcc2130 | 000 | Service CLI argv[0]=C:zpool
+0000000b5460d943 0x000000004bcc2130 | 000 | Service CLI argv[1]=list
+0000000b54b8291e 0x000000004bcc2130 | 000 | Service CLI argv[2]=cli_split_new
+0000000b551b1dee 0x000000004bcc2130 | 000 | Service CLI transport=0 status=1 dos=0 bytes=42
+cannot open 'cli_split_new': no such pool
+
+0000000b5ffcd62b 0x000000004bcc2130 | 000 | Service CLI argv[0]=C:zpool
+0000000b605915b2 0x000000004bcc2130 | 000 | Service CLI argv[1]=export
+0000000b60b2ca71 0x000000004bcc2130 | 000 | Service CLI argv[2]=cli_split_source
+0000000b611949fe 0x000000004bcc2130 | 000 | Service CLI transport=0 status=0 dos=0 bytes=124
+AROS OpenZFS: no native NFS/SMB export provider is installed.
+AROS OpenZFS: no native NFS/SMB export provider is installed.
+
+0000000b7435078a 0x000000004bcc2130 | 000 | Service CLI argv[0]=C:zpool
+0000000b74915715 0x000000004bcc2130 | 000 | Service CLI argv[1]=import
+0000000b74ebd050 0x000000004bcc2130 | 000 | Service CLI argv[2]=-N
+0000000b7540b089 0x000000004bcc2130 | 000 | Service CLI argv[3]=-o
+0000000b75954577 0x000000004bcc2130 | 000 | Service CLI argv[4]=cachefile=none
+0000000b75f968d1 0x000000004bcc2130 | 000 | Service CLI argv[5]=-o
+0000000b764e1ac0 0x000000004bcc2130 | 000 | Service CLI argv[6]=readonly=on
+0000000b76aea197 0x000000004bcc2130 | 000 | Service CLI argv[7]=-d
+0000000b77039f67 0x000000004bcc2130 | 000 | Service CLI argv[8]=/RAM Disk/cli-split-a.vdev
+0000000b777ec949 0x000000004bcc2130 | 000 | Service CLI argv[9]=cli_split_source
+0000000b77e5521d 0x000000004bcc2130 | 000 | Service CLI transport=0 status=0 dos=0 bytes=0
+
+0000000b7cd13f08 0x000000004bcc2130 | 000 | Service CLI argv[0]=C:zpool
+0000000b7d2ca3cf 0x000000004bcc2130 | 000 | Service CLI argv[1]=status
+0000000b7d88cf06 0x000000004bcc2130 | 000 | Service CLI argv[2]=-P
+0000000b7ddda8e6 0x000000004bcc2130 | 000 | Service CLI argv[3]=cli_split_source
+0000000b7e43f628 0x000000004bcc2130 | 000 | Service CLI transport=0 status=0 dos=0 bytes=253
+  pool: cli_split_source
+ state: ONLINE
+config:
+
+	NAME                          STATE     READ WRITE CKSUM
+	cli_split_source              ONLINE       0     0     0
+	  /RAM Disk/cli-split-a.vdev  ONLINE       0     0     0
+
+errors: No known data errors
+
+0000000b85e27887 0x000000004bcc2130 | 000 | Service CLI argv[0]=C:zfs
+0000000b863b40f2 0x000000004bcc2130 | 000 | Service CLI argv[1]=mount
+0000000b869adc0b 0x000000004bcc2130 | 000 | Service CLI argv[2]=-o
+0000000b86efd657 0x000000004bcc2130 | 000 | Service CLI argv[3]=ro
+0000000b8744b9c9 0x000000004bcc2130 | 000 | Service CLI argv[4]=cli_split_source/files
+0000000b87b3834f 0x000000004bcc2130 | 000 | Service CLI transport=0 status=0 dos=0 bytes=124
+AROS OpenZFS: no native NFS/SMB export provider is installed.
+AROS OpenZFS: no native NFS/SMB export provider is installed.
+
+0000000b9060d457 0x000000004bcc2130 | 000 | Service CLI argv[0]=C:zfs
+0000000b90ba1ed6 0x000000004bcc2130 | 000 | Service CLI argv[1]=unmount
+0000000b9114fe05 0x000000004bcc2130 | 000 | Service CLI argv[2]=cli_split_source/files
+0000000b9182c5ed 0x000000004bcc2130 | 000 | Service CLI transport=0 status=0 dos=0 bytes=124
+AROS OpenZFS: no native NFS/SMB export provider is installed.
+AROS OpenZFS: no native NFS/SMB export provider is installed.
+
+0000000b9799ab2c 0x000000004bcc2130 | 000 | Service CLI argv[0]=C:zpool
+0000000b97f4ef3c 0x000000004bcc2130 | 000 | Service CLI argv[1]=export
+0000000b984f0fe4 0x000000004bcc2130 | 000 | Service CLI argv[2]=cli_split_source
+0000000b98b5e674 0x000000004bcc2130 | 000 | Service CLI transport=0 status=0 dos=0 bytes=124
+AROS OpenZFS: no native NFS/SMB export provider is installed.
+AROS OpenZFS: no native NFS/SMB export provider is installed.
+
+0000000bb2a05420 0x000000004bcc2130 | 000 | Service CLI argv[0]=C:zpool
+0000000bb304be60 0x000000004bcc2130 | 000 | Service CLI argv[1]=import
+0000000bb35f5483 0x000000004bcc2130 | 000 | Service CLI argv[2]=-N
+0000000bb3b53240 0x000000004bcc2130 | 000 | Service CLI argv[3]=-o
+0000000bb40af392 0x000000004bcc2130 | 000 | Service CLI argv[4]=cachefile=none
+0000000bb46ffb89 0x000000004bcc2130 | 000 | Service CLI argv[5]=-d
+0000000bb4c4ccd1 0x000000004bcc2130 | 000 | Service CLI argv[6]=/RAM Disk/cli-split-a.vdev
+0000000bb53790b3 0x000000004bcc2130 | 000 | Service CLI argv[7]=cli_split_source
+0000000bb59e31a6 0x000000004bcc2130 | 000 | Service CLI transport=0 status=0 dos=0 bytes=0
+
+0000000bbf6a9341 0x000000004bcc2130 | 000 | Service CLI argv[0]=C:zpool
+0000000bbfc74bae 0x000000004bcc2130 | 000 | Service CLI argv[1]=destroy
+0000000bc0228c6c 0x000000004bcc2130 | 000 | Service CLI argv[2]=cli_split_source
+0000000bc088765d 0x000000004bcc2130 | 000 | Service CLI transport=0 status=0 dos=0 bytes=124
+AROS OpenZFS: no native NFS/SMB export provider is installed.
+AROS OpenZFS: no native NFS/SMB export provider is installed.
+
+0000000c0f7dc5b0 0x000000004bcc2130 | 000 | Service CLI argv[0]=C:zpool
+0000000c0fdac75b 0x000000004bcc2130 | 000 | Service CLI argv[1]=import
+0000000c103488e5 0x000000004bcc2130 | 000 | Service CLI argv[2]=-N
+0000000c108a356a 0x000000004bcc2130 | 000 | Service CLI argv[3]=-o
+0000000c10deddf9 0x000000004bcc2130 | 000 | Service CLI argv[4]=cachefile=none
+0000000c1142e22c 0x000000004bcc2130 | 000 | Service CLI argv[5]=-o
+0000000c1197b022 0x000000004bcc2130 | 000 | Service CLI argv[6]=readonly=on
+0000000c11f7e9d3 0x000000004bcc2130 | 000 | Service CLI argv[7]=-d
+0000000c124ca379 0x000000004bcc2130 | 000 | Service CLI argv[8]=/RAM Disk/cli-split-b.vdev
+0000000c12bf9091 0x000000004bcc2130 | 000 | Service CLI argv[9]=cli_split_new
+0000000c132256b3 0x000000004bcc2130 | 000 | Service CLI transport=0 status=0 dos=0 bytes=0
+
+0000000c17ba1fdf 0x000000004bcc2130 | 000 | Service CLI argv[0]=C:zpool
+0000000c1815b8cc 0x000000004bcc2130 | 000 | Service CLI argv[1]=status
+0000000c186fa823 0x000000004bcc2130 | 000 | Service CLI argv[2]=-P
+0000000c18c4b1dd 0x000000004bcc2130 | 000 | Service CLI argv[3]=cli_split_new
+0000000c192748a2 0x000000004bcc2130 | 000 | Service CLI transport=0 status=0 dos=0 bytes=250
+  pool: cli_split_new
+ state: ONLINE
+config:
+
+	NAME                          STATE     READ WRITE CKSUM
+	cli_split_new                 ONLINE       0     0     0
+	  /RAM Disk/cli-split-b.vdev  ONLINE       0     0     0
+
+errors: No known data errors
+
+0000000c20cc5b60 0x000000004bcc2130 | 000 | Service CLI argv[0]=C:zfs
+0000000c21270da3 0x000000004bcc2130 | 000 | Service CLI argv[1]=mount
+0000000c217fc7fe 0x000000004bcc2130 | 000 | Service CLI argv[2]=-o
+0000000c21d48fcd 0x000000004bcc2130 | 000 | Service CLI argv[3]=ro
+0000000c2229d2f3 0x000000004bcc2130 | 000 | Service CLI argv[4]=cli_split_new/files
+0000000c2293c19a 0x000000004bcc2130 | 000 | Service CLI transport=0 status=0 dos=0 bytes=124
+AROS OpenZFS: no native NFS/SMB export provider is installed.
+AROS OpenZFS: no native NFS/SMB export provider is installed.
+
+0000000c2aa583c8 0x000000004bcc2130 | 000 | Service CLI argv[0]=C:zfs
+0000000c2afe9c15 0x000000004bcc2130 | 000 | Service CLI argv[1]=unmount
+0000000c2b5987dd 0x000000004bcc2130 | 000 | Service CLI argv[2]=cli_split_new/files
+0000000c2bc400fe 0x000000004bcc2130 | 000 | Service CLI transport=0 status=0 dos=0 bytes=124
+AROS OpenZFS: no native NFS/SMB export provider is installed.
+AROS OpenZFS: no native NFS/SMB export provider is installed.
+
+0000000c31c43d5c 0x000000004bcc2130 | 000 | Service CLI argv[0]=C:zpool
+0000000c321fa944 0x000000004bcc2130 | 000 | Service CLI argv[1]=export
+0000000c32797334 0x000000004bcc2130 | 000 | Service CLI argv[2]=cli_split_new
+0000000c32dc36e5 0x000000004bcc2130 | 000 | Service CLI transport=0 status=0 dos=0 bytes=124
+AROS OpenZFS: no native NFS/SMB export provider is installed.
+AROS OpenZFS: no native NFS/SMB export provider is installed.
+
+0000000c4cf73480 0x000000004bcc2130 | 000 | Service CLI argv[0]=C:zpool
+0000000c4d55d06c 0x000000004bcc2130 | 000 | Service CLI argv[1]=import
+0000000c4daf5cd6 0x000000004bcc2130 | 000 | Service CLI argv[2]=-N
+0000000c4e048602 0x000000004bcc2130 | 000 | Service CLI argv[3]=-o
+0000000c4e5a76e3 0x000000004bcc2130 | 000 | Service CLI argv[4]=cachefile=none
+0000000c4ebdfba5 0x000000004bcc2130 | 000 | Service CLI argv[5]=-d
+0000000c4f147fb1 0x000000004bcc2130 | 000 | Service CLI argv[6]=/RAM Disk/cli-split-b.vdev
+0000000c4f873583 0x000000004bcc2130 | 000 | Service CLI argv[7]=cli_split_new
+0000000c4fe9631b 0x000000004bcc2130 | 000 | Service CLI transport=0 status=0 dos=0 bytes=0
+
+0000000c598218fa 0x000000004bcc2130 | 000 | Service CLI argv[0]=C:zpool
+0000000c59de0b5b 0x000000004bcc2130 | 000 | Service CLI argv[1]=destroy
+0000000c5a3987c4 0x000000004bcc2130 | 000 | Service CLI argv[2]=cli_split_new
+0000000c5a9bea95 0x000000004bcc2130 | 000 | Service CLI transport=0 status=0 dos=0 bytes=124
+AROS OpenZFS: no native NFS/SMB export provider is installed.
+AROS OpenZFS: no native NFS/SMB export provider is installed.
+
+0000000c619ef891 0x000000004bcc2130 | 000 | RESULT native CLI split PASS mounted-denied=1 readonly-denied=1 unauthorized=1 dryrun-unchanged=1 destination-exported=1 separate-imports=2 payload-bytes=1048576
+0000000c7b2203bc 0x000000004bcc2130 | 000 | Service CLI argv[0]=C:zpool
+0000000c7b84fecc 0x000000004bcc2130 | 000 | Service CLI argv[1]=create
+0000000c7be53913 0x000000004bcc2130 | 000 | Service CLI argv[2]=-o
+0000000c7c3f230b 0x000000004bcc2130 | 000 | Service CLI argv[3]=cachefile=none
+0000000c7ca9625c 0x000000004bcc2130 | 000 | Service CLI argv[4]=-O
+0000000c7d0356c7 0x000000004bcc2130 | 000 | Service CLI argv[5]=mountpoint=none
+0000000c7d6f146b 0x000000004bcc2130 | 000 | Service CLI argv[6]=cli_split_source
+0000000c7ddc8d9d 0x000000004bcc2130 | 000 | Service CLI argv[7]=/RAM Disk/cli-split-a.vdev
+0000000c7e564930 0x000000004bcc2130 | 000 | Service CLI transport=0 status=0 dos=0 bytes=124
+AROS OpenZFS: no native NFS/SMB export provider is installed.
+AROS OpenZFS: no native NFS/SMB export provider is installed.
+
+0000000c8b5a2796 0x000000004bcc2130 | 000 | Service CLI argv[0]=C:zfs
+0000000c8bb8b58b 0x000000004bcc2130 | 000 | Service CLI argv[1]=create
+0000000c8c188560 0x000000004bcc2130 | 000 | Service CLI argv[2]=-u
+0000000c8c72595f 0x000000004bcc2130 | 000 | Service CLI argv[3]=-o
+0000000c8cd374d8 0x000000004bcc2130 | 000 | Service CLI argv[4]=mountpoint=OZCLI:
+0000000c8d415ad4 0x000000004bcc2130 | 000 | Service CLI argv[5]=-o
+0000000c8d9b25be 0x000000004bcc2130 | 000 | Service CLI argv[6]=normalization=formC
+0000000c8e0b82e1 0x000000004bcc2130 | 000 | Service CLI argv[7]=-o
+0000000c8e6549ca 0x000000004bcc2130 | 000 | Service CLI argv[8]=utf8only=on
+0000000c8ed2406b 0x000000004bcc2130 | 000 | Service CLI argv[9]=-o
+0000000c8f2c8823 0x000000004bcc2130 | 000 | Service CLI argv[10]=casesensitivity=insensitive
+0000000c8fa861cd 0x000000004bcc2130 | 000 | Service CLI argv[11]=cli_split_source/files
+0000000c90201493 0x000000004bcc2130 | 000 | Service CLI transport=0 status=0 dos=0 bytes=0
+
+0000000c96358d90 0x000000004bcc2130 | 000 | Service CLI argv[0]=C:zfs
+0000000c9693f0bf 0x000000004bcc2130 | 000 | Service CLI argv[1]=mount
+0000000c96f25164 0x000000004bcc2130 | 000 | Service CLI argv[2]=cli_split_source/files
+0000000c9766cc0b 0x000000004bcc2130 | 000 | Service CLI transport=0 status=0 dos=0 bytes=124
+AROS OpenZFS: no native NFS/SMB export provider is installed.
+AROS OpenZFS: no native NFS/SMB export provider is installed.
+
+0000000ca9f569db 0x000000004bcc2130 | 000 | Service CLI argv[0]=C:zpool
+0000000caa56eecc 0x000000004bcc2130 | 000 | Service CLI argv[1]=sync
+0000000caab428b7 0x000000004bcc2130 | 000 | Service CLI argv[2]=cli_split_source
+0000000cab21c79b 0x000000004bcc2130 | 000 | Service CLI transport=0 status=0 dos=0 bytes=0
+
+0000000d18f7c1da 0x000000004bcc2130 | 000 | Service CLI argv[0]=C:zpool
+0000000d195a8fcc 0x000000004bcc2130 | 000 | Service CLI argv[1]=attach
+0000000d19bb0e6f 0x000000004bcc2130 | 000 | Service CLI argv[2]=cli_split_source
+0000000d1a283981 0x000000004bcc2130 | 000 | Service CLI argv[3]=/RAM Disk/cli-split-a.vdev
+0000000d1aa1f44c 0x000000004bcc2130 | 000 | Service CLI argv[4]=/AROS/ata.device/3/partition/0
+0000000d1b1e2706 0x000000004bcc2130 | 000 | Service CLI transport=0 status=0 dos=0 bytes=0
+
+0000000d2fdfc159 0x000000004bcc2130 | 000 | Service CLI argv[0]=C:zpool
+0000000d303ba992 0x000000004bcc2130 | 000 | Service CLI argv[1]=status
+0000000d3096067b 0x000000004bcc2130 | 000 | Service CLI argv[2]=-P
+0000000d30eb5847 0x000000004bcc2130 | 000 | Service CLI argv[3]=cli_split_source
+0000000d31572d5b 0x000000004bcc2130 | 000 | Service CLI transport=0 status=0 dos=0 bytes=761
+  pool: cli_split_source
+ state: ONLINE
+status: One or more devices is currently being resilvered.  The pool will
+	continue to function, possibly in a degraded state.
+action: Wait for the resilver to complete.
+  scan: resilver in progress since Tue Oct 27 06:52:29 2026
+	1.19M / 1.19M scanned, 1.12M / 1.13M issued at 1.12M/s
+	1.32M resilvered, 99.65% done, no estimated completion time
+config:
+
+	NAME                                STATE     READ WRITE CKSUM
+	cli_split_source                    ONLINE       0     0     0
+	  mirror-0                          ONLINE       0     0     0
+	    /RAM Disk/cli-split-a.vdev      ONLINE       0     0     0
+	    /AROS/ata.device/3/partition/0  ONLINE       0     0     0  (resilvering)
+
+errors: No known data errors
+
+0000000dd370ba99 0x000000004bcc2130 | 000 | Service CLI argv[0]=C:zpool
+0000000dd3fdd492 0x000000004bcc2130 | 000 | Service CLI argv[1]=status
+0000000dd457e67b 0x000000004bcc2130 | 000 | Service CLI argv[2]=-P
+0000000dd4aca6de 0x000000004bcc2130 | 000 | Service CLI argv[3]=cli_split_source
+0000000dd5134a10 0x000000004bcc2130 | 000 | Service CLI transport=0 status=0 dos=0 bytes=478
+  pool: cli_split_source
+ state: ONLINE
+  scan: resilvered 1.32M in 00:00:01 with 0 errors on Tue Oct 27 06:52:30 2026
+config:
+
+	NAME                                STATE     READ WRITE CKSUM
+	cli_split_source                    ONLINE       0     0     0
+	  mirror-0                          ONLINE       0     0     0
+	    /RAM Disk/cli-split-a.vdev      ONLINE       0     0     0
+	    /AROS/ata.device/3/partition/0  ONLINE       0     0     0
+
+errors: No known data errors
+
+0000000ddeaf7323 0x000000004bcc2130 | 000 | Service CLI argv[0]=C:zpool
+0000000ddf0be95a 0x000000004bcc2130 | 000 | Service CLI argv[1]=status
+0000000ddf6cbfc8 0x000000004bcc2130 | 000 | Service CLI argv[2]=-P
+0000000ddfc285fc 0x000000004bcc2130 | 000 | Service CLI argv[3]=cli_split_source
+0000000de028f3c3 0x000000004bcc2130 | 000 | Service CLI transport=0 status=0 dos=0 bytes=478
+  pool: cli_split_source
+ state: ONLINE
+  scan: resilvered 1.32M in 00:00:01 with 0 errors on Tue Oct 27 06:52:30 2026
+config:
+
+	NAME                                STATE     READ WRITE CKSUM
+	cli_split_source                    ONLINE       0     0     0
+	  mirror-0                          ONLINE       0     0     0
+	    /RAM Disk/cli-split-a.vdev      ONLINE       0     0     0
+	    /AROS/ata.device/3/partition/0  ONLINE       0     0     0
+
+errors: No known data errors
+
+0000000de8fce63f 0x000000004bcc2130 | 000 | Typed native split expected=16 status=9: Authenticated mirror split (destination exported) returned errno=16
+0000000dee267518 0x000000004bcc2130 | 000 | Service CLI argv[0]=C:zpool
+0000000dee829546 0x000000004bcc2130 | 000 | Service CLI argv[1]=split
+0000000deedb3b06 0x000000004bcc2130 | 000 | Service CLI argv[2]=cli_split_source
+0000000def430e07 0x000000004bcc2130 | 000 | Service CLI argv[3]=cli_split_new
+0000000defacaec0 0x000000004bcc2130 | 000 | Service CLI argv[4]=/AROS/ata.device/3/partition/0
+0000000df0245b5f 0x000000004bcc2130 | 000 | Service CLI transport=0 status=1 dos=0 bytes=47
+Unable to split cli_split_source: pool is busy
+
+0000000df92a06dc 0x000000004bcc2130 | 000 | Service CLI argv[0]=C:zfs
+0000000df983e4ea 0x000000004bcc2130 | 000 | Service CLI argv[1]=unmount
+0000000df9df163a 0x000000004bcc2130 | 000 | Service CLI argv[2]=cli_split_source/files
+0000000dfa4ce66f 0x000000004bcc2130 | 000 | Service CLI transport=0 status=0 dos=0 bytes=124
+AROS OpenZFS: no native NFS/SMB export provider is installed.
+AROS OpenZFS: no native NFS/SMB export provider is installed.
+
+0000000e0cad31a7 0x000000004bcc2130 | 000 | Service CLI argv[0]=C:zpool
+0000000e0d09bdf0 0x000000004bcc2130 | 000 | Service CLI argv[1]=export
+0000000e0d647835 0x000000004bcc2130 | 000 | Service CLI argv[2]=cli_split_source
+0000000e0dcb5104 0x000000004bcc2130 | 000 | Service CLI transport=0 status=0 dos=0 bytes=124
+AROS OpenZFS: no native NFS/SMB export provider is installed.
+AROS OpenZFS: no native NFS/SMB export provider is installed.
+
+0000000e29fa6991 0x000000004bcc2130 | 000 | Service CLI argv[0]=C:zpool
+0000000e2a56d280 0x000000004bcc2130 | 000 | Service CLI argv[1]=import
+0000000e2ab1048a 0x000000004bcc2130 | 000 | Service CLI argv[2]=-N
+0000000e2b0637f7 0x000000004bcc2130 | 000 | Service CLI argv[3]=-o
+0000000e2b5c0d03 0x000000004bcc2130 | 000 | Service CLI argv[4]=cachefile=none
+0000000e2bbfc3de 0x000000004bcc2130 | 000 | Service CLI argv[5]=-o
+0000000e2c153c3d 0x000000004bcc2130 | 000 | Service CLI argv[6]=readonly=on
+0000000e2c754a2e 0x000000004bcc2130 | 000 | Service CLI argv[7]=-d
+0000000e2cca114e 0x000000004bcc2130 | 000 | Service CLI argv[8]=/RAM Disk/cli-split-a.vdev
+0000000e2d3d0ffa 0x000000004bcc2130 | 000 | Service CLI argv[9]=-d
+0000000e2d92694b 0x000000004bcc2130 | 000 | Service CLI argv[10]=/AROS/ata.device/3/partition/0
+0000000e2e0b886c 0x000000004bcc2130 | 000 | Service CLI argv[11]=cli_split_source
+0000000e2e740d5b 0x000000004bcc2130 | 000 | Service CLI transport=0 status=0 dos=0 bytes=0
+
+0000000e33514c5d 0x000000004bcc2130 | 000 | Service CLI argv[0]=C:zpool
+0000000e33ad6fc4 0x000000004bcc2130 | 000 | Service CLI argv[1]=split
+0000000e3406030f 0x000000004bcc2130 | 000 | Service CLI argv[2]=cli_split_source
+0000000e346d4268 0x000000004bcc2130 | 000 | Service CLI argv[3]=cli_split_new
+0000000e34cfad22 0x000000004bcc2130 | 000 | Service CLI argv[4]=/AROS/ata.device/3/partition/0
+0000000e3547fa66 0x000000004bcc2130 | 000 | Service CLI transport=0 status=1 dos=0 bytes=52
+Unable to split cli_split_source: pool is read-only
+
+0000000e3602ecb3 0x000000004bcc2130 | 000 | Typed native split expected=30 status=9: Authenticated mirror split (destination exported) returned errno=30
+0000000e3ba98ba9 0x000000004bcc2130 | 000 | Service CLI argv[0]=C:zpool
+0000000e3c06065e 0x000000004bcc2130 | 000 | Service CLI argv[1]=export
+0000000e3c5fe2c3 0x000000004bcc2130 | 000 | Service CLI argv[2]=cli_split_source
+0000000e3cc6a981 0x000000004bcc2130 | 000 | Service CLI transport=0 status=0 dos=0 bytes=124
+AROS OpenZFS: no native NFS/SMB export provider is installed.
+AROS OpenZFS: no native NFS/SMB export provider is installed.
+
+0000000e6870b324 0x000000004bcc2130 | 000 | Service CLI argv[0]=C:zpool
+0000000e68cca553 0x000000004bcc2130 | 000 | Service CLI argv[1]=import
+0000000e6926e266 0x000000004bcc2130 | 000 | Service CLI argv[2]=-N
+0000000e697c4035 0x000000004bcc2130 | 000 | Service CLI argv[3]=-o
+0000000e69d109df 0x000000004bcc2130 | 000 | Service CLI argv[4]=cachefile=none
+0000000e6a349d15 0x000000004bcc2130 | 000 | Service CLI argv[5]=-d
+0000000e6a8a4b5c 0x000000004bcc2130 | 000 | Service CLI argv[6]=/RAM Disk/cli-split-a.vdev
+0000000e6afe567d 0x000000004bcc2130 | 000 | Service CLI argv[7]=-d
+0000000e6b535dc6 0x000000004bcc2130 | 000 | Service CLI argv[8]=/AROS/ata.device/3/partition/0
+0000000e6bcb40b1 0x000000004bcc2130 | 000 | Service CLI argv[9]=cli_split_source
+0000000e6c321999 0x000000004bcc2130 | 000 | Service CLI transport=0 status=0 dos=0 bytes=0
+
+0000000e70fe14fa 0x000000004bcc2130 | 000 | Service CLI argv[0]=C:zpool
+0000000e7159bf7b 0x000000004bcc2130 | 000 | Service CLI argv[1]=split
+0000000e71b2b423 0x000000004bcc2130 | 000 | Service CLI argv[2]=cli_split_source
+0000000e7219e4a4 0x000000004bcc2130 | 000 | Service CLI argv[3]=cli_split_new
+0000000e727cffd5 0x000000004bcc2130 | 000 | Service CLI argv[4]=/AROS/ata.device/3/partition/0
+0000000e72f66721 0x000000004bcc2130 | 000 | Service CLI transport=0 status=1 dos=0 bytes=114
+cannot open '/AROS/ata.device/3/partition/0': Permission denied
+Unable to build a pool from the specified devices
+
+0000000e740444df 0x000000004bcc2130 | 000 | Typed native split expected=1 status=9: Authenticated mirror split (destination exported) returned errno=1
+0000000e794666bc 0x000000004bcc2130 | 000 | Service CLI argv[0]=C:zpool
+0000000e79a1b53f 0x000000004bcc2130 | 000 | Service CLI argv[1]=split
+0000000e79fb8957 0x000000004bcc2130 | 000 | Service CLI argv[2]=-n
+0000000e7a51401d 0x000000004bcc2130 | 000 | Service CLI argv[3]=-P
+0000000e7aa62cef 0x000000004bcc2130 | 000 | Service CLI argv[4]=cli_split_source
+0000000e7b0d1c34 0x000000004bcc2130 | 000 | Service CLI argv[5]=cli_split_new
+0000000e7b6f8c98 0x000000004bcc2130 | 000 | Service CLI argv[6]=/AROS/ata.device/3/partition/0
+0000000e7be72d02 0x000000004bcc2130 | 000 | Service CLI transport=0 status=0 dos=0 bytes=106
+would create 'cli_split_new' with the following layout:
+
+	cli_split_new
+	  /AROS/ata.device/3/partition/0
+
+0000000e8159ee6e 0x000000004bcc2130 | 000 | Service CLI argv[0]=C:zpool
+0000000e81b53508 0x000000004bcc2130 | 000 | Service CLI argv[1]=status
+0000000e820ff1f0 0x000000004bcc2130 | 000 | Service CLI argv[2]=-P
+0000000e8264f8bc 0x000000004bcc2130 | 000 | Service CLI argv[3]=cli_split_source
+0000000e82cbba34 0x000000004bcc2130 | 000 | Service CLI transport=0 status=0 dos=0 bytes=478
+  pool: cli_split_source
+ state: ONLINE
+  scan: resilvered 1.32M in 00:00:01 with 0 errors on Tue Oct 27 06:52:30 2026
+config:
+
+	NAME                                STATE     READ WRITE CKSUM
+	cli_split_source                    ONLINE       0     0     0
+	  mirror-0                          ONLINE       0     0     0
+	    /RAM Disk/cli-split-a.vdev      ONLINE       0     0     0
+	    /AROS/ata.device/3/partition/0  ONLINE       0     0     0
+
+errors: No known data errors
+
+0000000e85c8c353 0x000000004bcc2130 | 000 | Typed native split expected=0 status=9: Authenticated mirror split (destination exported) returned errno=86
+RESULT native pool import FAIL cycles=2 dos-read=1 writable-denied=1 line=774
