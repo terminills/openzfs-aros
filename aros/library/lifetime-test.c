@@ -10,7 +10,7 @@
 struct Library *OpenZFSBase;
 int main(int argc,char **argv)
 {
-    OpenZFSBase=OpenLibrary((CONST_STRPTR)"openzfs.library",1);
+    OpenZFSBase=OpenLibrary((CONST_STRPTR)"openzfs.library",2);
     if(argc==2&&!strcmp(argv[1],"FOREIGN")){
         if(!OpenZFSBase)return 0;
         CloseLibrary(OpenZFSBase);return 20;
@@ -21,7 +21,9 @@ int main(int argc,char **argv)
         if(!secBase){CloseLibrary(OpenZFSBase);return 20;}
         struct TagItem login[]={{secT_UserID,(IPTR)"ozreader"},{secT_Password,(IPTR)""},{TAG_DONE,0}};
         int ok=secIsConfigured()&&secLoginA(login)==((77UL<<16)|88);
-        if(ok)ok=OpenZFSRunService(1)==20&&OpenZFSRunService(1)==10;
+        char *debug_args[]={"zdb","--help",NULL};
+        if(ok)ok=OpenZFSRunService(1)==20&&OpenZFSRunService(1)==10&&
+            OpenZFSRunDebugger(2,debug_args)==10;
         CloseLibrary(OpenZFSBase);CloseLibrary(secBase);
         /* Explicit libc exit after returning from and unloading the engine. */
         exit(ok?7:20);
@@ -30,7 +32,7 @@ int main(int argc,char **argv)
     if(OpenZFSRunService(2)!=20||OpenZFSRunService((ULONG)-1)!=20)goto done;
     if(argc==2&&!strcmp(argv[1],"REOPEN")){result=0;goto done;}
     if(argc!=1)goto done;
-    struct Library *second=OpenLibrary((CONST_STRPTR)"openzfs.library",1);
+    struct Library *second=OpenLibrary((CONST_STRPTR)"openzfs.library",2);
     if(!second)goto done;
     int same=second==OpenZFSBase;
     CloseLibrary(second);
@@ -44,7 +46,7 @@ int main(int argc,char **argv)
         if(SystemTags((CONST_STRPTR)"C:OpenZFSLibraryTest DENIED",TAG_DONE)!=7)return 20;
         /* Reacquire in the original task too: a child's denied start must
          * not retain ownership or leave the one-shot claim in a new load. */
-        OpenZFSBase=OpenLibrary((CONST_STRPTR)"openzfs.library",1);
+        OpenZFSBase=OpenLibrary((CONST_STRPTR)"openzfs.library",2);
         if(!OpenZFSBase)return 20;
         int valid=OpenZFSRunService(2)==20;
         CloseLibrary(OpenZFSBase);OpenZFSBase=NULL;

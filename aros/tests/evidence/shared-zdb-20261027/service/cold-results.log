@@ -1,0 +1,241 @@
+[bootstrap:multiboot2] smartfb: using VBE mode 0x417a (1280x800x32, fb=0xFD000000)
+[bootstrap:multiboot2] smartfb: KRN_FBAddr=0x00000000FD000000
+AROS64 - The AROS Research OS
+64-bit SMP build. Compiled Oct 21 2026
+[Kernel] Local APIC: x2APIC
+ACPI: RSDP 0x00000000000F52E0 000014 (v00 BOCHS )
+ACPI: RSDT 0x000000007FFE25BF 000034 (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+ACPI: FACP 0x000000007FFE243B 000074 (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+ACPI: DSDT 0x000000007FFE0040 0023FB (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+ACPI: FACS 0x000000007FFE0000 000040
+ACPI: APIC 0x000000007FFE24AF 0000B0 (v03 BOCHS  BXPC     00000001 BXPC 00000001)
+ACPI: HPET 0x000000007FFE255F 000038 (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+ACPI: WAET 0x000000007FFE2597 000028 (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+[HPET] 2 units total
+ACPI: 1 ACPI AML tables successfully acquired and loaded
+[Kernel:ACPI-IOAPIC] Registering IO-APIC #1 [ID=000] @ 00000000fec00000 [GSI = 0]
+[Kernel:ACPI] System Total APICs: 8, 8 usable
+[Kernel:APIC-IA32] MSI Interrupts Allocatable
+[Kernel:APIC-IA32]     start = 16
+[Kernel:APIC-IA32]     total = 198
+[Kernel:APIC-IA32] Heartbeat timer: TSC deadline
+[Kernel:APIC-IA32.001] core_APIC_Calibrate: TSC freq inherited from BSP (2496062 kHz) [hypervisor]
+[Kernel:APIC-IA32.001] core_APIC_Calibrate: LAPIC timer freq inherited from BSP (1000404010 Hz) [hypervisor]
+[Kernel:APIC-IA32.002] core_APIC_Calibrate: TSC freq inherited from BSP (2496062 kHz) [hypervisor]
+[Kernel:APIC-IA32.002] core_APIC_Calibrate: LAPIC timer freq inherited from BSP (1000404010 Hz) [hypervisor]
+[Kernel:APIC-IA32.003] core_APIC_Calibrate: TSC freq inherited from BSP (2496062 kHz) [hypervisor]
+[Kernel:APIC-IA32.003] core_APIC_Calibrate: LAPIC timer freq inherited from BSP (1000404010 Hz) [hypervisor]
+[Kernel:APIC-IA32.004] core_APIC_Calibrate: TSC freq inherited from BSP (2496062 kHz) [hypervisor]
+[Kernel:APIC-IA32.004] core_APIC_Calibrate: LAPIC timer freq inherited from BSP (1000404010 Hz) [hypervisor]
+[Kernel:APIC-IA32.005] core_APIC_Calibrate: TSC freq inherited from BSP (2496062 kHz) [hypervisor]
+[Kernel:APIC-IA32.005] core_APIC_Calibrate: LAPIC timer freq inherited from BSP (1000404010 Hz) [hypervisor]
+[Kernel:APIC-IA32.006] core_APIC_Calibrate: TSC freq inherited from BSP (2496062 kHz) [hypervisor]
+[Kernel:APIC-IA32.006] core_APIC_Calibrate: LAPIC timer freq inherited from BSP (1000404010 Hz) [hypervisor]
+[Kernel:APIC-IA32.007] core_APIC_Calibrate: TSC freq inherited from BSP (2496062 kHz) [hypervisor]
+[Kernel:APIC-IA32.007] core_APIC_Calibrate: LAPIC timer freq inherited from BSP (1000404010 Hz) [hypervisor]
+[PCIPC:Driver] PCIPC_InitClass: No ACPI MCFG table
+[Timer] clock: PIT (no invariant TSC)
+[ATI] Init
+[ATI] No supported cards found
+[HW] HW__HW__AddDriver: Failed to instantiate Driver Object
+Writable startup denied: configured security.library and system task identity required.
+Public startup invalid-mode and non-root denial PASS
+Native authenticated admission ready
+OpenZFS management API 3 ready; engine initialized
+Public service op=1 status=0 engine=1 rows=0
+Public service op=2 status=0 engine=1 rows=0
+Public service op=3 status=0 engine=1 rows=0
+Service remains resident: active client sessions or admitted operations.
+Public native control descriptors PASS capacity=64 ownership=1 stale=1 session-cleanup=1
+Public task-exit session reclamation PASS cycles=4 sessions=32
+Public authenticated sessions ownership, capacity, stale handles and shutdown guard PASS
+Public mutation requires authenticated admission PASS
+Public CLI command result=0 ioerr=0: C:zpool import -N -o cachefile=none -o readonly=on -d /OZBACK/OZReuseChanges/disk1 -d /OZBACK/OZReuseChanges/disk2 -d /OZBACK/OZReuseChanges/disk3 -d /OZBACK/OZReuseChanges/disk4 public_reuse_target
+Public CLI command result=0 ioerr=0: C:zpool export public_reuse_target
+Public changed pool cold PASS phase=0 exact-read=1 readonly-write-denied=1 exported=1
+Public CLI command result=0 ioerr=0: C:zpool import -N -o cachefile=none -o readonly=on -d /OZBACK/OZReuseChanges/disk1 -d /OZBACK/OZReuseChanges/disk2 -d /OZBACK/OZReuseChanges/disk3 -d /OZBACK/OZReuseChanges/disk4 public_reuse_target
+Public CLI command result=0 ioerr=0: C:zpool export public_reuse_target
+Public changed pool cold PASS phase=1 exact-read=1 readonly-write-denied=1 exported=1
+Public CLI command result=0 ioerr=0: C:zpool import -N -o cachefile=none -o readonly=on -d /OZBACK/OZReuseChanges/disk1 -d /OZBACK/OZReuseChanges/disk2 -d /OZBACK/OZReuseChanges/disk3 -d /OZBACK/OZReuseChanges/disk4 public_reuse_target
+Public CLI command result=0 ioerr=0: C:zpool export public_reuse_target
+Public changed pool cold PASS phase=2 exact-read=1 readonly-write-denied=1 exported=1
+Public storage op=7 status=0 Authenticated pool import returned errno=0
+Public pool assign PASS op=7 kind=1 removed=1
+Public upstream bootenv persistence PASS cold=1 marker=1 version=1
+Public clear rewind readonly PASS preview-erofs=1 commit-erofs=1
+Public upstream bootenv readonly PASS get=1 set-erofs=1 unchanged=1
+Public cold pool root PASS exact-read=1 readonly-write-denied=1 detached=1
+Public CLI command result=0 ioerr=0: C:zfs get -H -o value defer_destroy public_mirror/defer_pending@pending >T:cli-package-output.txt
+Public CLI command result=0 ioerr=0: C:zfs get -H -o value userrefs public_mirror/defer_pending@pending >T:cli-package-output.txt
+Public CLI command result=0 ioerr=0: C:zfs get -H -o value defer_destroy public_mirror/defer_pending/child@pending >T:cli-package-output.txt
+Public CLI command result=0 ioerr=0: C:zfs get -H -o value userrefs public_mirror/defer_pending/child@pending >T:cli-package-output.txt
+Public diagnostic begin T:public-cli-errors.log
+cannot release: pool is read-only
+
+Public diagnostic end
+Public CLI command result=1 ioerr=209: C:zfs release -r cold_keep public_mirror/defer_pending@pending
+Public CLI command result=0 ioerr=0: C:zfs get -H -o value userrefs public_mirror/defer_pending@pending >T:cli-package-output.txt
+Public CLI command result=0 ioerr=0: C:zfs get -H -o value userrefs public_mirror/defer_pending/child@pending >T:cli-package-output.txt
+Public cold deferred snapshots PASS parent=1 child=1 pending=1 holds=1 readonly-release-refused=1 unchanged=1
+Public sparse64 PASS write=0 boundary=4294967296 size=4294971392 holes=1 legacy-refused=1
+Public DOS links PASS write=0 hard=1 relative-soft=1 unlinked-source=1 dangling-refused=1
+Metadata readonly comment result=0 DOS=214
+Metadata readonly protection result=0 DOS=214
+Metadata readonly timestamp result=0 DOS=214
+Metadata observed write=0 comment='OpenZFS native metadata' protection=55 size=8 date=17000/721/1234 DOS=0
+Public DOS metadata PASS write=0 comment=1 protection=1 timestamp=1 exact-data=1
+Public desktop directory PASS phase=cold-import stage=exall exnext=1/7 exall=1/7 errno=0 doserr=232
+Public cold resilver payload PASS bytes=1048576 exact=1
+Public CLI command result=0 ioerr=0: C:zfs get -H -o value keystatus public_mirror/encrypted >T:cli-package-output.txt
+OpenZFS mount failed stage=objset-own errno=13
+Public storage op=62 status=0 Authenticated key verification (not loaded) returned errno=0
+Public CLI command result=0 ioerr=0: C:zfs get -H -o value keystatus public_mirror/encrypted >T:cli-package-output.txt
+OpenZFS mount failed stage=objset-own errno=13
+Public cold key verification PASS readonly-import=1 correct=1 remains-locked=1 mount-refused=1
+Public CLI command result=0 ioerr=0: C:zfs load-key -L file:///RAM/public-test.key public_mirror/encrypted
+Public CLI command result=0 ioerr=0: C:zfs unload-key public_mirror/encrypted
+Public cold encryption PASS locked=1 mount-denied=1 load=1 exact-read=1 unload=1
+Public CLI command result=0 ioerr=0: C:zfs get -H -o value keyformat public_mirror/check_hex >T:cli-package-output.txt
+Public CLI command result=0 ioerr=0: C:zfs get -H -o value keylocation public_mirror/check_hex >T:cli-package-output.txt
+Public CLI command result=0 ioerr=0: C:zfs get -H -o value keystatus public_mirror/check_hex >T:cli-package-output.txt
+Public storage op=62 status=0 Authenticated key load returned errno=0
+Public storage op=63 status=0 Authenticated key unload returned errno=0
+Public cold key format rotation PASS format=hex location=1 locked=1 reload=1 exact-data=1 unload=1
+Public CLI command result=0 ioerr=0: C:zfs get -H -o value pbkdf2iters public_mirror/passphrase >T:cli-package-output.txt
+Public CLI command result=0 ioerr=0: C:zfs get -H -o value keystatus public_mirror/passphrase >T:cli-package-output.txt
+OpenZFS mount failed stage=objset-own errno=13
+Public diagnostic begin T:public-cli-errors.log
+Key load error: Incorrect key provided for 'public_mirror/passphrase'.
+
+Public diagnostic end
+Public CLI command result=-1 ioerr=209: C:zfs load-key -L file:///RAM/public-cold-passphrase public_mirror/passphrase
+Public CLI command result=0 ioerr=0: C:zfs get -H -o value keystatus public_mirror/passphrase >T:cli-package-output.txt
+Public CLI command result=0 ioerr=0: C:zfs load-key -L file:///RAM/public-cold-passphrase public_mirror/passphrase
+Public CLI command result=0 ioerr=0: C:zfs unload-key public_mirror/passphrase
+Public cold passphrase rotation PASS iterations=400000 old-key-denied=1 locked=1 new-key-load=1 exact-read=1 unload=1
+Public cold zvol PASS exact-read=1 discard-edges=1 readonly=1 bounds=1 stale-descriptor=1
+Public storage op=8 status=0 Authenticated pool export returned errno=0
+Public cold hosted DOS PASS exact=1 readonly-refusal=1 exported=1
+Public storage op=7 status=0 Authenticated pool import returned errno=0
+Public pool assign PASS op=7 kind=1 removed=1
+Public upstream bootenv persistence PASS cold=1 marker=1 version=1
+Public clear rewind readonly PASS preview-erofs=1 commit-erofs=1
+Public upstream bootenv readonly PASS get=1 set-erofs=1 unchanged=1
+Public cold pool root PASS exact-read=1 readonly-write-denied=1 detached=1
+Public CLI command result=0 ioerr=0: C:zfs get -H -o value defer_destroy public_mirror/defer_pending@pending >T:cli-package-output.txt
+Public CLI command result=0 ioerr=0: C:zfs get -H -o value userrefs public_mirror/defer_pending@pending >T:cli-package-output.txt
+Public CLI command result=0 ioerr=0: C:zfs get -H -o value defer_destroy public_mirror/defer_pending/child@pending >T:cli-package-output.txt
+Public CLI command result=0 ioerr=0: C:zfs get -H -o value userrefs public_mirror/defer_pending/child@pending >T:cli-package-output.txt
+Public diagnostic begin T:public-cli-errors.log
+cannot release: pool is read-only
+
+Public diagnostic end
+Public CLI command result=1 ioerr=209: C:zfs release -r cold_keep public_mirror/defer_pending@pending
+Public CLI command result=0 ioerr=0: C:zfs get -H -o value userrefs public_mirror/defer_pending@pending >T:cli-package-output.txt
+Public CLI command result=0 ioerr=0: C:zfs get -H -o value userrefs public_mirror/defer_pending/child@pending >T:cli-package-output.txt
+Public cold deferred snapshots PASS parent=1 child=1 pending=1 holds=1 readonly-release-refused=1 unchanged=1
+Public sparse64 PASS write=0 boundary=4294967296 size=4294971392 holes=1 legacy-refused=1
+Public DOS links PASS write=0 hard=1 relative-soft=1 unlinked-source=1 dangling-refused=1
+Metadata readonly comment result=0 DOS=214
+Metadata readonly protection result=0 DOS=214
+Metadata readonly timestamp result=0 DOS=214
+Metadata observed write=0 comment='OpenZFS native metadata' protection=55 size=8 date=17000/721/1234 DOS=0
+Public DOS metadata PASS write=0 comment=1 protection=1 timestamp=1 exact-data=1
+Public desktop directory PASS phase=cold-import stage=exall exnext=1/7 exall=1/7 errno=0 doserr=232
+Public cold resilver payload PASS bytes=1048576 exact=1
+Public CLI command result=0 ioerr=0: C:zfs get -H -o value keystatus public_mirror/encrypted >T:cli-package-output.txt
+OpenZFS mount failed stage=objset-own errno=13
+Public storage op=62 status=0 Authenticated key verification (not loaded) returned errno=0
+Public CLI command result=0 ioerr=0: C:zfs get -H -o value keystatus public_mirror/encrypted >T:cli-package-output.txt
+OpenZFS mount failed stage=objset-own errno=13
+Public cold key verification PASS readonly-import=1 correct=1 remains-locked=1 mount-refused=1
+Public CLI command result=0 ioerr=0: C:zfs load-key -L file:///RAM/public-test.key public_mirror/encrypted
+Public CLI command result=0 ioerr=0: C:zfs unload-key public_mirror/encrypted
+Public cold encryption PASS locked=1 mount-denied=1 load=1 exact-read=1 unload=1
+Public CLI command result=0 ioerr=0: C:zfs get -H -o value keyformat public_mirror/check_hex >T:cli-package-output.txt
+Public CLI command result=0 ioerr=0: C:zfs get -H -o value keylocation public_mirror/check_hex >T:cli-package-output.txt
+Public CLI command result=0 ioerr=0: C:zfs get -H -o value keystatus public_mirror/check_hex >T:cli-package-output.txt
+Public storage op=62 status=0 Authenticated key load returned errno=0
+Public storage op=63 status=0 Authenticated key unload returned errno=0
+Public cold key format rotation PASS format=hex location=1 locked=1 reload=1 exact-data=1 unload=1
+Public CLI command result=0 ioerr=0: C:zfs get -H -o value pbkdf2iters public_mirror/passphrase >T:cli-package-output.txt
+Public CLI command result=0 ioerr=0: C:zfs get -H -o value keystatus public_mirror/passphrase >T:cli-package-output.txt
+OpenZFS mount failed stage=objset-own errno=13
+Public diagnostic begin T:public-cli-errors.log
+Key load error: Incorrect key provided for 'public_mirror/passphrase'.
+
+Public diagnostic end
+Public CLI command result=-1 ioerr=209: C:zfs load-key -L file:///RAM/public-cold-passphrase public_mirror/passphrase
+Public CLI command result=0 ioerr=0: C:zfs get -H -o value keystatus public_mirror/passphrase >T:cli-package-output.txt
+Public CLI command result=0 ioerr=0: C:zfs load-key -L file:///RAM/public-cold-passphrase public_mirror/passphrase
+Public CLI command result=0 ioerr=0: C:zfs unload-key public_mirror/passphrase
+Public cold passphrase rotation PASS iterations=400000 old-key-denied=1 locked=1 new-key-load=1 exact-read=1 unload=1
+Public cold zvol PASS exact-read=1 discard-edges=1 readonly=1 bounds=1 stale-descriptor=1
+Public storage op=8 status=0 Authenticated pool export returned errno=0
+Public cold hosted DOS PASS exact=1 readonly-refusal=1 exported=1
+Public cold degraded assign PASS missing=1 exact=1 readonly=1 restored=1
+OpenZFS import failed stage=discovery errno=2
+Public storage op=7 status=9 Authenticated pool import returned errno=2
+Public storage op=7 status=0 Authenticated pool import returned errno=0
+Public pool assign PASS op=7 kind=1 removed=1
+Public upstream bootenv persistence PASS cold=1 marker=1 version=1
+Public clear rewind readonly PASS preview-erofs=1 commit-erofs=1
+Public upstream bootenv readonly PASS get=1 set-erofs=1 unchanged=1
+Public cold pool root PASS exact-read=1 readonly-write-denied=1 detached=1
+Public CLI command result=0 ioerr=0: C:zfs get -H -o value defer_destroy public_mirror/defer_pending@pending >T:cli-package-output.txt
+Public CLI command result=0 ioerr=0: C:zfs get -H -o value userrefs public_mirror/defer_pending@pending >T:cli-package-output.txt
+Public CLI command result=0 ioerr=0: C:zfs get -H -o value defer_destroy public_mirror/defer_pending/child@pending >T:cli-package-output.txt
+Public CLI command result=0 ioerr=0: C:zfs get -H -o value userrefs public_mirror/defer_pending/child@pending >T:cli-package-output.txt
+Public diagnostic begin T:public-cli-errors.log
+cannot release: pool is read-only
+
+Public diagnostic end
+Public CLI command result=1 ioerr=209: C:zfs release -r cold_keep public_mirror/defer_pending@pending
+Public CLI command result=0 ioerr=0: C:zfs get -H -o value userrefs public_mirror/defer_pending@pending >T:cli-package-output.txt
+Public CLI command result=0 ioerr=0: C:zfs get -H -o value userrefs public_mirror/defer_pending/child@pending >T:cli-package-output.txt
+Public cold deferred snapshots PASS parent=1 child=1 pending=1 holds=1 readonly-release-refused=1 unchanged=1
+Public sparse64 PASS write=0 boundary=4294967296 size=4294971392 holes=1 legacy-refused=1
+Public DOS links PASS write=0 hard=1 relative-soft=1 unlinked-source=1 dangling-refused=1
+Metadata readonly comment result=0 DOS=214
+Metadata readonly protection result=0 DOS=214
+Metadata readonly timestamp result=0 DOS=214
+Metadata observed write=0 comment='OpenZFS native metadata' protection=55 size=8 date=17000/721/1234 DOS=0
+Public DOS metadata PASS write=0 comment=1 protection=1 timestamp=1 exact-data=1
+Public desktop directory PASS phase=cold-import stage=exall exnext=1/7 exall=1/7 errno=0 doserr=232
+Public cold resilver payload PASS bytes=1048576 exact=1
+Public CLI command result=0 ioerr=0: C:zfs get -H -o value keystatus public_mirror/encrypted >T:cli-package-output.txt
+OpenZFS mount failed stage=objset-own errno=13
+Public storage op=62 status=0 Authenticated key verification (not loaded) returned errno=0
+Public CLI command result=0 ioerr=0: C:zfs get -H -o value keystatus public_mirror/encrypted >T:cli-package-output.txt
+OpenZFS mount failed stage=objset-own errno=13
+Public cold key verification PASS readonly-import=1 correct=1 remains-locked=1 mount-refused=1
+Public CLI command result=0 ioerr=0: C:zfs load-key -L file:///RAM/public-test.key public_mirror/encrypted
+Public CLI command result=0 ioerr=0: C:zfs unload-key public_mirror/encrypted
+Public cold encryption PASS locked=1 mount-denied=1 load=1 exact-read=1 unload=1
+Public CLI command result=0 ioerr=0: C:zfs get -H -o value keyformat public_mirror/check_hex >T:cli-package-output.txt
+Public CLI command result=0 ioerr=0: C:zfs get -H -o value keylocation public_mirror/check_hex >T:cli-package-output.txt
+Public CLI command result=0 ioerr=0: C:zfs get -H -o value keystatus public_mirror/check_hex >T:cli-package-output.txt
+Public storage op=62 status=0 Authenticated key load returned errno=0
+Public storage op=63 status=0 Authenticated key unload returned errno=0
+Public cold key format rotation PASS format=hex location=1 locked=1 reload=1 exact-data=1 unload=1
+Public CLI command result=0 ioerr=0: C:zfs get -H -o value pbkdf2iters public_mirror/passphrase >T:cli-package-output.txt
+Public CLI command result=0 ioerr=0: C:zfs get -H -o value keystatus public_mirror/passphrase >T:cli-package-output.txt
+OpenZFS mount failed stage=objset-own errno=13
+Public diagnostic begin T:public-cli-errors.log
+Key load error: Incorrect key provided for 'public_mirror/passphrase'.
+
+Public diagnostic end
+Public CLI command result=-1 ioerr=209: C:zfs load-key -L file:///RAM/public-cold-passphrase public_mirror/passphrase
+Public CLI command result=0 ioerr=0: C:zfs get -H -o value keystatus public_mirror/passphrase >T:cli-package-output.txt
+Public CLI command result=0 ioerr=0: C:zfs load-key -L file:///RAM/public-cold-passphrase public_mirror/passphrase
+Public CLI command result=0 ioerr=0: C:zfs unload-key public_mirror/passphrase
+Public cold passphrase rotation PASS iterations=400000 old-key-denied=1 locked=1 new-key-load=1 exact-read=1 unload=1
+Public cold zvol PASS exact-read=1 discard-edges=1 readonly=1 bounds=1 stale-descriptor=1
+Public storage op=8 status=0 Authenticated pool export returned errno=0
+Public cold hosted DOS PASS exact=1 readonly-refusal=1 exported=1
+Public cold beyond-parity PASS missing=2 refused=1 empty=1 responsive=1 restored-read=1
+Public backing clean detach PASS
+Service remains resident: mounted or retired DOS endpoints still require servicing.
+Public service retains retired DOS endpoints after export
+Public service test line=0
+RESULT public service storage PASS

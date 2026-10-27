@@ -10,8 +10,12 @@ compile-time 64-bit `off_t` assertion. This is not native debugger qualification
 the initial dependency-only link audit failed on five symbols. Linking real
 client support now resolves them. An isolated eight-CPU native diagnostic
 executable reads all four ISO-backed labels twice, with both zero-exit reports
-matching host zdb exactly. Production shared-engine integration, full pool
-traversal and read-only raw-device admission remain unfinished.
+matching host zdb exactly. The following shared-library implementation replaces
+that diagnostic executable: version 2 adds a one-shot debugger entry and a
+small `C:zdb` launcher. Both standalone and generated MetaMake builds pass
+native label/lifetime tests with a 64-KiB caller stack; the library supplies
+the required 4-MiB stack. Full pool traversal, read-only raw-device admission
+and public release-bundle qualification remain unfinished.
 See `aros/tests/evidence/native-zdb-build-20261027`. Existing pool-integrity
 results continue to use the independent **host** zdb, not this native candidate.
 

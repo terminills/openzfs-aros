@@ -8,6 +8,9 @@ sdk=${AROS_SDK:?explicit ABI-matched AROS SDK required}
 gen=${AROS_GENMODULE:?explicit SDK-matched genmodule required}
 engine=${AROS_LINKED_OBJECT:?full normal service engine object required}
 normal=${AROS_SERVICE_BUILD_DIR:?normal full service build provenance required}
+: "${AROS_PTHREAD_INCLUDE:?matching pthread headers required}"
+: "${AROS_CRYPTO_INCLUDE:?matching crypto headers required}"
+: "${AROS_TIRPC_SOURCE:?matching tirpc source required}"
 nm_tool=${AROS_NM:-$("$cc" -print-prog-name=nm)}
 objcopy_tool=$("$cc" -print-prog-name=objcopy)
 bash aros/library/verify-engine.sh "$engine" "$normal" "$nm_tool"
@@ -39,17 +42,22 @@ done
 "$gen" -c aros/library/openzfs.conf -d "$out/include" writeincludes openzfs library
 "$objcopy_tool" --redefine-sym main=oz_service_main "$engine" "$out/engine.o"
 flags=(--sysroot="$sdk" -B"$sdk/lib/" -O2 -g -Wall -Wextra -I"$out/include" -I"$out/gen")
+bash aros/library/build-zdb-object.sh "$out/debugger.o" >"$out/debugger-build.log" 2>&1
+sha256sum "$out/debugger.o" >>"$out/inputs.sha256"
 "$cc" "${flags[@]}" -c "$out/gen/openzfs_start.c" -o "$out/start.o"
 "$cc" "${flags[@]}" -c "$out/gen/openzfs_end.c" -o "$out/end.o"
 "$cc" "${flags[@]}" -c aros/library/engine-library.c -o "$out/library.o"
 "$cc" "${flags[@]}" -nostartfiles -nix "$out/start.o" "$out/library.o" \
-    "$out/engine.o" "$nvpair" "$zlib" "$crypto" "$pthread" -lm "$out/end.o" -o "$out/openzfs.library"
+    "$out/engine.o" "$out/debugger.o" "$nvpair" "$zlib" "$crypto" "$pthread" -lm "$out/end.o" -o "$out/openzfs.library"
 "$cc" "${flags[@]}" aros/library/service-launcher.c -o "$out/OpenZFSServiceNative"
 "$cc" "${flags[@]}" aros/library/lifetime-test.c -o "$out/OpenZFSLibraryTest"
+"$cc" "${flags[@]}" aros/library/zdb-launcher.c -o "$out/zdb"
+debugger_symbols=$("$nm_tool" "$out/zdb")
+[[ $debugger_symbols != *' T zfsdev_ioctl_common'* && $debugger_symbols != *' T oz_zdb_main'* ]]
 launcher_symbols=$("$nm_tool" "$out/OpenZFSServiceNative")
 [[ $launcher_symbols != *' T zfsdev_ioctl_common'* && $launcher_symbols != *' T oz_engine_start'* ]]
 sha256sum -c "$out/inputs.sha256" >"$out/input-stability.log"
-sha256sum "$out/openzfs.library" "$out/OpenZFSServiceNative" "$out/OpenZFSLibraryTest" >"$out/binaries.sha256"
+sha256sum "$out/openzfs.library" "$out/OpenZFSServiceNative" "$out/OpenZFSLibraryTest" "$out/zdb" >"$out/binaries.sha256"
 cp "$normal/engine-object.sha256" "$normal/engine-metadata.h" "$normal/engine-metadata.sha256" "$out/"
 printf 'service_test_modes=0\nfull_dispatcher=1\nshared_engine=1\n' >"$out/service-build-options.txt"
 # Preserve engine diagnostic provenance, not the wrapper's environment.

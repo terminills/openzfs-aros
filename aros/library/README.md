@@ -7,12 +7,31 @@ and Manager continue using authenticated IPC; no engine is embedded in them
 or in the launcher. This is an experimental packaging target, not yet the
 default distribution bundle or a separately loadable DOS handler.
 
+Version 2 adds vector 6, `LONG OpenZFSRunDebugger(LONG argc, APTR argv)`.
+The small `C:zdb` launcher requires version 2 and calls the real upstream zdb
+implementation inside this same library. It contains no private engine copy.
+The service vector remains binary-compatible with version 1 clients.
+
+The debugger is offline: it cannot acquire the active service owner's library.
+Both entry points share the same one-shot claim. Invalid argc/argv values
+return 20 without consuming it; a second service or debugger run returns 10.
+Close/reload is required for a fresh initialization. The debugger entry uses
+`NewStackSwap` with 4 MiB, since upstream label inspection alone puts four
+256-KiB labels on its stack. The original runtime error/exit targets and stack
+are restored before return. This ABI is not a memory-isolation boundary.
+
+Current native qualification covers ISO-backed label decoding, exact host
+comparison, repeated launches, invalid arguments, cross-entry refusal, reload
+and caller exit. Full native block/MOS traversal and production raw-device
+admission remain unqualified; do not infer them from label inspection.
+
 ## Host ABI and lifetime
 
 The standalone `build.sh` requires explicit `AROS_CC`, `AROS_SDK`,
 `AROS_GENMODULE`, `AROS_LINKED_OBJECT`, `AROS_SERVICE_BUILD_DIR`,
 `AROS_NVPAIR_ARCHIVE`, `AROS_PRIVATE_PTHREAD`, `AROS_CRYPTO_ARCHIVE`, and
-`AROS_ZLIB_IMPORT`. Select an ABI-matched SDK and generator; no historical
+`AROS_ZLIB_IMPORT`, plus `AROS_PTHREAD_INCLUDE`, `AROS_CRYPTO_INCLUDE` and
+`AROS_TIRPC_SOURCE` for the source-built debugger. Select an ABI-matched SDK and generator; no historical
 workspace path is chosen automatically. The compiler selects `nm` and
 `objcopy` (`AROS_NM` can override the former). Input hashes are recorded before
 building and verified afterward; compiler identity and selected tool paths
@@ -52,6 +71,9 @@ This preserves failure status, including denied startup.
 
 The AROS build-system targets `contrib-openzfs-library` and
 `contrib-openzfs-service` now generate the native module/import ABI and launcher.
+`contrib-openzfs-zdb` builds the debugger launcher and is included by the main
+`contrib-openzfs` aggregate. Both standalone and MetaMake library builds compile
+the real debugger sources and native client support into the module.
 The library depends on the source-building `contrib-openzfs-engine` target;
 an explicit full normal engine object/provenance override remains available.
 See the root BUILDING.md for dependency inputs and remaining qualification work.

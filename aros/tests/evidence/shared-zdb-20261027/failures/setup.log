@@ -1,0 +1,7 @@
+Generating /mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/mmake-debugger.NdAOHQOS/gen/openzfs/aros/library/openzfs/include/openzfs_libdefs.h
+Generating /mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/mmake-debugger.NdAOHQOS/gen/openzfs/aros/library/openzfs/include/openzfs_deflibdefs.h
+Makedepend  openzfs/aros/library/engine-library.c ...
+Generating openzfs.library includes
+Generating library support files for openzfs module
+/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/mmake-debugger.NdAOHQOS/gen/openzfs/aros/library/openzfs/include/proto/openzfs.h: No such file or directory
+make: *** No rule to make target '/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/mmake-debugger.NdAOHQOS/gen/compiler/libinit/libentry.o', needed by '/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/mmake-debugger.NdAOHQOS/stage/Libs/openzfs.library'.  Stop.

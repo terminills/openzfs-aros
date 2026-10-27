@@ -13,15 +13,31 @@ echo "Evidence: $run"
 cp "$0" aros/cli/zdb-label-native-test.c aros/cli/Startup-Zdb-Labels "$run/"
 sha256sum "$AROS_TEST_ISO" "$AROS_TEST_BASE_DOS_PACKAGE" "$AROS_TEST_POSIX_LIBRARY" \
     "$AROS_TEST_ZDB_BINARY" "$AROS_TEST_ZDB_MEMBER" "$AROS_TEST_HOST_ZDB" >"$run/inputs.sha256"
+library_maps=()
+test_flags=()
+if [[ -n ${AROS_TEST_ZDB_LIBRARY:-} ]];then
+    : "${AROS_TEST_ZDB_INCLUDE:?matching generated library headers required}"
+    sha256sum "$AROS_TEST_ZDB_LIBRARY" >>"$run/inputs.sha256"
+    library_maps=(-map "$AROS_TEST_ZDB_LIBRARY" /Libs/openzfs.library)
+    test_flags=(-DOZ_ZDB_SHARED)
+    "$AROS_CC" --sysroot="$AROS_SDK" -B"$AROS_SDK/lib/" -O2 -Wall -Wextra \
+        -I"$AROS_TEST_ZDB_INCLUDE" aros/library/zdb-lifetime-test.c \
+        -o "$run/OpenZFSZdbLifetimeTest" >"$run/lifetime-build.log" 2>&1
+    library_maps+=(-map "$run/OpenZFSZdbLifetimeTest" /C/OpenZFSZdbLifetimeTest)
+    printf 'shared_library=1\nlauncher_stack=65536\n' >"$run/mode.txt"
+else
+    printf 'shared_library=0\nlauncher_stack=4194304\n' >"$run/mode.txt"
+fi
 "$AROS_TEST_HOST_ZDB" -l "$AROS_TEST_ZDB_MEMBER" >"$run/host-labels.log" 2>&1
 grep -q "name: 'topo_source'" "$run/host-labels.log"
 grep -q 'labels = 0 1 2 3 ' "$run/host-labels.log"
 "$AROS_CC" --sysroot="$AROS_SDK" -B"$AROS_SDK/lib/" -O2 -Wall -Wextra \
-    aros/cli/zdb-label-native-test.c -o "$run/OpenZFSZdbLabelsTest" >"$run/build.log" 2>&1
+    "${test_flags[@]}" aros/cli/zdb-label-native-test.c -o "$run/OpenZFSZdbLabelsTest" >"$run/build.log" 2>&1
 xorriso -indev "$AROS_TEST_ISO" -outdev "$run/test.iso" \
     -map aros/engine/grub-qemu-test.cfg /boot/grub/grub.cfg \
     -map "$AROS_TEST_BASE_DOS_PACKAGE" /boot/aros-base.pkg.xz \
     -map "$AROS_TEST_POSIX_LIBRARY" /Libs/posixc.library \
+    "${library_maps[@]}" \
     -map "$AROS_TEST_ZDB_BINARY" /C/ZdbAudit \
     -map "$AROS_TEST_ZDB_MEMBER" /zdb-member \
     -map "$run/OpenZFSZdbLabelsTest" /C/OpenZFSZdbLabelsTest \
@@ -51,4 +67,10 @@ wait "$pid"
 trap - EXIT
 sha256sum -c "$run/inputs.sha256" >"$run/unchanged.log"
 python3 aros/cli/verify-zdb-labels.py "$run/serial.log" "$run/host-labels.log" >"$run/comparison.log"
-echo 'PASS native zdb labels only; shared-library packaging and full pool traversal remain unverified.'
+if [[ -n ${AROS_TEST_ZDB_LIBRARY:-} ]];then
+    for cycle in 0 1;do
+        rg -q "RESULT shared zdb lifecycle PASS cycle=$cycle invalid=5 repeated=10 service=10" "$run/serial.log"
+    done
+    rg -q 'RESULT shared zdb caller exit PASS status=7' "$run/serial.log"
+fi
+echo 'PASS native zdb labels and selected lifecycle checks; full pool traversal remains unverified.'

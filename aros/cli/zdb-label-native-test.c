@@ -14,7 +14,12 @@ int main(void)
             "C:ZdbAudit -l /SYS/zdb-member >RAM:zdb-labels.log",
             /* dump_label holds all four 256-KiB vdev labels on its stack,
              * in addition to the caller and decoder frames. */
+#ifdef OZ_ZDB_SHARED
+            /* The public library entry must provide its own large stack. */
+            NP_StackSize, 65536, TAG_DONE);
+#else
             NP_StackSize, 4194304, TAG_DONE);
+#endif
         FILE *report = fopen("RAM:zdb-labels.log", "r");
         int name = 0, labels = 0, failed = 0;
         char line[1024];
@@ -34,6 +39,16 @@ int main(void)
             return 20;
         }
     }
+#ifdef OZ_ZDB_SHARED
+    LONG lifecycle=SystemTags((CONST_STRPTR)
+        "C:OpenZFSZdbLifetimeTest >RAM:zdb-lifetime.log",
+        NP_StackSize,65536,TAG_DONE);
+    if(lifecycle!=7){
+        bug("RESULT native zdb labels FAIL lifecycle-exit=%ld\n",(long)lifecycle);
+        return 20;
+    }
+    bug("RESULT shared zdb caller exit PASS status=7\n");
+#endif
     bug("RESULT native zdb labels PASS runs=2 storage=readonly-iso\n");
     return 0;
 }

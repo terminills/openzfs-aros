@@ -26,7 +26,7 @@ OPENZFS_MANAGER_FILES := aros/ui/api aros/ui/admission-client \
     aros/ui/hostid-settings aros/engine/hostid-record
 
 #MM contrib-openzfs-tools : contrib-openzfs-manager contrib-openzfs-hostidentity contrib-openzfs-runtimecheck contrib-openzfs-device contrib-openzfs-exechelper
-#MM contrib-openzfs : contrib-openzfs-tools contrib-openzfs-cli contrib-openzfs-handler contrib-openzfs-library contrib-openzfs-service
+#MM contrib-openzfs : contrib-openzfs-tools contrib-openzfs-cli contrib-openzfs-handler contrib-openzfs-library contrib-openzfs-service contrib-openzfs-zdb
 .PHONY: contrib-openzfs contrib-openzfs-tools contrib-openzfs-cli
 contrib-openzfs contrib-openzfs-tools contrib-openzfs-cli:
 	@:
