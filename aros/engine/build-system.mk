@@ -66,11 +66,11 @@ $(OZE_OUT)/objects/aros/engine/admission.c.o: OZE_EXTRA += -include $(OZE_OUT)/i
 
 $(OZE_OUT)/objects/aros/engine/passphrase.c.o: $(OZE_ROOT)/aros/engine/passphrase.c
 	@$(MKDIR) $(dir $@)
-	$(AROS_CC) $(TARGET_SYSROOT) $(CFLAGS) -O2 -g -I$(OPENZFS_CRYPTO_INCLUDE) -MMD -MP -MF $@.d -c $< -o $@
+	$(AROS_CC) $(TARGET_SYSROOT) $(CFLAGS) -O2 -g -I$(OPENZFS_CRYPTO_INCLUDE) -MD -MP -MF $@.d -c $< -o $@
 
 $(OZE_OUT)/objects/%.o: $(OZE_ROOT)/% $(OZE_OUT)/include/zfs_gitrev.h $(OZE_OUT)/include/engine-metadata.h
 	@$(MKDIR) $(dir $@)
-	$(AROS_CC) $(TARGET_SYSROOT) -include $(OZE_ROOT)/aros/engine/config.h $(OZE_EXTRA) $(OZE_FLAGS) -MMD -MP -MF $@.d -c $< -o $@
+	$(AROS_CC) $(TARGET_SYSROOT) -include $(OZE_ROOT)/aros/engine/config.h $(OZE_EXTRA) $(OZE_FLAGS) -MD -MP -MF $@.d -c $< -o $@
 
 $(OZE_OUT)/include/engine-metadata.h: $(OZE_ROOT)/META $(OZE_ROOT)/aros/cli/generate-metadata.py
 	@$(MKDIR) $(dir $@)
@@ -96,4 +96,5 @@ contrib-openzfs-engine: $(OZE_OUT)/full-engine.o
 	sha256sum $(OZE_ROOT)/META $(OZE_ROOT)/aros/cli/generate-metadata.py $(OZE_OUT)/engine-metadata.h >$(OZE_OUT)/engine-metadata.sha256
 	printf '%s\n' $(OZE_SOURCES) >$(OZE_OUT)/sources.txt
 	cd $(OZE_ROOT) && sha256sum $(OZE_SOURCES) >$(OZE_OUT)/sources.sha256
+	$(OPENZFS_PYTHON) $(OZE_ROOT)/aros/engine/record-build-inputs.py --source-root $(OZE_ROOT) --build-root $(OZE_OUT) --expected-count $(words $(OZE_OBJECTS))
 -include $(addsuffix .d,$(OZE_OBJECTS))

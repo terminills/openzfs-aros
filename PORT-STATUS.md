@@ -2,6 +2,15 @@
 
 Experimental development snapshot; not production-qualified storage software.
 
+## Compiler input drift checks (2026-10-27)
+
+The MetaMake engine target now includes SDK/system headers in its compiler
+dependency manifest and verifies the exact 360-object source inventory.
+Fresh build and eight-CPU three-boot persistent regression evidence is in
+`aros/tests/evidence/compiler-inputs-20261027`. This is a post-build drift check,
+not complete source/toolchain closure or immutable-build attestation; see
+`aros/engine/BUILD-INPUTS.md`.
+
 ## Coordinated dependency builds (2026-10-26)
 
 An explicit `contrib-openzfs-dependencies` target builds the selected pthread,
