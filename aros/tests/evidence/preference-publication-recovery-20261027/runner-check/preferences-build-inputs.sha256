@@ -1,0 +1,12 @@
+c5f9324c056abb11b47a7abba257e179c0f89c691528c374df7d7b6e89ccd16e  aros/ui/preferences.c
+b3dc7ace2ce8eb03bc494ec9d043db565a26d2c838c7a6a75203d2628b008cf9  aros/ui/preferences-file.c
+1ffecd9cc4567a4b52fc79842ca2fa6d7c3eaf4753cae8249061a0d8ad4f90e8  aros/ui/preferences.h
+b8c7e431482fbe5dc1c7f1447ec3bdb68e9f9113107149e16331ec02c0c0a2f3  aros/ui/preferences-test.c
+fd4571694330cb4b1374f9dd34d414189d770726cb29758bf3e7e5c7637ac278  aros/ui/startup-settings.c
+d736302328a94663bd284d12e5e023a22f984d66be2e0a227c626cc5be3198da  aros/ui/startup-settings.h
+4f662c9e0e047ccbae7995c49c5491c65a395409aad2f1e66624e0a65fca84b8  aros/ui/startup-settings-test.c
+4168ee5fd77a9c95039c5e6f0ad6e5bf8ff5ba9a4c4535ee6f7dc624adabfba5  aros/ui/startup-settings-file.c
+e51f20c8f236ff46f9225618ba4c2d5bf1a3936a89d95f273ef2f320e2b4375a  aros/ui/settings-file.h
+1cd9186bcf0d54ce8dd0510b2c4f5a319684bd7feb0465d012aaa8d5238dfd25  /home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/proto/iffparse.h
+0ca53e6850c4d76390725eeb116274e5cc1a1767d82fff290fa44df1a6066639  /home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/libraries/iffparse.h
+6b504014e4b13eafd766a866fba9c270c6dc996246b88a912d212be7d87f4aa9  /mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/preferences-recovery/OpenZFSPreferencesTest

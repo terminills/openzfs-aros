@@ -40,7 +40,12 @@ if [[ $gui == startup ]];then startup=aros/ui/Startup-Pool-Preferences-GUI;fi
 if [[ $gui == simple ]];then startup=aros/ui/Startup-Preferences-Simple;fi
 run=$(mktemp -d "$artifact_root/$prefix.XXXXXXXX")
 echo "Evidence: $run"
-cp "${AROS_TEST_PREFERENCES_BINARY:-build-aros/OpenZFSPreferencesTest}" "$run/OpenZFSPreferencesTest"
+preferences_binary=${AROS_TEST_PREFERENCES_BINARY:-build-aros/OpenZFSPreferencesTest}
+preferences_manifest=${preferences_binary}.inputs.sha256
+if [[ -z ${AROS_TEST_PREFERENCES_BINARY:-} ]];then
+    preferences_manifest=build-aros/preferences-build-inputs.sha256
+fi
+cp "$preferences_binary" "$run/OpenZFSPreferencesTest"
 cp aros/ui/preferences.c aros/ui/preferences-file.c aros/ui/preferences.h aros/ui/preferences-test.c "$run/"
 cp aros/ui/startup-settings.c aros/ui/startup-settings.h aros/ui/startup-settings-test.c "$run/"
 cp aros/ui/startup-settings-file.c aros/ui/settings-file.h "$run/"
@@ -55,8 +60,8 @@ if [[ $gui == 1 || $gui == failures || $gui == startup || $gui == simple ]];then
         -map "$run/OpenZFSPreferencesGuiTest" /C/OpenZFSPreferencesGuiTest)
     sha256sum "$run/OpenZFSManagerNative" "$run/OpenZFSPreferencesGuiTest" >"$run/gui-inputs.sha256"
 fi
-if [[ -f build-aros/preferences-build-inputs.sha256 ]];then
-    cp build-aros/preferences-build-inputs.sha256 "$run/"
+if [[ -f $preferences_manifest ]];then
+    cp "$preferences_manifest" "$run/preferences-build-inputs.sha256"
 fi
 git rev-parse HEAD >"$run/source.txt"
 git diff --binary >"$run/source.patch"
@@ -94,5 +99,5 @@ wait "$pid"
 trap - EXIT
 echo "PASS: native IFF preferences. Evidence: $run"
 if [[ $prefix == preferences-run ]];then
-    python3 aros/distribution/prune-public-test-images.py --run "$(basename "$run")" --apply
+    python3 aros/distribution/prune-public-test-images.py --artifact-root "$artifact_root" --run "$(basename "$run")" --apply
 fi

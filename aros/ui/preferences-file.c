@@ -10,6 +10,13 @@
 #include <errno.h>
 #include <stdio.h>
 #include <string.h>
+#ifdef OZ_SETTINGS_FAULT_TEST
+/* Only the isolated preferences test supplies this fault-injection seam. */
+extern LONG oz_settings_test_rename(CONST_STRPTR,CONST_STRPTR);
+#define settings_rename oz_settings_test_rename
+#else
+#define settings_rename Rename
+#endif
 
 static int file_error(LONG e)
 {
@@ -161,7 +168,7 @@ int oz_settings_store(const char *path,const void *p,int *published,const struct
             }
             UnLock(lock);
             if(!error){
-                if(!Rename((CONST_STRPTR)path,(CONST_STRPTR)previous))error=file_error(IoErr());
+                if(!settings_rename((CONST_STRPTR)path,(CONST_STRPTR)previous))error=file_error(IoErr());
                 else moved=1;
             }
         }else if(IoErr()!=ERROR_OBJECT_NOT_FOUND)error=file_error(IoErr());
@@ -172,7 +179,7 @@ int oz_settings_store(const char *path,const void *p,int *published,const struct
         else{error=verify_lock(lock,codec,0);UnLock(lock);}
     }
     if(!error){
-        if(!Rename((CONST_STRPTR)next,(CONST_STRPTR)path))error=file_error(IoErr());
+        if(!settings_rename((CONST_STRPTR)next,(CONST_STRPTR)path))error=file_error(IoErr());
         else{
             committed=1;created=0;
             /* A successful DOS rename is not sufficient evidence that the
@@ -193,7 +200,7 @@ int oz_settings_store(const char *path,const void *p,int *published,const struct
     if(error&&moved&&!committed){
         /* A failed rollback retains the previous version in the transaction;
          * load can recover it. Never delete the sole saved copy. */
-        if(Rename((CONST_STRPTR)previous,(CONST_STRPTR)path))moved=0;
+        if(settings_rename((CONST_STRPTR)previous,(CONST_STRPTR)path))moved=0;
     }
     if(created&&!DeleteFile((CONST_STRPTR)next)&&!error)error=file_error(IoErr());
     if(committed&&moved&&!error){

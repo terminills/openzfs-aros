@@ -8,7 +8,7 @@ output=${1:-build-aros/OpenZFSPreferencesTest}
 manifest="$output.inputs.sha256"
 if (( $# == 0 )); then manifest=build-aros/preferences-build-inputs.sha256; fi
 mkdir -p "$(dirname "$output")"
-"$cc" --sysroot="$sdk" -B"$sdk/lib/" -O2 -g -Wall -Wextra \
+"$cc" --sysroot="$sdk" -B"$sdk/lib/" -O2 -g -Wall -Wextra -DOZ_SETTINGS_FAULT_TEST \
     aros/ui/preferences.c aros/ui/preferences-file.c aros/ui/preferences-test.c \
     aros/ui/startup-settings.c aros/ui/startup-settings-file.c aros/ui/startup-settings-test.c -liffparse \
     -o "$output"

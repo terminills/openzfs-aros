@@ -8,6 +8,17 @@
 #include <errno.h>
 #include <stdio.h>
 #include <string.h>
+#ifdef OZ_SETTINGS_FAULT_TEST
+static int lose_publication;
+LONG oz_settings_test_rename(CONST_STRPTR from,CONST_STRPTR to)
+{
+    size_t length=strlen((const char *)from);
+    if(lose_publication&&length>=5&&!strcmp((const char *)from+length-5,"/next")){
+        lose_publication=0;SetIoErr(0);return DOSTRUE;
+    }
+    return Rename(from,to);
+}
+#endif
 static const unsigned char golden[46]={
     'F','O','R','M',0,0,0,38,'P','R','E','F',
     'P','R','H','D',0,0,0,6,0,0,0,0,0,0,
@@ -74,6 +85,19 @@ int main(void)
     p=(struct oz_preferences){5,1024,768};
     CHECK(!oz_preferences_store(path,&p,&published)&&published);
     CHECK(!oz_preferences_load(path,&loaded,&recovered)&&!recovered&&!memcmp(&p,&loaded,sizeof(p)));
+#ifdef OZ_SETTINGS_FAULT_TEST
+    /* A filesystem may acknowledge rename without publishing the file.
+     * Preserve the old valid record and refuse another writer until recovery. */
+    struct oz_preferences replacement={1,900,700,OZ_UI_SIMPLE};
+    lose_publication=1;
+    CHECK(oz_preferences_store(path,&replacement,&published)==ENOENT&&!published&&!lose_publication);
+    CHECK(!oz_preferences_load(path,&loaded,&recovered)&&recovered&&!memcmp(&p,&loaded,sizeof(p)));
+    CHECK(oz_preferences_store(path,&replacement,&published)==EBUSY&&!published);
+    CHECK(Rename((CONST_STRPTR)"RAM:OpenZFS-managed.prefs.txn/previous",(CONST_STRPTR)path));
+    CHECK(DeleteFile((CONST_STRPTR)"RAM:OpenZFS-managed.prefs.txn/next"));
+    CHECK(DeleteFile((CONST_STRPTR)"RAM:OpenZFS-managed.prefs.txn"));
+    {const char *s="Native publication failure recovery PASS unpublished=1 previous-retained=1 collision-refused=1 restored=1\n";while(*s)RawPutChar(*s++);}
+#endif
     p=(struct oz_preferences){2,800,600,OZ_UI_ADVANCED};published=0;
     CHECK(!oz_preferences_store(path,&p,&published)&&published);
     CHECK(!oz_preferences_load(path,&loaded,&recovered)&&!recovered&&!memcmp(&p,&loaded,sizeof(p)));
