@@ -1,0 +1,30 @@
+QEMU 10.1.94 monitor - type 'help' for more information
+(qemu) i[K[Din[K[D[Dinf[K[D[D[Dinfo[K[D[D[D[Dinfo [K[D[D[D[D[Dinfo b[K[D[D[D[D[D[Dinfo bl[K[D[D[D[D[D[D[Dinfo blo[K[D[D[D[D[D[D[D[Dinfo bloc[K[D[D[D[D[D[D[D[D[Dinfo block[K[D[D[D[D[D[D[D[D[D[Dinfo blocks[K[D[D[D[D[D[D[D[D[D[D[Dinfo blockst[K[D[D[D[D[D[D[D[D[D[D[D[Dinfo blocksta[K[D[D[D[D[D[D[D[D[D[D[D[D[Dinfo blockstat[K[D[D[D[D[D[D[D[D[D[D[D[D[D[Dinfo blockstats[K
+ide1-cd0: rd_bytes=709670912 wr_bytes=0 rd_operations=23229 wr_operations=0 flush_operations=0 wr_total_time_ns=0 rd_total_time_ns=1791439138 flush_total_time_ns=0 rd_merged=0 wr_merged=0 idle_time_ns=534786448438
+ide0-hd0: rd_bytes=2271031296 wr_bytes=1206042624 rd_operations=138634 wr_operations=73611 flush_operations=0 wr_total_time_ns=5022176806 rd_total_time_ns=8369142805 flush_total_time_ns=0 rd_merged=0 wr_merged=0 idle_time_ns=527854516158
+ide0-hd1: rd_bytes=314880 wr_bytes=192000 rd_operations=37 wr_operations=375 flush_operations=0 wr_total_time_ns=24207681 rd_total_time_ns=3940127 flush_total_time_ns=0 rd_merged=0 wr_merged=0 idle_time_ns=534719202692
+floppy0: rd_bytes=0 wr_bytes=0 rd_operations=0 wr_operations=0 flush_operations=0 wr_total_time_ns=0 rd_total_time_ns=0 flush_total_time_ns=0 rd_merged=0 wr_merged=0 idle_time_ns=0
+(qemu) i[K[Din[K[D[Dinf[K[D[D[Dinfo[K[D[D[D[Dinfo [K[D[D[D[D[Dinfo b[K[D[D[D[D[D[Dinfo bl[K[D[D[D[D[D[D[Dinfo blo[K[D[D[D[D[D[D[D[Dinfo bloc[K[D[D[D[D[D[D[D[D[Dinfo block[K
+ide1-cd0 (#block136): /mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/public-service-run.3WjW1wTf/test.iso (raw, read-only)
+    Attached to:      /machine/unattached/device[14]
+    Removable device: not locked, tray closed
+    Cache mode:       writeback
+
+ide0-hd0 (#block305): /mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/public-service-run.3WjW1wTf/backing.raw (raw)
+    Attached to:      /machine/unattached/device[12]
+    Cache mode:       writeback
+
+ide0-hd1 (#block554): /mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/public-service-run.3WjW1wTf/startup-archive.raw (raw)
+    Attached to:      /machine/unattached/device[13]
+    Cache mode:       writeback
+
+floppy0: [not inserted]
+    Attached to:      /machine/unattached/device[24]
+    Removable device: not locked, tray closed
+(qemu) s[K[Dst[K[D[Dsto[K[D[D[Dstop[K
+(qemu) i[K[Din[K[D[Dinf[K[D[D[Dinfo[K[D[D[D[Dinfo [K[D[D[D[D[Dinfo b[K[D[D[D[D[D[Dinfo bl[K[D[D[D[D[D[D[Dinfo blo[K[D[D[D[D[D[D[D[Dinfo bloc[K[D[D[D[D[D[D[D[D[Dinfo block[K[D[D[D[D[D[D[D[D[D[Dinfo blocks[K[D[D[D[D[D[D[D[D[D[D[Dinfo blockst[K[D[D[D[D[D[D[D[D[D[D[D[Dinfo blocksta[K[D[D[D[D[D[D[D[D[D[D[D[D[Dinfo blockstat[K[D[D[D[D[D[D[D[D[D[D[D[D[D[Dinfo blockstats[K
+ide1-cd0: rd_bytes=709670912 wr_bytes=0 rd_operations=23229 wr_operations=0 flush_operations=0 wr_total_time_ns=0 rd_total_time_ns=1791439138 flush_total_time_ns=0 rd_merged=0 wr_merged=0 idle_time_ns=534790079902
+ide0-hd0: rd_bytes=2271031296 wr_bytes=1206042624 rd_operations=138634 wr_operations=73611 flush_operations=0 wr_total_time_ns=5022176806 rd_total_time_ns=8369142805 flush_total_time_ns=0 rd_merged=0 wr_merged=0 idle_time_ns=527858089404
+ide0-hd1: rd_bytes=314880 wr_bytes=192000 rd_operations=37 wr_operations=375 flush_operations=0 wr_total_time_ns=24207681 rd_total_time_ns=3940127 flush_total_time_ns=0 rd_merged=0 wr_merged=0 idle_time_ns=534722727918
+floppy0: rd_bytes=0 wr_bytes=0 rd_operations=0 wr_operations=0 flush_operations=0 wr_total_time_ns=0 rd_total_time_ns=0 flush_total_time_ns=0 rd_merged=0 wr_merged=0 idle_time_ns=0
+(qemu) 

@@ -1,0 +1,21 @@
+--- os_aros_support.c
++++ os_aros_support.c
+@@ -328,3 +328,5 @@
+ void osMediumFree(struct AFSBase *afsbase, struct Volume *volume, LONG all) {
++        bug("[afs-inhibit] remove-volume begin\n");
+         remDosVolume(afsbase, volume);
++        bug("[afs-inhibit] remove-volume end\n");
+         if (all)
+@@ -581,8 +583,12 @@
+ BOOL flush(struct AFSBase *afsbase, struct Volume *volume) {
+ 
++        bug("[afs-inhibit] flush-cache begin\n");
+         flushCache(afsbase, volume);
++        bug("[afs-inhibit] flush-cache end; device-update begin\n");
+         volume->ioh.ioreq->iotd_Req.io_Command = CMD_UPDATE;
+         DoIO((struct IORequest *)&volume->ioh.ioreq->iotd_Req);
++        bug("[afs-inhibit] device-update end; clear-cache begin\n");
+         clearCache(afsbase, volume->blockcache);
++        bug("[afs-inhibit] clear-cache end\n");
+         return DOSTRUE;
+ }

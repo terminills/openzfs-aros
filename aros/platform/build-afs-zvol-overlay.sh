@@ -26,6 +26,15 @@ if [[ ${AROS_AFS_RENAME_FIX:-0} == 1 ]];then
     patch --batch --fuzz=0 -d "$out/source" -p0 <"$out/afs-rename-pinned-link.patch"
 fi
 flags=(--sysroot "$sdk" -m64 -mcmodel=large -mno-red-zone -mno-ms-bitfields)
+if [[ ${AROS_AFS_INHIBIT_TRACE:-0} == 1 ]];then
+    cp "$repo/aros/platform/afs-inhibit-trace.patch" "$out/"
+    patch --batch --fuzz=0 -d "$out/source" -p0 <"$out/afs-inhibit-trace.patch"
+    "$cc" "${flags[@]}" -iquote "$out/source" -O2 -fno-asynchronous-unwind-tables \
+        -fno-omit-frame-pointer -Wno-pointer-sign -Wno-parentheses \
+        -DAROS_BUILD_TYPE=AROS_BUILD_TYPE_PERSONAL -DUSE_EXEC_DEBUG -DDEBUG=0 \
+        -D__INTUITION_NOLIBBASE__ -I"$objects/include" -include "$objects/include/afs_deflibdefs.h" \
+        '-D__SRCFILENAME__="rom/filesys/afs/os_aros_support.c"' -c "$out/source/os_aros_support.c" -o "$out/objects/os_aros_support.o"
+fi
 "$cc" "${flags[@]}" -iquote "$out/source" -O2 -fno-asynchronous-unwind-tables \
     -fno-omit-frame-pointer -Wno-pointer-sign -Wno-parentheses \
     -DAROS_BUILD_TYPE=AROS_BUILD_TYPE_PERSONAL -DUSE_EXEC_DEBUG -DDEBUG=0 \

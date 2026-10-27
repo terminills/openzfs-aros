@@ -44,3 +44,17 @@ The subsequent diagnostic client adds bounded cleanup-phase markers to the
 test, and the writer timeout now invokes the existing opt-in failure capture.
 That follow-up must establish what happens after publication before this
 overlay can be called qualified for the complete startup path.
+
+## Cleanup localization
+
+`public-service-run.3WjW1wTf`, using diagnostic client `dependency-client.9ojIj5R1`
+and the same candidate handler, timed out at `phase=archive-inhibit`.
+ENV record deletion and ENVARC reassignment returned. The writer did not emit
+the cleanup-end marker. The timeout capture retained QEMU block information;
+host debugger attachment failed with a ptrace error, so no host stack was
+obtained. Raw results are under `cleanup-timeout/`.
+
+`AROS_AFS_INHIBIT_TRACE=1` is an optional private-overlay diagnostic, disabled
+by default. It emits boundaries for cache flush, device CMD_UPDATE, cache
+clear and volume removal. It changes no operation ordering or error policy.
+It is not intended for performance measurements or release packaging.
