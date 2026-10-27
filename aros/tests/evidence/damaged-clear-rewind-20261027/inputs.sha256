@@ -1,0 +1,7 @@
+9414bf6a77ac3c84050674d5b8086e93386afccc0cb099ca68c89c945af988c6  build-audit/shared-engine.VpiTT74c/openzfs.library
+a1a3089b1b4b999cdba17f2bcce9d41e62aae4fd676a6227040f06be1b206a23  build-audit/shared-engine.VpiTT74c/OpenZFSServiceNative
+13f0f9daecf6b0e99ae145208a05c61fb1948eea389614cd688ed41dd1ac795b  build-audit/mmake-cli.JZ90tGIt/stage/C/zpool
+e31708409f4777b746b247eb1240613732cc29def144e5f2634f3ea846724e5d  build-audit/qemu-run.rewind-corrupt-20261026/disk0.raw
+2f32714afd52c09dc23bfeb2c3da7b0d316b0aa2ddeb9a9f96af0184a57dd9e8  build-audit/qemu-run.rewind-corrupt-20261026/disk1.raw
+5b0b1c14ec8e3f49cb534fe396e4e2072ebe460ca2d3b08a7a5af32a35270351  build-audit/qemu-run.clear-cold.Tax9gyqA/disk0.raw
+fa3c2680c635b68a64ef617e93f7a0e619b6e50533dabcc0cf9bf67a28085baf  build-audit/qemu-run.clear-cold.Tax9gyqA/disk1.raw

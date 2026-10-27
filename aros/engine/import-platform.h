@@ -20,7 +20,7 @@ int oz_import_config_check(struct oz_import_paths *,nvlist_t *);
 int oz_import_config_select(struct oz_import_paths *,nvlist_t *,char **selected,unsigned *count);
 int oz_cli_tryimport_begin(const void *,size_t,cred_t *,const struct oz_packet_security *,void **);
 int oz_cli_tryimport_end(void *);
-int oz_cli_import_begin(const char *,uint64_t,void *,size_t *,const void *,size_t,cred_t *,const struct oz_packet_security *,void **);
+int oz_cli_import_begin(const char *,uint64_t,uint64_t,void *,size_t *,const void *,size_t,cred_t *,const struct oz_packet_security *,void **);
 int oz_cli_import_end(void *,int);
 int oz_cli_create_begin(const char *,const void *,size_t,const void *,size_t,cred_t *,const struct oz_packet_security *,void **);
 int oz_cli_create_request(const char *,void *,size_t *,const void *,size_t,cred_t *,const struct oz_packet_security *,void **);

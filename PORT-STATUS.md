@@ -294,6 +294,14 @@ results, not a fresh qualification of this public snapshot.
 
 ## Remaining boundaries
 
+Damaged-pool CLEAR update (2026-10-27): actual upstream `clear -nF/-F` and
+`clear -nFX/-FX` pass on separately prepared damaged mirror fixtures through
+explicit native admission. The extreme result also passes a separate cold
+ordinary import, exact DOS readback, unchanged reader images and independent
+host zdb. This is not only healthy-clear acceptance. See
+`aros/tests/evidence/damaged-clear-rewind-20261027` for failed controls,
+authorization checks and the remaining Manager/assessment-only/crash gaps.
+
 Current-source refresh (2026-10-26): all 248 upstream inventory units, service
 adapters and nvpair/XDR were rebuilt without old engine objects. Both the
 standalone service and actual shared library/launcher passed the file/native

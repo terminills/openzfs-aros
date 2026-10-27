@@ -8293,6 +8293,17 @@ zfsdev_ioctl_common(uint_t vecnum, zfs_cmd_t *zc, int flag)
 	case POOL_NAME:
 		if (pool_namecheck(zc->zc_name, NULL, NULL) != 0)
 			error = SET_ERROR(EINVAL);
+#ifdef __AROS__
+		else if (vecnum == ZFS_IOC_CLEAR - ZFS_IOC_FIRST &&
+		    zc->zc_cookie != ZPOOL_NO_REWIND) {
+			/* A normal spa_open would reject the damaged MOS before
+			 * zfs_ioc_clear can apply its explicit recovery policy.
+			 * Check privilege, retained writable admission, identity
+			 * and mounted-subtree exclusion without opening the SPA. */
+			extern int oz_cli_pool_rewind_check(const char *, cred_t *);
+			error = oz_cli_pool_rewind_check(zc->zc_name, CRED());
+		}
+#endif
 		else
 			error = pool_status_check(zc->zc_name,
 			    vec->zvec_namecheck, vec->zvec_pool_check);

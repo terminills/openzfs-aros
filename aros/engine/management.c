@@ -204,6 +204,10 @@ int oz_cli_pool_rewind_check(const char *name,cred_t *caller)
     spa_namespace_enter(FTAG);
     spa_t *spa=spa_lookup(name);
     if(!spa)error=ENOENT;
+    else if(spa->spa_state==POOL_STATE_UNINITIALIZED) {
+        extern int oz_pool_import_uninitialized_rewind_check(spa_t *);
+        error=oz_pool_import_uninitialized_rewind_check(spa);
+    }
     else if(!spa_writeable(spa))error=EROFS;
     else {
         extern int oz_pool_import_identity_check(spa_t *);

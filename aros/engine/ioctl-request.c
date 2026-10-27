@@ -267,7 +267,9 @@ static int execute(void *storage,size_t length,const struct oz_packet_security *
      * readonly property admission. Upstream distinguishes readonly preview
      * from committing the rewind; do not strip the requested load policy. */
     if(importing&&(command.zc_cookie&~(ZFS_IMPORT_ONLY|ZFS_IMPORT_ANY_HOST|
-        ZFS_IMPORT_CHECKPOINT)))return ENOTSUP;
+        ZFS_IMPORT_CHECKPOINT|ZFS_IMPORT_VERBATIM)))return ENOTSUP;
+    if(importing&&(command.zc_cookie&ZFS_IMPORT_VERBATIM)&&
+        (command.zc_cookie&ZFS_IMPORT_CHECKPOINT))return EINVAL;
     if(trying&&(!w->conf_size||w->src_size||!w->dst_capacity||
         command.zc_cookie||command.zc_guid||command.zc_value[0]))return EINVAL;
     if(w->history_size&&(!removing||
@@ -466,7 +468,7 @@ static int execute(void *storage,size_t length,const struct oz_packet_security *
             (char *)storage+conf,w->conf_size,cred,&import_scope);
         if(importing) {
             size_t clean_size=w->conf_size;
-            w->engine_error=oz_cli_import_begin(command.zc_name,command.zc_guid,
+            w->engine_error=oz_cli_import_begin(command.zc_name,command.zc_guid,command.zc_cookie,
                 (char *)storage+conf,&clean_size,(char *)storage+base,w->src_size,cred,security,&import_scope);
             if(!w->engine_error)command.zc_nvlist_conf_size=clean_size;
         }

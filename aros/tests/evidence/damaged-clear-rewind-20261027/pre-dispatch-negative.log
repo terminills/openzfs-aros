@@ -1,0 +1,51 @@
+[bootstrap:multiboot2] smartfb: using VBE mode 0x417a (1280x800x32, fb=0xFD000000)
+[bootstrap:multiboot2] smartfb: KRN_FBAddr=0x00000000FD000000
+0000000000000000 0x0000000000000000 | 000 | AROS64 - The AROS Research OS
+0000000000000000 0x0000000000000000 | 000 | 64-bit SMP build. Compiled Oct 21 2026
+0000000000000000 0x0000000000000000 | 000 | [Kernel] Local APIC: x2APIC
+000000008fc30075 0x0000000000000000 | 000 | ACPI: RSDP 0x00000000000F52E0 000014 (v00 BOCHS )
+00000000903d3827 0x0000000000000000 | 000 | ACPI: RSDT 0x000000007FFE25BF 000034 (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+0000000090de0612 0x0000000000000000 | 000 | ACPI: FACP 0x000000007FFE243B 000074 (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+00000000917ebe04 0x0000000000000000 | 000 | ACPI: DSDT 0x000000007FFE0040 0023FB (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+00000000921ea8fb 0x0000000000000000 | 000 | ACPI: FACS 0x000000007FFE0000 000040
+000000009285b5d7 0x0000000000000000 | 000 | ACPI: APIC 0x000000007FFE24AF 0000B0 (v03 BOCHS  BXPC     00000001 BXPC 00000001)
+0000000093270527 0x0000000000000000 | 000 | ACPI: HPET 0x000000007FFE255F 000038 (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+0000000093c95ead 0x0000000000000000 | 000 | ACPI: WAET 0x000000007FFE2597 000028 (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+000000009469ac78 0x0000000000000000 | 000 | [HPET] 2 units total
+0000000095269b44 0x00000000013d2020 | 000 | ACPI: 1 ACPI AML tables successfully acquired and loaded
+0000000095ca25ac 0x00000000013b0130 | 000 | [Kernel:ACPI-IOAPIC] Registering IO-APIC #1 [ID=000] @ 00000000fec00000 [GSI = 0]
+00000000966a40c8 0x00000000013b0130 | 000 | [Kernel:ACPI] System Total APICs: 8, 8 usable
+00000000971ad0fa 0x00000000013b0130 | 000 | [Kernel:APIC-IA32] MSI Interrupts Allocatable
+000000009790c47c 0x00000000013b0130 | 000 | [Kernel:APIC-IA32]     start = 16
+0000000097f42a62 0x00000000013b0130 | 000 | [Kernel:APIC-IA32]     total = 198
+00000000b61de1c2 0x00000000013b0130 | 000 | [Kernel:APIC-IA32] Heartbeat timer: TSC deadline
+00000000b82141fd 0x00000000013dbe80 | 001 | [Kernel:APIC-IA32.001] core_APIC_Calibrate: TSC freq inherited from BSP (2496065 kHz) [hypervisor]
+00000000b9b72ec9 0x00000000013dbe80 | 001 | [Kernel:APIC-IA32.001] core_APIC_Calibrate: LAPIC timer freq inherited from BSP (1000460800 Hz) [hypervisor]
+00000000bcf5034f 0x00000000013dc4c0 | 002 | [Kernel:APIC-IA32.002] core_APIC_Calibrate: TSC freq inherited from BSP (2496065 kHz) [hypervisor]
+00000000be8e89fb 0x00000000013dc4c0 | 002 | [Kernel:APIC-IA32.002] core_APIC_Calibrate: LAPIC timer freq inherited from BSP (1000460800 Hz) [hypervisor]
+00000000c1d070e3 0x000000000145c4b0 | 003 | [Kernel:APIC-IA32.003] core_APIC_Calibrate: TSC freq inherited from BSP (2496065 kHz) [hypervisor]
+00000000c367c910 0x000000000145c4b0 | 003 | [Kernel:APIC-IA32.003] core_APIC_Calibrate: LAPIC timer freq inherited from BSP (1000460800 Hz) [hypervisor]
+00000000c6a340b4 0x0000000001497100 | 004 | [Kernel:APIC-IA32.004] core_APIC_Calibrate: TSC freq inherited from BSP (2496065 kHz) [hypervisor]
+00000000c83b3afd 0x0000000001497100 | 004 | [Kernel:APIC-IA32.004] core_APIC_Calibrate: LAPIC timer freq inherited from BSP (1000460800 Hz) [hypervisor]
+00000000cb77c7ae 0x00000000014d1db0 | 005 | [Kernel:APIC-IA32.005] core_APIC_Calibrate: TSC freq inherited from BSP (2496065 kHz) [hypervisor]
+00000000cc97a1d1 0x00000000014d1db0 | 005 | [Kernel:APIC-IA32.005] core_APIC_Calibrate: LAPIC timer freq inherited from BSP (1000460800 Hz) [hypervisor]
+00000000cf496581 0x000000000150ca60 | 006 | [Kernel:APIC-IA32.006] core_APIC_Calibrate: TSC freq inherited from BSP (2496065 kHz) [hypervisor]
+00000000d0eb465c 0x000000000150ca60 | 006 | [Kernel:APIC-IA32.006] core_APIC_Calibrate: LAPIC timer freq inherited from BSP (1000460800 Hz) [hypervisor]
+00000000d42c69f4 0x0000000001547710 | 007 | [Kernel:APIC-IA32.007] core_APIC_Calibrate: TSC freq inherited from BSP (2496065 kHz) [hypervisor]
+00000000d5c79987 0x0000000001547710 | 007 | [Kernel:APIC-IA32.007] core_APIC_Calibrate: LAPIC timer freq inherited from BSP (1000460800 Hz) [hypervisor]
+00000000d822c26a 0x00000000013b0130 | 000 | [PCIPC:Driver] PCIPC_InitClass: No ACPI MCFG table
+00000000da6b80c0 0x00000000013b0130 | 000 | [Timer] clock: PIT (no invariant TSC)
+00000001c48162ba 0x00000000017a1f70 | 000 | [ATI] Init
+00000001c4ca3f8f 0x00000000017a1f70 | 000 | [ATI] No supported cards found
+00000001dc89762c 0x000000000179d0a0 | 000 | [HW] HW__HW__AddDriver: Failed to instantiate Driver Object
+Writable startup denied: configured security.library and system task identity required.
+RESULT native service release startup PASS diagnostic-modes-refused=3 malformed-refused=2 unauthorized-writable-refused=1 no-ports=1
+Native authenticated admission ready
+OpenZFS management API 3 ready; engine initialized
+RESULT native damaged import rewind PASS cycles=2 ordinary-refused=2 absent-after-refusal=2 readonly-FX=2 exact-DOS=2 write-refused=2
+READY native writable recovery request
+RESULT native verbatim admission PASS readonly-refused=1 absent=1 writable-admitted=1
+cannot clear errors for qemu_mirror: I/O error
+
+Clear assessment exit=1 close=4294967295
+RESULT native damaged rewind test FAIL line=594

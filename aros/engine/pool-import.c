@@ -26,7 +26,7 @@
 #include "../cli/device-path.h"
 struct imported_files {
     struct imported_files *next;
-    char name[256];unsigned count;
+    char name[256];unsigned count;int readonly;
     uint64_t guid;
     BPTR locks[OZ_MAX_DEVICES];
     struct oz_device_binding *native[OZ_MAX_DEVICES];
@@ -35,13 +35,35 @@ struct imported_files {
     struct oz_vdev_policy *policy;
 };
 static struct imported_files *imports;
+static uint64_t admitted_spa_guid(spa_t *spa)
+{
+    uint64_t guid=spa_guid(spa);
+    /* spa_add does not set spa_config_guid; a verbatim import has not run
+     * the first label load yet. Use only its admitted configuration GUID. */
+    if(!guid&&spa->spa_state==POOL_STATE_UNINITIALIZED&&spa->spa_config)
+        (void)nvlist_lookup_uint64(spa->spa_config,ZPOOL_CONFIG_POOL_GUID,&guid);
+    return guid;
+}
 /* Service owner only. A matching name with stale retained identity is not an
  * absent admission: recovery must fail rather than silently skip it. */
 int oz_pool_import_identity_check(spa_t *spa)
 {
     for(struct imported_files *p=imports;p;p=p->next)
-        if(!strcmp(p->name,spa_name(spa))&&p->guid!=spa_guid(spa))return ESTALE;
+        if(!strcmp(p->name,spa_name(spa))&&p->guid!=admitted_spa_guid(spa))return ESTALE;
     return 0;
+}
+/* A verbatim import has no trusted/open SPA yet. Only a retained writable
+ * admission of this exact identity authorizes its first recovery load. */
+int oz_pool_import_uninitialized_rewind_check(spa_t *spa)
+{
+    if(!(spa_mode_global&SPA_MODE_WRITE))return EROFS;
+    for(struct imported_files *p=imports;p;p=p->next)
+        if(!strcmp(p->name,spa_name(spa))) {
+            if(!p->guid||p->guid!=admitted_spa_guid(spa))return ESTALE;
+            if(p->readonly)return EROFS;
+            return p->policy&&p->count?0:EACCES;
+        }
+    return EACCES;
 }
 /* Common native/CLI reguid adapter. The service owner serializes import,
  * clear and GUID changes. Publish the new retained identity only after the
@@ -388,7 +410,7 @@ static int cli_import_prepare(const void *bytes,size_t size,cred_t *caller,
     struct imported_files *p=NULL;
     if(!error){p=calloc(1,sizeof(*p));if(!p)error=ENOMEM;}
     if(!error) {
-        p->count=count;
+        p->count=count;p->readonly=readonly;
         p->guid=guid;if(name)strcpy(p->name,name);
         for(unsigned i=0;!error&&i<count;i++)
             error=!strncmp(paths[i],"/AROS/",6)?pin_native(p,i,paths[i],readonly):pin_file(p,i,paths[i],security,readonly);
@@ -427,7 +449,7 @@ static int cli_cache_policy(nvlist_t *props)
     if(!leaf[0]||!strcmp(leaf,".")||!strcmp(leaf,".."))return EINVAL;
     return 0;
 }
-int oz_cli_import_begin(const char *name,uint64_t guid,void *bytes,size_t *size,
+int oz_cli_import_begin(const char *name,uint64_t guid,uint64_t flags,void *bytes,size_t *size,
     const void *property_bytes,size_t property_size,cred_t *caller,const struct oz_packet_security *security,void **out)
 {
     *out=NULL;
@@ -443,6 +465,9 @@ int oz_cli_import_begin(const char *name,uint64_t guid,void *bytes,size_t *size,
         if(error==ENOENT)error=0;
         if(!error&&readonly>1)error=EINVAL;
     }
+    /* Upstream verbatim import defers activation and ignores readonly when
+     * it later opens through spa_mode_global. Never accept that downgrade. */
+    if(!error&&(flags&ZFS_IMPORT_VERBATIM)&&readonly)error=ENOTSUP;
     if(!error)error=cli_cache_policy(props);
     if(!error&&!readonly&&!(spa_mode_global&SPA_MODE_WRITE))error=EROFS;
     nvlist_free(props);if(error)return error;
@@ -466,10 +491,10 @@ int oz_cli_import_end(void *scope,int error)
     /* A successful SPA import can precede a failed output-nvlist copy. Never
      * drop active device reservations merely because the reply was too small. */
     spa_namespace_enter(FTAG);spa_t *spa=spa_lookup(p->name);
-    boolean_t imported=spa&&(!p->guid||spa_guid(spa)==p->guid);
+    boolean_t imported=spa&&(!p->guid||admitted_spa_guid(spa)==p->guid);
     /* Create reservations precede SPA GUID allocation. Retain the assigned
      * identity, not zero, so later explicit readmission can match this pool. */
-    if(imported)p->guid=spa_guid(spa);
+    if(imported)p->guid=admitted_spa_guid(spa);
     spa_namespace_exit(FTAG);
     if(imported) {
         p->next=imports;imports=p;
@@ -838,7 +863,7 @@ int oz_pool_import_files(struct oz_message *m,cred_t *caller,const struct oz_pac
     spa_namespace_enter(FTAG);boolean_t exists=spa_lookup(m->target)!=NULL;
     spa_namespace_exit(FTAG);if(exists)return EEXIST;
     struct imported_files *p=calloc(1,sizeof(*p));if(!p)return ENOMEM;
-    p->count=m->topology.device_count;strcpy(p->name,m->target);
+    p->count=m->topology.device_count;p->readonly=readonly;strcpy(p->name,m->target);
     struct oz_cred_scope *scope=NULL;nvlist_t *config=NULL,*props=NULL;
     const char *stage="credentials";
     error=oz_cred_push(caller,&scope);if(error)goto done;

@@ -579,10 +579,37 @@ int main(void)
 #endif
 #ifdef OZ_NATIVE_IMPORT_REWIND_COMMIT
     note("READY native writable recovery request");
+#ifdef OZ_NATIVE_CLEAR_REWIND
+    {
+        struct TagItem quiet[]={{secT_Quiet,TRUE},{TAG_DONE,0}};
+        struct TagItem reader[]={{secT_UserID,(IPTR)"ozreader"},{secT_Password,(IPTR)""},{TAG_DONE,0}};
+        secLogoutA(quiet);CHECK(secLoginA(reader)==((77UL<<16)|88));
+        LONG denied=SystemTags((CONST_STRPTR)"C:zpool import -N -V -f -o cachefile=none -d /AROS/ata.device/0/partition/0 -d /AROS/ata.device/1/partition/0 qemu_mirror",TAG_DONE);
+        secLogoutA(quiet);CHECK(secLoginA(login)==secOWNER_SYSTEM);CHECK(denied>0);
+        CHECK(SystemTags((CONST_STRPTR)"C:zpool list -H qemu_mirror",TAG_DONE)>0);
+        note("RESULT native verbatim privilege PASS nonroot-refused=1 absent=1 root-restored=1");
+    }
+    CHECK(SystemTags((CONST_STRPTR)"C:zpool import -N -V -f -o cachefile=none -o readonly=on -d /AROS/ata.device/0/partition/0 -d /AROS/ata.device/1/partition/0 qemu_mirror",TAG_DONE)>0);
+    CHECK(SystemTags((CONST_STRPTR)"C:zpool list -H qemu_mirror",TAG_DONE)>0);
+    CHECK(SystemTags((CONST_STRPTR)"C:zpool import -N -V -f -o cachefile=none -d /AROS/ata.device/0/partition/0 -d /AROS/ata.device/1/partition/0 qemu_mirror",TAG_DONE)==0);
+    note("RESULT native verbatim admission PASS readonly-refused=1 absent=1 writable-admitted=1");
+    file=Open((CONST_STRPTR)"T:clear-assessment",MODE_NEWFILE);CHECK(file);
+    LONG clear_assessment=SystemTags((CONST_STRPTR)"C:zpool clear -n" OZ_REWIND_FLAG " qemu_mirror",SYS_Output,file,SYS_Error,file,TAG_DONE);
+    LONG clear_closed=Close(file);file=0;
+    file=Open((CONST_STRPTR)"T:clear-assessment",MODE_OLDFILE);CHECK(file);
+    char clear_report[2048];LONG clear_length=Read(file,clear_report,sizeof(clear_report)-1);
+    CHECK(clear_length>0);clear_report[clear_length]=0;CHECK(Close(file));file=0;note(clear_report);
+    {char result[96];snprintf(result,sizeof(result),"Clear assessment exit=%ld close=%ld",clear_assessment,clear_closed);note(result);}
+    CHECK(clear_closed&&clear_assessment==0);
+    CHECK(strstr(clear_report,"Would be able to return qemu_mirror to its state as of"));
+    CHECK(SystemTags((CONST_STRPTR)"C:zpool clear -" OZ_REWIND_FLAG " qemu_mirror",TAG_DONE)==0);
+    note("RESULT native damaged clear rewind PASS assessment=1 recoverable-report=1 commit=1");
+#else
 #ifdef OZ_NATIVE_IMPORT_REWIND_MANAGER
     CHECK(!request(7,"readonly=off;recovery=" OZ_REWIND_POLICY,0));
 #else
     CHECK(SystemTags((CONST_STRPTR)"C:zpool import -N -f -" OZ_REWIND_FLAG " -o cachefile=none -d /AROS/ata.device/0/partition/0 -d /AROS/ata.device/1/partition/0 qemu_mirror",TAG_DONE)==0);
+#endif
 #endif
     CHECK(!oz_mount_control(OZ_ADMISSION_PORT,"qemu_mirror/files","OZREWIND",OZ_MOUNT_ATTACH,0));
     file=Open((CONST_STRPTR)"OZREWIND:after-recovery",MODE_NEWFILE);CHECK(file);

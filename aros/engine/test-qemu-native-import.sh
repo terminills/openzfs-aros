@@ -150,8 +150,11 @@ usb_cli_clear=${AROS_TEST_USB_CLI_CLEAR:-0}
 import_rewind=${AROS_TEST_IMPORT_REWIND:-0}
 [[ $import_rewind == 0 || $import_rewind == 1 ]]
 import_rewind_mode=${AROS_TEST_IMPORT_REWIND_MODE:-preview}
+clear_rewind=${AROS_TEST_CLEAR_REWIND:-0}
+[[ $clear_rewind == 0 || ( $clear_rewind == 1 && $import_rewind == 1 && $import_rewind_mode == commit ) ]]
 import_rewind_manager=${AROS_TEST_IMPORT_REWIND_MANAGER:-0}
 import_rewind_cut=${AROS_TEST_IMPORT_REWIND_CUT:-0}
+[[ $clear_rewind == 0 || ( $import_rewind_manager == 0 && $import_rewind_cut == 0 ) ]]
 [[ $import_rewind_cut == 0 || ( $import_rewind_cut == 1 && $import_rewind == 1 && $import_rewind_mode == commit ) ]]
 import_rewind_normal=${AROS_TEST_IMPORT_REWIND_NORMAL:-0}
 import_assessment=${AROS_TEST_IMPORT_ASSESSMENT:-0}
@@ -411,6 +414,7 @@ if [[ $import_rewind == 1 ]];then
     sha256sum "$run/zpool" > "$run/rewind-cli.sha256"
     gui_maps+=(-map "$run/zpool" /C/zpool)
     gui_flags+=(-DOZ_NATIVE_IMPORT_REWIND)
+    if [[ $clear_rewind == 1 ]];then gui_flags+=(-DOZ_NATIVE_CLEAR_REWIND);fi
     if [[ $import_rewind_mode == seed ]];then gui_flags+=(-DOZ_NATIVE_IMPORT_REWIND_SEED);fi
     if [[ $import_rewind_normal == 1 ]];then gui_flags+=(-DOZ_NATIVE_IMPORT_REWIND_NORMAL);fi
     if [[ $import_assessment == 1 ]];then gui_flags+=(-DOZ_NATIVE_IMPORT_ASSESSMENT);fi
@@ -1397,6 +1401,11 @@ if [[ $import_rewind == 1 ]];then
         rg -q "^RESULT native damaged import rewind PASS cycles=2 ordinary-refused=2 absent-after-refusal=2 readonly-${import_rewind_flag}=2 exact-DOS=2 write-refused=2" "$run/serial.log"
     fi
     rg -q '^RESULT native damaged rewind test PASS line=0' "$run/serial.log"
+    if [[ $clear_rewind == 1 ]];then
+        rg -q '^RESULT native verbatim privilege PASS nonroot-refused=1 absent=1 root-restored=1' "$run/serial.log"
+        rg -q '^RESULT native verbatim admission PASS readonly-refused=1 absent=1 writable-admitted=1' "$run/serial.log"
+        rg -q '^RESULT native damaged clear rewind PASS assessment=1 recoverable-report=1 commit=1' "$run/serial.log"
+    fi
     if [[ $import_rewind_manager == 1 ]];then
         rg -q '^RESULT native recovery parser PASS modes=3 guid=1 malformed=5 unchanged=1 legacy-refused=1' "$run/serial.log"
         rg -q '^RESULT native Manager recovery authorization PASS nonroot-denied=1 root-restored=1' "$run/serial.log"
