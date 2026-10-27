@@ -1013,6 +1013,39 @@ cleanup:
 /* Fixed GUIDs exercise both 32-bit halves across independent writer/cold
  * boots. Disabled records must never probe their deliberately invalid path. */
 static void companion_archive_inventory(const char *,uint64_t);
+/* DOS-only reproduction: no preference codec or OpenZFS API is involved.
+ * The .txn and .prefs names collide in the AFS 72-slot directory hash. */
+static int companion_dos_rename_probe(void)
+{
+    static const char *roots[]={"OZARCH:RenameCollision","OZARCH:RenameControl"};
+    static const char *stages[]={"OpenZFS-58240c24e63dee45.txn","stage"};
+    int failed=0;
+    for(unsigned i=0;i<2;i++){
+        char stage[160],source[176],target[176],line[256];
+        BPTR lock=CreateDir((CONST_STRPTR)roots[i]);if(!lock)return EIO;UnLock(lock);
+        snprintf(stage,sizeof(stage),"%s/%s",roots[i],stages[i]);
+        lock=CreateDir((CONST_STRPTR)stage);if(!lock)return EIO;UnLock(lock);
+        snprintf(source,sizeof(source),"%s/next",stage);
+        snprintf(target,sizeof(target),"%s/OpenZFS-58240c24e63dee45.prefs",roots[i]);
+        BPTR file=Open((CONST_STRPTR)source,MODE_NEWFILE);if(!file)return EIO;
+        int wrote=Write(file,"rename-probe",12)==12&&Flush(file);
+        if(!Close(file)||!wrote)return EIO;
+        int renamed=Rename((CONST_STRPTR)source,(CONST_STRPTR)target)!=0;
+        LONG rename_error=IoErr();
+        file=Open((CONST_STRPTR)target,MODE_OLDFILE);LONG open_error=IoErr();
+        char bytes[12];int exact=0;
+        if(file){exact=Read(file,bytes,sizeof(bytes))==sizeof(bytes)&&!memcmp(bytes,"rename-probe",12);if(!Close(file))exact=0;}
+        snprintf(line,sizeof(line),"Public DOS rename collision=%u rename=%d rename-DOS=%ld destination=%d open-DOS=%ld exact=%d\n",
+            i==0,renamed,(long)rename_error,file!=0,(long)open_error,exact);note(line);
+        if(!renamed||!exact)failed=1;
+        /* Keep the failing directory structure for independent inspection. */
+        if(renamed&&exact){
+            if(!DeleteFile((CONST_STRPTR)target)||!DeleteFile((CONST_STRPTR)stage)||
+                !DeleteFile((CONST_STRPTR)roots[i]))return EIO;
+        }
+    }
+    return failed?EIO:0;
+}
 static int companion_persistent_guid_cases(int cold)
 {
     static const struct { uint64_t guid; const char *hex; } cases[]={
@@ -1108,6 +1141,7 @@ static int companion_persistent_settings(int cold)
         !loaded.flags&&loaded.count==1&&!strcmp(loaded.pool,record.pool)&&!strcmp(loaded.paths[0],record.paths[0]));
     PS_CHECK(!cli_command("C:OpenZFSStartup 5a46530000000002 RESTORE"));
     PS_CHECK(!present(OZ_PORT)&&!present(OZ_ADMISSION_PORT));
+    if(!cold)PS_CHECK(!companion_dos_rename_probe());
     PS_CHECK(!companion_persistent_guid_cases(cold));
 cleanup:
     for(unsigned i=0;i<2;i++){
