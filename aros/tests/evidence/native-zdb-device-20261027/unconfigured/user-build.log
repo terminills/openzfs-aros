@@ -1,0 +1,4 @@
+/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/zdb-label-run.pQpQziIV/zdb-unprivileged-test.c: In function 'main':
+/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/zdb-label-run.pQpQziIV/zdb-unprivileged-test.c:14:20: warning: unused variable 'login' [-Wunused-variable]
+   14 |     struct TagItem login[]={{secT_UserID,(IPTR)"ozreader"},{secT_Password,(IPTR)""},{TAG_DONE,0}};
+      |                    ^~~~~

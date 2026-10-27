@@ -46,7 +46,30 @@ file-label tests, and full healthy file-pool block/MOS checks (three datasets,
 21 feature verdicts, 72 object rows). The host fixture/verifier suites pass
 nine tests; those are parser/mutation checks, not substitutes for runtime proof.
 
-Still unqualified: native partition path behavior, absent/unconfigured security
+## Additional isolated guests
+
+`zdb-label-run.ltXVaTkp` creates a new 256-MiB MBR fixture with two 64-MiB
+partitions in native positions 0 and 2, beginning at sectors 4097 and 139265.
+Each contains a copy of the qualified member. Native
+`/AROS/ata.device/0/partition/0` and `/partition/2` match the host's whole-member
+label report exactly, demonstrating correct extent-relative label offsets at
+both ends. The actual UID 77 caller is denied for `/partition/0`. The complete
+partitioned disk is unchanged, not just the selected extent.
+
+`zdb-label-run.pQpQziIV` omits the disposable Security configuration. Its
+actual debugger caller checks `secIsConfigured()` is false; the existing
+whole-device path returns EACCES/status 1. That overlay also remains unchanged.
+This proves unconfigured-library denial, not a missing-library test.
+Both guests also pass file-label/lifetime/damaged-label/full-pool checks.
+
+`test-zdb-device-verifier.py` exercises whole-device, partition and
+unconfigured-security transcripts plus missing identity/completion, duplicate
+status, fault-marker and incorrect-denial rejection. It tests the verifier,
+not native security. The unconfigured helper produced one unused-variable
+warning; its unused login declaration is now guarded out (no runtime behavior
+change), with a follow-up warning-clean cross-compile retained.
+
+Still unqualified: GPT-specific debugger paths, missing security.library
 denial, L2ARC fixtures, native whole-pool binding, and physical durability.
 The parent/child identity behavior needs separate platform investigation;
 do not infer child identity from successful parent login. Full-port and public

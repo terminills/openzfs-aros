@@ -26,8 +26,11 @@ Native `zdb -l /AROS/ata.device/0` now uses read-only Exec device access with
 configured-security/root authorization, checked again for each read. An
 eight-CPU QEMU run matches host labels before/after an actual UID 77 caller's
 EACCES denial; its disposable ATA overlay is byte-identical to the backing
-fixture. See `aros/tests/evidence/native-zdb-device-20261027`. Partition paths,
-missing-security denial, native L2ARC and native whole-pool binding still need
+fixture. A separate guest verifies native MBR slots 0 and 2, correct extent
+label reads and UID 77 denial; another verifies EACCES when security is
+unconfigured. All overlays remain identical to their input disks. See
+`aros/tests/evidence/native-zdb-device-20261027`. GPT-specific debugger paths,
+missing-library denial, native L2ARC and native whole-pool binding still need
 runtime qualification. Broader diagnostic/corruption coverage and
 public release-bundle qualification remain unfinished. See
 `aros/tests/evidence/native-zdb-pool-20261027`.

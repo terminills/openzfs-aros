@@ -11,6 +11,20 @@
 #include <libraries/security.h>
 static int check_device(void)
 {
+#ifdef OZ_ZDB_NO_SECURITY
+    LONG status=SystemTags((CONST_STRPTR)"C:OpenZFSZdbUserTest >RAM:zdb-device.log",
+        NP_StackSize,65536,TAG_DONE);
+    bug("RESULT native zdb device pass=0 exit=%ld\n",(long)status);
+    FILE *report=fopen("RAM:zdb-device.log","r");
+    if(!report)return 20;
+    char line[1024];unsigned lines=0;
+    while(fgets(line,sizeof(line),report)){bug("ZDBDEV[0] %s",line);lines++;}
+    int failed=ferror(report)||!lines||status!=1;
+    fclose(report);
+    if(failed)return 20;
+    bug("RESULT native zdb device PASS no-security=1\n");
+    return 0;
+#else
     struct Library *secBase=OpenLibrary((CONST_STRPTR)SECURITYNAME,SECURITYVERSION);
     if(!secBase)return 20;
     ULONG previous=secGetTaskOwner(FindTask(NULL));
@@ -22,9 +36,16 @@ static int check_device(void)
         ULONG logged=secLoginA(root);
         if(logged!=expected)failed=1;
         if(!failed) {
+#ifdef OZ_ZDB_PARTITIONS
+            const char *command=pass==1?
+                "C:OpenZFSZdbUserTest >RAM:zdb-device.log":pass==0?
+                "C:ZdbAudit -l /AROS/ata.device/0/partition/0 >RAM:zdb-device.log":
+                "C:ZdbAudit -l /AROS/ata.device/0/partition/2 >RAM:zdb-device.log";
+#else
             const char *command=pass==1?
                 "C:OpenZFSZdbUserTest >RAM:zdb-device.log":
                 "C:ZdbAudit -l /AROS/ata.device/0 >RAM:zdb-device.log";
+#endif
             LONG status=SystemTags((CONST_STRPTR)command,NP_StackSize,65536,TAG_DONE);
             bug("RESULT native zdb device pass=%u exit=%ld\n",pass,(long)status);
             FILE *report=fopen("RAM:zdb-device.log","r");
@@ -44,6 +65,7 @@ static int check_device(void)
     if(failed)return 20;
     bug("RESULT native zdb device PASS root-denied-root=1\n");
     return 0;
+#endif
 }
 #endif
 

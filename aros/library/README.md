@@ -36,8 +36,10 @@ and on every read; no write or flush operation is exposed. The existing
 partition resolver supplies extent bounds. This is offline inspection, not an
 exclusive snapshot against other raw writers or partition-table replacement.
 An eight-CPU QEMU whole-device test passes root reads, actual UID 77 denial,
-then root reopening with an unchanged disk overlay. Partition/L2ARC runtime
-coverage, absent-security denial and native whole-pool import bindings remain
+then root reopening with an unchanged disk overlay. Separate guests verify
+MBR partition slots 0/2 with non-root denial and unconfigured-security denial,
+also with unchanged disks. GPT-specific debugger paths, missing-library
+denial, L2ARC runtime coverage and native whole-pool import bindings remain
 open. See `aros/tests/evidence/native-zdb-device-20261027` and
 `aros/tests/evidence/native-zdb-pool-20261027`.
 

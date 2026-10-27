@@ -11,15 +11,30 @@ int main(void)
     struct Library *secBase=OpenLibrary((CONST_STRPTR)SECURITYNAME,SECURITYVERSION);
     if(!secBase)return 20;
     ULONG previous=secGetTaskOwner(FindTask(NULL));
+#ifndef OZ_ZDB_NO_SECURITY
     struct TagItem login[]={{secT_UserID,(IPTR)"ozreader"},{secT_Password,(IPTR)""},{TAG_DONE,0}};
+#endif
     struct TagItem logout[]={{secT_Quiet,TRUE},{TAG_DONE,0}};
-    ULONG logged=secLoginA(login);
+    ULONG logged=0;
+#ifdef OZ_ZDB_NO_SECURITY
+    int allowed=!secIsConfigured();
+    if(allowed)bug("RESULT native zdb actual caller security-unconfigured=1\n");
+#else
+    logged=secLoginA(login);
+    int allowed=logged==((77UL<<16)|88)&&secGetTaskOwner(FindTask(NULL))==logged;
+    if(allowed)bug("RESULT native zdb actual caller uid=77 gid=88\n");
+#endif
     LONG status=20;
-    if(logged==((77UL<<16)|88)&&secGetTaskOwner(FindTask(NULL))==logged) {
-        bug("RESULT native zdb actual caller uid=77 gid=88\n");
+    if(allowed) {
         OpenZFSBase=OpenLibrary((CONST_STRPTR)"openzfs.library",2);
         if(OpenZFSBase) {
-            char *args[]={"zdb","-l","/AROS/ata.device/0",NULL};
+            char *args[]={"zdb","-l",
+#ifdef OZ_ZDB_PARTITIONS
+                "/AROS/ata.device/0/partition/0",
+#else
+                "/AROS/ata.device/0",
+#endif
+                NULL};
             status=OpenZFSRunDebugger(3,args);
             CloseLibrary(OpenZFSBase);
         }

@@ -26,10 +26,19 @@ pool_maps=()
 device_args=()
 if [[ ${AROS_TEST_ZDB_DEVICE:-0} == 1 ]];then
     [[ -n ${AROS_TEST_ZDB_LIBRARY:-} ]] || { echo 'Device test requires shared debugger' >&2;exit 1; }
-    qemu-img create -f qcow2 -F raw -b "$(realpath -e "$AROS_TEST_ZDB_MEMBER")" "$run/device.qcow2" >"$run/device-create.log"
+    device_base=$(realpath -e "$AROS_TEST_ZDB_MEMBER")
+    if [[ ${AROS_TEST_ZDB_PARTITIONS:-0} == 1 ]];then
+        cp aros/cli/make-zdb-partitions.py aros/platform/make-partition-fixture.py "$run/"
+        python3 aros/cli/make-zdb-partitions.py "$device_base" "$run/partitions.raw" >"$run/partition-create.log"
+        device_base="$run/partitions.raw"
+        sha256sum "$device_base" >>"$run/inputs.sha256"
+    fi
+    qemu-img create -f qcow2 -F raw -b "$device_base" "$run/device.qcow2" >"$run/device-create.log"
     device_args=(-drive "file=$run/device.qcow2,format=qcow2,if=ide,index=0")
-    cp -a aros/engine/security-fixture "$run/security-fixture"
-    pool_maps+=(-map "$run/security-fixture" /Security)
+    if [[ ${AROS_TEST_ZDB_NO_SECURITY:-0} != 1 ]];then
+        cp -a aros/engine/security-fixture "$run/security-fixture"
+        pool_maps+=(-map "$run/security-fixture" /Security)
+    fi
 fi
 if [[ -n ${AROS_TEST_ZDB_LIBRARY:-} ]];then
     : "${AROS_TEST_ZDB_INCLUDE:?matching generated library headers required}"
@@ -80,9 +89,17 @@ fi
 if [[ ${AROS_TEST_ZDB_DEVICE:-0} == 1 ]];then
     test_flags+=(-DOZ_ZDB_DEVICE)
     printf 'native_device=1\n' >>"$run/mode.txt"
+    if [[ ${AROS_TEST_ZDB_NO_SECURITY:-0} == 1 ]];then
+        test_flags+=(-DOZ_ZDB_NO_SECURITY)
+        printf 'unconfigured_security=1\n' >>"$run/mode.txt"
+    fi
+    if [[ ${AROS_TEST_ZDB_PARTITIONS:-0} == 1 ]];then
+        test_flags+=(-DOZ_ZDB_PARTITIONS)
+        printf 'native_partitions=1\n' >>"$run/mode.txt"
+    fi
     cp aros/cli/zdb-unprivileged-test.c aros/cli/verify-zdb-device.py "$run/"
     "$AROS_CC" --sysroot="$AROS_SDK" -B"$AROS_SDK/lib/" -O2 -Wall -Wextra \
-        -I"$AROS_TEST_ZDB_INCLUDE" "$run/zdb-unprivileged-test.c" \
+        "${test_flags[@]}" -I"$AROS_TEST_ZDB_INCLUDE" "$run/zdb-unprivileged-test.c" \
         -o "$run/OpenZFSZdbUserTest" >"$run/user-build.log" 2>&1
     pool_maps+=(-map "$run/OpenZFSZdbUserTest" /C/OpenZFSZdbUserTest)
 fi
@@ -136,7 +153,7 @@ if [[ ${AROS_TEST_ZDB_BAD_LABELS:-0} == 1 ]];then
     python3 "$run/verify-zdb-bad-labels.py" "$run" >"$run/damaged-comparison.log"
 fi
 if [[ ${AROS_TEST_ZDB_DEVICE:-0} == 1 ]];then
-    qemu-img compare -f qcow2 -F raw "$run/device.qcow2" "$AROS_TEST_ZDB_MEMBER" >"$run/device-unchanged.log"
+    qemu-img compare -f qcow2 -F raw "$run/device.qcow2" "$device_base" >"$run/device-unchanged.log"
     python3 "$run/verify-zdb-device.py" "$run" >"$run/device-comparison.log"
 fi
 echo 'PASS selected native zdb checks; consult mode.txt and comparison logs for scope.'
