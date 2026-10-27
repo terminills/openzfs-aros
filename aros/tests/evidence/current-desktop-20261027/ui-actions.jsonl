@@ -1,0 +1,13 @@
+{"time": 1793105307.2252028, "action": "capture", "args": ["initial.png"]}
+{"time": 1793105416.2053616, "action": "click", "args": ["304", "175", "1280", "800"]}
+{"time": 1793105416.4760218, "action": "click", "args": ["877", "185", "1280", "800"]}
+{"time": 1793105416.6290011, "action": "capture", "args": ["pools.png"]}
+{"time": 1793105528.093701, "action": "move", "args": ["310", "192", "1280", "800"]}
+{"time": 1793105528.2452357, "action": "capture", "args": ["pointer-position.png"]}
+{"time": 1793105626.063831, "action": "click", "args": ["337", "200", "1280", "800"]}
+{"time": 1793105626.221034, "action": "capture", "args": ["selected.png"]}
+{"time": 1793105724.3904095, "action": "click", "args": ["875", "226", "1280", "800"]}
+{"time": 1793105724.5488896, "action": "capture", "args": ["live-pools.png"]}
+{"time": 1793105839.6614425, "action": "click", "args": ["117", "87", "1280", "800"]}
+{"time": 1793105839.8177452, "action": "capture", "args": ["drawer-closed.png"]}
+{"time": 1793105933.9929945, "action": "click", "args": ["296", "143", "1280", "800"]}
