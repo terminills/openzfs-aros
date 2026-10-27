@@ -42,9 +42,20 @@ GUI `MCKON9B5` displays both assessment modes, preserves the draft on reopen,
 rejects a writable assessment draft, and previews options without submission.
 Its supported close is followed by a passing public storage regression suite.
 The screenshot exposed misleading generic mutation wording and an unrelated
-generic dry-run flag; these were corrected in `JbDgWkI2`. Final GUI validation
-is recorded separately once complete. No GUI recovery was submitted in this
+generic dry-run flag; these were corrected in `JbDgWkI2`. No GUI recovery was submitted in this
 first run; actual assessment execution is proven by the native API tests above.
+
+Fresh GUI `UXACpaAD` verifies the final build: request preview and confirmation
+identify read-only assessment, and generic Dry-run is off. An explicitly
+confirmed assessment of `assessment_missing` at the deliberately nonexistent
+`ram:missing-assessment.img` reaches authenticated admission and returns
+ENOENT (`errno=2`), displayed as an engine failure. Transport and ticket
+release return zero; no automatic retry occurs. This is a real GUI-to-backend
+error path, not a successful assessment of that nonexistent pool. The supported
+window close is followed by a PASS from the full public storage regression
+suite (terminal exit 0). Runner admission preflight also passes. Four completed
+native-test ISOs, including the failed assertion run, were hashed and pruned
+to reclaim approximately 18 GiB; logs and disk backing chains remain.
 
 Logs, screenshots, action records, hashes and failed attempts are retained.
 This does not qualify arbitrary corruption/topology, interrupted assessments,
