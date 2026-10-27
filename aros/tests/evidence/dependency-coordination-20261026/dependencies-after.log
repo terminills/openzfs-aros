@@ -1,0 +1,5 @@
+/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/dependencies.YF6P1Tca/pthread-consistent.zxUBt8mH/libpthread.a: OK
+/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/dependencies.YF6P1Tca/crypto-source.VqJJuapK/build/crypto/libcrypto.a: OK
+/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/dependencies.YF6P1Tca/nvpair/libnvpair.a: OK
+/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/dependencies.YF6P1Tca/dependencies.env: OK
+/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/dependencies.YF6P1Tca/dependencies.mk: OK

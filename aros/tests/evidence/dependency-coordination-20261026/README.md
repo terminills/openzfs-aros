@@ -37,6 +37,19 @@ Retained failures:
   `../fat-bpb-bound`. No repair or cold boot was performed on this failed image.
   It is not a passing persistent qualification.
 
+Corrected run `public-service-run.QLNV5BNZ` changes only the FAT selection to
+the previously source-replayed BPB-corrected handler, SHA256
+`7e15a444306fe0a1b901fcd66c7a403cca17e925385475bdaedec3760881cad3`.
+The same eight-CPU workload now passes the native nvpair/XDR and PBKDF2 tests,
+writer lifecycle, fresh-boot healthy/degraded/restored imports, exact handler
+readback, and a third writable boot releasing deferred snapshots. Read-only
+host FAT checks after each boot are clean; independent zdb checks pass, and
+member hashes remain unchanged through the read-only recovery phase. Guest
+passes alone were insufficient: the host storage checks are part of acceptance.
+
+The successful runner pruned generated ISO/member copies through its existing
+hash-manifest cleanup. The stale-FAT failed backing volume remains retained.
+
 The complete raw logs and inputs remain under the external checkout's
 `build-audit`. Selected build/runtime logs and hashes accompany this record.
 No DUT or user hosted session was used. SDK/toolchain provenance, stock runtime

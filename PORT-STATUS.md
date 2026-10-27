@@ -2,6 +2,18 @@
 
 Experimental development snapshot; not production-qualified storage software.
 
+## Coordinated dependency builds (2026-10-26)
+
+An explicit `contrib-openzfs-dependencies` target builds the selected pthread,
+pinned BoringSSL, and nvpair/XDR sources into one private external directory,
+with shared shell/MetaMake inputs. Fresh consumers pass an eight-CPU public
+service run and a three-boot persistent mirror/handler/CLI suite, including
+native PBKDF2 and nvpair tests. See
+`aros/tests/evidence/dependency-coordination-20261026` for inputs, failed
+attempts, and passing guest plus host-integrity evidence. This closes a manual
+dependency-assembly gap, not the official SDK/runtime API compatibility or
+complete public binary source-packaging requirements below.
+
 ## Current local package (2026-10-25)
 
 **Runtime ABI boundary:** this archive is qualified against the recorded
