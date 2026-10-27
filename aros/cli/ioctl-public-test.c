@@ -237,7 +237,9 @@ int oz_public_bootenv_readonly_test(const char *pool)
     fnvlist_add_uint32(policy,ZPOOL_LOAD_REWIND_POLICY,ZPOOL_TRY_REWIND);
     TEST(!oz_session_open(OZ_ADMISSION_PORT,&ticket));opened=1;
     TEST(!oz_control_open(OZ_ADMISSION_PORT,&ticket,&fd));
-    TEST(invoke_clear(&ticket,fd,pool,ZPOOL_TRY_REWIND,policy,65536,0)==EROFS);
+    int preview_error=invoke_clear(&ticket,fd,pool,ZPOOL_TRY_REWIND,policy,65536,0);
+    {char text[128];snprintf(text,sizeof(text),"Public readonly clear preview errno=%d expected=%d\n",preview_error,EROFS);for(char *p=text;*p;p++)RawPutChar(*p);}
+    TEST(preview_error==EROFS);
     fnvlist_remove(policy,ZPOOL_LOAD_REWIND_POLICY);
     fnvlist_add_uint32(policy,ZPOOL_LOAD_REWIND_POLICY,ZPOOL_DO_REWIND);
     TEST(invoke_clear(&ticket,fd,pool,ZPOOL_DO_REWIND,policy,65536,0)==EROFS);

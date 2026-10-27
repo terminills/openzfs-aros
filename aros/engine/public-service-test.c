@@ -1145,6 +1145,22 @@ cleanup:
 /* FAT is only fixture data. When the independent muFS archive is enabled,
  * publish policy there and use the production trusted RESTORE path on boot. */
 static int storage_no_pools(void);
+/* Bounded metadata-only evidence from the disposable startup archive. Never
+ * print preference contents or keys, and do not change the restore policy. */
+static void companion_archive_inventory(const char *phase,uint64_t guid)
+{
+    BPTR root=Lock((CONST_STRPTR)"ENVARC:",SHARED_LOCK);
+    struct FileInfoBlock *fib=AllocDosObject(DOS_FIB,NULL);
+    char line[384];unsigned count=0;
+    snprintf(line,sizeof(line),"Public startup archive inventory phase=%s guid=%016llx root=%d\n",
+        phase,(unsigned long long)guid,root!=BNULL);note(line);
+    if(root&&fib&&Examine(root,fib))while(count<32&&ExNext(root,fib)){
+        snprintf(line,sizeof(line),"Public startup archive entry name=%s size=%ld owner=%u\n",
+            fib->fib_FileName,(long)fib->fib_Size,(unsigned)fib->fib_OwnerUID);note(line);count++;
+    }
+    if(fib)FreeDosObject(DOS_FIB,fib);
+    if(root)UnLock(root);
+}
 static int companion_import_test(int write)
 {
     BPTR marker=Lock((CONST_STRPTR)"SYS:openzfs-startup-import-test",SHARED_LOCK);
@@ -1180,6 +1196,7 @@ static int companion_import_test(int write)
         if(archive){
             CI_CHECK(!oz_startup_settings_apply_trusted(&record,1,&published));
             CI_CHECK(published==(OZ_STARTUP_PUBLISHED_ENV|OZ_STARTUP_PUBLISHED_ENVARC));
+            companion_archive_inventory("writer",record.guid);
         }
         note("Public startup import record PASS persisted-fixture=1 readonly=1 enabled=1\n");
     }else{
@@ -1202,7 +1219,7 @@ static int companion_import_test(int write)
         if(!archive){
             CI_CHECK(!oz_startup_settings_apply_trusted(&record,0,&published));
             CI_CHECK(published==OZ_STARTUP_PUBLISHED_ENV);
-        }else published=OZ_STARTUP_PUBLISHED_ENV;
+        }else {published=OZ_STARTUP_PUBLISHED_ENV;companion_archive_inventory("cold",record.guid);}
         snprintf(command,sizeof(command),"C:OpenZFSStartup %016llx%s >T:companion-import.log",(unsigned long long)record.guid,archive?" RESTORE":"");
         LONG status=cli_command(command);diagnostic_log("T:companion-import.log");CI_CHECK(!status);
         if(archive){
@@ -3856,7 +3873,6 @@ static int storage_cold_once(void)
     if(error)return error;
 #ifdef OZ_NATIVE_DISPATCHER
     error=oz_public_bootenv_persistence_test("public_mirror",0);
-    if(!error)error=oz_public_bootenv_readonly_test("public_mirror");
     if(error)return error;
 #endif
     error=pool_root_payload("public_mirror",0,1);
@@ -3936,6 +3952,12 @@ static int storage_cold_once(void)
         if(cli){UnLock(cli);error=storage_repair_data("OZCOLD:",0);if(error)return error;}
     }
     error=oz_mount_control(OZ_ADMISSION_PORT,"public_mirror/files","",OZ_MOUNT_DETACH,0);
+#ifdef OZ_NATIVE_DISPATCHER
+    /* Startup RESTORE may mount this dataset. Rewind correctly reports
+     * EBUSY while mounted; exercise the independent EROFS guard only after
+     * the cold handler data checks have completed and the mount is gone. */
+    if(!error)error=oz_public_bootenv_readonly_test("public_mirror");
+#endif
     if(!error)error=storage_encrypted_cold();
     if(!error)error=storage_rotated_format_cold();
     if(!error)error=storage_rotated_passphrase_cold();
