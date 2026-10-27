@@ -68,6 +68,18 @@ def main():
     counts = compare(*(report.decode() for report in reports),
                      (run / 'host-blocks.log').read_text(),
                      (run / 'host-objects.log').read_text())
+    if (run / 'mode.txt').exists() and 'native_pool=1' in (run / 'mode.txt').read_text().splitlines():
+        if len(re.findall(r'(?:^| \| )RESULT native zdb actual caller root=1$', serial, re.M)) != 4:
+            raise ValueError('Missing/duplicate authenticated root callers')
+        retry = decode(serial, 2)
+        (run / 'native-retry-blocks.log').write_bytes(retry)
+        compare(retry.decode(), reports[1].decode(),
+                (run / 'host-blocks.log').read_text(),
+                (run / 'host-objects.log').read_text())
+        if re.findall(r'(?:^| \| )RESULT native zdb partial admission exit=(-?\d+)$', serial, re.M) != ['1']:
+            raise ValueError('Missing partial-admission failure')
+        if re.findall(r'(?:^| \| )ZDBMISSING (.*)$', serial, re.M) != ['cannot admit native devices: No such file or directory']:
+            raise ValueError('Unexpected partial-admission failure reason')
     if len(re.findall(r'(?:^| \| )RESULT native zdb pool PASS block-and-objects=1$', serial, re.M)) != 1:
         raise ValueError('Missing/duplicate final pool marker')
     print('PASS native pool integrity and exact host accounting: '

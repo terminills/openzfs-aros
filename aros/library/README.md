@@ -39,9 +39,21 @@ An eight-CPU QEMU whole-device test passes root reads, actual UID 77 denial,
 then root reopening with an unchanged disk overlay. Separate guests verify
 MBR partition slots 0/2 with non-root denial and unconfigured-security denial,
 also with unchanged disks. GPT-specific debugger paths, missing-library
-denial, L2ARC runtime coverage and native whole-pool import bindings remain
+denial and L2ARC runtime coverage remain
 open. See `aros/tests/evidence/native-zdb-device-20261027` and
 `aros/tests/evidence/native-zdb-pool-20261027`.
+
+Whole-pool native inspection uses explicit `-e -p /AROS/device/unit/...`
+arguments. At most 32 distinct native extents are admitted after root checks;
+duplicate arguments share one binding. Existing read-only binding references
+are retained through upstream `kernel_fini`, then released on normal and
+`zdb_exit` paths. Partial admission failures release every acquired binding.
+Label-supplied paths cannot authorize additional native opens. Workers borrow
+the admitted read-only capabilities; this is not per-read credential lookup
+in each ZIO worker. A two-member native-partition pool passes block/MOS
+inspection, non-root denial and failure/retry tests in an eight-CPU guest.
+See `aros/tests/evidence/native-zdb-bindings-20261027`; this does not qualify
+arbitrary topology, external-writer exclusion, or physical durability.
 
 ## Host ABI and lifetime
 

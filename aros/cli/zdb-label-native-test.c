@@ -40,7 +40,11 @@ static int check_device(void)
             const char *command=pass==1?
                 "C:OpenZFSZdbUserTest >RAM:zdb-device.log":pass==0?
                 "C:ZdbAudit -l /AROS/ata.device/0/partition/0 >RAM:zdb-device.log":
+#ifdef OZ_ZDB_NATIVE_POOL
+                "C:ZdbAudit -l /AROS/ata.device/0/partition/0 >RAM:zdb-device.log";
+#else
                 "C:ZdbAudit -l /AROS/ata.device/0/partition/2 >RAM:zdb-device.log";
+#endif
 #else
             const char *command=pass==1?
                 "C:OpenZFSZdbUserTest >RAM:zdb-device.log":
@@ -101,10 +105,31 @@ static int check_bad_labels(void)
 static int check_pool(void)
 {
     const char *commands[]={
+#ifdef OZ_ZDB_NATIVE_POOL
+        "C:OpenZFSZdbRootTest -P -e -p /AROS/ata.device/0/partition/0 -p /AROS/ata.device/0/partition/2 -bcc topo_source >RAM:zdb-pool.log",
+        "C:OpenZFSZdbRootTest -P -e -p /AROS/ata.device/0/partition/0 -p /AROS/ata.device/0/partition/2 -dddd topo_source >RAM:zdb-pool.log",
+        "C:OpenZFSZdbRootTest -P -e -p /AROS/ata.device/0/partition/0 -p /AROS/ata.device/0/partition/0 -p /AROS/ata.device/0/partition/2 -bcc topo_source >RAM:zdb-pool.log"
+#else
         "C:ZdbAudit -P -e -p /SYS/zdb-pool -bcc topo_source >RAM:zdb-pool.log",
         "C:ZdbAudit -P -e -p /SYS/zdb-pool -dddd topo_source >RAM:zdb-pool.log"
+#endif
     };
-    for(unsigned pass=0;pass<2;pass++) {
+    for(unsigned pass=0;pass<sizeof(commands)/sizeof(commands[0]);pass++) {
+#ifdef OZ_ZDB_NATIVE_POOL
+        if(pass==2) {
+            LONG status=SystemTags((CONST_STRPTR)
+                "C:OpenZFSZdbRootTest -e -p /AROS/ata.device/0/partition/0 -p /AROS/ata.device/0/partition/1 -bcc topo_source >RAM:zdb-missing.log",
+                NP_StackSize,65536,TAG_DONE);
+            bug("RESULT native zdb partial admission exit=%ld\n",(long)status);
+            FILE *missing=fopen("RAM:zdb-missing.log","r");
+            if(!missing)return 20;
+            char line[1024];unsigned lines=0;
+            while(fgets(line,sizeof(line),missing)){bug("ZDBMISSING %s",line);lines++;}
+            int failed=ferror(missing)||!lines||status!=1;
+            fclose(missing);
+            if(failed){bug("RESULT native zdb labels FAIL partial-admission\n");return 20;}
+        }
+#endif
         bug("RESULT native zdb pool BEGIN pass=%u\n",pass);
         LONG status=SystemTags((CONST_STRPTR)commands[pass],NP_StackSize,65536,TAG_DONE);
         FILE *report=fopen("RAM:zdb-pool.log","r");

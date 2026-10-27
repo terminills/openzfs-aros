@@ -29,7 +29,12 @@ if [[ ${AROS_TEST_ZDB_DEVICE:-0} == 1 ]];then
     device_base=$(realpath -e "$AROS_TEST_ZDB_MEMBER")
     if [[ ${AROS_TEST_ZDB_PARTITIONS:-0} == 1 ]];then
         cp aros/cli/make-zdb-partitions.py aros/platform/make-partition-fixture.py "$run/"
-        python3 aros/cli/make-zdb-partitions.py "$device_base" "$run/partitions.raw" >"$run/partition-create.log"
+        partition_second=()
+        if [[ ${AROS_TEST_ZDB_NATIVE_POOL:-0} == 1 ]];then
+            : "${AROS_TEST_ZDB_POOL_SECOND:?native pool requires both members}"
+            partition_second=("$AROS_TEST_ZDB_POOL_SECOND")
+        fi
+        python3 aros/cli/make-zdb-partitions.py "$device_base" "$run/partitions.raw" "${partition_second[@]}" >"$run/partition-create.log"
         device_base="$run/partitions.raw"
         sha256sum "$device_base" >>"$run/inputs.sha256"
     fi
@@ -96,6 +101,16 @@ if [[ ${AROS_TEST_ZDB_DEVICE:-0} == 1 ]];then
     if [[ ${AROS_TEST_ZDB_PARTITIONS:-0} == 1 ]];then
         test_flags+=(-DOZ_ZDB_PARTITIONS)
         printf 'native_partitions=1\n' >>"$run/mode.txt"
+    fi
+    if [[ ${AROS_TEST_ZDB_NATIVE_POOL:-0} == 1 ]];then
+        [[ ${AROS_TEST_ZDB_PARTITIONS:-0} == 1 && ${AROS_TEST_ZDB_NO_SECURITY:-0} != 1 ]]
+        test_flags+=(-DOZ_ZDB_NATIVE_POOL)
+        printf 'native_pool=1\n' >>"$run/mode.txt"
+        cp aros/cli/zdb-root-test.c "$run/"
+        "$AROS_CC" --sysroot="$AROS_SDK" -B"$AROS_SDK/lib/" -O2 -Wall -Wextra -Werror \
+            -I"$AROS_TEST_ZDB_INCLUDE" "$run/zdb-root-test.c" \
+            -o "$run/OpenZFSZdbRootTest" >"$run/root-build.log" 2>&1
+        pool_maps+=(-map "$run/OpenZFSZdbRootTest" /C/OpenZFSZdbRootTest)
     fi
     cp aros/cli/zdb-unprivileged-test.c aros/cli/verify-zdb-device.py "$run/"
     "$AROS_CC" --sysroot="$AROS_SDK" -B"$AROS_SDK/lib/" -O2 -Wall -Wextra \

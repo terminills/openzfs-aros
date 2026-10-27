@@ -3632,6 +3632,9 @@ zdb_exit(int reason)
 	if (kernel_init_done)
 		kernel_fini();
 
+#ifdef __AROS__
+	zdb_native_unbind();
+#endif
 	exit(reason);
 }
 
@@ -10003,6 +10006,17 @@ main(int argc, char **argv)
 		args.paths = nsearch;
 		args.path = searchdirs;
 		args.can_be_active = B_TRUE;
+#ifdef __AROS__
+		error = zdb_native_bind(searchdirs, nsearch);
+		if (error != 0) {
+			(void) printf("cannot admit native devices: %s\n",
+			    strerror(error));
+			umem_free(searchdirs, nsearch * sizeof (char *));
+			searchdirs = NULL;
+			error = 1;
+			goto fini;
+		}
+#endif
 
 		libpc_handle_t lpch = {
 			.lpc_lib_handle = NULL,
@@ -10288,6 +10302,9 @@ fini:
 	if (kernel_init_done)
 		kernel_fini();
 
+#ifdef __AROS__
+	zdb_native_unbind();
+#endif
 	if (corruption_found && error == 0)
 		error = 3;
 

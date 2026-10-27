@@ -29,8 +29,13 @@ EACCES denial; its disposable ATA overlay is byte-identical to the backing
 fixture. A separate guest verifies native MBR slots 0 and 2, correct extent
 label reads and UID 77 denial; another verifies EACCES when security is
 unconfigured. All overlays remain identical to their input disks. See
-`aros/tests/evidence/native-zdb-device-20261027`. GPT-specific debugger paths,
-missing-library denial, native L2ARC and native whole-pool binding still need
+`aros/tests/evidence/native-zdb-device-20261027`. Whole-pool inspection now
+binds explicitly supplied native `-p` paths read-only through teardown. An
+eight-CPU guest passes full block/MOS comparison on two native MBR extents,
+actual UID 77 admission denial, and a failed partial admission followed by
+successful traversal with duplicate path arguments. The whole disk remains
+unchanged. See `aros/tests/evidence/native-zdb-bindings-20261027`.
+GPT-specific debugger paths, missing-library denial and native L2ARC still need
 runtime qualification. Broader diagnostic/corruption coverage and
 public release-bundle qualification remain unfinished. See
 `aros/tests/evidence/native-zdb-pool-20261027`.

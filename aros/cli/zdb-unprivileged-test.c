@@ -28,6 +28,11 @@ int main(void)
     if(allowed) {
         OpenZFSBase=OpenLibrary((CONST_STRPTR)"openzfs.library",2);
         if(OpenZFSBase) {
+#ifdef OZ_ZDB_NATIVE_POOL
+            char *args[]={"zdb","-P","-e","-p","/AROS/ata.device/0/partition/0",
+                "-p","/AROS/ata.device/0/partition/2","-bcc","topo_source",NULL};
+            status=OpenZFSRunDebugger(9,args);
+#else
             char *args[]={"zdb","-l",
 #ifdef OZ_ZDB_PARTITIONS
                 "/AROS/ata.device/0/partition/0",
@@ -36,6 +41,7 @@ int main(void)
 #endif
                 NULL};
             status=OpenZFSRunDebugger(3,args);
+#endif
             CloseLibrary(OpenZFSBase);
         }
     }

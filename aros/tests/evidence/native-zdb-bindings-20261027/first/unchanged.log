@@ -1,0 +1,11 @@
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/distfiles/aros-smp-pc-x86_64-20261022-alpha18c5.iso: OK
+/mnt/short-term/openzfs-qualification-20261024.aGFlVF7T/fat-replay.k72bijo1/aros-base.pkg.xz: OK
+/mnt/short-term/openzfs-qualification-20261024.aGFlVF7T/posix-source.krrt6d62/posixc.library: OK
+/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/mmake-debugger.JLOOcjrH/stage/C/zdb: OK
+/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/native-import-run.NI5sF03m/topology-members/member0: OK
+/home/terminills/Documents/GitHub/openzfs-aros/build-control/zdb: OK
+/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/zdb-label-run.Z0bL6FSP/partitions.raw: OK
+/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/mmake-debugger.JLOOcjrH/stage/Libs/openzfs.library: OK
+/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/native-import-run.NI5sF03m/topology-members/member2: OK
+/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/zdb-label-run.Z0bL6FSP/damaged/one-bad: OK
+/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/zdb-label-run.Z0bL6FSP/damaged/all-bad: OK

@@ -9,6 +9,7 @@ serial = (run / "serial.log").read_text().splitlines()
 expected = (run / "host-labels.log").read_text().splitlines()
 partitioned = "native_partitions=1" in (run / "mode.txt").read_text().splitlines()
 unconfigured = "unconfigured_security=1" in (run / "mode.txt").read_text().splitlines()
+native_pool = "native_pool=1" in (run / "mode.txt").read_text().splitlines()
 denied_path = "/AROS/ata.device/0" + ("/partition/0" if partitioned else "")
 if not expected or not any("name: 'topo_source'" in x for x in expected):
     raise SystemExit("FAIL missing host labels")
@@ -21,7 +22,8 @@ for index in range(1 if unconfigured else 3):
     if exits != ["1" if unconfigured or index == 1 else "0"]:
         raise SystemExit("FAIL device exit status")
     if unconfigured or index == 1:
-        if len(report) != 1 or not report[0].startswith(f"cannot open '{denied_path}': "):
+        prefix = "cannot admit native devices: " if native_pool else f"cannot open '{denied_path}': "
+        if len(report) != 1 or not report[0].startswith(prefix):
             raise SystemExit("FAIL missing permission denial")
         if "Permission denied" not in report[0]:
             raise SystemExit("FAIL unexpected denial reason")
@@ -33,5 +35,6 @@ if sum(bool(re.search(r"(?:^| \| )RESULT native zdb device PASS " + completion +
 if any(any(w in x for w in ("RESULT native zdb labels FAIL", "[PF-DBG]", "ASSERT at")) for x in serial):
     raise SystemExit("FAIL native failure marker")
 print("PASS native EACCES with unconfigured security" if unconfigured else
+      "PASS native pool admission EACCES and member-zero label reopening" if native_pool else
       "PASS native " + ("partition slots 0/2" if partitioned else "whole device") +
       " labels match host before/after unprivileged EACCES denial")

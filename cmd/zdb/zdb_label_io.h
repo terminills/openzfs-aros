@@ -135,4 +135,60 @@ zdb_label_invalidate(zdb_label_reader_t *reader)
 	return (zfs_dev_flush(reader->fd));
 #endif
 }
+
+#ifdef __AROS__
+/* Explicit native -p arguments only. Label-supplied paths never authorize
+ * additional devices. Bindings retain readonly handles through kernel_fini;
+ * the pool/worker layer borrows these capabilities, not ambient root identity.
+ * This is process-local admission, not exclusion against external raw users. */
+static struct {
+	zdb_label_reader_t reader;
+	struct oz_device_binding *binding;
+} zdb_native_members[32];
+static unsigned zdb_native_count;
+
+static void
+zdb_native_unbind(void)
+{
+	while (zdb_native_count != 0) {
+		unsigned i = --zdb_native_count;
+		oz_device_unbind(zdb_native_members[i].binding);
+		zdb_native_members[i].binding = NULL;
+		zdb_label_close(&zdb_native_members[i].reader);
+	}
+}
+
+static int
+zdb_native_bind(char **paths, int count)
+{
+	int error = 0;
+	for (int i = 0; i < count && !error; i++) {
+		if (strncmp(paths[i], "/AROS/", 6) != 0)
+			continue;
+		boolean_t duplicate = B_FALSE;
+		for (int j = 0; j < i; j++)
+			if (strcmp(paths[j], paths[i]) == 0)
+				duplicate = B_TRUE;
+		if (duplicate)
+			continue;
+		if (zdb_native_count == 32) {
+			error = E2BIG;
+			break;
+		}
+		unsigned n = zdb_native_count;
+		struct stat64 st;
+		if (zdb_label_open(&zdb_native_members[n].reader, paths[i], &st)) {
+			error = errno;
+			break;
+		}
+		zdb_native_count++;
+		error = oz_device_bind_readonly(paths[i],
+		    zdb_native_members[n].reader.device,
+		    &zdb_native_members[n].binding);
+	}
+	if (error)
+		zdb_native_unbind();
+	return (error);
+}
+#endif
 #endif
