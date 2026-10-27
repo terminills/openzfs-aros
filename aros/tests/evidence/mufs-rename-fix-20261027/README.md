@@ -58,3 +58,12 @@ obtained. Raw results are under `cleanup-timeout/`.
 by default. It emits boundaries for cache flush, device CMD_UPDATE, cache
 clear and volume removal. It changes no operation ordering or error policy.
 It is not intended for performance measurements or release packaging.
+
+The traced run `public-service-run.ZilMqtxB` returned from cache flush and
+device update, then waited in `clearCache`. Its captured display shows the
+AFS requester **You MUST re-insert ejected volume**. This is a requester wait,
+not evidence of a machine deadlock. `clearCache` emits that requester when a
+buffer remains BCF_WRITE after `flushCache`; the latter skips BCF_USED buffers.
+The next diagnostic must identify the residual dirty/pinned buffer and the
+path retaining it. The screenshot and in-progress serial snapshot are retained
+under `inhibit-requester/`; they are not a completed-run result.
