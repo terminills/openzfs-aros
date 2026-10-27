@@ -5,6 +5,7 @@
 #include <aros/debug.h>
 #include <stdio.h>
 #include <string.h>
+#include "zdb-fixture-paths.h"
 #ifdef OZ_ZDB_DEVICE
 #include <proto/exec.h>
 #include <proto/security.h>
@@ -43,7 +44,7 @@ static int check_device(void)
 #ifdef OZ_ZDB_NATIVE_POOL
                 "C:ZdbAudit -l /AROS/ata.device/0/partition/0 >RAM:zdb-device.log";
 #else
-                "C:ZdbAudit -l /AROS/ata.device/0/partition/2 >RAM:zdb-device.log";
+                "C:ZdbAudit -l " OZ_ZDB_SECOND_PATH " >RAM:zdb-device.log";
 #endif
 #else
             const char *command=pass==1?
@@ -106,9 +107,9 @@ static int check_pool(void)
 {
     const char *commands[]={
 #ifdef OZ_ZDB_NATIVE_POOL
-        "C:OpenZFSZdbRootTest -P -e -p /AROS/ata.device/0/partition/0 -p /AROS/ata.device/0/partition/2 -bcc topo_source >RAM:zdb-pool.log",
-        "C:OpenZFSZdbRootTest -P -e -p /AROS/ata.device/0/partition/0 -p /AROS/ata.device/0/partition/2 -dddd topo_source >RAM:zdb-pool.log",
-        "C:OpenZFSZdbRootTest -P -e -p /AROS/ata.device/0/partition/0 -p /AROS/ata.device/0/partition/0 -p /AROS/ata.device/0/partition/2 -bcc topo_source >RAM:zdb-pool.log"
+        "C:OpenZFSZdbRootTest -P -e -p /AROS/ata.device/0/partition/0 -p " OZ_ZDB_SECOND_PATH " -bcc topo_source >RAM:zdb-pool.log",
+        "C:OpenZFSZdbRootTest -P -e -p /AROS/ata.device/0/partition/0 -p " OZ_ZDB_SECOND_PATH " -dddd topo_source >RAM:zdb-pool.log",
+        "C:OpenZFSZdbRootTest -P -e -p /AROS/ata.device/0/partition/0 -p /AROS/ata.device/0/partition/0 -p " OZ_ZDB_SECOND_PATH " -bcc topo_source >RAM:zdb-pool.log"
 #else
         "C:ZdbAudit -P -e -p /SYS/zdb-pool -bcc topo_source >RAM:zdb-pool.log",
         "C:ZdbAudit -P -e -p /SYS/zdb-pool -dddd topo_source >RAM:zdb-pool.log"
@@ -118,7 +119,7 @@ static int check_pool(void)
 #ifdef OZ_ZDB_NATIVE_POOL
         if(pass==2) {
             LONG status=SystemTags((CONST_STRPTR)
-                "C:OpenZFSZdbRootTest -e -p /AROS/ata.device/0/partition/0 -p /AROS/ata.device/0/partition/1 -bcc topo_source >RAM:zdb-missing.log",
+                "C:OpenZFSZdbRootTest -e -p /AROS/ata.device/0/partition/0 -p " OZ_ZDB_MISSING_PATH " -bcc topo_source >RAM:zdb-missing.log",
                 NP_StackSize,65536,TAG_DONE);
             bug("RESULT native zdb partial admission exit=%ld\n",(long)status);
             FILE *missing=fopen("RAM:zdb-missing.log","r");

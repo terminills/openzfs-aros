@@ -1,0 +1,21 @@
+Creating new GPT entries in memory.
+Warning: The kernel is still using the old partition table.
+The new table will be used at the next reboot or after you
+run partprobe(8) or kpartx(8)
+The operation has completed successfully.
+Disk /mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/zdb-label-run.zavj2FuZ/partitions.raw: 524288 sectors, 256.0 MiB
+Sector size (logical): 512 bytes
+Disk identifier (GUID): DE0641F5-DC86-4207-B6E7-92B2DA341A5B
+Partition table holds up to 128 entries
+Main partition table begins at sector 2 and ends at sector 33
+First usable sector is 34, last usable sector is 524254
+Partitions will be aligned on 1-sector boundaries
+Total free space is 262077 sectors (128.0 MiB)
+
+Number  Start (sector)    End (sector)  Size       Code  Name
+   1            4097          135168   64.0 MiB    BF01  OpenZFS-A
+   3          139265          270336   64.0 MiB    BF01  OpenZFS-B
+
+No problems found. 262077 free sectors (128.0 MiB) available in 3
+segments, the largest of which is 253918 (124.0 MiB) in size.
+GPT fixture: slots=0,2 sectors=4097,139265 extent_bytes=67108864

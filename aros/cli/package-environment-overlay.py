@@ -6,6 +6,7 @@ import lzma
 import os
 import pathlib
 import runpy
+import struct
 import subprocess
 import sys
 
@@ -20,7 +21,12 @@ assert pathlib.Path(stem).name == stem and stem not in ('', '.', '..')
 def unpack(path):
     raw = lzma.decompress(path.read_bytes())
     stream = io.BytesIO(raw)
-    assert api['readHeader'](stream) == 1
+    header = api['readHeader'](stream)
+    # ADT's validated reader now returns (version, declared size); older
+    # tools returned only the version. Validate the on-disk size either way.
+    version = header[0] if isinstance(header, tuple) else header
+    if version != 1 or len(raw) < 8 or struct.unpack('!I', raw[4:8])[0] != len(raw):
+        raise ValueError('Invalid package version or declared size')
     entries = []
     while stream.tell() < len(raw):
         name, data = api['readFile'](stream)

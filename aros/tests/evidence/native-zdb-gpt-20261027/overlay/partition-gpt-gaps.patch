@@ -1,0 +1,9 @@
+--- partitiongpt.c
++++ partitiongpt.c
+@@ -405,1 +405,2 @@
+-                for (i = 0; i < cnt; i++)
++                /* Advance even when an unused GPT slot takes continue. */
++                for (i = 0; i < cnt; i++, p = (APTR)p + entrysize)
+@@ -453,2 +454,0 @@
+-                    /* Jump to next entry, skip 'entrysize' bytes */
+-                    p = (APTR)p + entrysize;

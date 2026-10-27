@@ -1,0 +1,33 @@
+------------------------------------
+LABEL 0 
+------------------------------------
+    version: 5000
+    name: 'topo_source'
+    state: 1
+    txg: 43
+    pool_guid: 14234554318354544387
+    errata: 0
+    min_alloc: 512
+    max_alloc: 512
+    hostname: 'localhost.localdomain'
+    top_guid: 6400177601317808579
+    guid: 6400177601317808579
+    vdev_children: 2
+    vdev_tree:
+        type: 'file'
+        id: 0
+        guid: 6400177601317808579
+        path: '/Ozfiles/split-topology-0'
+        metaslab_array: 143
+        metaslab_shift: 24
+        ashift: 9
+        asize: 62390272
+        min_alloc: 512
+        is_log: 0
+        create_txg: 4
+        orig_guid: 3050965855516911264
+    features_for_read:
+        com.delphix:hole_birth
+        com.delphix:embedded_data
+        com.klarasystems:vdev_zaps_v2
+    labels = 0 1 2 3 

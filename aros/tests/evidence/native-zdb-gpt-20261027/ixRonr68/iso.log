@@ -1,0 +1,74 @@
+xorriso 1.5.6 : RockRidge filesystem manipulator, libburnia project.
+
+xorriso : NOTE : Loading ISO image tree from LBA 0
+xorriso : UPDATE :   91275 nodes read in 1 seconds
+xorriso : NOTE : Detected El-Torito boot information which currently is set to be discarded
+Drive current: -indev '/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/distfiles/aros-smp-pc-x86_64-20261022-alpha18c5.iso'
+Media current: stdio file, overwriteable
+Media status : is written , is appendable
+Boot record  : El Torito , MBR protective-msdos-label grub2-mbr cyl-align-off GPT APM
+Media summary: 1 session, 2396343 data blocks, 4680m data,  574g free
+Volume id    : 'AROS Live CD'
+Drive current: -outdev '/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/zdb-label-run.ixRonr68/test.iso'
+Media current: stdio file, overwriteable
+Media status : is blank
+Media summary: 0 sessions, 0 data blocks, 0 data,  234g free
+xorriso : UPDATE :       1 files added in 1 seconds
+Added to ISO image: file '/boot/grub/grub.cfg'='/mnt/short-term/openzfs-bootenv-candidate-20261025/aros/engine/grub-qemu-test.cfg'
+xorriso : UPDATE :       1 files added in 1 seconds
+Added to ISO image: file '/boot/aros-base.pkg.xz'='/mnt/short-term/openzfs-qualification-20261024.aGFlVF7T/fat-replay.k72bijo1/aros-base.pkg.xz'
+xorriso : UPDATE :       1 files added in 1 seconds
+Added to ISO image: file '/Libs/posixc.library'='/mnt/short-term/openzfs-qualification-20261024.aGFlVF7T/posix-source.krrt6d62/posixc.library'
+xorriso : UPDATE :       1 files added in 1 seconds
+Added to ISO image: file '/Libs/openzfs.library'='/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/mmake-debugger.JLOOcjrH/stage/Libs/openzfs.library'
+xorriso : UPDATE :       1 files added in 1 seconds
+Added to ISO image: file '/C/OpenZFSZdbLifetimeTest'='/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/zdb-label-run.ixRonr68/OpenZFSZdbLifetimeTest'
+xorriso : UPDATE :       3 files added in 1 seconds
+Added to ISO image: directory '/Security'='/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/zdb-label-run.ixRonr68/security-fixture'
+xorriso : UPDATE :       1 files added in 1 seconds
+Added to ISO image: file '/zdb-pool/member0'='/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/native-import-run.NI5sF03m/topology-members/member0'
+xorriso : UPDATE :       1 files added in 1 seconds
+Added to ISO image: file '/zdb-pool/member2'='/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/native-import-run.NI5sF03m/topology-members/member2'
+xorriso : UPDATE :       1 files added in 1 seconds
+Added to ISO image: file '/zdb-bad/one-bad'='/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/zdb-label-run.ixRonr68/damaged/one-bad'
+xorriso : UPDATE :       1 files added in 1 seconds
+Added to ISO image: file '/zdb-bad/all-bad'='/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/zdb-label-run.ixRonr68/damaged/all-bad'
+xorriso : UPDATE :       1 files added in 1 seconds
+Added to ISO image: file '/C/OpenZFSZdbRootTest'='/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/zdb-label-run.ixRonr68/OpenZFSZdbRootTest'
+xorriso : UPDATE :       1 files added in 1 seconds
+Added to ISO image: file '/C/OpenZFSZdbUserTest'='/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/zdb-label-run.ixRonr68/OpenZFSZdbUserTest'
+xorriso : UPDATE :       1 files added in 1 seconds
+Added to ISO image: file '/C/ZdbAudit'='/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/mmake-debugger.JLOOcjrH/stage/C/zdb'
+xorriso : UPDATE :       1 files added in 1 seconds
+Added to ISO image: file '/zdb-member'='/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/native-import-run.NI5sF03m/topology-members/member0'
+xorriso : UPDATE :       1 files added in 1 seconds
+Added to ISO image: file '/C/OpenZFSZdbLabelsTest'='/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/zdb-label-run.ixRonr68/OpenZFSZdbLabelsTest'
+xorriso : UPDATE :       1 files added in 1 seconds
+Added to ISO image: file '/S/Startup-Sequence'='/mnt/short-term/openzfs-bootenv-candidate-20261025/aros/cli/Startup-Zdb-Labels'
+xorriso : UPDATE : Writing:       8192s    0.3%   fifo 100%  buf  50%
+xorriso : UPDATE : Writing:      65536s    2.6%   fifo 100%  buf  50%  211.6xD 
+xorriso : UPDATE : Writing:     209392s    8.4%   fifo 100%  buf  50%  212.5xD 
+xorriso : UPDATE : Writing:     352256s   14.1%   fifo 100%  buf  50%  211.0xD 
+xorriso : UPDATE : Writing:     499712s   20.0%   fifo 100%  buf  50%  217.8xD 
+xorriso : UPDATE : Writing:     622592s   25.0%   fifo 100%  buf  50%  181.5xD 
+xorriso : UPDATE : Writing:     680544s   27.3%   fifo  99%  buf  50%   85.6xD 
+xorriso : UPDATE : Writing:     737280s   29.6%   fifo 100%  buf  50%   83.8xD 
+xorriso : UPDATE : Writing:     787823s   31.6%   fifo 100%  buf  50%   74.6xD 
+xorriso : UPDATE : Writing:     851968s   34.2%   fifo 100%  buf  50%   94.7xD 
+xorriso : UPDATE : Writing:     909312s   36.5%   fifo 100%  buf  50%   84.7xD 
+xorriso : UPDATE : Writing:     978912s   39.2%   fifo  98%  buf  50%  102.8xD 
+xorriso : UPDATE : Writing:    1024000s   41.1%   fifo 100%  buf  50%   66.6xD 
+xorriso : UPDATE : Writing:    1073152s   43.0%   fifo 100%  buf  50%   72.6xD 
+xorriso : UPDATE : Writing:    1236992s   49.6%   fifo 100%  buf  50%  242.0xD 
+xorriso : UPDATE : Writing:    1398960s   56.1%   fifo  99%  buf  50%  239.1xD 
+xorriso : UPDATE : Writing:    1564672s   62.7%   fifo 100%  buf  50%  244.7xD 
+xorriso : UPDATE : Writing:    1703936s   68.3%   fifo 100%  buf  50%  205.7xD 
+xorriso : UPDATE : Writing:    1851392s   74.2%   fifo 100%  buf  50%  217.6xD 
+xorriso : UPDATE : Writing:    1998848s   80.1%   fifo 100%  buf  50%  217.7xD 
+xorriso : UPDATE : Writing:    2138112s   85.7%   fifo 100%  buf  50%  205.5xD 
+xorriso : UPDATE : Writing:    2277376s   91.3%   fifo 100%  buf  50%  205.7xD 
+xorriso : UPDATE : Writing:    2415861s   96.9%   fifo  80%  buf  50%  204.5xD 
+ISO image produced: 2494227 sectors
+Written to medium : 2494400 sectors at LBA 32
+Writing to '/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/zdb-label-run.ixRonr68/test.iso' completed successfully.
+

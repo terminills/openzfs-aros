@@ -7,8 +7,10 @@ source=${AROS_PARTITION_SOURCE:-/opt/aros-workspace/AROS-amiwest-nightly-src/rom
 sdk="$build/bin/pc-x86_64-smp/AROS/Developer"
 gen="$build/bin/pc-x86_64-smp/gen"
 objects="$gen/rom/partition/partition"
-cc=/opt/aros-workspace/aros-crosstools/x86_64-aros-gcc
-out=$(mktemp -d "$repo/build-aros/partition-gpt.XXXXXXXX")
+cc=${AROS_CC:-/opt/aros-workspace/aros-crosstools/x86_64-aros-gcc}
+source "$repo/aros/engine/storage-preflight.sh"
+root=$(oz_artifact_root "$repo/build-aros" "${AROS_ARTIFACT_ROOT:?}")
+out=$(mktemp -d "$root/partition-gpt.XXXXXXXX")
 echo "Evidence: $out"
 exec > >(tee "$out/build.log") 2>&1
 mkdir "$out/source" "$out/objects"

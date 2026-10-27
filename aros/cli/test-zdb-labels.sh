@@ -17,13 +17,17 @@ if [[ ${OZ_ZDB_RUNNER_SNAPSHOT:-} != "$0" ]];then
 fi
 run=$(mktemp -d "$root/zdb-label-run.XXXXXXXX")
 echo "Evidence: $run"
-cp "$0" aros/cli/zdb-label-native-test.c aros/cli/Startup-Zdb-Labels "$run/"
+cp "$0" aros/cli/zdb-label-native-test.c aros/cli/zdb-fixture-paths.h aros/cli/Startup-Zdb-Labels "$run/"
 sha256sum "$AROS_TEST_ISO" "$AROS_TEST_BASE_DOS_PACKAGE" "$AROS_TEST_POSIX_LIBRARY" \
     "$AROS_TEST_ZDB_BINARY" "$AROS_TEST_ZDB_MEMBER" "$AROS_TEST_HOST_ZDB" >"$run/inputs.sha256"
 library_maps=()
 test_flags=()
 pool_maps=()
 device_args=()
+if [[ -n ${AROS_TEST_FS_PACKAGE:-} ]];then
+    sha256sum "$AROS_TEST_FS_PACKAGE" >>"$run/inputs.sha256"
+    pool_maps+=(-map "$AROS_TEST_FS_PACKAGE" /boot/aros-fs.pkg.xz)
+fi
 if [[ ${AROS_TEST_ZDB_DEVICE:-0} == 1 ]];then
     [[ -n ${AROS_TEST_ZDB_LIBRARY:-} ]] || { echo 'Device test requires shared debugger' >&2;exit 1; }
     device_base=$(realpath -e "$AROS_TEST_ZDB_MEMBER")
@@ -34,7 +38,8 @@ if [[ ${AROS_TEST_ZDB_DEVICE:-0} == 1 ]];then
             : "${AROS_TEST_ZDB_POOL_SECOND:?native pool requires both members}"
             partition_second=("$AROS_TEST_ZDB_POOL_SECOND")
         fi
-        python3 aros/cli/make-zdb-partitions.py "$device_base" "$run/partitions.raw" "${partition_second[@]}" >"$run/partition-create.log"
+        python3 aros/cli/make-zdb-partitions.py "$device_base" "$run/partitions.raw" "${partition_second[@]}" \
+            --table "${AROS_TEST_ZDB_PARTITION_TABLE:-mbr}" >"$run/partition-create.log"
         device_base="$run/partitions.raw"
         sha256sum "$device_base" >>"$run/inputs.sha256"
     fi
@@ -101,6 +106,10 @@ if [[ ${AROS_TEST_ZDB_DEVICE:-0} == 1 ]];then
     if [[ ${AROS_TEST_ZDB_PARTITIONS:-0} == 1 ]];then
         test_flags+=(-DOZ_ZDB_PARTITIONS)
         printf 'native_partitions=1\n' >>"$run/mode.txt"
+        printf 'partition_table=%s\n' "${AROS_TEST_ZDB_PARTITION_TABLE:-mbr}" >>"$run/mode.txt"
+        if [[ ${AROS_TEST_ZDB_PARTITION_TABLE:-mbr} == gpt ]];then
+            test_flags+=(-DOZ_ZDB_GPT)
+        fi
     fi
     if [[ ${AROS_TEST_ZDB_NATIVE_POOL:-0} == 1 ]];then
         [[ ${AROS_TEST_ZDB_PARTITIONS:-0} == 1 && ${AROS_TEST_ZDB_NO_SECURITY:-0} != 1 ]]

@@ -1,0 +1,88 @@
+patching file partitiongpt.c
+Hunk #1 succeeded at 372 (offset -33 lines).
+Hunk #2 succeeded at 421 (offset -33 lines).
+» afs-handler (86832 bytes)
+» cdrom-handler (71832 bytes)
+» sfs-handler (200296 bytes)
+» pfs3-handler (163048 bytes)
+» fat-handler (79456 bytes)
+» partition.library (59040 bytes)
+/home/terminills/Documents/GitHub/aros-adt-upstream-merge/rom/partition/addbootfilesystem.c: OK
+/home/terminills/Documents/GitHub/aros-adt-upstream-merge/rom/partition/addpartition.c: OK
+/home/terminills/Documents/GitHub/aros-adt-upstream-merge/rom/partition/arosmacros.h: OK
+/home/terminills/Documents/GitHub/aros-adt-upstream-merge/rom/partition/closepartitiontable.c: OK
+/home/terminills/Documents/GitHub/aros-adt-upstream-merge/rom/partition/closerootpartition.c: OK
+/home/terminills/Documents/GitHub/aros-adt-upstream-merge/rom/partition/compilerspecific.h: OK
+/home/terminills/Documents/GitHub/aros-adt-upstream-merge/rom/partition/crc32.c: OK
+/home/terminills/Documents/GitHub/aros-adt-upstream-merge/rom/partition/createpartitiontable.c: OK
+/home/terminills/Documents/GitHub/aros-adt-upstream-merge/rom/partition/debug.h: OK
+/home/terminills/Documents/GitHub/aros-adt-upstream-merge/rom/partition/deletepartition.c: OK
+/home/terminills/Documents/GitHub/aros-adt-upstream-merge/rom/partition/destroypartitiontable.c: OK
+/home/terminills/Documents/GitHub/aros-adt-upstream-merge/rom/partition/findfilesystema.c: OK
+/home/terminills/Documents/GitHub/aros-adt-upstream-merge/rom/partition/fsloader.c: OK
+/home/terminills/Documents/GitHub/aros-adt-upstream-merge/rom/partition/fsloader.h: OK
+/home/terminills/Documents/GitHub/aros-adt-upstream-merge/rom/partition/getfilesystemattrsa.c: OK
+/home/terminills/Documents/GitHub/aros-adt-upstream-merge/rom/partition/getpartitionattrs.c: OK
+/home/terminills/Documents/GitHub/aros-adt-upstream-merge/rom/partition/getpartitiontableattrs.c: OK
+/home/terminills/Documents/GitHub/aros-adt-upstream-merge/rom/partition/loadbootfilesystems.c: OK
+/home/terminills/Documents/GitHub/aros-adt-upstream-merge/rom/partition/loadfilesystem.c: OK
+/home/terminills/Documents/GitHub/aros-adt-upstream-merge/rom/partition/openpartitiontable.c: OK
+/home/terminills/Documents/GitHub/aros-adt-upstream-merge/rom/partition/openrootpartition.c: OK
+/home/terminills/Documents/GitHub/aros-adt-upstream-merge/rom/partition/partition_init.c: OK
+/home/terminills/Documents/GitHub/aros-adt-upstream-merge/rom/partition/partition_intern.h: OK
+/home/terminills/Documents/GitHub/aros-adt-upstream-merge/rom/partition/partition_platform.c: OK
+/home/terminills/Documents/GitHub/aros-adt-upstream-merge/rom/partition/partition_support.c: OK
+/home/terminills/Documents/GitHub/aros-adt-upstream-merge/rom/partition/partition_support.h: OK
+/home/terminills/Documents/GitHub/aros-adt-upstream-merge/rom/partition/partition_types.c: OK
+/home/terminills/Documents/GitHub/aros-adt-upstream-merge/rom/partition/partition_types.h: OK
+/home/terminills/Documents/GitHub/aros-adt-upstream-merge/rom/partition/partitionami_init.c: OK
+/home/terminills/Documents/GitHub/aros-adt-upstream-merge/rom/partition/partitionebr.c: OK
+/home/terminills/Documents/GitHub/aros-adt-upstream-merge/rom/partition/partitiongpt.c: OK
+/home/terminills/Documents/GitHub/aros-adt-upstream-merge/rom/partition/partitiongpt.h: OK
+/home/terminills/Documents/GitHub/aros-adt-upstream-merge/rom/partition/partitionmbr.c: OK
+/home/terminills/Documents/GitHub/aros-adt-upstream-merge/rom/partition/partitionmbr.h: OK
+/home/terminills/Documents/GitHub/aros-adt-upstream-merge/rom/partition/partitionrdb.c: OK
+/home/terminills/Documents/GitHub/aros-adt-upstream-merge/rom/partition/platform.h: OK
+/home/terminills/Documents/GitHub/aros-adt-upstream-merge/rom/partition/querypartitionattrs.c: OK
+/home/terminills/Documents/GitHub/aros-adt-upstream-merge/rom/partition/querypartitiontableattrs.c: OK
+/home/terminills/Documents/GitHub/aros-adt-upstream-merge/rom/partition/readpartitiondata.c: OK
+/home/terminills/Documents/GitHub/aros-adt-upstream-merge/rom/partition/setpartitionattrs.c: OK
+/home/terminills/Documents/GitHub/aros-adt-upstream-merge/rom/partition/setpartitiontableattrs.c: OK
+/home/terminills/Documents/GitHub/aros-adt-upstream-merge/rom/partition/writepartitiondata.c: OK
+/home/terminills/Documents/GitHub/aros-adt-upstream-merge/rom/partition/writepartitiontable.c: OK
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/gen/rom/partition/partition/addbootfilesystem.o: OK
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/gen/rom/partition/partition/addpartition.o: OK
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/gen/rom/partition/partition/closepartitiontable.o: OK
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/gen/rom/partition/partition/closerootpartition.o: OK
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/gen/rom/partition/partition/crc32.o: OK
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/gen/rom/partition/partition/createpartitiontable.o: OK
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/gen/rom/partition/partition/deletepartition.o: OK
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/gen/rom/partition/partition/destroypartitiontable.o: OK
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/gen/rom/partition/partition/findfilesystema.o: OK
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/gen/rom/partition/partition/fsloader.o: OK
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/gen/rom/partition/partition/getfilesystemattrsa.o: OK
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/gen/rom/partition/partition/getpartitionattrs.o: OK
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/gen/rom/partition/partition/getpartitiontableattrs.o: OK
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/gen/rom/partition/partition/loadbootfilesystems.o: OK
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/gen/rom/partition/partition/loadfilesystem.o: OK
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/gen/rom/partition/partition/openpartitiontable.o: OK
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/gen/rom/partition/partition/openrootpartition.o: OK
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/gen/rom/partition/partition/partition_end.o: OK
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/gen/rom/partition/partition/partition_init.o: OK
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/gen/rom/partition/partition/partition_platform.o: OK
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/gen/rom/partition/partition/partition_start.o: OK
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/gen/rom/partition/partition/partition_support.o: OK
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/gen/rom/partition/partition/partition_types.o: OK
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/gen/rom/partition/partition/partitionebr.o: OK
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/gen/rom/partition/partition/partitiongpt.o: OK
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/gen/rom/partition/partition/partitionmbr.o: OK
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/gen/rom/partition/partition/partitionrdb.o: OK
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/gen/rom/partition/partition/querypartitionattrs.o: OK
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/gen/rom/partition/partition/querypartitiontableattrs.o: OK
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/gen/rom/partition/partition/readpartitiondata.o: OK
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/gen/rom/partition/partition/setpartitionattrs.o: OK
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/gen/rom/partition/partition/setpartitiontableattrs.o: OK
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/gen/rom/partition/partition/writepartitiondata.o: OK
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/gen/rom/partition/partition/writepartitiontable.o: OK
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/gen/rom/partition/partition/include/partition_deflibdefs.h: OK
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/../Libs/partition.library: OK

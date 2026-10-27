@@ -1,0 +1,1 @@
+Formatting '/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/zdb-label-run.BZHb8jdm/device.qcow2', fmt=qcow2 cluster_size=65536 extended_l2=off compression_type=zlib size=268435456 backing_file=/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/zdb-label-run.BZHb8jdm/partitions.raw backing_fmt=raw lazy_refcounts=off refcount_bits=16

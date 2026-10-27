@@ -1,0 +1,8 @@
+shared_library=1
+launcher_stack=65536
+pool_traversal=1
+damaged_labels=1
+native_device=1
+native_partitions=1
+partition_table=gpt
+native_pool=1
