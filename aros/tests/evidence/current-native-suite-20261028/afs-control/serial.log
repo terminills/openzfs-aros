@@ -1,0 +1,117 @@
+[bootstrap:multiboot2] smartfb: using VBE mode 0x417a (1280x800x32, fb=0xFD000000)
+[bootstrap:multiboot2] smartfb: KRN_FBAddr=0x00000000FD000000
+0000000000000000 0x0000000000000000 | 000 | AROS64 - The AROS Research OS
+0000000000000000 0x0000000000000000 | 000 | 64-bit SMP build. Compiled Oct 21 2026
+0000000000000000 0x0000000000000000 | 000 | [Kernel] Local APIC: x2APIC
+00000000aaae9aa7 0x0000000000000000 | 000 | ACPI: RSDP 0x00000000000F52E0 000014 (v00 BOCHS )
+00000000ab299270 0x0000000000000000 | 000 | ACPI: RSDT 0x000000007FFE25C5 000034 (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+00000000abcc184c 0x0000000000000000 | 000 | ACPI: FACP 0x000000007FFE2441 000074 (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+00000000ac6c3c4b 0x0000000000000000 | 000 | ACPI: DSDT 0x000000007FFE0040 002401 (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+00000000ad0c72f1 0x0000000000000000 | 000 | ACPI: FACS 0x000000007FFE0000 000040
+00000000ad7370c3 0x0000000000000000 | 000 | ACPI: APIC 0x000000007FFE24B5 0000B0 (v03 BOCHS  BXPC     00000001 BXPC 00000001)
+00000000ae143823 0x0000000000000000 | 000 | ACPI: HPET 0x000000007FFE2565 000038 (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+00000000aeb5d9c6 0x0000000000000000 | 000 | ACPI: WAET 0x000000007FFE259D 000028 (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+00000000af56ae3c 0x0000000000000000 | 000 | [HPET] 2 units total
+00000000b0587bcb 0x00000000013d2020 | 000 | ACPI: 1 ACPI AML tables successfully acquired and loaded
+00000000b1191462 0x00000000013b0130 | 000 | [Kernel:ACPI-IOAPIC] Registering IO-APIC #1 [ID=000] @ 00000000fec00000 [GSI = 0]
+00000000b1b976c8 0x00000000013b0130 | 000 | [Kernel:ACPI] System Total APICs: 8, 8 usable
+00000000b26b82dc 0x00000000013b0130 | 000 | [Kernel:APIC-IA32] MSI Interrupts Allocatable
+00000000b2e42962 0x00000000013b0130 | 000 | [Kernel:APIC-IA32]     start = 16
+00000000b34763a1 0x00000000013b0130 | 000 | [Kernel:APIC-IA32]     total = 198
+00000000d170eba4 0x00000000013b0130 | 000 | [Kernel:APIC-IA32] Heartbeat timer: TSC deadline
+00000000d37436e0 0x00000000013dbe80 | 001 | [Kernel:APIC-IA32.001] core_APIC_Calibrate: TSC freq inherited from BSP (2496025 kHz) [hypervisor]
+00000000d50b19f6 0x00000000013dbe80 | 001 | [Kernel:APIC-IA32.001] core_APIC_Calibrate: LAPIC timer freq inherited from BSP (1000420670 Hz) [hypervisor]
+00000000d848e1ca 0x00000000013dc4c0 | 002 | [Kernel:APIC-IA32.002] core_APIC_Calibrate: TSC freq inherited from BSP (2496025 kHz) [hypervisor]
+00000000d9e588a8 0x00000000013dc4c0 | 002 | [Kernel:APIC-IA32.002] core_APIC_Calibrate: LAPIC timer freq inherited from BSP (1000420670 Hz) [hypervisor]
+00000000dd290d0a 0x000000000145c4b0 | 003 | [Kernel:APIC-IA32.003] core_APIC_Calibrate: TSC freq inherited from BSP (2496025 kHz) [hypervisor]
+00000000debde6bd 0x000000000145c4b0 | 003 | [Kernel:APIC-IA32.003] core_APIC_Calibrate: LAPIC timer freq inherited from BSP (1000420670 Hz) [hypervisor]
+00000000e1fa6095 0x0000000001497100 | 004 | [Kernel:APIC-IA32.004] core_APIC_Calibrate: TSC freq inherited from BSP (2496025 kHz) [hypervisor]
+00000000e38fbeb4 0x0000000001497100 | 004 | [Kernel:APIC-IA32.004] core_APIC_Calibrate: LAPIC timer freq inherited from BSP (1000420670 Hz) [hypervisor]
+00000000e6cd118a 0x00000000014d1db0 | 005 | [Kernel:APIC-IA32.005] core_APIC_Calibrate: TSC freq inherited from BSP (2496025 kHz) [hypervisor]
+00000000e8655a57 0x00000000014d1db0 | 005 | [Kernel:APIC-IA32.005] core_APIC_Calibrate: LAPIC timer freq inherited from BSP (1000420670 Hz) [hypervisor]
+00000000eba2eb49 0x000000000150ca60 | 006 | [Kernel:APIC-IA32.006] core_APIC_Calibrate: TSC freq inherited from BSP (2496025 kHz) [hypervisor]
+00000000ec62f3ee 0x000000000150ca60 | 006 | [Kernel:APIC-IA32.006] core_APIC_Calibrate: LAPIC timer freq inherited from BSP (1000420670 Hz) [hypervisor]
+00000000eead67c4 0x0000000001547710 | 007 | [Kernel:APIC-IA32.007] core_APIC_Calibrate: TSC freq inherited from BSP (2496025 kHz) [hypervisor]
+00000000f044188f 0x0000000001547710 | 007 | [Kernel:APIC-IA32.007] core_APIC_Calibrate: LAPIC timer freq inherited from BSP (1000420670 Hz) [hypervisor]
+00000000f2a025c4 0x00000000013b0130 | 000 | [PCIPC:Driver] PCIPC_InitClass: No ACPI MCFG table
+00000000f711b30c 0x00000000013b0130 | 000 | [Timer] clock: PIT (no invariant TSC)
+0000000208bfcc05 0x000000000185ef10 | 000 | [ATI] Init
+00000002090aaea0 0x000000000185ef10 | 000 | [ATI] No supported cards found
+00000002240463db 0x0000000001840730 | 000 | [HW] HW__HW__AddDriver: Failed to instantiate Driver Object
+0000000237d5ba13 0x000000000184d1b0 | 000 | RESULT pre-storage errno PASS
+Writable startup denied: configured security.library and system task identity required.
+000000026bba3e03 0x000000000184d1b0 | 000 | RESULT shared engine lifecycle cycle=1 PASS
+Writable startup denied: configured security.library and system task identity required.
+00000002920fb9f7 0x000000000184d1b0 | 000 | RESULT shared engine lifecycle cycle=2 PASS
+Writable startup denied: configured security.library and system task identity required.
+00000002b849b276 0x000000000184d1b0 | 000 | RESULT shared engine lifecycle cycle=3 PASS
+Writable startup denied: configured security.library and system task identity required.
+00000002de978610 0x000000000184d1b0 | 000 | RESULT shared engine lifecycle cycle=4 PASS
+Writable startup denied: configured security.library and system task identity required.
+0000000304c5872e 0x000000000184d1b0 | 000 | RESULT shared engine lifecycle cycle=5 PASS
+Writable startup denied: configured security.library and system task identity required.
+000000032afcc317 0x000000000184d1b0 | 000 | RESULT shared engine lifecycle cycle=6 PASS
+Writable startup denied: configured security.library and system task identity required.
+0000000352086c72 0x000000000184d1b0 | 000 | RESULT shared engine lifecycle cycle=7 PASS
+Writable startup denied: configured security.library and system task identity required.
+000000037bb2c6ad 0x000000000184d1b0 | 000 | RESULT shared engine lifecycle cycle=8 PASS
+000000037c243e0a 0x000000000184d1b0 | 000 | RESULT shared engine denied return PASS status=20 repeated=10 caller-exit=7
+000000037cbbb6b3 0x000000000184d1b0 | 000 | RESULT shared engine library lifecycle PASS invalid-mode=2 nested-open=1 foreign-refused=1 reload-other-task=1
+Native authenticated admission ready
+OpenZFS management API 3 ready; engine initialized
+0000000436b6b973 0x000000000184d1b0 | 000 | Public service op=1 status=0 engine=1 rows=0
+000000043cafbe5b 0x000000000184d1b0 | 000 | Public service op=2 status=0 engine=1 rows=0
+0000000442a79f77 0x000000000184d1b0 | 000 | Public service op=3 status=0 engine=1 rows=0
+0000000448a0630a 0x000000000184d1b0 | 000 | Public mutation requires authenticated admission PASS
+OpenZFS service engine shutdown complete
+000000045a912e05 0x000000000184d1b0 | 000 | Public service test line=0
+RESULT public service lifecycle PASS
+Native authenticated admission ready
+OpenZFS management API 3 ready; engine initialized
+000000048162206b 0x000000000184d1b0 | 000 | Public service op=1 status=0 engine=1 rows=0
+00000004875aaeac 0x000000000184d1b0 | 000 | Public service op=2 status=0 engine=1 rows=0
+000000048d521f93 0x000000000184d1b0 | 000 | Public service op=3 status=0 engine=1 rows=0
+00000004934a08b1 0x000000000184d1b0 | 000 | Public mutation requires authenticated admission PASS
+OpenZFS service engine shutdown complete
+00000004a53cae61 0x000000000184d1b0 | 000 | Public service test line=0
+RESULT public service lifecycle PASS
+Writable startup denied: configured security.library and system task identity required.
+00000004b5851b2d 0x000000000184d1b0 | 000 | Public configuration created-directory owner=65535:65535 protection=8800 type=2
+00000004b6645bd0 0x000000000184d1b0 | 000 | Public CLI command result=0 ioerr=0: C:OpenZFSHostIdentity 5a465301 SAVE >T:companion-identity.log
+00000004b719d56e 0x000000000184d1b0 | 000 | Public diagnostic begin T:companion-identity.log
+00000004b7917448 0x000000000184d1b0 | 000 | Host identity 5A465301 saved to ENVARC and ENV. Start OpenZFS to use it.
+00000004b826f27f 0x000000000184d1b0 | 000 | 
+Public diagnostic end
+00000004bbf4c120 0x000000000184d1b0 | 000 | Public CLI command result=0 ioerr=0: C:OpenZFSStartup 5a46530000000001 CHECK
+00000004bfd3aa77 0x000000000184d1b0 | 000 | Public CLI command result=0 ioerr=0: C:OpenZFSStartup 5a46530000000001
+00000004c3ad152a 0x000000000184d1b0 | 000 | Public diagnostic begin T:public-cli-errors.log
+00000004c424df60 0x000000000184d1b0 | 000 | Startup check: errno=2; no import attempted
+00000004c49778e0 0x000000000184d1b0 | 000 | 
+Public diagnostic end
+00000004c4ede01d 0x000000000184d1b0 | 000 | Public CLI command result=1 ioerr=209: C:OpenZFSStartup 5a46530000000001 CHECK
+00000004c8dc7c1b 0x000000000184d1b0 | 000 | Public CLI command result=0 ioerr=0: C:OpenZFSStartup 5a46530000000001 PREPARE
+00000004ccafa08e 0x000000000184d1b0 | 000 | Public CLI command result=0 ioerr=0: C:OpenZFSStartup 5a46530000000001 RESTORE
+00000004cd4d061c 0x000000000184d1b0 | 000 | Public companion configuration PASS hostid-save=1 iff-readback=2 trusted-check=1 prepare=1 disabled-restore=1 assigns-restored=1
+00000004ce5fc896 0x000000000184d1b0 | 000 | Public CLI command result=0 ioerr=0: C:Mount SYS:OZARCH
+00000004d0e9ed67 0x000000000184d1b0 | 000 | Public CLI command result=0 ioerr=0: C:OpenZFSHostIdentity 5a465302 SAVE >T:persistent-identity.log
+00000004d1a0e526 0x000000000184d1b0 | 000 | Public diagnostic begin T:persistent-identity.log
+00000004d2180ab6 0x000000000184d1b0 | 000 | Host identity 5A465302 saved to ENVARC and ENV. Start OpenZFS to use it.
+00000004d2afc3d3 0x000000000184d1b0 | 000 | 
+Public diagnostic end
+00000004d3b93c2d 0x000000000184d1b0 | 000 | Public persistent publish errno=0 published=3 DOS=0
+00000004d781703c 0x000000000184d1b0 | 000 | Public diagnostic begin T:public-cli-errors.log
+00000004d7f6f276 0x000000000184d1b0 | 000 | Startup check: errno=2; no import attempted
+00000004d86841c9 0x000000000184d1b0 | 000 | 
+Public diagnostic end
+00000004d8c182b6 0x000000000184d1b0 | 000 | Public CLI command result=1 ioerr=209: C:OpenZFSStartup 5a46530000000002 CHECK
+00000004dc9c1d6a 0x000000000184d1b0 | 000 | Public CLI command result=0 ioerr=0: C:OpenZFSStartup 5a46530000000002 PREPARE >T:persistent-prepare.log
+00000004dd5827cb 0x000000000184d1b0 | 000 | Public diagnostic begin T:persistent-prepare.log
+00000004ddcede84 0x000000000184d1b0 | 000 | Startup ENV record prepared; no pool import
+00000004de3f1b22 0x000000000184d1b0 | 000 | 
+Public diagnostic end
+00000004e2427516 0x000000000184d1b0 | 000 | Public CLI command result=0 ioerr=0: C:OpenZFSStartup 5a46530000000002 RESTORE
+00000004e33d0440 0x000000000184d1b0 | 000 | Public DOS rename collision=1 rename=1 rename-DOS=0 destination=0 open-DOS=205 exact=0
+00000004e437619c 0x000000000184d1b0 | 000 | Public DOS rename collision=0 rename=1 rename-DOS=0 destination=1 open-DOS=0 exact=1
+00000004e50f00bb 0x000000000184d1b0 | 000 | Public persistent settings FAIL write=1 line=1153 DOS=0
+00000004e58d7a5e 0x000000000184d1b0 | 000 | Public service test line=4259
+RESULT public service lifecycle FAIL

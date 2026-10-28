@@ -1,0 +1,18 @@
+xorriso 1.5.6 : RockRidge filesystem manipulator, libburnia project.
+
+Copying of file objects from ISO image to disk filesystem is: Enabled
+xorriso : NOTE : Loading ISO image tree from LBA 0
+libburn : SORRY : Read start address 2396342s larger than number of readable blocks 2369312
+libisofs: NOTE : Found Protective MBR with size range larger than the medium capacity
+xorriso : UPDATE :   91305 nodes read in 1 seconds
+xorriso : NOTE : Detected El-Torito boot information which currently is set to be discarded
+Drive current: -indev '/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/public-service-run.TWxWdCyM/test.iso'
+Media current: stdio file, overwriteable
+Media status : is written , is appendable
+Boot record  : El Torito , MBR protective-msdos-label cyl-align-off GPT APM
+Media summary: 1 session, 2369124 data blocks, 4627m data,  113g free
+Volume id    : 'AROS Live CD'
+xorriso : NOTE : Tolerated problem event of severity 'SORRY'
+xorriso : UPDATE :       1 files restored ( 324.2k) in 1 seconds = 0.2xD
+Extracted from ISO image: file '/Libs/posixc.library'='/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/public-service-run.TWxWdCyM/iso-runtime/posixc.library'
+xorriso : NOTE : -return_with SORRY 32 triggered by problem severity SORRY

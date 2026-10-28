@@ -530,7 +530,8 @@ xorriso -indev "$base" -outdev "$run/test.iso" \
     "${extra_maps[@]}" \
     -map aros/engine/public-service-test-only /openzfs-service-test-only \
     -map "$run/Startup-Sequence" /S/Startup-Sequence \
-    -boot_image any discard -boot_image grub bin_path=/boot/grub/i386-pc/eltorito.img \
+    -boot_image any discard -boot_image any system_area=/dev/zero \
+    -boot_image grub bin_path=/boot/grub/i386-pc/eltorito.img \
     -boot_image grub boot_info_table=on -boot_image grub grub2_boot_info=on >"$run/pack.log" 2>&1
 # Verify runtime bytes in the image, not just the intended xorriso maps.
 mkdir "$run/iso-runtime"
