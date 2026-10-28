@@ -14,12 +14,24 @@ if missing and unconfigured:
     raise SystemExit("FAIL contradictory security modes")
 denial_only = unconfigured or missing
 native_pool = "native_pool=1" in (run / "mode.txt").read_text().splitlines()
+if missing and native_pool:
+    raise SystemExit("FAIL unsupported missing-security pool mode")
 denied_path = "/AROS/ata.device/0" + ("/partition/0" if partitioned else "")
 if not expected or not any("name: 'topo_source'" in x for x in expected):
     raise SystemExit("FAIL missing host labels")
 identity = "security-missing=1" if missing else "security-unconfigured=1" if unconfigured else "uid=77 gid=88"
 if sum(bool(re.search(r"(?:^| \| )RESULT native zdb actual caller " + identity + "$", x)) for x in serial) != 1:
     raise SystemExit("FAIL unverified debugger caller identity")
+identities = [x for x in serial if re.search(r"(?:^| \| )RESULT native zdb actual caller (?:uid=|security-)", x)]
+if len(identities) != 1:
+    raise SystemExit("FAIL ambiguous debugger caller identity")
+passes = [int(m.group(1)) for x in serial if
+          (m := re.search(r"(?:^| \| )RESULT native zdb device pass=(\d+) exit=", x))]
+if passes != list(range(1 if denial_only else 3)):
+    raise SystemExit("FAIL unexpected device pass sequence")
+if any(int(m.group(1)) not in passes for x in serial if
+       (m := re.search(r"(?:^| \| )ZDBDEV\[(\d+)\] ", x))):
+    raise SystemExit("FAIL report from unexpected device pass")
 for index in range(1 if denial_only else 3):
     report = [m.group(1) for x in serial if (m := re.search(rf"(?:^| \| )ZDBDEV\[{index}\] (.*)$", x))]
     exits = [m.group(1) for x in serial if (m := re.search(rf"(?:^| \| )RESULT native zdb device pass={index} exit=(-?\d+)$", x))]

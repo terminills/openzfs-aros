@@ -33,3 +33,17 @@ bash build-audit/run-zdb-device.sh
 
 Omit PREPARE_ONLY only after acquiring the isolated QEMU slot. Do not run
 against the DUT or user hosted session. Native denial remains unverified.
+
+## Verifier follow-up
+
+Device evidence now rejects extra/out-of-order device passes, reports for
+unknown passes and ambiguous unprivileged/security-state identity markers.
+An initial overly broad identity count rejected legitimate root-helper calls
+in the retained pool tests. The corrected count isolates the denial caller;
+the separate root helpers remain covered by the pool verifier.
+
+Retained runs 6Y7sxTkv (MBR), LRQP52DN (GPT) and EsMKxiba (native L2ARC)
+all pass the stricter device verifier. The five-mode device parser suite,
+six pool-verifier tests, six L2ARC-verifier tests and sixteen MetaMake
+staging tests pass. This replay is evidence-parser regression coverage, not
+a new native boot or missing-library denial result.

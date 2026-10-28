@@ -1,0 +1,23 @@
+.
+----------------------------------------------------------------------
+Ran 1 test in 1.243s
+
+OK
+PASS native pool admission EACCES and member-zero label reopening
+PASS native pool admission EACCES and member-zero label reopening
+PASS native whole device labels match host before/after unprivileged EACCES denial
+......
+----------------------------------------------------------------------
+Ran 6 tests in 0.002s
+
+OK
+......
+----------------------------------------------------------------------
+Ran 6 tests in 0.005s
+
+OK
+................
+----------------------------------------------------------------------
+Ran 16 tests in 0.667s
+
+OK

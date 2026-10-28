@@ -43,6 +43,9 @@ class Tests(unittest.TestCase):
                     if missing:
                         self.assertNotEqual(check([x.replace("security-missing=1", "security-unconfigured=1") for x in lines]), 0)
                     for damaged in (lines[1:], lines[:-1], lines+[lines[1]],
+                                    lines+["RESULT native zdb actual caller uid=0 gid=0"],
+                                    lines+["RESULT native zdb device pass=9 exit=0"],
+                                    lines+["ZDBDEV[9] unexpected device read"],
                                     lines+["[PF-DBG] failure"],
                                     [x.replace("Permission denied", "No such file") for x in lines]):
                         self.assertNotEqual(check(damaged), 0)
