@@ -9,7 +9,18 @@
 struct Library *OpenZFSBase;
 int main(void)
 {
-    struct Library *secBase=OpenLibrary((CONST_STRPTR)SECURITYNAME,SECURITYVERSION);
+    struct Library *secBase=OpenLibrary((CONST_STRPTR)SECURITYNAME,
+#ifdef OZ_ZDB_MISSING_SECURITY
+        0);
+#else
+        SECURITYVERSION);
+#endif
+#ifdef OZ_ZDB_MISSING_SECURITY
+    if(secBase){CloseLibrary(secBase);return 20;}
+    if(FindResident((CONST_STRPTR)SECURITYNAME))return 20;
+    int allowed=1;
+    bug("RESULT native zdb actual caller security-missing=1\n");
+#else
     if(!secBase)return 20;
     ULONG previous=secGetTaskOwner(FindTask(NULL));
 #ifndef OZ_ZDB_NO_SECURITY
@@ -24,6 +35,7 @@ int main(void)
     logged=secLoginA(login);
     int allowed=logged==((77UL<<16)|88)&&secGetTaskOwner(FindTask(NULL))==logged;
     if(allowed)bug("RESULT native zdb actual caller uid=77 gid=88\n");
+#endif
 #endif
     LONG status=20;
     if(allowed) {
@@ -46,8 +58,10 @@ int main(void)
             CloseLibrary(OpenZFSBase);
         }
     }
+#ifndef OZ_ZDB_MISSING_SECURITY
     if(logged&&secLogoutA(logout)!=previous)status=20;
     if(secGetTaskOwner(FindTask(NULL))!=previous)status=20;
     CloseLibrary(secBase);
+#endif
     return status;
 }

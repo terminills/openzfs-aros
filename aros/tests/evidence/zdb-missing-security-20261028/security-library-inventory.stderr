@@ -1,0 +1,11 @@
+xorriso 1.5.6 : RockRidge filesystem manipulator, libburnia project.
+
+xorriso : NOTE : Loading ISO image tree from LBA 0
+xorriso : UPDATE :   91286 nodes read in 1 seconds
+xorriso : NOTE : Detected El-Torito boot information which currently is set to be discarded
+Drive current: -indev '/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/zdb-label-run.2c7bWaNK/test.iso'
+Media current: stdio file, overwriteable
+Media status : is written , is appendable
+Boot record  : El Torito , MBR cyl-align-off GPT APM
+Media summary: 1 session, 2494157 data blocks, 4871m data,  164g free
+Volume id    : 'AROS Live CD'

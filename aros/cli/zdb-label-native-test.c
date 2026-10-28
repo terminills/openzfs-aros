@@ -57,7 +57,7 @@ static int check_l2arc(void)
 #include <libraries/security.h>
 static int check_device(void)
 {
-#ifdef OZ_ZDB_NO_SECURITY
+#if defined(OZ_ZDB_NO_SECURITY) || defined(OZ_ZDB_MISSING_SECURITY)
     LONG status=SystemTags((CONST_STRPTR)"C:OpenZFSZdbUserTest >RAM:zdb-device.log",
         NP_StackSize,65536,TAG_DONE);
     bug("RESULT native zdb device pass=0 exit=%ld\n",(long)status);
@@ -68,7 +68,11 @@ static int check_device(void)
     int failed=ferror(report)||!lines||status!=1;
     fclose(report);
     if(failed)return 20;
+#ifdef OZ_ZDB_MISSING_SECURITY
+    bug("RESULT native zdb device PASS missing-security=1\n");
+#else
     bug("RESULT native zdb device PASS no-security=1\n");
+#endif
     return 0;
 #else
     struct Library *secBase=OpenLibrary((CONST_STRPTR)SECURITYNAME,SECURITYVERSION);

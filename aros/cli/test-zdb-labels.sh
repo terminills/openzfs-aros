@@ -24,6 +24,13 @@ library_maps=()
 test_flags=()
 pool_maps=()
 device_args=()
+security_remove=()
+if [[ ${AROS_TEST_ZDB_MISSING_SECURITY:-0} == 1 ]];then
+    [[ ${AROS_TEST_ZDB_DEVICE:-0} == 1 && ${AROS_TEST_ZDB_NO_SECURITY:-0} != 1 && ${AROS_TEST_ZDB_NATIVE_POOL:-0} != 1 ]] || {
+        echo 'Missing-security test requires device mode, without unconfigured or native-pool mode' >&2;exit 1;
+    }
+    security_remove=(-rm /Libs/security.library --)
+fi
 if [[ -n ${AROS_TEST_FS_PACKAGE:-} ]];then
     sha256sum "$AROS_TEST_FS_PACKAGE" >>"$run/inputs.sha256"
     pool_maps+=(-map "$AROS_TEST_FS_PACKAGE" /boot/aros-fs.pkg.xz)
@@ -45,7 +52,7 @@ if [[ ${AROS_TEST_ZDB_DEVICE:-0} == 1 ]];then
     fi
     qemu-img create -f qcow2 -F raw -b "$device_base" "$run/device.qcow2" >"$run/device-create.log"
     device_args=(-drive "file=$run/device.qcow2,format=qcow2,if=ide,index=0")
-    if [[ ${AROS_TEST_ZDB_NO_SECURITY:-0} != 1 ]];then
+    if [[ ${AROS_TEST_ZDB_NO_SECURITY:-0} != 1 && ${AROS_TEST_ZDB_MISSING_SECURITY:-0} != 1 ]];then
         cp -a aros/engine/security-fixture "$run/security-fixture"
         pool_maps+=(-map "$run/security-fixture" /Security)
     fi
@@ -94,7 +101,7 @@ if [[ -n ${AROS_TEST_ZDB_L2ARC_LIBNVPAIR:-} ]];then
     pool_maps+=(-map "$run/l2arc" /zdb-l2arc)
     test_flags+=(-DOZ_ZDB_L2ARC)
     printf 'l2arc_header_iso=1\n' >>"$run/mode.txt"
-    if [[ ${AROS_TEST_ZDB_DEVICE:-0} == 1 && ${AROS_TEST_ZDB_NO_SECURITY:-0} != 1 ]];then
+    if [[ ${AROS_TEST_ZDB_DEVICE:-0} == 1 && ${AROS_TEST_ZDB_NO_SECURITY:-0} != 1 && ${AROS_TEST_ZDB_MISSING_SECURITY:-0} != 1 ]];then
         qemu-img create -f qcow2 -F raw -b "$run/l2arc/little" "$run/l2arc-device.qcow2" >"$run/l2arc-device-create.log"
         device_args+=(-drive "file=$run/l2arc-device.qcow2,format=qcow2,if=ide,index=1")
         test_flags+=(-DOZ_ZDB_L2ARC_DEVICE)
@@ -120,6 +127,10 @@ fi
 if [[ ${AROS_TEST_ZDB_DEVICE:-0} == 1 ]];then
     test_flags+=(-DOZ_ZDB_DEVICE)
     printf 'native_device=1\n' >>"$run/mode.txt"
+    if [[ ${AROS_TEST_ZDB_MISSING_SECURITY:-0} == 1 ]];then
+        test_flags+=(-DOZ_ZDB_MISSING_SECURITY)
+        printf 'missing_security=1\n' >>"$run/mode.txt"
+    fi
     if [[ ${AROS_TEST_ZDB_NO_SECURITY:-0} == 1 ]];then
         test_flags+=(-DOZ_ZDB_NO_SECURITY)
         printf 'unconfigured_security=1\n' >>"$run/mode.txt"
@@ -151,6 +162,7 @@ fi
 "$AROS_CC" --sysroot="$AROS_SDK" -B"$AROS_SDK/lib/" -O2 -Wall -Wextra \
     "${test_flags[@]}" aros/cli/zdb-label-native-test.c -o "$run/OpenZFSZdbLabelsTest" >"$run/build.log" 2>&1
 xorriso -indev "$AROS_TEST_ISO" -outdev "$run/test.iso" \
+    "${security_remove[@]}" \
     -map aros/engine/grub-qemu-test.cfg /boot/grub/grub.cfg \
     -map "$AROS_TEST_BASE_DOS_PACKAGE" /boot/aros-base.pkg.xz \
     -map "$AROS_TEST_POSIX_LIBRARY" /Libs/posixc.library \
@@ -162,6 +174,21 @@ xorriso -indev "$AROS_TEST_ISO" -outdev "$run/test.iso" \
     -map aros/cli/Startup-Zdb-Labels /S/Startup-Sequence \
     -boot_image any discard -boot_image grub bin_path=/boot/grub/i386-pc/eltorito.img \
     -boot_image grub boot_info_table=on -boot_image grub grub2_boot_info=on >"$run/iso.log" 2>&1
+if [[ ${AROS_TEST_ZDB_MISSING_SECURITY:-0} == 1 ]];then
+    # Check the actual prepared image, not merely the xorriso command line.
+    xorriso -indev "$run/test.iso" -find / -name security.library -exec lsdl \
+        >"$run/security-library-inventory.log" 2>"$run/security-library-inventory.stderr"
+    if [[ -s $run/security-library-inventory.log ]];then
+        echo 'Missing-security ISO still contains security.library' >&2;exit 1
+    fi
+fi
+if [[ ${AROS_TEST_ZDB_PREPARE_ONLY:-0} == 1 ]];then
+    sha256sum -c "$run/inputs.sha256" >"$run/unchanged.log"
+    sha256sum "$run/test.iso" >"$run/prepared-iso.sha256"
+    printf 'Prepared only: no native runtime executed\n' >"$run/prepared-only.txt"
+    echo 'Prepared isolated test ISO; native runtime remains unverified.'
+    exit 0
+fi
 qemu-system-x86_64 -name "openzfs-zdb-labels-$$" -machine pc,accel=kvm \
     -cpu host -smp 8 -m 2048 -cdrom "$run/test.iso" "${device_args[@]}" -boot d -nic none \
     -display none -serial "file:$run/serial.log" \

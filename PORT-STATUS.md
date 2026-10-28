@@ -35,8 +35,14 @@ eight-CPU guest passes full block/MOS comparison on two native MBR extents,
 actual UID 77 admission denial, and a failed partial admission followed by
 successful traversal with duplicate path arguments. The whole disk remains
 unchanged. See `aros/tests/evidence/native-zdb-bindings-20261027`.
-GPT-specific debugger paths, missing-library denial and native L2ARC still need
-runtime qualification. Broader diagnostic/corruption coverage and
+GPT paths now pass with the private partition-gap fix (and fail with the
+stock partition library); see `aros/tests/evidence/native-zdb-gpt-20261027`.
+Synthetic empty L2ARC headers also pass through ISO and authenticated native
+device reads; this does not cover populated cache logs or rebuild behavior.
+See `aros/tests/evidence/native-zdb-l2arc-20261027`. Missing-library denial has
+a separate cross-built harness and prepared ISO, but still needs native
+execution; unconfigured-library denial does not substitute for that result.
+Broader diagnostic/corruption coverage and
 public release-bundle qualification remain unfinished. See
 `aros/tests/evidence/native-zdb-pool-20261027`.
 See `aros/tests/evidence/native-zdb-build-20261027`. Existing pool-integrity
