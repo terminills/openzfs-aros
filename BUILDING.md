@@ -2,6 +2,32 @@
 
 ## AROS build-system integration (in progress)
 
+### Export retained dependency sources
+
+After `build-dependencies.sh` succeeds, its selected source inputs can be
+exported without another download or build:
+
+```sh
+python3 aros/distribution/export-dependency-sources.py /path/to/dependencies.BUILD \
+  --output-parent /path/to/package-staging
+```
+
+The helper checks the published archive/environment/include hashes, verifies
+the pthread and crypto source manifests, and copies every recorded file in
+those source trees except Git history. It retains the exact pinned libtirpc
+source archive, original copyright/license notices, build scripts, compiler
+identity and the crypto patch/revision. A new directory is always used; source
+symlinks, unrecorded files and checksum drift are refused. The output filesystem
+must retain at least 100 GiB free before export.
+
+Verify the result with `sha256sum -c SHA256SUMS` inside the export. This is
+source/provenance export, not a standalone bootstrap or a fresh compile: use
+the OpenZFS checkout's builders with explicit paths to the exported sources
+and a matching AROS SDK/compiler/host tools. The retained `.env` and `.mk`
+records describe original build paths; they are not automatically rewritten
+or sourced. SDK/toolchain distribution and independent rebuild qualification
+remain separate.
+
 ### Check SDK link prerequisites first
 
 Before an expensive build against a different SDK, run:

@@ -1,0 +1,15 @@
+{
+  "format": 1,
+  "dependency_root": "/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/dependencies.YF6P1Tca",
+  "source_files": {
+    "Pthread": 41,
+    "Crypto": 7040
+  },
+  "archive_sha256": {
+    "/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/dependencies.YF6P1Tca/pthread-consistent.zxUBt8mH/libpthread.a": "5aa4625a78449c5a2d10fd2ab6ec3bd6a6b6ee9c739e81a7c98aa440afac7198",
+    "/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/dependencies.YF6P1Tca/crypto-source.VqJJuapK/build/crypto/libcrypto.a": "65f7c97346dec9f45354c0d56c41c4df0382d15806c3a5c6d0b799117bb31057",
+    "/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/dependencies.YF6P1Tca/nvpair/libnvpair.a": "d7a996ca6f08f6ebbe1e4a2196207c762a016755ef0854bce87da202a228b634"
+  },
+  "external_requirements": "Matching AROS SDK, compiler, host tools and OpenZFS source checkout; recorded build scripts are provenance, not a standalone bootstrap.",
+  "runtime_claim": "No new compilation or runtime validation performed by export."
+}
