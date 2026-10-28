@@ -22,6 +22,7 @@
 #include "simple-health.h"
 #include "report-save.h"
 #include "report-page.h"
+#include "report-export.h"
 static struct oz_rate_history io_history;
 static struct oz_refresh io_refresh;
 static Object *auto_iostat;
@@ -63,6 +64,7 @@ static UQUAD next_cursor;
 static char response_text[32768];
 static struct oz_report_page report_page={-1,-1,1};
 static unsigned report_page_number;
+static struct oz_report_export *report_export;
 static struct oz_client client;
 static struct oz_admission_worker *auth_worker;
 static struct oz_project_worker *projectworker;
@@ -142,7 +144,9 @@ static void render_response(const char *text) {
         DoMethod(output,MUIM_List_InsertSingle,(IPTR)line,MUIV_List_Insert_Bottom);line=strtok(NULL,"\n");}
 }
 static void show_response(const char *text) {
+    if(report_page.fd>=0){next_cursor=0;set(next_page,MUIA_Disabled,TRUE);}
     oz_report_page_close(&report_page);report_page_number=0;
+    set(save_response,MUIA_Text_Contents,"Save response...");
     render_response(text);
 }
 static void show_report_page(void) {
@@ -582,7 +586,7 @@ int main(int argc,char **argv) {
     notify_button(execute,EV_SEND);notify_button(preview,EV_PREVIEW);notify_button(connect_button,EV_CONNECT);
     notify_button(caps_button,EV_CAPS);notify_button(save,EV_SAVE);notify_button(build_topology,EV_TOPOLOGY);notify_button(clear,EV_CLEAR);
     notify_button(next_page,EV_NEXT);notify_button(save_response,EV_SAVE_RESPONSE);set(next_page,MUIA_Disabled,TRUE);
-    set(save_response,MUIA_ShortHelp,"Save the current backend response/page to a new file, including details hidden in Simple mode. Choose persistent storage to keep it after reboot. Existing files are never overwritten. Large command reports named in the response remain separate files.");
+    set(save_response,MUIA_ShortHelp,"Save the current backend response, or the entire retained command report when available. Choose persistent storage to keep it after reboot. Existing files are never overwritten.");
     notify_button(use_token,EV_USE_TOKEN);set(use_token,MUIA_Disabled,TRUE);
     DoMethod(auto_iostat,MUIM_Notify,MUIA_Selected,MUIV_EveryTime,(IPTR)app,2,MUIM_Application_ReturnID,EV_AUTO_IO);
     set(auto_iostat,MUIA_ShortHelp,"Refresh the displayed I/O page every 2 seconds, retaining histogram options. Stops on query edits, page changes or errors. Pages are live samples, not an atomic pool snapshot. No overlapping requests.");
@@ -706,6 +710,7 @@ int main(int argc,char **argv) {
                 else {char all[1024];const char *separator=oz_operations[selected].id==37?",":";";snprintf(all,sizeof(all),"%s%s%s",string(options),string(options)[0]?separator:"",pair);set(options,MUIA_String_Contents,all);}}
             break;}
         case EV_NEXT:stop_auto_io();
+            if(report_export)break;
             if(report_page.fd>=0){show_report_page();break;}
             if(next_cursor&&!auth_worker){
             last_request.cursor=next_cursor;
@@ -717,11 +722,13 @@ int main(int argc,char **argv) {
             } else {ULONG rc=oz_submit(&client,&last_request);set(status,MUIA_Text_Contents,rc==OZ_OK?"Loading next page...":oz_status(rc));}
         }break;
         case EV_SAVE_RESPONSE:{
+            if(report_export)break;
+            int full_report=report_page.fd>=0;
             struct TagItem tags[]={
-                {ASLFR_TitleText,(IPTR)"Save OpenZFS response (new file)"},
+                {ASLFR_TitleText,(IPTR)(full_report?"Save full OpenZFS report (new file)":"Save OpenZFS response (new file)")},
                 {ASLFR_Window,value(win,MUIA_Window_Window)},
                 {ASLFR_InitialDrawer,(IPTR)"T:"},
-                {ASLFR_InitialFile,(IPTR)"OpenZFS-Response.txt"},
+                {ASLFR_InitialFile,(IPTR)(full_report?"OpenZFS-Report.txt":"OpenZFS-Response.txt")},
                 {ASLFR_DoSaveMode,TRUE},{TAG_DONE,0}};
             struct FileRequester *request=MUI_AllocAslRequest(ASL_FileRequest,tags);
             if(!request){set(status,MUIA_Text_Contents,"Cannot open file requester; response has not been saved");break;}
@@ -734,9 +741,13 @@ int main(int argc,char **argv) {
                 else if(strlen(request->fr_Drawer)<sizeof(path)){
                     strcpy(path,request->fr_Drawer);
                     if(AddPart((STRPTR)path,(CONST_STRPTR)request->fr_File,sizeof(path)))
-                        error=oz_report_save_new(path,response_text);
+                        error=full_report?oz_report_export_start(report_page.fd,path,&report_export):oz_report_save_new(path,response_text);
                 }
-                if(!error)snprintf(message,sizeof(message),"Saved backend response: %s",path);
+                if(!error&&full_report){
+                    set(save_response,MUIA_Disabled,TRUE);set(next_page,MUIA_Disabled,TRUE);
+                    snprintf(message,sizeof(message),"Saving full report: %s",path);
+                }
+                else if(!error)snprintf(message,sizeof(message),"Saved backend response: %s",path);
                 else if(error==EEXIST)snprintf(message,sizeof(message),"File exists; nothing overwritten. Choose a new filename.");
                 else snprintf(message,sizeof(message),"Response save failed (errno=%d); a partial new file may remain",error);
                 set(status,MUIA_Text_Contents,message);
@@ -747,6 +758,20 @@ int main(int argc,char **argv) {
         /* Closing keeps the process, task and outstanding packets alive.
          * No pthread_cancel or timeout can make borrowed DOS storage safe. */
         struct oz_message *auth_reply=NULL;
+        if(report_export){
+            int error=oz_report_export_poll(report_export);
+            if(!error){
+                char message[1200];
+                if(!report_export->error)snprintf(message,sizeof(message),"Saved full report (%llu bytes): %s",
+                    (unsigned long long)report_export->bytes,report_export->path);
+                else if(report_export->error==EEXIST)snprintf(message,sizeof(message),"File exists; nothing overwritten. Choose a new filename.");
+                else snprintf(message,sizeof(message),"Report export failed (errno=%d); a partial new file may remain",report_export->error);
+                set(status,MUIA_Text_Contents,message);logline(message);
+                if(!oz_report_export_free(report_export))report_export=NULL;
+                set(save_response,MUIA_Disabled,FALSE);
+                set(next_page,MUIA_Disabled,report_page.fd>=0?report_page.eof:!next_cursor);
+            }else if(error!=EAGAIN)set(status,MUIA_Text_Contents,"Report exporter join failed; keeping worker alive");
+        }
         if(projectworker){
             static struct oz_message response;
             int error=oz_project_worker_poll(projectworker,&response);
@@ -758,6 +783,7 @@ int main(int argc,char **argv) {
                 if(response.row_count==1&&!strcmp(response.rows[0].kind,"command-report")){
                     int report_error=oz_report_page_open(&report_page,response.rows[0].name);
                     next_cursor=0;set(next_page,MUIA_Disabled,report_error!=0);
+                    if(!report_error)set(save_response,MUIA_Text_Contents,"Save full report...");
                     if(report_error)set(status,MUIA_Text_Contents,"Retained report could not be opened; command was not rerun");
                 }
                 if(response.operation==76&&response.status==OZ_OK){
@@ -959,7 +985,7 @@ int main(int argc,char **argv) {
         }
         if(SetSignal(0,SIGBREAKF_CTRL_C)&SIGBREAKF_CTRL_C)closing=1;
         if(closing){
-            if(auth_worker||projectworker||partworker||gptworker||mappingworker||inventoryworker)set(status,MUIA_Text_Contents,"Closing: waiting for request to drain; do not terminate task");
+            if(auth_worker||projectworker||partworker||gptworker||mappingworker||inventoryworker||report_export)set(status,MUIA_Text_Contents,"Closing: waiting for request to drain; do not terminate task");
             else quit=1;
         }
         Delay(1); /* yield to AROS; asynchronous replies never block Zune input */

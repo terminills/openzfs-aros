@@ -10,7 +10,7 @@ base=("$AROS_CC" "--sysroot=$AROS_SDK" "-B$AROS_SDK/lib/" -O2 -Wall -Wextra)
     aros/cli/process.c aros/cli/arguments.c aros/cli/output.c \
     "$AROS_PRIVATE_PTHREAD" -o "$out/OpenZFSCommandReportTest"
 sha256sum aros/ui/command-report-test.c aros/ui/command-report-child.c \
-    aros/ui/project-worker.c aros/ui/report-page.h aros/ui/api.c aros/ui/api.h \
+    aros/ui/project-worker.c aros/ui/report-page.h aros/ui/report-copy.h aros/ui/report-export.h aros/ui/api.c aros/ui/api.h \
     aros/ui/admission-client.c aros/cli/process.c aros/cli/arguments.c aros/cli/output.c \
     "$AROS_PRIVATE_PTHREAD" "$out/OpenZFSReportChild" "$out/OpenZFSCommandReportTest" \
     >"$out/inputs.sha256"

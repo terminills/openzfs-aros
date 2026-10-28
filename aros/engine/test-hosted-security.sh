@@ -210,6 +210,9 @@ cat "$run/security-test.log"
 if [[ -n ${AROS_TEST_COMMAND_REPORT_DIR:-} ]];then
     cat "$run/command-report-test.log"
     rg -q '^PASS native command reports cycles=3 exact-read=1 no-command-rerun=1$' "$run/command-report-test.log"
+    for cycle in 0 1 2; do
+        rg -q "^PASS native report export cycle=$cycle exact=1 overwrite-refused=1 pager-close-safe=1$" "$run/command-report-test.log"
+    done
     if rg -q '^FAIL' "$run/command-report-test.log";then exit 1;fi
 fi
 if [[ -n ${AROS_TEST_RUNTIME_CHECK:-} ]];then

@@ -1,0 +1,14 @@
+/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/hosted-atime-inputs.U3JnCvcI/openzfs.library: OK
+/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/hosted-atime-inputs.U3JnCvcI/OpenZFSServiceNative: OK
+/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/hosted-atime-inputs.U3JnCvcI/OpenZFSPublicServiceTest: OK
+Evidence: /mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/hosted-security-test.TMuftqTz
+hosted security configured=1
+hosted security authenticated=1 owner=004d0058
+RESULT hosted security login/logout PASS configured=1 uid77gid88=1 restored=1
+PASS native report export cycle=0 exact=1 overwrite-refused=1 pager-close-safe=1
+PASS command report cycle=0 bytes=131085 pages=33 exit=23 retained=1
+PASS native report export cycle=1 exact=1 overwrite-refused=1 pager-close-safe=1
+PASS command report cycle=1 bytes=131085 pages=33 exit=23 retained=1
+PASS native report export cycle=2 exact=1 overwrite-refused=1 pager-close-safe=1
+PASS command report cycle=2 bytes=131085 pages=33 exit=23 retained=1
+PASS native command reports cycles=3 exact-read=1 no-command-rerun=1

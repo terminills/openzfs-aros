@@ -1,0 +1,5 @@
+PASS report save: exact bytes, no overwrite, symlink refusal, private mode, empty and invalid inputs
+PASS report save faults: EINTR retry, short writes, ENOSPC, zero write, close failure, incomplete file retained
+PASS report pages: capacities=257 exact boundaries, long lines, empty, NUL refusal, missing file and closed descriptor
+PASS report export: exact binary bytes, unchanged cursor, no overwrite, symlink refusal, joined worker, duplicate lifetime
+PASS report copy faults: interrupted and short I/O, read error, ENOSPC, zero write, close failure, partial retention
