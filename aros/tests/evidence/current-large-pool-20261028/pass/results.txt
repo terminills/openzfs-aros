@@ -1,0 +1,2 @@
+raidz1 member-bytes=14293651161088 members=5 native roundtrip and independent zdb PASS
+PASS independent hosted readonly DOS matrix and unchanged members

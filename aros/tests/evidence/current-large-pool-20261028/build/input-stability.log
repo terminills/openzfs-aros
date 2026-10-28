@@ -1,0 +1,6 @@
+/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/mmake-engine.cjQbkyg6/aros/engine/full/full-engine.o: OK
+/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/dependencies.YF6P1Tca/nvpair/libnvpair.a: OK
+/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/dependencies.YF6P1Tca/pthread-consistent.zxUBt8mH/libpthread.a: OK
+/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/dependencies.YF6P1Tca/crypto-source.VqJJuapK/build/crypto/libcrypto.a: OK
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/lib/libz1.a: OK
+/home/terminills/Documents/GitHub/aros-adt-crosstools/x86_64-aros-gcc: OK

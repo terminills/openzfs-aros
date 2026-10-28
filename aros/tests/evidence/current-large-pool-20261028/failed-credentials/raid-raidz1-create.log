@@ -1,0 +1,15 @@
+Disposable native pool directory: /SYS/OpenZFS-test-5d73e81d
+file /SYS/OpenZFS-test-5d73e81d/disk0 truncate=0 stat=0 size=14293651161088
+file /SYS/OpenZFS-test-5d73e81d/disk1 truncate=0 stat=0 size=14293651161088
+file /SYS/OpenZFS-test-5d73e81d/disk2 truncate=0 stat=0 size=14293651161088
+file /SYS/OpenZFS-test-5d73e81d/disk3 truncate=0 stat=0 size=14293651161088
+file /SYS/OpenZFS-test-5d73e81d/disk4 truncate=0 stat=0 size=14293651161088
+Starting upstream read/write engine, explicit test hostid=0x5d73e81d
+Creating upstream raidz1 aros_raidz1_5d73e81d
+spa_create=0
+spa_open=0
+native pool guid=6107320882692454322
+dataset payload write=13 object=0 bytes=16384
+spa_export=13
+RESULT native raidz1 data roundtrip FAIL
+RESULT native raidz1 create/open/export FAIL

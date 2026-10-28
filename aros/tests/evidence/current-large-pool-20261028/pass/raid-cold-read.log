@@ -1,0 +1,6 @@
+RAID raidz1 degraded=0 root-state=7
+RAID raidz1 leaves=5 parity=1 unavailable=0
+DOS capacity used=287936 available=56939688246688 block=32768 blocks=1737661393 used-blocks=9 errno=0
+DOS startup descriptor errno=0
+RESULT cold RAID DOS raidz1 degraded=0 mode=0 errno=0 PASS
+RESULT cold RAID DOS matrix PASS

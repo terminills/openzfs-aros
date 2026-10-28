@@ -105,6 +105,12 @@ guest=$!;printf '%s\n' "$guest" >"$run/$phase-guest.pid"
 start_guest create
 deadline=$((SECONDS+600))
 while [[ ! -f "$run/raid-created.marker" ]];do
+    # FailAt can leave AROS alive without reaching the completion marker.
+    # An explicit failed diagnostic is terminal, not a stalled boot.
+    if compgen -G "$run/raid-*-create.log" >/dev/null &&
+        rg -q '^RESULT .* FAIL$|^FAIL ' "$run"/raid-*-create.log;then
+        echo 'FAIL: private large-pool diagnostic reported failure' >&2;exit 1
+    fi
     if ! kill -0 "$guest" 2>/dev/null || ((SECONDS>=deadline));then
         echo 'FAIL: private large-pool test exit/deadline' >&2;exit 1
     fi
@@ -118,7 +124,16 @@ cleanup
 all_members=()
 for topology in "${topologies[@]}";do
     log="$run/raid-$topology-create.log"
-    [[ ! -s "$run/pool-$topology-errors.log" ]]
+    # The full libzpool engine's fm_init reports its unimplemented host-kstat
+    # sink once per kernel_init. It is a notice, not a pool integrity error.
+    # Keep the raw log; reject every other diagnostic and unexpected repeats.
+    python3 - "$run/pool-$topology-errors.log" <<'PY'
+import pathlib, sys
+lines = [line for line in pathlib.Path(sys.argv[1]).read_text().splitlines() if line]
+notice = 'libzpool: NOTICE: failed to create fm/misc kstat'
+if any(line != notice for line in lines) or len(lines) not in (0, 2):
+    raise SystemExit('FAIL: unexpected pool diagnostics: ' + repr(lines))
+PY
     dir=$(sed -n 's/^Disposable native pool directory: //p' "$log")
     pool=$(sed -n "s/^Creating upstream $topology //p" "$log")
     [[ $dir =~ ^/SYS/OpenZFS-test-[0-9a-f]{8}$ && $pool =~ ^aros_${topology}_[0-9a-f]{8}$ ]]

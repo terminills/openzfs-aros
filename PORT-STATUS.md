@@ -2,6 +2,17 @@
 
 Experimental development snapshot; not production-qualified storage software.
 
+## Current-engine large-pool qualification (2026-10-28)
+
+Fresh diagnostic frontends linked against the source/header/hash-verified normal
+engine now pass the 50-TB-class sparse RAIDZ1 create/write/export/import test,
+independent host zdb, and a separate cold hosted DOS-handler reader with unchanged
+sparse member digests. This extends the earlier historical-fixture runtime test
+to the current engine build. Fixture-only credential scoping and precise handling
+of the upstream libzpool kstat notice were required; production authorization is
+unchanged. Native QEMU and physical large-array qualification remain separate.
+See `aros/tests/evidence/current-large-pool-20261028` for passes and failed controls.
+
 ## Native debugger and selected CRT acceptance (2026-10-28)
 
 The current debugger with selected source-built DOS64/POSIX/stdc/stdcio passes

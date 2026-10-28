@@ -268,13 +268,19 @@ int main(int argc, char **argv)
         if (!rc) {
             printf("native pool guid=%llu\n",(unsigned long long)spa_guid(spa));
             spa_close(spa,FTAG);
-            rc=payload(dataset,&object,B_TRUE);
+            /* Direct engine diagnostic, not an authenticated service request.
+             * Scope fixture creation explicitly, as the QEMU pool test does;
+             * never restore the old implicit-root behavior in production. */
+            struct oz_cred_scope *fixture_scope=NULL;
+            rc=oz_cred_push(kcred,&fixture_scope);
+            if(!rc)rc=payload(dataset,&object,B_TRUE);
             printf("dataset payload write=%d object=%llu bytes=16384\n",rc,
                 (unsigned long long)object);
             if(!rc) {
                 char files[256];snprintf(files,sizeof(files),"%s/files",pool);
                 rc=oz_zpl_fixture_create(files);printf("real ZPL fixture creation=%d\n",rc);
             }
+            if(fixture_scope)VERIFY0(oz_cred_pop(fixture_scope));
             if (!rc) rc=spa_export(pool,&exported,B_FALSE,B_FALSE);
             printf("spa_export=%d\n",rc);
         }

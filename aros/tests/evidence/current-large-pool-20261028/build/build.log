@@ -1,0 +1,84 @@
+PASS selected engine compiler-input manifest
+In file included from /mnt/short-term/openzfs-bootenv-candidate-20261025/include/sys/zfs_context.h:96,
+                 from /mnt/short-term/openzfs-bootenv-candidate-20261025/aros/engine/pool-test.c:4:
+/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/dependencies.YF6P1Tca/pthread-consistent.zxUBt8mH/source/pthread.h:57:9: warning: 'PTHREAD_KEYS_MAX' redefined
+   57 | #define PTHREAD_KEYS_MAX                      64
+      |         ^~~~~~~~~~~~~~~~
+In file included from /home/terminills/Documents/GitHub/aros-adt-crosstools/lib/gcc/x86_64-aros/15.2.0/include/limits.h:210,
+                 from /home/terminills/Documents/GitHub/aros-adt-crosstools/lib/gcc/x86_64-aros/15.2.0/include/syslimits.h:9,
+                 from /home/terminills/Documents/GitHub/aros-adt-crosstools/lib/gcc/x86_64-aros/15.2.0/include/limits.h:34,
+                 from /home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/sys/param.h:19,
+                 from /mnt/short-term/openzfs-bootenv-candidate-20261025/lib/libspl/include/os/linux/sys/param.h:31,
+                 from /mnt/short-term/openzfs-bootenv-candidate-20261025/lib/libspl/include/sys/types.h:55,
+                 from /mnt/short-term/openzfs-bootenv-candidate-20261025/aros/engine/include/sys/stat.h:4,
+                 from /home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/fcntl.h:14,
+                 from /mnt/short-term/openzfs-bootenv-candidate-20261025/include/sys/zfs_context.h:92:
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/limits.h:40:9: note: this is the location of the previous definition
+   40 | #define PTHREAD_KEYS_MAX                        _POSIX_THREAD_KEYS_MAX
+      |         ^~~~~~~~~~~~~~~~
+/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/dependencies.YF6P1Tca/pthread-consistent.zxUBt8mH/source/pthread.h:58:9: warning: 'PTHREAD_STACK_MIN' redefined
+   58 | #define PTHREAD_STACK_MIN                     40960
+      |         ^~~~~~~~~~~~~~~~~
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/limits.h:41:9: note: this is the location of the previous definition
+   41 | #define PTHREAD_STACK_MIN                       0
+      |         ^~~~~~~~~~~~~~~~~
+/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/dependencies.YF6P1Tca/pthread-consistent.zxUBt8mH/source/pthread.h:59:9: warning: 'PTHREAD_THREADS_MAX' redefined
+   59 | #define PTHREAD_THREADS_MAX                   2019
+      |         ^~~~~~~~~~~~~~~~~~~
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/limits.h:42:9: note: this is the location of the previous definition
+   42 | #define PTHREAD_THREADS_MAX                     _POSIX_THREAD_THREADS_MAX
+      |         ^~~~~~~~~~~~~~~~~~~
+/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/dependencies.YF6P1Tca/pthread-consistent.zxUBt8mH/source/pthread.h:60:9: warning: 'PTHREAD_DESTRUCTOR_ITERATIONS' redefined
+   60 | #define PTHREAD_DESTRUCTOR_ITERATIONS         4
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/limits.h:39:9: note: this is the location of the previous definition
+   39 | #define PTHREAD_DESTRUCTOR_ITERATIONS           _POSIX_THREAD_DESTRUCTOR_ITERATIONS
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In file included from /mnt/short-term/openzfs-bootenv-candidate-20261025/include/sys/zfs_context.h:96,
+                 from /mnt/short-term/openzfs-bootenv-candidate-20261025/aros/engine/raid-read-test.c:5:
+/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/dependencies.YF6P1Tca/pthread-consistent.zxUBt8mH/source/pthread.h:57:9: warning: 'PTHREAD_KEYS_MAX' redefined
+   57 | #define PTHREAD_KEYS_MAX                      64
+      |         ^~~~~~~~~~~~~~~~
+In file included from /home/terminills/Documents/GitHub/aros-adt-crosstools/lib/gcc/x86_64-aros/15.2.0/include/limits.h:210,
+                 from /home/terminills/Documents/GitHub/aros-adt-crosstools/lib/gcc/x86_64-aros/15.2.0/include/syslimits.h:9,
+                 from /home/terminills/Documents/GitHub/aros-adt-crosstools/lib/gcc/x86_64-aros/15.2.0/include/limits.h:34,
+                 from /home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/sys/param.h:19,
+                 from /mnt/short-term/openzfs-bootenv-candidate-20261025/lib/libspl/include/os/linux/sys/param.h:31,
+                 from /mnt/short-term/openzfs-bootenv-candidate-20261025/lib/libspl/include/sys/types.h:55,
+                 from /mnt/short-term/openzfs-bootenv-candidate-20261025/aros/engine/include/sys/stat.h:4,
+                 from /home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/fcntl.h:14,
+                 from /mnt/short-term/openzfs-bootenv-candidate-20261025/include/sys/zfs_context.h:92:
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/limits.h:40:9: note: this is the location of the previous definition
+   40 | #define PTHREAD_KEYS_MAX                        _POSIX_THREAD_KEYS_MAX
+      |         ^~~~~~~~~~~~~~~~
+/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/dependencies.YF6P1Tca/pthread-consistent.zxUBt8mH/source/pthread.h:58:9: warning: 'PTHREAD_STACK_MIN' redefined
+   58 | #define PTHREAD_STACK_MIN                     40960
+      |         ^~~~~~~~~~~~~~~~~
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/limits.h:41:9: note: this is the location of the previous definition
+   41 | #define PTHREAD_STACK_MIN                       0
+      |         ^~~~~~~~~~~~~~~~~
+/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/dependencies.YF6P1Tca/pthread-consistent.zxUBt8mH/source/pthread.h:59:9: warning: 'PTHREAD_THREADS_MAX' redefined
+   59 | #define PTHREAD_THREADS_MAX                   2019
+      |         ^~~~~~~~~~~~~~~~~~~
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/limits.h:42:9: note: this is the location of the previous definition
+   42 | #define PTHREAD_THREADS_MAX                     _POSIX_THREAD_THREADS_MAX
+      |         ^~~~~~~~~~~~~~~~~~~
+/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/dependencies.YF6P1Tca/pthread-consistent.zxUBt8mH/source/pthread.h:60:9: warning: 'PTHREAD_DESTRUCTOR_ITERATIONS' redefined
+   60 | #define PTHREAD_DESTRUCTOR_ITERATIONS         4
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/limits.h:39:9: note: this is the location of the previous definition
+   39 | #define PTHREAD_DESTRUCTOR_ITERATIONS           _POSIX_THREAD_DESTRUCTOR_ITERATIONS
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/mnt/short-term/openzfs-bootenv-candidate-20261025/aros/engine/raid-read-test.c: In function 'read_client':
+/mnt/short-term/openzfs-bootenv-candidate-20261025/aros/engine/raid-read-test.c:65:45: warning: pointer targets in passing argument 1 of 'strlen' differ in signedness [-Wpointer-sign]
+   65 |         if(!startup||!startup->fssm_Device||AROS_BSTR_strlen(startup->fssm_Device)||
+      |                                             ^~~~~~~~~~~~~~~~
+      |                                             |
+      |                                             UBYTE * {aka unsigned char *}
+In file included from /home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/string.h:12,
+                 from /mnt/short-term/openzfs-bootenv-candidate-20261025/lib/libspl/include/string.h:31,
+                 from /mnt/short-term/openzfs-bootenv-candidate-20261025/include/sys/zfs_context.h:95:
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/stdc/string.h:54:29: note: expected 'const char *' but argument is of type 'UBYTE *' {aka 'unsigned char *'}
+   54 | size_t strlen (const char * str);
+      |                ~~~~~~~~~~~~~^~~
+PASS fresh large-pool frontends linked against verified normal engine
