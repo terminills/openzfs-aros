@@ -1,6 +1,7 @@
 /* SPDX-License-Identifier: CDDL-1.0 */
 #include <sys/zfs_context.h>
 #include <sys/zfs_znode.h>
+#include <sys/zfs_sa.h>
 #include <sys/dmu_tx.h>
 #include <sys/spa.h>
 
@@ -79,8 +80,9 @@ zfs_tstamp_update_setup(znode_t *zp, uint_t flag, uint64_t mtime[2],
 
 /* Caller retains the mount teardown hold and znode/SA lifetime throughout.
  * Commit schedules a TXG write; it is not a synchronous durability guarantee.
- * SA updates the existing native or legacy atime attribute in place; this
- * does not request or claim a legacy-to-SA format upgrade. */
+ * On an SA-enabled filesystem the registered upstream callback may upgrade
+ * a legacy znode during sa_update. Reserve its layout/ACL changes as well as
+ * the timestamp; old-format filesystems without that callback stay legacy. */
 int
 oz_znode_flush_atime(znode_t *zp)
 {
@@ -98,6 +100,7 @@ oz_znode_flush_atime(znode_t *zp)
     if (!dirty) return (0);
     dmu_tx_t *tx = dmu_tx_create(fs->z_os);
     dmu_tx_hold_sa(tx, zp->z_sa_hdl, B_FALSE);
+    zfs_sa_upgrade_txholds(tx, zp);
     int error = dmu_tx_assign(tx, DMU_TX_WAIT);
     if (error) {
         dmu_tx_abort(tx);

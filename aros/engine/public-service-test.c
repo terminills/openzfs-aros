@@ -775,7 +775,15 @@ static int cli_result(const char *command,const char *expected)
     int closed=Close(file);
     if(count<0||!closed)return EIO;
     while(count>0&&(text[count-1]=='\n'||text[count-1]=='\r'))text[--count]=0;
-    return strcmp(text,expected)?EIO:0;
+    if(strcmp(text,expected)){
+        char message[640];
+        snprintf(message,sizeof(message),
+            "Public CLI output mismatch bytes=%ld expected=[%s] actual=[%s]\n",
+            (long)count,expected,text);
+        note(message);
+        return EIO;
+    }
+    return 0;
 }
 static int manager_upgrade_request(ULONG flags,const char *options,ULONG expected)
 {

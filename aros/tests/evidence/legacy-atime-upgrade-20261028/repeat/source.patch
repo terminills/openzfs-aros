@@ -1,0 +1,66 @@
+diff --git a/aros/engine/public-service-test.c b/aros/engine/public-service-test.c
+index 3b14bd0..ee0cd8e 100644
+--- a/aros/engine/public-service-test.c
++++ b/aros/engine/public-service-test.c
+@@ -775,7 +775,15 @@ static int cli_result(const char *command,const char *expected)
+     int closed=Close(file);
+     if(count<0||!closed)return EIO;
+     while(count>0&&(text[count-1]=='\n'||text[count-1]=='\r'))text[--count]=0;
+-    return strcmp(text,expected)?EIO:0;
++    if(strcmp(text,expected)){
++        char message[640];
++        snprintf(message,sizeof(message),
++            "Public CLI output mismatch bytes=%ld expected=[%s] actual=[%s]\n",
++            (long)count,expected,text);
++        note(message);
++        return EIO;
++    }
++    return 0;
+ }
+ static int manager_upgrade_request(ULONG flags,const char *options,ULONG expected)
+ {
+diff --git a/aros/engine/test-hosted-security.sh b/aros/engine/test-hosted-security.sh
+index 5a54645..fd242b6 100644
+--- a/aros/engine/test-hosted-security.sh
++++ b/aros/engine/test-hosted-security.sh
+@@ -46,7 +46,7 @@ artifact_root=$(oz_artifact_root "$repo/build-aros" "${AROS_ARTIFACT_ROOT:-}")
+ run=$(mktemp -d "$artifact_root/hosted-security-test.XXXXXXXX")
+ echo "Evidence: $run"
+ for dir in boot C Classes Devs Fonts L Libs Locale Prefs S System;do
+-    cp -a --reflink=auto "$runtime/$dir" "$run/$dir"
++    cp -aL --reflink=auto "$runtime/$dir" "$run/$dir"
+ done
+ cp "$runtime/AROS.boot" "$run/AROS.boot"
+ cp -a aros/engine/security-fixture "$run/Security"
+diff --git a/aros/zpl/timestamps.c b/aros/zpl/timestamps.c
+index 833de9c..22e3673 100644
+--- a/aros/zpl/timestamps.c
++++ b/aros/zpl/timestamps.c
+@@ -1,6 +1,7 @@
+ /* SPDX-License-Identifier: CDDL-1.0 */
+ #include <sys/zfs_context.h>
+ #include <sys/zfs_znode.h>
++#include <sys/zfs_sa.h>
+ #include <sys/dmu_tx.h>
+ #include <sys/spa.h>
+ 
+@@ -79,8 +80,9 @@ zfs_tstamp_update_setup(znode_t *zp, uint_t flag, uint64_t mtime[2],
+ 
+ /* Caller retains the mount teardown hold and znode/SA lifetime throughout.
+  * Commit schedules a TXG write; it is not a synchronous durability guarantee.
+- * SA updates the existing native or legacy atime attribute in place; this
+- * does not request or claim a legacy-to-SA format upgrade. */
++ * On an SA-enabled filesystem the registered upstream callback may upgrade
++ * a legacy znode during sa_update. Reserve its layout/ACL changes as well as
++ * the timestamp; old-format filesystems without that callback stay legacy. */
+ int
+ oz_znode_flush_atime(znode_t *zp)
+ {
+@@ -98,6 +100,7 @@ oz_znode_flush_atime(znode_t *zp)
+     if (!dirty) return (0);
+     dmu_tx_t *tx = dmu_tx_create(fs->z_os);
+     dmu_tx_hold_sa(tx, zp->z_sa_hdl, B_FALSE);
++    zfs_sa_upgrade_txholds(tx, zp);
+     int error = dmu_tx_assign(tx, DMU_TX_WAIT);
+     if (error) {
+         dmu_tx_abort(tx);

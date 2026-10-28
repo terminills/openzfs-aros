@@ -46,7 +46,7 @@ artifact_root=$(oz_artifact_root "$repo/build-aros" "${AROS_ARTIFACT_ROOT:-}")
 run=$(mktemp -d "$artifact_root/hosted-security-test.XXXXXXXX")
 echo "Evidence: $run"
 for dir in boot C Classes Devs Fonts L Libs Locale Prefs S System;do
-    cp -a --reflink=auto "$runtime/$dir" "$run/$dir"
+    cp -aL --reflink=auto "$runtime/$dir" "$run/$dir"
 done
 cp "$runtime/AROS.boot" "$run/AROS.boot"
 cp -a aros/engine/security-fixture "$run/Security"
