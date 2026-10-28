@@ -70,6 +70,7 @@ class EvidenceTests(unittest.TestCase):
             for run in runs:
                 run.mkdir()
                 (run / 'inputs.sha256').write_text(evidence)
+                (run / 'iso-runtime.sha256').write_text(evidence)
             (runs[-1] / 'native-debugger.sha256').write_text('role marker')
             iso_manifest = runs[-1] / 'iso-runtime.sha256'
             iso_manifest.write_text(evidence)
@@ -87,16 +88,18 @@ class EvidenceTests(unittest.TestCase):
                     with self.assertRaisesRegex(ValueError, 'differs from tested'):
                         stage.require_platform_runtime(selected, runs)
                 manifest.write_text(evidence)
-            for bad in ('', evidence + evidence.splitlines()[0] + '\n',
-                        evidence.replace(stage.digest(selected / 'Libs/dos64.library'), '0' * 64),
-                        'invalid manifest\n'):
-                iso_manifest.write_text(bad)
-                with self.subTest(iso=bad), self.assertRaises(ValueError):
+            for run in runs:
+                iso_manifest = run / 'iso-runtime.sha256'
+                for bad in ('', evidence + evidence.splitlines()[0] + '\n',
+                            evidence.replace(stage.digest(selected / 'Libs/dos64.library'), '0' * 64),
+                            'invalid manifest\n'):
+                    iso_manifest.write_text(bad)
+                    with self.subTest(run=run.name, iso=bad), self.assertRaises(ValueError):
+                        stage.require_platform_runtime(selected, runs)
+                iso_manifest.unlink()
+                with self.subTest(run=run.name), self.assertRaisesRegex(ValueError, 'Missing prepared ISO'):
                     stage.require_platform_runtime(selected, runs)
-            iso_manifest.unlink()
-            with self.assertRaisesRegex(ValueError, 'Missing prepared ISO'):
-                stage.require_platform_runtime(selected, runs)
-            iso_manifest.write_text(evidence)
+                iso_manifest.write_text(evidence)
             (selected / 'Libs/dos64.library').unlink()
             with self.assertRaises(FileNotFoundError):
                 stage.require_platform_runtime(selected, runs)

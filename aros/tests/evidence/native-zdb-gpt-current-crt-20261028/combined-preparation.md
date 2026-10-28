@@ -20,6 +20,13 @@ files matched. Results are retained externally in
 `build-audit/iso-runtime-check.N1aXhsKl`, with hashes copied alongside this note.
 This checks ISO contents, not a new native GUI/cold/encrypted-root execution.
 
+The release stager now requires `iso-runtime.sha256` for every selected CRT
+in each of the GUI, cold, encrypted-root, and debugger acceptance runs.
+Input hashes alone no longer qualify an older combined run. The 20-test
+staging suite exercises absent, empty, duplicate, malformed, and mismatched
+ISO manifests independently for all four runs. Missing evidence must be
+obtained from the actual test image, not synthesized from the intended inputs.
+
 Completed `sqr6jdSX` and `QRkxXhcQ` ISO files were compressed with zstd.
 Decompressed hashes matched the originals, file identity remained unchanged,
 and no open users were found before removing only the uncompressed ISO files.

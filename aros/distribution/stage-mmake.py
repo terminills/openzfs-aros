@@ -239,8 +239,7 @@ def require_platform_runtime(stage, runs):
         source = stage / 'Libs' / name
         for run in runs:
             require_match(source, run)
-            if (run / 'native-debugger.sha256').is_file():
-                require_iso_match(source, run)
+            require_iso_match(source, run)
         selected['Platform/Libs/' + name] = source
     return selected
 
