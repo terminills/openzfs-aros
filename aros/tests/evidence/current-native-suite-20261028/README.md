@@ -52,3 +52,30 @@ and completed. The same explicit El Torito-only generation is now applied
 to every follow-on ISO builder; future runs must validate that change.
 The encrypted-root attempt after this pass was refused before any preparation
 or launch because another agent's QEMU appeared. No competing VM was started.
+
+## Encrypted native cold writer and resumed reader
+
+`TFkyLdzR` stopped during preparation because the partition-test SDK fallback
+pointed at an obsolete `/opt` location. The harness now requires an explicit
+SDK for this mode; the private recipe selects the matching current SDK.
+No guest ran in that failed preparation.
+
+`XMxcRVST` passed the encrypted native writer, including locked import,
+wrong-key rejection, key reload and exact data. QEMU then refused to start
+the cold reader because the run path plus `native-cold-monitor` exceeded the
+Unix socket path limit. The error is retained in `encrypted-cold/`.
+The runner now uses the shorter `n-monitor` basename for its sequential native
+cold phases. No unrelated process or socket is used.
+
+The retained cold ISO and writer disk were resumed without rebuilding either.
+The pre-cold disk hash was checked before launch. The reader passed locked
+mount refusal, key loading, exact reads, readonly write denial and export;
+the complete pool image hash was unchanged afterward. All five cold ISO
+runtime files were extracted and compared with the verified writer runtime.
+The private resume script and transcripts are retained here.
+
+This is a verified encrypted cold-read result, not a complete release gate:
+the separate native discovery/corrupt/conflicting-label scenarios are not
+executed by NATIVE_COLD mode and remain required. The original full harness
+exited nonzero at launch; the explicit resumed reader exited zero. Neither
+result is relabeled as a complete combined acceptance run.

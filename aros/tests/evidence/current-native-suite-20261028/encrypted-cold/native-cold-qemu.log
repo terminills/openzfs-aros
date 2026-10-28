@@ -1,0 +1,2 @@
+qemu-system-x86_64: -monitor unix:/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/public-service-run.XMxcRVST/native-cold-monitor,server=on,wait=off: UNIX socket path '/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/public-service-run.XMxcRVST/native-cold-monitor' is too long
+Path must be less than 108 bytes

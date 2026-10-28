@@ -446,7 +446,7 @@ if [[ $force_create == 1 ]];then
     extra_maps+=(-map aros/engine/public-service-test-only /openzfs-force-create-test)
 fi
 if [[ $partitions == 1 ]];then
-    sdk=${AROS_SDK:-/opt/aros-workspace/aros-amiwest-nightly-release/bin/pc-x86_64-smp/AROS/Developer}
+    sdk=${AROS_SDK:?explicit matching SDK required for native partition tests}
     python3 aros/platform/make-partition-fixture.py mbr "$run/partition.raw"
     qemu-img create -f raw "$run/blank.raw" 256M
     sha256sum "$run/partition.raw" "$run/blank.raw" > "$run/disks-before.sha256"
@@ -1054,6 +1054,9 @@ if [[ $native_cold == 1 || $all_native == 1 ]];then
         done
     fi
     for native_phase in "${native_phases[@]}";do
+      # Keep the AF_UNIX pathname within sockaddr_un.sun_path even when
+      # the artifact root is long. Phases execute sequentially.
+      native_monitor="$run/n-monitor"
       native_iso="$run/native-cold.iso"
       native_first=(-drive "file=$run/partition.raw,format=raw,if=ide,index=0")
       expected_reader=$native_reader
@@ -1078,7 +1081,7 @@ if [[ $native_cold == 1 || $all_native == 1 ]];then
         "${native_cold_drives[@]}" \
         -display none -nic none -boot d -no-reboot -no-shutdown \
         -serial "file:$run/$native_phase-serial.log" \
-        -monitor "unix:$run/$native_phase-monitor,server=on,wait=off" > "$run/$native_phase-qemu.log" 2>&1 &
+        -monitor "unix:$native_monitor,server=on,wait=off" > "$run/$native_phase-qemu.log" 2>&1 &
     pid=$!
     trap cleanup EXIT
     deadline=$((SECONDS+duration))
@@ -1092,7 +1095,7 @@ if [[ $native_cold == 1 || $all_native == 1 ]];then
         if ! kill -0 "$pid" 2>/dev/null || ((SECONDS>=deadline));then echo "Native cold timeout/exit: $run" >&2;exit 1;fi
         sleep 1
     done
-    printf 'quit\n' | socat - "UNIX-CONNECT:$run/$native_phase-monitor" >/dev/null
+    printf 'quit\n' | socat - "UNIX-CONNECT:$native_monitor" >/dev/null
     wait "$pid"
     trap - EXIT
     case "$native_phase" in
