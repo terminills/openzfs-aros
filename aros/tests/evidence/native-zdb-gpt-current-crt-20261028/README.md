@@ -18,6 +18,27 @@ shared debugger. The harness now extracts an explicitly selected filesystem
 package from the final ISO and compares it byte-for-byte, in addition to the
 existing runtime library checks. Its hash is retained in `iso-runtime.sha256`.
 
-At preparation time this is NOT a native pass. The replacement still requires
-an owned QEMU slot, complete pool/authorization/L2ARC checks, and unchanged
-device comparisons. No DUT or user hosted session was used.
+## Native result
+
+The replacement subsequently ran in an owned QEMU slot (8 vCPU, 2 GiB,
+no network). `pass/` retains its native transcript and host verification:
+
+- Full pool traversal matches three dataset descriptions, 21 feature checks,
+  and 72 object rows from the independent host debugger.
+- Authenticated root access, unprivileged EACCES, partial-admission failure,
+  duplicate-path recovery, and member-zero reopening passed.
+- Shared debugger lifecycle and caller-exit checks, damaged labels, and
+  L2ARC endian/corruption/bounds/recovery checks passed.
+- Both native ATA overlays compare byte-for-byte identical to their bases;
+  selected input hashes also remain unchanged.
+
+The private replay script initially invoked the L2ARC verifier before creating
+its required unchanged-device log. That postprocessing failed with a missing
+file after the guest had finished successfully. After the VM exited, both
+actual device comparisons were performed, and the L2ARC verifier passed.
+The retained replay recipe now orders the comparisons before that verifier.
+No guest rerun or fabricated result was used to cover the missing check.
+
+The QEMU lease was released after this run. No DUT or user hosted session was
+used. This closes the selected-runtime GPT debugger test, not the full port or
+the remaining combined GUI/cold/encrypted-root packaging qualification.
