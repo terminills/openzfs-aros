@@ -2,6 +2,30 @@
 
 Experimental development snapshot; not production-qualified storage software.
 
+## Retained stdc source and runtime packaging (2026-10-28)
+
+The runtime snapshot builder now rebuilds all 518 selected stdc objects,
+including x86-64 math/setjmp assembly, with a retained generated locale table
+and ABI headers. Relocated replay produces a byte-identical library. Two fresh
+isolated hosted writer/cold-reader runs pass with this candidate; one includes
+native Manager response saving and authenticated snapshot creation followed
+by independent cold discovery. The stdcio default build still reproduces its
+previously qualified binary. Packaging now requires retained stdc and stdcio
+source snapshots and binds both binaries, alongside POSIX, to native evidence.
+This is not whole-OS/toolchain source closure or native-QEMU qualification.
+See `aros/engine/CRT-SOURCE-BUILDS.md` and
+`aros/tests/evidence/stdc-source-20261028`.
+
+## Native response save destination (2026-10-28)
+
+Manager response saving uses the native file requester and refuses existing
+files rather than overwriting a fixed temporary destination. It saves the
+current backend response/page, including details hidden in Simple mode; full
+large command reports remain separate. Actual hosted save, repeat refusal,
+cancellation, continued snapshot interaction and cold import passed. Host tests
+also cover interrupted/short writes and write/close failures. These do not
+prove power-loss durability. See `aros/tests/evidence/hosted-response-save-20261028`.
+
 ## UI clone cold persistence (2026-10-28)
 
 The persistent hosted GUI fixture now retains its UI-created clone instead

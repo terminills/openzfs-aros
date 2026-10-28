@@ -106,6 +106,28 @@ def require_stdcio_snapshot(snapshot, binary):
     return paths
 
 
+def require_stdc_snapshot(snapshot, binary):
+    paths = snapshot_paths(snapshot)
+    required = {pathlib.Path(name) for name in (
+        "rebuild.json", "rebuild-fat-snapshot.py", "source/LICENSE",
+        "provenance.json", "stdc.library", "source/compiler/crt/stdc/__stdc_intbase.h",
+        "generated/include/stdc_libdefs.h", "generated/include/stdc_deflibdefs.h",
+        "generated/include/aros/x86_64/asm.h", "generated/defaults/en_GB_ISO8859-1.c",
+        "source/arch/x86_64-all/stdc/setjmp.s", "source/arch/x86_64-all/stdc/longjmp.s",
+        "generated/stdc_start.c", "generated/stdc_end.c")}
+    if not required.issubset(paths):
+        raise ValueError("Incomplete stdc source snapshot")
+    if (snapshot / 'generated/include/stdc_deflibdefs.h').read_text().strip() != (
+            '#define LC_LIBDEFS_FILE "stdc_libdefs.h"'):
+        raise ValueError("stdc ABI include is not snapshot-local")
+    recipe = json.loads((snapshot / "rebuild.json").read_text())
+    if (recipe.get("format") != 1 or recipe.get("artifact") != "stdc.library"
+            or recipe.get("expected_binary") != digest(binary)
+            or digest(snapshot / "stdc.library") != digest(binary)):
+        raise ValueError("stdc source recipe does not bind selected binary")
+    return paths
+
+
 def require_afs_snapshot(snapshot, binary):
     paths = snapshot_paths(snapshot)
     required = {pathlib.Path(name) for name in (
@@ -347,6 +369,7 @@ def main():
     parser.add_argument("--dos-source-snapshot", type=pathlib.Path, required=True)
     parser.add_argument("--posix-source-snapshot", type=pathlib.Path, required=True)
     parser.add_argument("--stdcio-source-snapshot", type=pathlib.Path, required=True)
+    parser.add_argument("--stdc-source-snapshot", type=pathlib.Path, required=True)
     parser.add_argument("--afs-handler", type=pathlib.Path)
     parser.add_argument("--afs-source-snapshot", type=pathlib.Path)
     args = parser.parse_args()
@@ -434,6 +457,8 @@ def main():
     posix_sources = require_posix_snapshot(posix_snapshot, selected["Platform/Libs/posixc.library"])
     stdcio_snapshot = args.stdcio_source_snapshot.resolve(strict=True)
     stdcio_sources = require_stdcio_snapshot(stdcio_snapshot, selected["Platform/Libs/stdcio.library"])
+    stdc_snapshot = args.stdc_source_snapshot.resolve(strict=True)
+    stdc_sources = require_stdc_snapshot(stdc_snapshot, selected["Platform/Libs/stdc.library"])
     selected["Platform/L/fat-handler"] = fat
     selected["Platform/Boot/aros-base.pkg.xz"] = dos
     afs = args.afs_handler.resolve(strict=True) if args.afs_handler else None
@@ -487,6 +512,13 @@ def main():
         target.parent.mkdir(parents=True, exist_ok=True)
         shutil.copy2(stdcio_snapshot / relative, target)
     require_stdcio_snapshot(sources, output / "Platform/Libs/stdcio.library")
+    sources = output / "Sources/StdC"
+    sources.mkdir(parents=True)
+    for relative in [*stdc_sources, pathlib.Path("retained.sha256")]:
+        target = sources / relative
+        target.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(stdc_snapshot / relative, target)
+    require_stdc_snapshot(sources, output / "Platform/Libs/stdc.library")
     if afs_sources:
         sources = output / 'Sources/AFS'
         sources.mkdir(parents=True)

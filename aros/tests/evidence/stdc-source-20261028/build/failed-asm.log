@@ -1,0 +1,12 @@
+/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/stdc-source.vnv9latn/source/arch/x86_64-all/stdc/math/e_fmodf.s:6:18: fatal error: aros/x86_64/asm.h: No such file or directory
+    6 |         #include "aros/x86_64/asm.h"
+      |                  ^~~~~~~~~~~~~~~~~~~
+compilation terminated.
+Traceback (most recent call last):
+  File "/mnt/short-term/openzfs-bootenv-candidate-20261025/aros/engine/record-source-build.py", line 66, in <module>
+    main()
+  File "/mnt/short-term/openzfs-bootenv-candidate-20261025/aros/engine/record-source-build.py", line 27, in main
+    subprocess.run(args, check=True)
+  File "/home/terminills/.local/share/uv/python/cpython-3.12.12-linux-x86_64-gnu/lib/python3.12/subprocess.py", line 571, in run
+    raise CalledProcessError(retcode, process.args,
+subprocess.CalledProcessError: Command '['/home/terminills/Documents/GitHub/aros-adt-crosstools/x86_64-aros-gcc', '--sysroot=/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer', '-B/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/lib/', '-m64', '-mcmodel=large', '-mno-red-zone', '-mno-ms-bitfields', '-x', 'assembler-with-cpp', '-I/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include', '-c', '/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/stdc-source.vnv9latn/source/arch/x86_64-all/stdc/math/e_fmodf.s', '-o', '/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/stdc-source.vnv9latn/objects/2-e_fmodf.o', '-MD', '-MF', '/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/stdc-source.vnv9latn/objects/2-e_fmodf.d']' returned non-zero exit status 1.

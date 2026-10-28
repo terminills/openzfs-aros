@@ -1,0 +1,13 @@
+In file included from /mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/stdc-source.m8rezxt_/source/compiler/crt/stdc/math/bsdsrc/b_exp.c:71:
+/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/stdc-source.m8rezxt_/source/compiler/crt/stdc/math/bsdsrc/mathimpl.h:36:10: fatal error: math_private.h: No such file or directory
+   36 | #include "math_private.h"
+      |          ^~~~~~~~~~~~~~~~
+compilation terminated.
+Traceback (most recent call last):
+  File "/mnt/short-term/openzfs-bootenv-candidate-20261025/aros/engine/record-source-build.py", line 66, in <module>
+    main()
+  File "/mnt/short-term/openzfs-bootenv-candidate-20261025/aros/engine/record-source-build.py", line 27, in main
+    subprocess.run(args, check=True)
+  File "/home/terminills/.local/share/uv/python/cpython-3.12.12-linux-x86_64-gnu/lib/python3.12/subprocess.py", line 571, in run
+    raise CalledProcessError(retcode, process.args,
+subprocess.CalledProcessError: Command '['/home/terminills/Documents/GitHub/aros-adt-crosstools/x86_64-aros-gcc', '--sysroot=/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer', '-B/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/lib/', '-m64', '-mcmodel=large', '-mno-red-zone', '-mno-ms-bitfields', '-O2', '-noposixc', '-fno-builtin', '-D_GNU_SOURCE', '-D__ISO_C_VISIBLE=2011', '-Dlint', '-D__FBSDID(x)=', '-I/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/stdc-source.m8rezxt_/generated/include', '-I/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/stdc', '-iquote', '/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/stdc-source.m8rezxt_/source/compiler/crt/stdc', '-iquote', '/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/stdc-source.m8rezxt_/source/compiler/crt/common', '-iquote', '/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/stdc-source.m8rezxt_/source/compiler/fmtprintf', '-include', '/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/stdc-source.m8rezxt_/generated/include/stdc_deflibdefs.h', '-fno-math-errno', '-DSTDC_LOCALE_DEFAULT="/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/stdc-source.m8rezxt_/generated/defaults/en_GB_ISO8859-1.c"', '-c', '/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/stdc-source.m8rezxt_/source/compiler/crt/stdc/math/bsdsrc/b_exp.c', '-o', '/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/stdc-source.m8rezxt_/objects/73-b_exp.o', '-MD', '-MF', '/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/stdc-source.m8rezxt_/objects/73-b_exp.d']' returned non-zero exit status 1.

@@ -13,6 +13,51 @@ spec.loader.exec_module(stage)
 
 
 class EvidenceTests(unittest.TestCase):
+    def test_stdc_snapshot_binds_assembly_locale_and_binary(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = pathlib.Path(directory)
+            names = ('rebuild-fat-snapshot.py', 'source/LICENSE', 'provenance.json',
+                     'stdc.library', 'source/compiler/crt/stdc/__stdc_intbase.h',
+                     'generated/include/stdc_libdefs.h', 'generated/include/stdc_deflibdefs.h',
+                     'generated/include/aros/x86_64/asm.h',
+                     'generated/defaults/en_GB_ISO8859-1.c',
+                     'source/arch/x86_64-all/stdc/setjmp.s',
+                     'source/arch/x86_64-all/stdc/longjmp.s',
+                     'generated/stdc_start.c', 'generated/stdc_end.c')
+            for name in names:
+                path = root / name
+                path.parent.mkdir(parents=True, exist_ok=True)
+                path.write_text(name)
+            header = root / 'generated/include/stdc_deflibdefs.h'
+            header.write_text('#define LC_LIBDEFS_FILE "stdc_libdefs.h"\n')
+            recipe = root / 'rebuild.json'
+            recipe.write_text(json.dumps({'format': 1, 'artifact': 'stdc.library',
+                                          'expected_binary': stage.digest(root / 'stdc.library')}))
+            def seal(omit=None):
+                (root / 'retained.sha256').write_text(''.join(
+                    stage.digest(root / name) + '  ' + name + '\n'
+                    for name in (*names, 'rebuild.json') if name != omit))
+            seal()
+            stage.require_stdc_snapshot(root, root / 'stdc.library')
+            seal('generated/include/aros/x86_64/asm.h')
+            with self.assertRaisesRegex(ValueError, 'Incomplete stdc'):
+                stage.require_stdc_snapshot(root, root / 'stdc.library')
+            seal()
+            for path, text, diagnostic in (
+                    (header, '#define LC_LIBDEFS_FILE "/private/stdc_libdefs.h"\n', 'snapshot-local'),
+                    (recipe, recipe.read_text().replace('stdc.library', 'other.library'), 'bind selected'),
+                    (root / 'stdc.library', 'untested binary', 'bind selected')):
+                original = path.read_text()
+                path.write_text(text)
+                seal()
+                with self.subTest(path=path.name), self.assertRaisesRegex(ValueError, diagnostic):
+                    stage.require_stdc_snapshot(root, root / 'stdc.library')
+                path.write_text(original)
+                seal()
+            (root / 'generated/defaults/en_GB_ISO8859-1.c').write_text('changed locale')
+            with self.assertRaisesRegex(ValueError, 'Retained input changed'):
+                stage.require_stdc_snapshot(root, root / 'stdc.library')
+
     def test_stdcio_snapshot_binds_selected_binary_and_local_abi(self):
         with tempfile.TemporaryDirectory() as directory:
             root = pathlib.Path(directory)

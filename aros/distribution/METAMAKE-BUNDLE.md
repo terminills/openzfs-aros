@@ -71,10 +71,13 @@ python3 Sources/StdioC/rebuild-fat-snapshot.py Sources/StdioC --output-parent /p
 
 Both stdcio.library and stdc.library must be present in the input build's
 `stage/Libs/` and match GUI, cold, encrypted-root and native-debugger evidence.
-Missing evidence is not replaced by hosted-only qualification. The bundled
-stdc.library remains an explicit SDK binary dependency; this stdcio snapshot
-does not provide its corresponding source closure. Old evidence sets lacking
-these runtime hashes cannot qualify a new bundle.
+Missing evidence is not replaced by hosted-only qualification.
+`--stdc-source-snapshot` is also required. `Sources/StdC/` retains the C/math
+and x86-64 assembly sources, generated locale table and ABI/assembly headers,
+and the replay recipe for stdc.library. Use the same replay helper with
+`Sources/StdC` as its input. SDK headers, link archives and the compiler remain
+explicit external dependencies; these snapshots do not rebuild the whole OS.
+Old evidence sets lacking these runtime hashes cannot qualify a new bundle.
 
 `Sources/DOS/` similarly retains the pinned DOS source/catalog revisions,
 generated sources and headers, execute-policy patch and upstream license

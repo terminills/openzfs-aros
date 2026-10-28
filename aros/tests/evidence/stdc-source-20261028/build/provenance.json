@@ -1,0 +1,8 @@
+{
+  "upstream": "/home/terminills/Documents/GitHub/aros-adt-src",
+  "generated": "/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/gen/compiler/crt/stdc/stdc",
+  "library": "stdc",
+  "stdio_source": null,
+  "upstream_head": "671efe3b321926332e3330a0e138ed4a3d4e820e",
+  "note": "Source contents retained; HEAD is context, not a clean-tree claim."
+}
