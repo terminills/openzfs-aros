@@ -1,5 +1,27 @@
 # Reproducible AROS runtime candidates
 
+## DOS64
+
+Build the full selected DOS64 source inventory without cached module objects:
+
+```sh
+python3 aros/engine/build-dos64-snapshot.py \
+  --upstream /path/to/aros-source \
+  --generated /path/to/gen/rom/dos64/dos64 \
+  --sdk /path/to/AROS/Developer --cc /path/to/x86_64-aros-gcc \
+  --output-parent /path/to/private/external/builds
+```
+
+The builder retains DOS64 sources, its shared DOS filehandle header, generated
+ABI inputs, licenses and the replay recipe. It checks the full source/object
+inventory and rejects cached objects or unretained source dependencies. SDK
+headers/link archives and the compiler remain hash-bound external prerequisites.
+Use the replay command below to verify a relocated byte-identical rebuild.
+`stage-mmake.py --dos64-source-snapshot` requires the snapshot to match the
+selected, tested library and includes it under `Sources/DOS64`.
+
+## stdc and stdcio
+
 `build-stdcio-snapshot.py` builds private stdcio or stdc candidates from the
 selected AROS source tree and generated link map. It never installs them.
 The generated inputs and SDK must belong to the intended ABI. Retained hashes

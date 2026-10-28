@@ -13,6 +13,49 @@ spec.loader.exec_module(stage)
 
 
 class EvidenceTests(unittest.TestCase):
+    def test_dos64_snapshot_binds_source_abi_and_selected_binary(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = pathlib.Path(directory)
+            names = ('rebuild-fat-snapshot.py', 'provenance.json', 'source/LICENSE',
+                     'dos64.library', 'source/rom/dos64/dos64.conf',
+                     'source/rom/dos64/dos64_support.c', 'source/rom/dos64/dos64_packet.c',
+                     'source/rom/dos/dos_fhflags.h', 'generated/dos64_start.c',
+                     'generated/dos64_end.c', 'generated/include/dos64_libdefs.h',
+                     'generated/include/dos64_deflibdefs.h')
+            for name in names:
+                path = root / name
+                path.parent.mkdir(parents=True, exist_ok=True)
+                path.write_text(name)
+            header = root / 'generated/include/dos64_deflibdefs.h'
+            header.write_text('#define LC_LIBDEFS_FILE "dos64_libdefs.h"\n')
+            recipe = root / 'rebuild.json'
+            recipe.write_text(json.dumps({'format': 1, 'artifact': 'dos64.library',
+                                          'expected_binary': stage.digest(root / 'dos64.library')}))
+            def seal(omit=None):
+                (root / 'retained.sha256').write_text(''.join(
+                    stage.digest(root / name) + '  ' + name + '\n'
+                    for name in (*names, 'rebuild.json') if name != omit))
+            seal()
+            stage.require_dos64_snapshot(root, root / 'dos64.library')
+            seal('source/rom/dos64/dos64_support.c')
+            with self.assertRaisesRegex(ValueError, 'Incomplete DOS64'):
+                stage.require_dos64_snapshot(root, root / 'dos64.library')
+            seal()
+            for path, text, diagnostic in (
+                    (header, '#define LC_LIBDEFS_FILE "/private/dos64_libdefs.h"\n', 'snapshot-local'),
+                    (recipe, recipe.read_text().replace('dos64.library', 'other.library'), 'bind selected'),
+                    (root / 'dos64.library', 'untested', 'bind selected')):
+                original = path.read_text()
+                path.write_text(text)
+                seal()
+                with self.subTest(path=path.name), self.assertRaisesRegex(ValueError, diagnostic):
+                    stage.require_dos64_snapshot(root, root / 'dos64.library')
+                path.write_text(original)
+                seal()
+            (root / 'source/rom/dos64/dos64_support.c').write_text('unrecorded source drift')
+            with self.assertRaisesRegex(ValueError, 'Retained input changed'):
+                stage.require_dos64_snapshot(root, root / 'dos64.library')
+
     def test_platform_runtime_requires_dos64_in_every_acceptance_run(self):
         with tempfile.TemporaryDirectory() as directory:
             root = pathlib.Path(directory)

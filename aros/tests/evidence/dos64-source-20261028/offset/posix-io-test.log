@@ -1,0 +1,10 @@
+file=SYS:posix-io-32467d3a.bin off_t=8 fd=3
+offset=0 write=512 errno=0 read=512 errno=0 diff=0 stat=0 size=512
+offset=16384 write=512 errno=0 read=512 errno=0 diff=0 stat=0 size=16896
+offset=2147483136 write=512 errno=0 read=512 errno=0 diff=0 stat=0 size=2147483648
+offset=2147483648 write=512 errno=0 read=512 errno=0 diff=0 stat=0 size=2147484160
+offset=4294966784 write=512 errno=0 read=512 errno=0 diff=0 stat=0 size=4294967296
+offset=4294967296 write=512 errno=0 read=512 errno=0 diff=0 stat=0 size=4294967808
+RESULT raw POSIX reopen exact=1 holes=1 failures=0
+RESULT raw POSIX boundaries=6 holes=3 preserved-offset=1 failures=0
+RESULT raw POSIX failures=0

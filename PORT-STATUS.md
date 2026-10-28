@@ -2,6 +2,16 @@
 
 Experimental development snapshot; not production-qualified storage software.
 
+## Source-rebuilt DOS64 dependency (2026-10-28)
+
+DOS64 now builds from a complete retained source inventory without cached module
+objects, with a byte-identical relocated replay. Staging requires and packages
+the hash-bound source snapshot. The new candidate passes >4 GiB offset/growth
+and reopen checks, full hosted writer/cold-reader service/CLI/handler tests,
+and the independent hosted debugger regression. SDK headers, link archives and
+toolchain remain external recorded dependencies; this is not whole-OS closure
+or native QEMU acceptance. See `aros/tests/evidence/dos64-source-20261028`.
+
 ## DOS64 packaging and matched hosted runtime (2026-10-28)
 
 Staging now binds the selected DOS64, POSIX, stdc and stdcio binaries across
