@@ -2,6 +2,16 @@
 
 Experimental development snapshot; not production-qualified storage software.
 
+## Current CRT actual-Manager persistence (2026-10-28)
+
+The current Manager with source-built DOS64/POSIX/stdc/stdcio passed an actual
+hosted GUI snapshot submission followed by independent zdb and a separate cold
+handler reader. The snapshot persisted, exact readback/read-only refusal and
+degraded/restored recovery passed, and original members stayed unchanged.
+Named-window screenshots, activity logs and complete input hashes are retained
+in `aros/tests/evidence/current-crt-manager-20261028`. This closes the hosted
+GUI check for this selected CRT set, not native public-package acceptance.
+
 ## Current-engine large-pool qualification (2026-10-28)
 
 Fresh diagnostic frontends linked against the source/header/hash-verified normal
