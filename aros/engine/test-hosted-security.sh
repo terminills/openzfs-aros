@@ -75,7 +75,8 @@ printf '%s\n' 'FailAt 21' 'Stack 262144' \
 if [[ -n $service ]];then
     rg -Fxq 'service_test_modes=0' "$service/service-build-options.txt"
     rg -Fxq 'full_dispatcher=1' "$service/service-build-options.txt"
-    cp "$service/OpenZFSServiceNative" "$service/OpenZFSPublicServiceTest" "$run/C/"
+    cp "$service/OpenZFSServiceNative" "$run/C/"
+    cp "${AROS_TEST_CLIENT_BINARY:-$service/OpenZFSPublicServiceTest}" "$run/C/OpenZFSPublicServiceTest"
     if [[ -n $shared ]];then
         cp "$shared/OpenZFSServiceNative" "$run/C/"
         cp "$shared/openzfs.library" "$run/Libs/"
@@ -114,6 +115,9 @@ if [[ -n $service ]];then
         fi
         if [[ $mode == GUI ]];then
             printf '%s\n' 'Cold reader must find actual GUI snapshot' >"$run/openzfs-gui-snapshot-required"
+            if [[ $gui_clone == 1 ]];then
+                printf '%s\n' 'Retain actual GUI clone for cold verification' >"$run/openzfs-gui-clone-persistent"
+            fi
         fi
     fi
     printf '%s\n' 'FailAt 21' 'MakeDir RAM:T RAM:ENV' 'Assign T: RAM:T' \
@@ -212,7 +216,8 @@ if [[ -n $service ]];then
     fi
     if [[ -n $handler ]];then rg -q 'Public packaged handler PASS' "$run/serial.log";fi
     if [[ $gui_clone == 1 ]];then
-        rg -q 'Public GUI clone PASS quota=1 compression=1 no-mount=1 origin=1 cleanup=1' "$run/serial.log"
+        if [[ $persistent == 1 ]];then clone_result=retained=1;else clone_result=cleanup=1;fi
+        rg -q "Public GUI clone PASS quota=1 compression=1 no-mount=1 origin=1 $clone_result" "$run/serial.log"
     fi
 fi
 if [[ $persistent == 1 ]];then
@@ -250,6 +255,9 @@ if [[ $persistent == 1 ]];then
     rg -q 'Public cold hosted DOS PASS exact=1 readonly-refusal=1 exported=1' "$run/cold-serial.log"
     rg -q 'Public cold degraded assign PASS missing=1 exact=1 readonly=1 restored=1' "$run/cold-serial.log"
     if [[ $mode == GUI ]];then rg -q 'Public cold GUI snapshot retained PASS' "$run/cold-serial.log";fi
+    if [[ $gui_clone == 1 ]];then
+        rg -q 'Public cold GUI clone PASS properties=1 origin=1 exact-read=1 readonly-refusal=1 detached=1' "$run/cold-serial.log"
+    fi
     cleanup
     sha256sum -c "$run/before-cold.sha256" | tee "$run/after-cold-verified.log"
     echo 'PASS persistent hosted mirror: independent zdb, cold DOS read and unchanged files'

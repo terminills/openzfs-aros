@@ -2,6 +2,18 @@
 
 Experimental development snapshot; not production-qualified storage software.
 
+## UI clone cold persistence (2026-10-28)
+
+The persistent hosted GUI fixture now retains its UI-created clone instead
+of deleting it before export. Fresh healthy, degraded and restored imports
+verify quota, compression, mountpoint and exact origin, mount the clone through
+the native handler, read hello.txt exactly, reject creation with write-protected
+DOS error, and detach it. Independent host zdb also finds the clone and file.
+Full pool integrity, both runtime preflights and unchanged cold-reader member
+hashes pass. This extends hosted clone evidence through restart; it does not
+claim physical-device durability or replace pending QEMU qualification.
+See `aros/tests/evidence/hosted-clone-cold-20261028`.
+
 ## Rebuilt Manager clone UI qualification (2026-10-28)
 
 The fresh MetaMake Manager creates a clone through its real confirmation UI

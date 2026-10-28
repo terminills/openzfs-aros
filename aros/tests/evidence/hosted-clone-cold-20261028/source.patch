@@ -1,0 +1,98 @@
+diff --git a/aros/engine/public-service-test.c b/aros/engine/public-service-test.c
+index 0fbb8fa..d40f3e1 100644
+--- a/aros/engine/public-service-test.c
++++ b/aros/engine/public-service-test.c
+@@ -3779,9 +3779,15 @@ static int storage_test(int gui){
+             STORAGE_CHECK(!cli_result("C:zfs get -H -o value compression public_mirror/gui_clone >T:cli-package-output.txt","off"));
+             STORAGE_CHECK(!cli_result("C:zfs get -H -o value mounted public_mirror/gui_clone >T:cli-package-output.txt","no"));
+             STORAGE_CHECK(!cli_result("C:zfs get -H -o value origin public_mirror/gui_clone >T:cli-package-output.txt","public_mirror/files@gui_clone"));
+-            STORAGE_CHECK(!cli_command("C:zfs destroy public_mirror/gui_clone"));
+-            STORAGE_CHECK(!cli_command("C:zfs destroy public_mirror/files@gui_clone"));
+-            note("Public GUI clone PASS quota=1 compression=1 no-mount=1 origin=1 cleanup=1\n");
++            BPTR retain_clone=Lock((CONST_STRPTR)"SYS:openzfs-gui-clone-persistent",SHARED_LOCK);
++            if(retain_clone){
++                UnLock(retain_clone);
++                note("Public GUI clone PASS quota=1 compression=1 no-mount=1 origin=1 retained=1\n");
++            }else{
++                STORAGE_CHECK(!cli_command("C:zfs destroy public_mirror/gui_clone"));
++                STORAGE_CHECK(!cli_command("C:zfs destroy public_mirror/files@gui_clone"));
++                note("Public GUI clone PASS quota=1 compression=1 no-mount=1 origin=1 cleanup=1\n");
++            }
+         }
+         if(volume_gui)STORAGE_CHECK(!storage_gui_volume_verify());
+         if(desktop){
+@@ -4017,6 +4023,30 @@ static int storage_cold_once(void)
+         if(error)return error;
+         note("Public cold GUI snapshot retained PASS\n");
+     }
++    marker=Lock((CONST_STRPTR)"SYS:openzfs-gui-clone-persistent",SHARED_LOCK);
++    if(marker){
++        UnLock(marker);
++        if(cli_result("C:zfs get -Hp -o value quota public_mirror/gui_clone >T:cli-package-output.txt","33554432")||
++           cli_result("C:zfs get -H -o value compression public_mirror/gui_clone >T:cli-package-output.txt","off")||
++           cli_result("C:zfs get -H -o value mountpoint public_mirror/gui_clone >T:cli-package-output.txt","none")||
++           cli_result("C:zfs get -H -o value origin public_mirror/gui_clone >T:cli-package-output.txt","public_mirror/files@gui_clone"))return EIO;
++        error=oz_mount_control(OZ_ADMISSION_PORT,"public_mirror/gui_clone","OZGUICLONE",OZ_MOUNT_ATTACH,OZ_MOUNT_READONLY);
++        if(error)return error;
++        char clone_bytes[sizeof(storage_payload)+1];
++        BPTR clone_file=Open((CONST_STRPTR)"OZGUICLONE:hello.txt",MODE_OLDFILE);
++        if(!clone_file)error=EIO;
++        else{
++            LONG count=Read(clone_file,clone_bytes,sizeof(clone_bytes));
++            if(!Close(clone_file)||count!=sizeof(storage_payload)-1||
++               memcmp(clone_bytes,storage_payload,sizeof(storage_payload)-1))error=EIO;
++        }
++        clone_file=Open((CONST_STRPTR)"OZGUICLONE:denied.txt",MODE_NEWFILE);
++        if(clone_file){Close(clone_file);error=EIO;}
++        else if(IoErr()!=ERROR_DISK_WRITE_PROTECTED)error=EIO;
++        int detach=oz_mount_control(OZ_ADMISSION_PORT,"public_mirror/gui_clone","",OZ_MOUNT_DETACH,0);
++        if(error||detach)return error?error:detach;
++        note("Public cold GUI clone PASS properties=1 origin=1 exact-read=1 readonly-refusal=1 detached=1\n");
++    }
+     marker=Lock((CONST_STRPTR)"SYS:openzfs-startup-archive-test",SHARED_LOCK);
+     if(marker){UnLock(marker);error=verify_mounts("OZCOLD:",OZ_MOUNT_READONLY);}
+     else error=oz_mount_control(OZ_ADMISSION_PORT,"public_mirror/files","OZCOLD",OZ_MOUNT_ATTACH,OZ_MOUNT_READONLY);
+diff --git a/aros/engine/test-hosted-security.sh b/aros/engine/test-hosted-security.sh
+index d5f09b9..b063d96 100644
+--- a/aros/engine/test-hosted-security.sh
++++ b/aros/engine/test-hosted-security.sh
+@@ -75,7 +75,8 @@ printf '%s\n' 'FailAt 21' 'Stack 262144' \
+ if [[ -n $service ]];then
+     rg -Fxq 'service_test_modes=0' "$service/service-build-options.txt"
+     rg -Fxq 'full_dispatcher=1' "$service/service-build-options.txt"
+-    cp "$service/OpenZFSServiceNative" "$service/OpenZFSPublicServiceTest" "$run/C/"
++    cp "$service/OpenZFSServiceNative" "$run/C/"
++    cp "${AROS_TEST_CLIENT_BINARY:-$service/OpenZFSPublicServiceTest}" "$run/C/OpenZFSPublicServiceTest"
+     if [[ -n $shared ]];then
+         cp "$shared/OpenZFSServiceNative" "$run/C/"
+         cp "$shared/openzfs.library" "$run/Libs/"
+@@ -114,6 +115,9 @@ if [[ -n $service ]];then
+         fi
+         if [[ $mode == GUI ]];then
+             printf '%s\n' 'Cold reader must find actual GUI snapshot' >"$run/openzfs-gui-snapshot-required"
++            if [[ $gui_clone == 1 ]];then
++                printf '%s\n' 'Retain actual GUI clone for cold verification' >"$run/openzfs-gui-clone-persistent"
++            fi
+         fi
+     fi
+     printf '%s\n' 'FailAt 21' 'MakeDir RAM:T RAM:ENV' 'Assign T: RAM:T' \
+@@ -212,7 +216,8 @@ if [[ -n $service ]];then
+     fi
+     if [[ -n $handler ]];then rg -q 'Public packaged handler PASS' "$run/serial.log";fi
+     if [[ $gui_clone == 1 ]];then
+-        rg -q 'Public GUI clone PASS quota=1 compression=1 no-mount=1 origin=1 cleanup=1' "$run/serial.log"
++        if [[ $persistent == 1 ]];then clone_result=retained=1;else clone_result=cleanup=1;fi
++        rg -q "Public GUI clone PASS quota=1 compression=1 no-mount=1 origin=1 $clone_result" "$run/serial.log"
+     fi
+ fi
+ if [[ $persistent == 1 ]];then
+@@ -250,6 +255,9 @@ if [[ $persistent == 1 ]];then
+     rg -q 'Public cold hosted DOS PASS exact=1 readonly-refusal=1 exported=1' "$run/cold-serial.log"
+     rg -q 'Public cold degraded assign PASS missing=1 exact=1 readonly=1 restored=1' "$run/cold-serial.log"
+     if [[ $mode == GUI ]];then rg -q 'Public cold GUI snapshot retained PASS' "$run/cold-serial.log";fi
++    if [[ $gui_clone == 1 ]];then
++        rg -q 'Public cold GUI clone PASS properties=1 origin=1 exact-read=1 readonly-refusal=1 detached=1' "$run/cold-serial.log"
++    fi
+     cleanup
+     sha256sum -c "$run/before-cold.sha256" | tee "$run/after-cold-verified.log"
+     echo 'PASS persistent hosted mirror: independent zdb, cold DOS read and unchanged files'

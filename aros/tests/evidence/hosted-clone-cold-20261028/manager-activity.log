@@ -1,0 +1,8 @@
+OpenZFS Manager started. Existing private-format Work volume is not an OpenZFS pool.
+service.hello: OK (request 1)
+Response 1: OK
+Upstream zfs clone: exit=0, DOS=0, capture errno=0
+
+snapshot.snapshot: authenticated worker started; no automatic retry
+Authenticated ticket 14642638029135472595:403: transport errno=0, release errno=0
+Response 0: OK

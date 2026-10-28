@@ -3779,9 +3779,15 @@ static int storage_test(int gui){
             STORAGE_CHECK(!cli_result("C:zfs get -H -o value compression public_mirror/gui_clone >T:cli-package-output.txt","off"));
             STORAGE_CHECK(!cli_result("C:zfs get -H -o value mounted public_mirror/gui_clone >T:cli-package-output.txt","no"));
             STORAGE_CHECK(!cli_result("C:zfs get -H -o value origin public_mirror/gui_clone >T:cli-package-output.txt","public_mirror/files@gui_clone"));
-            STORAGE_CHECK(!cli_command("C:zfs destroy public_mirror/gui_clone"));
-            STORAGE_CHECK(!cli_command("C:zfs destroy public_mirror/files@gui_clone"));
-            note("Public GUI clone PASS quota=1 compression=1 no-mount=1 origin=1 cleanup=1\n");
+            BPTR retain_clone=Lock((CONST_STRPTR)"SYS:openzfs-gui-clone-persistent",SHARED_LOCK);
+            if(retain_clone){
+                UnLock(retain_clone);
+                note("Public GUI clone PASS quota=1 compression=1 no-mount=1 origin=1 retained=1\n");
+            }else{
+                STORAGE_CHECK(!cli_command("C:zfs destroy public_mirror/gui_clone"));
+                STORAGE_CHECK(!cli_command("C:zfs destroy public_mirror/files@gui_clone"));
+                note("Public GUI clone PASS quota=1 compression=1 no-mount=1 origin=1 cleanup=1\n");
+            }
         }
         if(volume_gui)STORAGE_CHECK(!storage_gui_volume_verify());
         if(desktop){
@@ -4016,6 +4022,30 @@ static int storage_cold_once(void)
         oz_client_close(&query);
         if(error)return error;
         note("Public cold GUI snapshot retained PASS\n");
+    }
+    marker=Lock((CONST_STRPTR)"SYS:openzfs-gui-clone-persistent",SHARED_LOCK);
+    if(marker){
+        UnLock(marker);
+        if(cli_result("C:zfs get -Hp -o value quota public_mirror/gui_clone >T:cli-package-output.txt","33554432")||
+           cli_result("C:zfs get -H -o value compression public_mirror/gui_clone >T:cli-package-output.txt","off")||
+           cli_result("C:zfs get -H -o value mountpoint public_mirror/gui_clone >T:cli-package-output.txt","none")||
+           cli_result("C:zfs get -H -o value origin public_mirror/gui_clone >T:cli-package-output.txt","public_mirror/files@gui_clone"))return EIO;
+        error=oz_mount_control(OZ_ADMISSION_PORT,"public_mirror/gui_clone","OZGUICLONE",OZ_MOUNT_ATTACH,OZ_MOUNT_READONLY);
+        if(error)return error;
+        char clone_bytes[sizeof(storage_payload)+1];
+        BPTR clone_file=Open((CONST_STRPTR)"OZGUICLONE:hello.txt",MODE_OLDFILE);
+        if(!clone_file)error=EIO;
+        else{
+            LONG count=Read(clone_file,clone_bytes,sizeof(clone_bytes));
+            if(!Close(clone_file)||count!=sizeof(storage_payload)-1||
+               memcmp(clone_bytes,storage_payload,sizeof(storage_payload)-1))error=EIO;
+        }
+        clone_file=Open((CONST_STRPTR)"OZGUICLONE:denied.txt",MODE_NEWFILE);
+        if(clone_file){Close(clone_file);error=EIO;}
+        else if(IoErr()!=ERROR_DISK_WRITE_PROTECTED)error=EIO;
+        int detach=oz_mount_control(OZ_ADMISSION_PORT,"public_mirror/gui_clone","",OZ_MOUNT_DETACH,0);
+        if(error||detach)return error?error:detach;
+        note("Public cold GUI clone PASS properties=1 origin=1 exact-read=1 readonly-refusal=1 detached=1\n");
     }
     marker=Lock((CONST_STRPTR)"SYS:openzfs-startup-archive-test",SHARED_LOCK);
     if(marker){UnLock(marker);error=verify_mounts("OZCOLD:",OZ_MOUNT_READONLY);}
