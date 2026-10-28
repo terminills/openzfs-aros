@@ -10,7 +10,8 @@ device and L2ARC endian/corruption/bounds suite. Prepared ISO libraries are now
 byte-compared against selected inputs; this caught and fixed a runner map-array
 replacement bug. The missing-security native attempt failed its fixture because
 security.library remained boot-resident. A corrected image removing that module
-while preserving all other BSP records is prepared but not yet boot-qualified.
+while preserving all other BSP records subsequently passed native QEMU: actual
+library/resident absence, EACCES device denial and byte-identical device backing.
 The complete native GUI/cold/encrypted package matrix remains open. See
 `aros/tests/evidence/native-zdb-current-crt-20261028`.
 

@@ -33,3 +33,24 @@ L2ARC and label-verifier tests also passed (1/11/1 tests).
 Original evidence directories are under the candidate's build-audit directory.
 Only logs, hashes, mode declarations and the reproducible run recipe are retained
 here; ISOs and disposable device images are not committed.
+
+## Corrected missing-security native replay
+
+After the SysInfo lane released QEMU, the already-prepared `LuO2nC45` ISO was
+booted without rebuilding or modifying the image. `prepared-replay.sh` retains
+the exact invocation. Preboot checks verified the ISO and all inputs against
+their recorded hashes and compared the disposable device with its original.
+
+The native run completed successfully: the actual debugger caller reported
+`security-missing=1` only after both OpenLibrary and FindResident failed;
+the debugger denied `/AROS/ata.device/0` with Permission denied and exit1.
+Post-run device comparison reports identical images. Exact host/native labels,
+shared-library lifecycle/caller-exit, damaged-label and ISO L2ARC
+endian/corruption/bounds/recovery checks also pass. This denial-only run does
+not exercise successful native L2ARC device access; the prior BygYEOql run does.
+
+The original `prepared-only.txt` and preparation hashes are preserved as history.
+The later `missing-security-pass/` logs prove the subsequent runtime; the earlier
+failed attempt remains unchanged under `failed/`. QEMU was released to the MAME
+lane afterward. Complete public-package GUI/cold/encrypted qualification remains
+open.

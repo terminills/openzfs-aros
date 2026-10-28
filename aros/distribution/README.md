@@ -16,7 +16,9 @@ the hosted service uses `AROS_TEST_HOSTED_STDCIO_LIBRARY` for its stdcio overrid
 No overrides change the runtime template or a user session.
 
 The current hosted service/cold and debugger combination passes with corrected
-DOS64. This is not native package acceptance: QEMU qualification remains open.
+DOS64. The selected CRT set also passes native QEMU debugger qualification,
+including absent-security denial, with actual prepared ISO library bytes verified.
+The complete native GUI/cold/encrypted package acceptance matrix remains open.
 DOS64 now has a retained-source builder. Staging requires
 `--dos64-source-snapshot`, validating its manifest, local ABI header and
 selected-binary recipe before copying it into `Sources/DOS64`. See
