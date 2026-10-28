@@ -229,6 +229,13 @@ xorriso -indev "$AROS_TEST_ISO" -outdev "$run/test.iso" \
 # Verify the prepared image, not just input hashes or intended map arguments.
 # A shared-debugger map must not discard the selected CRT maps above.
 mkdir "$run/iso-runtime"
+if [[ -n ${AROS_TEST_FS_PACKAGE:-} ]];then
+    xorriso -osirrox on -indev "$run/test.iso" \
+        -extract /boot/aros-fs.pkg.xz "$run/iso-runtime/aros-fs.pkg.xz" \
+        >>"$run/iso-runtime-verify.log" 2>&1
+    cmp "$AROS_TEST_FS_PACKAGE" "$run/iso-runtime/aros-fs.pkg.xz"
+    sha256sum "$run/iso-runtime/aros-fs.pkg.xz" >>"$run/iso-runtime.sha256"
+fi
 runtime_specs=("$AROS_TEST_POSIX_LIBRARY:posixc.library")
 if [[ -d $run/runtime-inputs ]];then
     for selected_library in "$run/runtime-inputs/"*.library;do
