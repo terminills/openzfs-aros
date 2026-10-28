@@ -1,0 +1,61 @@
+patching file main.c
+Hunk #1 succeeded at 895 (offset 1 line).
+patching file filehandles2.c
+Hunk #1 succeeded at 380 (offset -2 lines).
+patching file os_aros_support.c
+/home/terminills/Documents/GitHub/aros-adt-src/rom/filesys/afs/afs_security.c: OK
+/home/terminills/Documents/GitHub/aros-adt-src/rom/filesys/afs/afs_security.h: OK
+/home/terminills/Documents/GitHub/aros-adt-src/rom/filesys/afs/afsblocks.h: OK
+/home/terminills/Documents/GitHub/aros-adt-src/rom/filesys/afs/afshandler.h: OK
+/home/terminills/Documents/GitHub/aros-adt-src/rom/filesys/afs/baseredef.h: OK
+/home/terminills/Documents/GitHub/aros-adt-src/rom/filesys/afs/bitmap.c: OK
+/home/terminills/Documents/GitHub/aros-adt-src/rom/filesys/afs/bitmap.h: OK
+/home/terminills/Documents/GitHub/aros-adt-src/rom/filesys/afs/cache.c: OK
+/home/terminills/Documents/GitHub/aros-adt-src/rom/filesys/afs/cache.h: OK
+/home/terminills/Documents/GitHub/aros-adt-src/rom/filesys/afs/checksums.c: OK
+/home/terminills/Documents/GitHub/aros-adt-src/rom/filesys/afs/checksums.h: OK
+/home/terminills/Documents/GitHub/aros-adt-src/rom/filesys/afs/error.c: OK
+/home/terminills/Documents/GitHub/aros-adt-src/rom/filesys/afs/error.h: OK
+/home/terminills/Documents/GitHub/aros-adt-src/rom/filesys/afs/errstrings.h: OK
+/home/terminills/Documents/GitHub/aros-adt-src/rom/filesys/afs/extstrings.c: OK
+/home/terminills/Documents/GitHub/aros-adt-src/rom/filesys/afs/extstrings.h: OK
+/home/terminills/Documents/GitHub/aros-adt-src/rom/filesys/afs/filehandles.h: OK
+/home/terminills/Documents/GitHub/aros-adt-src/rom/filesys/afs/filehandles1.c: OK
+/home/terminills/Documents/GitHub/aros-adt-src/rom/filesys/afs/filehandles1.h: OK
+/home/terminills/Documents/GitHub/aros-adt-src/rom/filesys/afs/filehandles2.c: OK
+/home/terminills/Documents/GitHub/aros-adt-src/rom/filesys/afs/filehandles2.h: OK
+/home/terminills/Documents/GitHub/aros-adt-src/rom/filesys/afs/filehandles3.c: OK
+/home/terminills/Documents/GitHub/aros-adt-src/rom/filesys/afs/filehandles3.h: OK
+/home/terminills/Documents/GitHub/aros-adt-src/rom/filesys/afs/hashing.c: OK
+/home/terminills/Documents/GitHub/aros-adt-src/rom/filesys/afs/hashing.h: OK
+/home/terminills/Documents/GitHub/aros-adt-src/rom/filesys/afs/main.c: OK
+/home/terminills/Documents/GitHub/aros-adt-src/rom/filesys/afs/misc.c: OK
+/home/terminills/Documents/GitHub/aros-adt-src/rom/filesys/afs/misc.h: OK
+/home/terminills/Documents/GitHub/aros-adt-src/rom/filesys/afs/moreactions.h: OK
+/home/terminills/Documents/GitHub/aros-adt-src/rom/filesys/afs/os.h: OK
+/home/terminills/Documents/GitHub/aros-adt-src/rom/filesys/afs/os_aros_support.c: OK
+/home/terminills/Documents/GitHub/aros-adt-src/rom/filesys/afs/os_aros_support.h: OK
+/home/terminills/Documents/GitHub/aros-adt-src/rom/filesys/afs/os_unix_support.c: OK
+/home/terminills/Documents/GitHub/aros-adt-src/rom/filesys/afs/os_unix_support.h: OK
+/home/terminills/Documents/GitHub/aros-adt-src/rom/filesys/afs/validator.c: OK
+/home/terminills/Documents/GitHub/aros-adt-src/rom/filesys/afs/validator.h: OK
+/home/terminills/Documents/GitHub/aros-adt-src/rom/filesys/afs/volumes.c: OK
+/home/terminills/Documents/GitHub/aros-adt-src/rom/filesys/afs/volumes.h: OK
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/gen/rom/filesys/afs/afs/afs_end.o: OK
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/gen/rom/filesys/afs/afs/afs_security.o: OK
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/gen/rom/filesys/afs/afs/afs_start.o: OK
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/gen/rom/filesys/afs/afs/bitmap.o: OK
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/gen/rom/filesys/afs/afs/cache.o: OK
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/gen/rom/filesys/afs/afs/checksums.o: OK
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/gen/rom/filesys/afs/afs/error.o: OK
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/gen/rom/filesys/afs/afs/extstrings.o: OK
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/gen/rom/filesys/afs/afs/filehandles1.o: OK
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/gen/rom/filesys/afs/afs/filehandles2.o: OK
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/gen/rom/filesys/afs/afs/filehandles3.o: OK
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/gen/rom/filesys/afs/afs/hashing.o: OK
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/gen/rom/filesys/afs/afs/main.o: OK
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/gen/rom/filesys/afs/afs/misc.o: OK
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/gen/rom/filesys/afs/afs/os_aros_support.o: OK
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/gen/rom/filesys/afs/afs/validator.o: OK
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/gen/rom/filesys/afs/afs/volumes.o: OK
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/gen/rom/filesys/afs/afs/include/afs_deflibdefs.h: OK

@@ -19,3 +19,42 @@
 +        bug("[afs-inhibit] clear-cache end\n");
          return DOSTRUE;
  }
+--- cache.c
++++ cache.c
+@@ -90,4 +90,7 @@
+         for (block = volume->blockcache; block != NULL; block = block->next)
+         {
++                if ((block->flags & (BCF_WRITE | BCF_USED)) == (BCF_WRITE | BCF_USED))
++                        bug("[afs-inhibit] pinned-dirty block=%lu flags=%lu\n",
++                                block->blocknum, block->flags);
+                 if ((block->flags & (BCF_WRITE | BCF_USED)) == BCF_WRITE)
+                 {
+--- filehandles2.c
++++ filehandles2.c
+@@ -507,4 +507,6 @@
+         if (existingfile != NULL && existingfile->blocknum != oldfile->blocknum)
+         {
++                bug("[afs-inhibit] rename-existing block=%lu flags=%lu\n",
++                        oldfile->blocknum, oldfile->flags);
+                 dirblock->flags &= ~BCF_USED;
+                 return ERROR_OBJECT_EXISTS;
+--- main.c
++++ main.c
+@@ -897,2 +897,17 @@
+             afsSecEndPacket(handler);
++            {
++                static unsigned trace_count;
++                struct BlockCache *trace_block;
++                int pinned_root = 0;
++                for (trace_block = volume->blockcache; trace_block; trace_block = trace_block->next)
++                    if (trace_block->blocknum == volume->rootblock && (trace_block->flags & BCF_USED))
++                    {
++                        pinned_root = 1;
++                        if (trace_count++ < 16)
++                            bug("[afs-inhibit] packet-root-pin type=%ld flags=%lu result=%ld error=%ld\n",
++                                dp->dp_Type, trace_block->flags, ok, res2);
++                    }
++                if (!pinned_root)
++                    trace_count = 0;
++            }
+             /* ACTION_DIE is replied once, after AFS_free below. Replying

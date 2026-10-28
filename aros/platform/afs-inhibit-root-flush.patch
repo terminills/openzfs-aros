@@ -1,0 +1,20 @@
+--- os_aros_support.c
++++ os_aros_support.c
+@@ -584,2 +584,17 @@
++        /* newMedium deliberately pins the root until ejection. flushCache
++         * skips pinned buffers, so finish its dirty root after the ordinary
++         * data buffers and before CMD_UPDATE/cache invalidation. Do not
++         * unpin arbitrary buffers or change intermediate flush ordering. */
++        {
++                struct BlockCache *root;
++                for (root = volume->blockcache; root; root = root->next)
++                        if (root->blocknum == volume->rootblock &&
++                            (root->flags & BCF_WRITE))
++                        {
++                                writeBlock(afsbase, volume, root, -1);
++                                break;
++                        }
++        }
++
+         volume->ioh.ioreq->iotd_Req.io_Command = CMD_UPDATE;
+         DoIO((struct IORequest *)&volume->ioh.ioreq->iotd_Req);
