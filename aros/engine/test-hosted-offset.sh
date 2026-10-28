@@ -3,30 +3,45 @@
 set -euo pipefail
 repo=$(cd -- "$(dirname -- "$0")/../.." && pwd)
 cd "$repo"
-run=$(mktemp -d "$repo/build-aros/hosted-offset.XXXXXXXX")
+source "$repo/aros/engine/storage-preflight.sh"
+artifact_root=$(oz_artifact_root "$repo" "${AROS_ARTIFACT_ROOT:-}")
+runtime=$(realpath -e "${AROS_TEST_HOSTED_RUNTIME:?explicit isolated runtime template required}")
+dos_probe=$(realpath -e "${AROS_TEST_DOS64_PROBE:?explicit DOS64 probe required}")
+posix_probe=$(realpath -e "${AROS_TEST_POSIX_PROBE:?explicit POSIX probe required}")
+dos64=$(realpath -e "${AROS_TEST_DOS64_LIBRARY:?explicit DOS64 library required}")
+run=$(mktemp -d "$artifact_root/hosted-offset.XXXXXXXX")
 echo "Evidence: $run"
 for dir in boot C Classes Devs Fonts L Libs Locale Prefs S System;do
-    cp -a --reflink=auto "build-aros/hosted/$dir" "$run/$dir"
+    cp -aL --reflink=auto "$runtime/$dir" "$run/$dir"
 done
-cp build-aros/hosted/AROS.boot "$run/AROS.boot"
+cp "$runtime/AROS.boot" "$run/AROS.boot"
 # Selected candidates replace only this new private runtime's copies. Never
 # update build-aros/hosted or a user's running session to conduct a comparison.
-if [[ -n ${AROS_TEST_DOS64_LIBRARY:-} ]];then
-    cp -- "$(realpath -e "$AROS_TEST_DOS64_LIBRARY")" "$run/Libs/dos64.library"
-fi
+cp -- "$dos64" "$run/Libs/dos64.library"
 if [[ -n ${AROS_TEST_POSIX_LIBRARY:-} ]];then
     cp -- "$(realpath -e "$AROS_TEST_POSIX_LIBRARY")" "$run/Libs/posixc.library"
 fi
+if [[ -n ${AROS_TEST_STDC_LIBRARY:-} ]];then
+    cp -- "$(realpath -e "$AROS_TEST_STDC_LIBRARY")" "$run/Libs/stdc.library"
+fi
+if [[ -n ${AROS_TEST_HOSTED_STDCIO_LIBRARY:-} ]];then
+    cp -- "$(realpath -e "$AROS_TEST_HOSTED_STDCIO_LIBRARY")" "$run/Libs/stdcio.library"
+fi
+if [[ -n ${AROS_TEST_DOS_LIBRARY:-} ]];then
+    cp -- "$(realpath -e "$AROS_TEST_DOS_LIBRARY")" "$run/Libs/dos.library"
+fi
 cp "$0" "$run/test-hosted-offset.sh"
-cp build-aros/OpenZFSDos64OffsetTest "$run/C/"
-cp "${AROS_TEST_POSIX_PROBE:-build-aros/OpenZFSPosixIOTest}" "$run/C/OpenZFSPosixIOTest"
+cp "$dos_probe" "$run/C/OpenZFSDos64OffsetTest"
+cp "$posix_probe" "$run/C/OpenZFSPosixIOTest"
 cp aros/engine/Startup-Offset "$run/S/Startup-Sequence"
 sed "s|^logfile .*|logfile $run/serial.log|" aros/engine/hosted.conf >"$run/hosted.conf"
 git rev-parse HEAD >"$run/source.txt"
+git diff --binary >"$run/source.patch"
 cp aros/engine/dos64-offset-test.c "$run/probe.c"
 cp aros/engine/posix-io-test.c "$run/posix-probe.c"
 sha256sum "$run/C/OpenZFSDos64OffsetTest" "$run/C/OpenZFSPosixIOTest" "$run/Libs/posixc.library" \
     "$run/Libs/dos64.library" "$run/Libs/dos.library" \
+    "$run/Libs/stdc.library" "$run/Libs/stdcio.library" \
     "$run/boot/linux/L/emul-handler" >"$run/inputs.sha256"
 xpid=;guest=
 cleanup() {
@@ -54,5 +69,8 @@ done
 cat "$run/dos64-offset.log"
 cat "$run/posix-io-test.log"
 rg -q '^RESULT DOS64 offset failures=0' "$run/dos64-offset.log"
+rg -q '^past-eof raw-seek=-1/219 dos64-seek=-1/219$' "$run/dos64-offset.log"
 rg -q '^RESULT raw POSIX failures=0' "$run/posix-io-test.log"
+rg -q '^RESULT raw POSIX reopen exact=1 holes=1 failures=0$' "$run/posix-io-test.log"
+sha256sum -c "$run/inputs.sha256"
 echo "PASS: hosted DOS64 offset probe: $run"

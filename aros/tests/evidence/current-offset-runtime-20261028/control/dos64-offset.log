@@ -1,0 +1,14 @@
+file=SYS:dos64-offset-45b6c8f0.bin dos64=50.1 capable=-1
+past-eof raw-seek=-1/219 dos64-seek=-1/207
+expand=4294971392 ioerr=0
+offset=0 seek=0/0 write=512/0 back=512/0 read=512/0 diff=0
+offset=2147483136 seek=512/0 write=512/0 back=2147483648/0 read=512/0 diff=0
+offset=2147483648 seek=2147483648/0 write=512/0 back=2147484160/0 read=512/0 diff=0
+offset=4294966784 seek=2147484160/0 write=512/0 back=4294967296/0 read=512/0 diff=0
+offset=4294967296 seek=4294967296/0 write=512/0 back=4294967808/0 read=512/0 diff=0
+posix-existing offset=0 read=512 errno=0 diff=0
+posix-existing offset=2147483136 read=512 errno=0 diff=0
+posix-existing offset=2147483648 read=512 errno=0 diff=0
+posix-existing offset=4294966784 read=512 errno=0 diff=0
+posix-existing offset=4294967296 read=512 errno=0 diff=0
+RESULT DOS64 offset failures=0

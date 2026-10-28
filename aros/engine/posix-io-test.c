@@ -41,6 +41,20 @@ int main(void)
     if(lseek(fd,0,SEEK_CUR)!=0)failures++;
     if(fsync(fd))failures++;
     if(close(fd))failures++;
+    fd=open(path,O_RDONLY);
+    if(fd<0)return 20;
+    for(unsigned i=0;i<sizeof(offsets)/sizeof(offsets[0]);i++){
+        memset(out,0x41+i,sizeof(out));memset(in,0,sizeof(in));
+        if(pread(fd,in,sizeof(in),offsets[i])!=sizeof(in)||memcmp(in,out,sizeof(in)))failures++;
+    }
+    memset(out,0,sizeof(out));
+    for(unsigned i=0;i<sizeof(holes)/sizeof(holes[0]);i++){
+        memset(in,0xff,sizeof(in));
+        if(pread(fd,in,sizeof(in),holes[i])!=sizeof(in)||memcmp(in,out,sizeof(in)))failures++;
+    }
+    if(lseek(fd,0,SEEK_CUR)!=0)failures++;
+    if(close(fd))failures++;
+    printf("RESULT raw POSIX reopen exact=1 holes=1 failures=%d\n",failures);
     printf("RESULT raw POSIX boundaries=6 holes=3 preserved-offset=1 failures=%d\n",failures);
     printf("RESULT raw POSIX failures=%d\n",failures);return failures?20:0;
 }

@@ -2,6 +2,20 @@
 
 Experimental development snapshot; not production-qualified storage software.
 
+## Explicit DOS64 dependency requalification (2026-10-28)
+
+The current source-built CRT set passes >4 GiB positioned I/O, close/reopen,
+unchanged descriptor positions and sampled zero-filled holes when paired with
+the retained corrected DOS64 library. The old hosted runtime template's DOS64
+binary fails file growth near 4 GiB by replacing a past-EOF SEEK64 error with
+object-too-large. This is the previously fixed AROS `3df3790e58` behavior,
+not a new OpenZFS fix. Existing-file high-offset reads alone missed it.
+The offset runner now requires explicit DOS64/probe/runtime selection, checks
+that error distinction, supports external storage and binds all selected CRT
+hashes. Packaging still needs to bind DOS64 and qualify the selected combination
+in native QEMU; no general stock-runtime compatibility is claimed. See
+`aros/tests/evidence/current-offset-runtime-20261028`.
+
 ## Complete report export and backward paging (2026-10-28)
 
 Manager can export the entire retained command report through a background
