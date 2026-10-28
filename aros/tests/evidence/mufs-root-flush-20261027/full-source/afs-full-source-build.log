@@ -1,0 +1,7 @@
+/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/afs-source.wg6ei6nj
+patching file main.c
+Hunk #1 succeeded at 895 (offset 1 line).
+patching file filehandles2.c
+Hunk #1 succeeded at 380 (offset -2 lines).
+patching file os_aros_support.c
+PASS retained full-source AFS candidate: /mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/afs-source.wg6ei6nj

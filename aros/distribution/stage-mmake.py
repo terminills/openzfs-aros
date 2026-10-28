@@ -86,6 +86,50 @@ def require_posix_snapshot(snapshot, binary):
     return paths
 
 
+def require_afs_snapshot(snapshot, binary):
+    paths = snapshot_paths(snapshot)
+    required = {pathlib.Path(name) for name in (
+        'rebuild.json', 'rebuild-fat-snapshot.py', 'provenance.json',
+        'source/LICENSE', 'source/main.c', 'source/filehandles2.c',
+        'source/os_aros_support.c', 'generated/afs_start.c', 'generated/afs_end.c',
+        'generated/include/afs_deflibdefs.h', 'generated/include/afs_libdefs.h',
+        'afs-single-die-reply.patch', 'afs-rename-pinned-link.patch',
+        'afs-inhibit-root-flush.patch', 'build-options.txt', 'afs-handler')}
+    if not required.issubset(paths):
+        raise ValueError('Incomplete AFS source snapshot')
+    if (snapshot / 'generated/include/afs_deflibdefs.h').read_text().strip() != (
+            '#define LC_LIBDEFS_FILE "afs_libdefs.h"'):
+        raise ValueError('AFS ABI include is not snapshot-local')
+    recipe = json.loads((snapshot / 'rebuild.json').read_text())
+    if (recipe.get('format') != 1 or recipe.get('artifact') != 'afs-handler'
+            or recipe.get('expected_binary') != digest(binary)
+            or digest(snapshot / 'afs-handler') != digest(binary)):
+        raise ValueError('AFS source recipe does not bind selected binary')
+    options = (snapshot / 'build-options.txt').read_text().splitlines()
+    if not {'full_afs=1', 'rename_pinned_link=1', 'final_root_flush=1',
+            'inhibit_trace=0'}.issubset(options):
+        raise ValueError('AFS snapshot lacks qualified non-tracing source build')
+    return paths
+
+
+def require_afs_selection(run, binary, snapshot):
+    manifest = run / 'afs-handler.sha256'
+    if not manifest.exists():
+        if binary is not None or snapshot is not None:
+            raise ValueError('Selected AFS handler has no native evidence')
+        return []
+    if binary is None or snapshot is None:
+        raise ValueError('Native qualification used an AFS overlay; binary and source snapshot required')
+    lines = manifest.read_text().splitlines()
+    if len(lines) != 1:
+        raise ValueError('Ambiguous AFS handler evidence')
+    fields = lines[0].split(maxsplit=1)
+    if (len(fields) != 2 or pathlib.Path(fields[1].lstrip('*')).name != 'afs-handler'
+            or fields[0] != digest(binary)):
+        raise ValueError('AFS handler differs from tested binary')
+    return require_afs_snapshot(snapshot, binary)
+
+
 def recorded_hash(run, name):
     values = set()
     for manifest in run.glob("*-input*.sha256"):
@@ -282,6 +326,8 @@ def main():
     parser.add_argument("--dos-package", type=pathlib.Path, required=True)
     parser.add_argument("--dos-source-snapshot", type=pathlib.Path, required=True)
     parser.add_argument("--posix-source-snapshot", type=pathlib.Path, required=True)
+    parser.add_argument("--afs-handler", type=pathlib.Path)
+    parser.add_argument("--afs-source-snapshot", type=pathlib.Path)
     args = parser.parse_args()
     repo = pathlib.Path(__file__).resolve().parents[2]
     build, gui, cold = (p.resolve(strict=True) for p in
@@ -363,6 +409,11 @@ def main():
     posix_sources = require_posix_snapshot(posix_snapshot, selected["Platform/Libs/posixc.library"])
     selected["Platform/L/fat-handler"] = fat
     selected["Platform/Boot/aros-base.pkg.xz"] = dos
+    afs = args.afs_handler.resolve(strict=True) if args.afs_handler else None
+    afs_snapshot = args.afs_source_snapshot.resolve(strict=True) if args.afs_source_snapshot else None
+    afs_sources = require_afs_selection(cold, afs, afs_snapshot)
+    if afs_sources:
+        selected['Platform/L/afs-handler'] = afs
     companions = ("OpenZFSStartup", "OpenZFSStartupMount", "OpenZFSRuntimeCheck", "OpenZFSHostIdentity")
     for name in companions:
         source = stage / "C" / name
@@ -402,6 +453,14 @@ def main():
         target.parent.mkdir(parents=True, exist_ok=True)
         shutil.copy2(posix_snapshot / relative, target)
     require_posix_snapshot(sources, output / "Platform/Libs/posixc.library")
+    if afs_sources:
+        sources = output / 'Sources/AFS'
+        sources.mkdir(parents=True)
+        for relative in [*afs_sources, pathlib.Path('retained.sha256')]:
+            target = sources / relative
+            target.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copy2(afs_snapshot / relative, target)
+        require_afs_snapshot(sources, output / 'Platform/L/afs-handler')
     record = {"packaging_commit": subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=repo, text=True).strip(),
               "gui_run": str(gui), "cold_run": str(cold), "encrypted_root_run": str(encrypted), "build": str(build),
               "native_zdb_run": str(debugger),

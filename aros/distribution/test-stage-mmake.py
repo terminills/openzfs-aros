@@ -13,6 +13,70 @@ spec.loader.exec_module(stage)
 
 
 class EvidenceTests(unittest.TestCase):
+    def test_afs_snapshot_binds_recipe_headers_and_nontracing_build(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = pathlib.Path(directory)
+            names = ('rebuild-fat-snapshot.py', 'provenance.json', 'source/LICENSE',
+                     'source/main.c', 'source/filehandles2.c', 'source/os_aros_support.c',
+                     'generated/afs_start.c', 'generated/afs_end.c',
+                     'generated/include/afs_deflibdefs.h', 'generated/include/afs_libdefs.h',
+                     'afs-single-die-reply.patch', 'afs-rename-pinned-link.patch',
+                     'afs-inhibit-root-flush.patch', 'build-options.txt', 'afs-handler')
+            for name in names:
+                path = root / name
+                path.parent.mkdir(parents=True, exist_ok=True)
+                path.write_text(name)
+            header = root / 'generated/include/afs_deflibdefs.h'
+            header.write_text('#define LC_LIBDEFS_FILE "afs_libdefs.h"\n')
+            options = root / 'build-options.txt'
+            options.write_text('full_afs=1\nrename_pinned_link=1\nfinal_root_flush=1\ninhibit_trace=0\n')
+            recipe = root / 'rebuild.json'
+            recipe.write_text(json.dumps({'format': 1, 'artifact': 'afs-handler',
+                                          'expected_binary': stage.digest(root / 'afs-handler')}))
+            def seal():
+                (root / 'retained.sha256').write_text(''.join(
+                    stage.digest(root / name) + '  ' + name + '\n'
+                    for name in (*names, 'rebuild.json')))
+            seal()
+            stage.require_afs_snapshot(root, root / 'afs-handler')
+            for path, text, diagnostic in (
+                    (header, '#define LC_LIBDEFS_FILE "/private/afs_libdefs.h"\n', 'snapshot-local'),
+                    (options, options.read_text().replace('inhibit_trace=0', 'inhibit_trace=1'), 'non-tracing'),
+                    (recipe, recipe.read_text().replace('afs-handler', 'other-handler'), 'bind selected')):
+                original = path.read_text()
+                path.write_text(text)
+                seal()
+                with self.subTest(path=path.name), self.assertRaisesRegex(ValueError, diagnostic):
+                    stage.require_afs_snapshot(root, root / 'afs-handler')
+                path.write_text(original)
+                seal()
+            (root / 'source/main.c').write_text('unrecorded source change')
+            with self.assertRaisesRegex(ValueError, 'Retained input changed'):
+                stage.require_afs_snapshot(root, root / 'afs-handler')
+
+    def test_afs_overlay_cannot_be_silently_omitted_or_substituted(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = pathlib.Path(directory)
+            run = root / 'run'
+            run.mkdir()
+            binary = root / 'afs-handler'
+            binary.write_bytes(b'qualified handler')
+            self.assertEqual(stage.require_afs_selection(run, None, None), [])
+            with self.assertRaisesRegex(ValueError, 'no native evidence'):
+                stage.require_afs_selection(run, binary, root)
+            manifest = run / 'afs-handler.sha256'
+            manifest.write_text(stage.digest(binary) + '  /private/afs-handler\n')
+            with self.assertRaisesRegex(ValueError, 'source snapshot required'):
+                stage.require_afs_selection(run, None, None)
+            with self.assertRaisesRegex(ValueError, 'source snapshot required'):
+                stage.require_afs_selection(run, binary, None)
+            binary.write_bytes(b'untested handler')
+            with self.assertRaisesRegex(ValueError, 'differs from tested'):
+                stage.require_afs_selection(run, binary, root)
+            manifest.write_text(manifest.read_text() * 2)
+            with self.assertRaisesRegex(ValueError, 'Ambiguous'):
+                stage.require_afs_selection(run, binary, root)
+
     def test_native_debugger_gate_rechecks_reports_and_binary_pair(self):
         evidence = pathlib.Path(__file__).resolve().parents[1] / 'tests/evidence/native-zdb-gpt-20261027/LRQP52DN'
         with tempfile.TemporaryDirectory() as directory:

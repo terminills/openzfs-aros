@@ -35,6 +35,29 @@ Results and hashes are retained under `candidate/`.
 This verifies the private AFS overlay with the current matched OpenZFS engine,
 frontends and test client in QEMU. It does not verify an unpatched nightly,
 an upstream-integrated AROS build, write-error handling or physical durability.
-An independent repeat with a newly created pool/GUID is being run separately.
+The independent repeat `public-service-run.jDdlt8lc` also exited zero through
+writer/cold/release, with a newly created pool GUID `94552342856774e7`.
+Its phase logs and handler hash are under `repeat/`.
 The optional trace patch records skipped dirty pins and up to 16 consecutive
 packet-end root-pin observations per pinned interval. It is disabled by default.
+
+## Full source rebuild and package dependency
+
+`build-afs-snapshot.py` compiled every handler object afresh from retained
+AROS source and generated C/headers, with the same three companion patches.
+`afs-source.wg6ei6nj` was then replayed into `fat-replay.ckdw0und` with identical
+handler bytes, without using cached AFS objects or source checkout paths.
+SDK headers and link archives remain explicit hash-bound prerequisites.
+
+The full-source handler passed writer/cold/release in
+`public-service-run.6iuhXkGy` (runner exit zero), including exact data,
+persistent trusted restore and independent zdb verification. Logs, hashes,
+source provenance and the replay recipe are retained under `full-source/`.
+The complete private snapshot remains at the recorded build path.
+
+The MetaMake stager now refuses to omit or substitute a handler that appears
+in the cold run's `afs-handler.sha256`. Such a package requires the matching
+binary and full source snapshot, placed explicitly in Platform/L and
+Sources/AFS, rather than silently installing a filesystem replacement.
+Source snapshot, recipe, local ABI include and non-tracing build checks are
+host-side packaging tests, separate from the native acceptance above.

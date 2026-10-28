@@ -77,6 +77,16 @@ for the other boot modules, the SDK or toolchain. Those remain
 public-binary-release gates.
 
 Metadata/qualification.json identifies the exact selected inputs and evidence.
+If cold qualification used the private AFS handler, staging also requires
+`--afs-handler` and `--afs-source-snapshot` and includes them separately as
+`Platform/L/afs-handler` and `Sources/AFS/`. The hash-bound source snapshot is
+built by `aros/platform/build-afs-snapshot.py`, without cached AFS objects, and
+replays through the same retained-source helper described above. It contains
+the single-reply, rename-chain and final-root-flush companion patches. These
+are platform integration inputs, not an automatic replacement for another
+AROS installation's filesystem handler. Qualification with that overlay must
+not be presented as qualification of an unpatched stock nightly.
+
 Cold qualification requires both block-integrity (`zdb -bcc`) and full MOS
 object-reachability (`zdb -dddd`) reports for the main pool, changed-member pool
 and optional writable-release phase. A `No leaks` line does not override a

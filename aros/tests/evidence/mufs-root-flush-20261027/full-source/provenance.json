@@ -1,0 +1,11 @@
+{
+  "upstream": "/home/terminills/Documents/GitHub/aros-adt-src",
+  "configured_build": "/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean",
+  "upstream_head": "671efe3b321926332e3330a0e138ed4a3d4e820e",
+  "note": "Retained source hashes are authoritative; HEAD is not a clean-tree claim.",
+  "patches": [
+    "afs-single-die-reply.patch",
+    "afs-rename-pinned-link.patch",
+    "afs-inhibit-root-flush.patch"
+  ]
+}
