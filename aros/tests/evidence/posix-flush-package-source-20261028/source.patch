@@ -1,0 +1,26 @@
+diff --git a/aros/engine/build-posix-flush-snapshot.py b/aros/engine/build-posix-flush-snapshot.py
+index 38462f8..8226b23 100644
+--- a/aros/engine/build-posix-flush-snapshot.py
++++ b/aros/engine/build-posix-flush-snapshot.py
+@@ -26,6 +26,8 @@ def main():
+     recipe = json.loads((root / 'rebuild.json').read_text())
+     if recipe['format'] != 1 or recipe['artifact'] != 'posixc.library':
+         raise ValueError('Expected a retained POSIX snapshot')
++    if (root / 'source/posix-stream-end.c').exists():
++        raise ValueError('Snapshot already contains the stream teardown hook')
+     for name, expected in recipe['external_inputs'].items():
+         if helper.digest(Path(name)) != expected:
+             raise ValueError(f'External dependency changed: {name}')
+@@ -35,6 +37,12 @@ def main():
+     out = Path(tempfile.mkdtemp(prefix='posix-flush-source.', dir=parent))
+     print(out, flush=True)
+     helper.copy_sources(root, out, paths)
++    # Packaging needs the original module ABI definition and provenance, not
++    # only the C compiler inputs. Preserve the baseline record unchanged.
++    for relative in ('source/compiler/crt/posixc/posixc.conf', 'provenance.json'):
++        if Path(relative) not in paths:
++            raise ValueError(f'Missing retained metadata: {relative}')
++        shutil.copy2(root / relative, out / relative)
+     for name in ('LICENSE', 'LICENSE.Author', 'LICENSE.GPL', 'LICENSE.LGPL', 'ACKNOWLEDGEMENTS'):
+         if (root / 'source' / name).is_file():
+             shutil.copy2(root / 'source' / name, out / 'source' / name)

@@ -1,0 +1,28 @@
+/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/hosted-atime-inputs.x7lhh8L7/openzfs.library: OK
+/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/hosted-atime-inputs.x7lhh8L7/OpenZFSServiceNative: OK
+/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/hosted-atime-inputs.x7lhh8L7/OpenZFSPublicServiceTest: OK
+Evidence: /mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/hosted-security-test.qPGfVR6Z
+hosted security configured=1
+hosted security authenticated=1 owner=004d0058
+RESULT hosted security login/logout PASS configured=1 uid77gid88=1 restored=1
+PASS redirected stdio --stdio-child: transport=0 child=0 stdout=1 stderr=1 visible-out=1 visible-err=1
+PASS redirected stdio --stdio-return-child: transport=0 child=0 stdout=1 stderr=1 visible-out=1 visible-err=1
+PASS redirected stdio --stdio-exit-child: transport=0 child=0 stdout=1 stderr=1 visible-out=1 visible-err=1
+PASS checked stdio runtime prerequisites only
+/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/hosted-security-test.qPGfVR6Z/OZPublicPool/disk0: OK
+/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/hosted-security-test.qPGfVR6Z/OZPublicPool/disk1: OK
+PASS persistent hosted mirror: independent zdb, cold DOS read and unchanged files
+/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/hosted-security-test.qPGfVR6Z/Libs/security.library: OK
+/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/hosted-security-test.qPGfVR6Z/boot/linux/kernel: OK
+/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/hosted-security-test.qPGfVR6Z/C/OpenZFSSecurityTest: OK
+/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/hosted-security-test.qPGfVR6Z/Libs/stdcio.library: OK
+/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/hosted-security-test.qPGfVR6Z/Libs/posixc.library: OK
+/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/hosted-security-test.qPGfVR6Z/Libs/stdc.library: OK
+/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/hosted-security-test.qPGfVR6Z/C/OpenZFSRuntimeCheck: OK
+/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/hosted-security-test.qPGfVR6Z/C/OpenZFSServiceNative: OK
+/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/hosted-security-test.qPGfVR6Z/C/OpenZFSPublicServiceTest: OK
+/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/hosted-security-test.qPGfVR6Z/Libs/openzfs.library: OK
+/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/hosted-security-test.qPGfVR6Z/C/zfs: OK
+/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/hosted-security-test.qPGfVR6Z/C/zpool: OK
+/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/hosted-security-test.qPGfVR6Z/L/OpenZFS-Handler: OK
+PASS private hosted authentication: /mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/hosted-security-test.qPGfVR6Z
