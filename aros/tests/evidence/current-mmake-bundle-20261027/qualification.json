@@ -1,0 +1,85 @@
+{
+  "packaging_commit": "bef76718de835afd2ccdd8971918809e31b9c125",
+  "gui_run": "/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/native-gui-run.DKW8o83D",
+  "cold_run": "/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/public-service-run.6iuhXkGy",
+  "encrypted_root_run": "/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/public-service-run.CS0D8oKi",
+  "build": "/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/qualified-inputs.IjVDiatk",
+  "native_zdb_run": "/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/zdb-label-run.6Y7sxTkv",
+  "build_only_utilities": [],
+  "native_companion_utilities": [
+    "OpenZFSStartup",
+    "OpenZFSStartupMount",
+    "OpenZFSRuntimeCheck",
+    "OpenZFSHostIdentity"
+  ],
+  "inputs": {
+    "C/zfs": {
+      "path": "/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/qualified-inputs.IjVDiatk/stage/C/zfs",
+      "sha256": "e19ba9cfd1cd0af5c8a6a0ef6756e35f758637122d80d67c525e89fc4c78468f"
+    },
+    "C/zpool": {
+      "path": "/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/qualified-inputs.IjVDiatk/stage/C/zpool",
+      "sha256": "13f0f9daecf6b0e99ae145208a05c61fb1948eea389614cd688ed41dd1ac795b"
+    },
+    "C/zdb": {
+      "path": "/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/qualified-inputs.IjVDiatk/stage/C/zdb",
+      "sha256": "a26fe543642402356dd555289d4f1e15a296cd7c3ad1212ad0423456dd7d4f07"
+    },
+    "C/OpenZFSServiceNative": {
+      "path": "/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/qualified-inputs.IjVDiatk/package/OpenZFSServiceNative",
+      "sha256": "716a919653a2f56b527540d8550312ebdcd334b07b8f6e99f445a2667ab16a50"
+    },
+    "C/OpenZFSDevice": {
+      "path": "/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/qualified-inputs.IjVDiatk/stage/C/OpenZFSDevice",
+      "sha256": "941f21021c2d28e1b17c45812d685074a36e2d41f0b162d4cfe580fee32ebd27"
+    },
+    "Libs/openzfs.library": {
+      "path": "/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/qualified-inputs.IjVDiatk/package/openzfs.library",
+      "sha256": "3f7ddc51c14991c8fafcabaeb31f6a09648ffa9cade015230118f5751f6b3708"
+    },
+    "L/OpenZFS-Handler": {
+      "path": "/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/qualified-inputs.IjVDiatk/stage/L/OpenZFS-handler",
+      "sha256": "347be83a74d38251b4978d6adbf832d04a6b5b9b20ced5c9bff7e2d1cbbca69b"
+    },
+    "Tools/OpenZFSManagerNative": {
+      "path": "/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/qualified-inputs.IjVDiatk/stage/Tools/OpenZFSManagerNative",
+      "sha256": "483eb66049f22fd00d267f0f2810241769b5910da2226ae8c8c0d6563e37fee7"
+    },
+    "Tools/OpenZFS/ExecHelper": {
+      "path": "/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/qualified-inputs.IjVDiatk/stage/Tools/OpenZFS/ExecHelper",
+      "sha256": "0e05b9a192068e1325c816de59c6664d6a0a279ddb0ecd8928a8311bb6b0350e"
+    },
+    "Platform/Libs/posixc.library": {
+      "path": "/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/qualified-inputs.IjVDiatk/stage/Libs/posixc.library",
+      "sha256": "32a510b850fc85c322d71b902bb6ca497945ef17e3269a6bfe2cf9a254feede8"
+    },
+    "Platform/L/fat-handler": {
+      "path": "/mnt/short-term/openzfs-qualification-20261024.aGFlVF7T/flush-overlay.tufmbxjd/fat.handler",
+      "sha256": "7e15a444306fe0a1b901fcd66c7a403cca17e925385475bdaedec3760881cad3"
+    },
+    "Platform/Boot/aros-base.pkg.xz": {
+      "path": "/mnt/short-term/openzfs-qualification-20261024.aGFlVF7T/dos-revision.Pa9psAFv/aros-base.pkg.xz",
+      "sha256": "0a6d8c05a0bc33142f6d2f1ac0363f93771edf936b583ccdc3872ec0f37175b9"
+    },
+    "Platform/L/afs-handler": {
+      "path": "/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/afs-source.wg6ei6nj/afs-handler",
+      "sha256": "b50d82a5e1759f5acfafc48de074aaf45d58cba962919100e8c21080710173fb"
+    },
+    "C/OpenZFSStartup": {
+      "path": "/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/qualified-inputs.IjVDiatk/stage/C/OpenZFSStartup",
+      "sha256": "578828bfdbd7e97515e385064c255ad1e3a5ab28ad783bc50324b345cecdda3f"
+    },
+    "C/OpenZFSStartupMount": {
+      "path": "/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/qualified-inputs.IjVDiatk/stage/C/OpenZFSStartupMount",
+      "sha256": "71e5a7080ae992640a4b959b62c9ece9d216d2de0e728a9a51d9ed0c6b1093c1"
+    },
+    "C/OpenZFSRuntimeCheck": {
+      "path": "/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/qualified-inputs.IjVDiatk/stage/C/OpenZFSRuntimeCheck",
+      "sha256": "963ac89bf9884154df62ca0c6c12b587c714350e85df98ef01fd0f6181b2aa34"
+    },
+    "C/OpenZFSHostIdentity": {
+      "path": "/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/qualified-inputs.IjVDiatk/stage/C/OpenZFSHostIdentity",
+      "sha256": "cb476ad337919de9b40e7462e96229f1761fd59555353e0771a7b84c87dd4bad"
+    }
+  }
+}

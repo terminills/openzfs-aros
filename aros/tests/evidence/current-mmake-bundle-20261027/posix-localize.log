@@ -1,0 +1,7 @@
+Traceback (most recent call last):
+  File "/mnt/short-term/openzfs-bootenv-candidate-20261025/aros/engine/localize-posix-snapshot.py", line 70, in <module>
+    main()
+  File "/mnt/short-term/openzfs-bootenv-candidate-20261025/aros/engine/localize-posix-snapshot.py", line 62, in main
+    names = sorted({*paths, Path('localization.json'), Path(__file__).name})
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: '<' not supported between instances of 'str' and 'PosixPath'

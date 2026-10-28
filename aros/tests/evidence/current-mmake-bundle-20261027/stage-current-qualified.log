@@ -1,0 +1,10 @@
+Qualified input assembly: /mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/qualified-inputs.JY6g85RJ
+Traceback (most recent call last):
+  File "/mnt/short-term/openzfs-bootenv-candidate-20261025/aros/distribution/stage-mmake.py", line 490, in <module>
+    main()
+  File "/mnt/short-term/openzfs-bootenv-candidate-20261025/aros/distribution/stage-mmake.py", line 409, in main
+    posix_sources = require_posix_snapshot(posix_snapshot, selected["Platform/Libs/posixc.library"])
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/mnt/short-term/openzfs-bootenv-candidate-20261025/aros/distribution/stage-mmake.py", line 80, in require_posix_snapshot
+    raise ValueError("posixc ABI include is not snapshot-local")
+ValueError: posixc ABI include is not snapshot-local

@@ -1,0 +1,8 @@
+{
+  "source_snapshot": "/mnt/short-term/openzfs-qualification-20261024.aGFlVF7T/posix-source.krrt6d62",
+  "original_manifest_sha256": "abde1dd1993d89fee8a307d245e66fd5c038590bc3ce3a42167b7ad64ac80d82",
+  "removed_external_header": "/mnt/short-term/openzfs-qualification-20261024.aGFlVF7T/build-workspace.98Zx7n6B/build-aros/mmake-alpha18-20261022/gen/compiler/crt/posixc/posixc/include/posixc_libdefs.h",
+  "retained_header_sha256": "317544410b46538704a124431fc09b91f8a8a0fa2541ffe7e30caa7544b78998",
+  "expected_binary_unchanged": "32a510b850fc85c322d71b902bb6ca497945ef17e3269a6bfe2cf9a254feede8",
+  "status": "Requires byte-identical replay; no new native claim"
+}
