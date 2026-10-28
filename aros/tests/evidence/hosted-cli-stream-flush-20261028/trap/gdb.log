@@ -1,0 +1,125 @@
+
+This GDB supports auto-downloading debuginfo from the following URLs:
+  <https://debuginfod.ubuntu.com>
+Enable debuginfod for this session? (y or [n]) [answered N; input not from terminal]
+Debuginfod has been disabled.
+To make this setting permanent, add 'set debuginfod enabled off' to .gdbinit.
+[Thread debugging using libthread_db enabled]
+Using host libthread_db library "/usr/lib/x86_64-linux-gnu/libthread_db.so.1".
+[Attaching after Thread 0x7ffff7f92740 (LWP 1543518) fork to child process 1543521]
+[New inferior 2 (process 1543521)]
+[Detaching after fork from parent process 1543518]
+[Inferior 1 (process 1543518) detached]
+[Thread debugging using libthread_db enabled]
+Using host libthread_db library "/usr/lib/x86_64-linux-gnu/libthread_db.so.1".
+warning: Corrupted shared library list: 0x555555569150 != 0x7ffff7ffdda0
+warning: Corrupted shared library list: 0x555555569150 != 0x7ffff7ffdda0
+
+Thread 2.1 "AROSBootstrap" received signal SIGSEGV, Segmentation fault.
+[Switching to Thread 0x7ffff7f92740 (LWP 1543521)]
+0x00007fff97a35945 in ?? ()
+rax            0x7fffa23fb050      140735915470928
+rbx            0x7fffb0013250      140736146256464
+rcx            0x7fffb1013d00      140736163036416
+rdx            0x0                 0
+rsi            0x7fffb1014078      140736163037304
+rdi            0x7fff97a65618      140735737648664
+rbp            0x7fffaa5b4ff0      0x7fffaa5b4ff0
+rsp            0x7fffaa5b4fd0      0x7fffaa5b4fd0
+r8             0x60005865          1610635365
+r9             0x7fffa1b7b190      140735906558352
+r10            0x60029d65          1610784101
+r11            0x7fff9783633d      140735735358269
+r12            0x4d                77
+r13            0x7fffb14813f0      140736167678960
+r14            0x7fffa2baf060      140735923548256
+r15            0x7fffb14813f2      140736167678962
+rip            0x7fff97a35945      0x7fff97a35945
+eflags         0x10206             [ PF IF RF ]
+cs             0x33                51
+ss             0x2b                43
+ds             0x0                 0
+es             0x0                 0
+fs             0x0                 0
+gs             0x0                 0
+fs_base        0x7ffff7f92740      140737353688896
+gs_base        0x0                 0
+
+Thread 2.1 (Thread 0x7ffff7f92740 (LWP 1543521) "AROSBootstrap"):
+#0  0x00007fff97a35945 in ?? ()
+#1  0x00007fffa1b7b190 in ?? ()
+#2  0x00007fffb1013d00 in ?? ()
+#3  0x00007fffb14813f2 in ?? ()
+#4  0x00007fffb0013250 in ?? ()
+#5  0x00007fffaa5b5020 in ?? ()
+#6  0x00007fff97a4048c in ?? ()
+#7  0x0000000000000001 in ?? ()
+#8  0x00007fffb14813f2 in ?? ()
+#9  0x00007fffb14813f2 in ?? ()
+#10 0x000000000000004d in ?? ()
+#11 0x00007fffaa5b52b0 in ?? ()
+#12 0x0000000041ba159c in ?? ()
+#13 0x00007fffaa5b5050 in ?? ()
+#14 0x00007fffa2baf060 in ?? ()
+#15 0x00007fffb14813f0 in ?? ()
+#16 0x00007fffb06777c0 in ?? ()
+#17 0x00007fffb06b80d0 in ?? ()
+#18 0x00007fffb08c7a60 in ?? ()
+#19 0x00007fff97a290c0 in ?? ()
+#20 0x0000000000000000 in ?? ()
+   0x7fff97a35925:	mov    %rsi,0x20(%rax)
+   0x7fff97a35929:	lea    0x378(%rcx),%rsi
+   0x7fff97a35930:	movq   %rdx,%xmm0
+   0x7fff97a35935:	movq   %rsi,%xmm1
+   0x7fff97a3593a:	mov    %rax,0x28(%rax)
+   0x7fff97a3593e:	punpcklqdq %xmm1,%xmm0
+   0x7fff97a35942:	movups %xmm0,(%rax)
+=> 0x7fff97a35945:	mov    %rax,0x8(%rdx)
+   0x7fff97a35949:	mov    %rax,0x378(%rcx)
+   0x7fff97a35950:	mov    $0x1,%eax
+   0x7fff97a35955:	mov    -0x8(%rbp),%rbx
+   0x7fff97a35959:	leave
+   0x7fff97a3595a:	ret
+   0x7fff97a3595b:	movabs 0x7fff97a5a1d8,%rax
+   0x7fff97a35965:	mov    -0x20(%rbp),%rdi
+   0x7fff97a35969:	mov    %rax,%rsi
+   0x7fff97a3596c:	call   *-0x228(%rax)
+   0x7fff97a35972:	movq   $0x0,0xe8(%rbx)
+   0x7fff97a3597d:	xor    %eax,%eax
+   0x7fff97a3597f:	jmp    0x7fff97a35955
+   0x7fff97a35981:	data16 cs nopw 0x0(%rax,%rax,1)
+   0x7fff97a3598c:	nopl   0x0(%rax)
+   0x7fff97a35990:	mov    0xf8(%rdi),%rax
+   0x7fff97a35997:	test   %rax,%rax
+0x7fffaa5b4fd0:	0x00007fffa1b7b190	0x00007fffb1013d00
+0x7fffaa5b4fe0:	0x00007fffb14813f2	0x00007fffb0013250
+0x7fffaa5b4ff0:	0x00007fffaa5b5020	0x00007fff97a4048c
+0x7fffaa5b5000:	0x0000000000000001	0x00007fffb14813f2
+0x7fffaa5b5010:	0x00007fffb14813f2	0x000000000000004d
+0x7fffaa5b5020:	0x00007fffaa5b52b0	0x0000000041ba159c
+0x7fffaa5b5030:	0x00007fffaa5b5050	0x00007fffa2baf060
+0x7fffaa5b5040:	0x00007fffb14813f0	0x00007fffb06777c0
+0x7fffaa5b5050:	0x00007fffb06b80d0	0x00007fffb08c7a60
+0x7fffaa5b5060:	0x00007fff97a290c0	0x0000000000000000
+0x7fffaa5b5070:	0x0000000000000000	0x0000000000000000
+0x7fffaa5b5080:	0x0000000000000000	0x00007fff00000001
+0x7fffaa5b5090:	0x00007fff97a290c0	0x00007fff97a65470
+0x7fffaa5b50a0:	0x00007fffb08c7a60	0x0000000041002900
+0x7fffaa5b50b0:	0x00007fffaa5b5160	0x000000006000f00b
+0x7fffaa5b50c0:	0x00007fffaa5b51e0	0x0000000041002900
+0x7fffaa5b50d0:	0x00007fffaa5b50f0	0x00007fffaa5b5100
+0x7fffaa5b50e0:	0x00007fffb06b80d0	0x00007fffa2c05720
+0x7fffaa5b50f0:	0x00007fffaa5b51c0	0x00007fff97602618
+0x7fffaa5b5100:	0x00007fffb14813f2	0x0000000060019235
+0x7fffaa5b5110:	0x00007fffaa5b5130	0x00000000600191ee
+0x7fffaa5b5120:	0x0000000000000001	0x0000000000000000
+0x7fffaa5b5130:	0x0000000000000000	0x0000000000000000
+0x7fffaa5b5140:	0x0000000000000000	0x0000000000000000
+0x7fffaa5b5150:	0x0000000000000000	0x0000000000000000
+0x7fffaa5b5160:	0x00007fffa2761280	0x0000000011111000
+0x7fffaa5b5170:	0x00007fffb08c7a60	0x0000000011111000
+0x7fffaa5b5180:	0x00007fffaa5b4f78	0x00007fffaa5b4f7c
+0x7fffaa5b5190:	0x00007fff97a290c0	0x000000006000f00b
+0x7fffaa5b51a0:	0x00007fffb08c7aa0	0x00007fffa2761280
+0x7fffaa5b51b0:	0x00007fff97a290c0	0x00007fffb08c7a60
+0x7fffaa5b51c0:	0x00007fffaa5b5220	0x00000000600141fb

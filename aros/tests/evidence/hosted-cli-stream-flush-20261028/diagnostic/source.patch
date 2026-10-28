@@ -1,0 +1,46 @@
+diff --git a/aros/cli/build-system.mk b/aros/cli/build-system.mk
+index 07e0691..555deea 100644
+--- a/aros/cli/build-system.mk
++++ b/aros/cli/build-system.mk
+@@ -12,7 +12,7 @@ OPENZFS_PTHREAD_ARCHIVE ?= $(OPENZFS_PTHREAD_LIBDIR)/libpthread.a
+ OPENZFS_PIPE2_OBJECT ?=
+ OPENZFS_PYTHON ?= python3
+ 
+-OZ_CLI_FLAGS := $(CFLAGS) -O2 -g -ffunction-sections -fdata-sections \
++OZ_CLI_FLAGS := $(CFLAGS) -DOZ_LIST_TRACE -O2 -g -ffunction-sections -fdata-sections \
+     -D_GNU_SOURCE -D_FILE_OFFSET_BITS=64 -DOZ_NATIVE_LABEL_CLIENT \
+     -DTEXT_DOMAIN=\"zfs\" -DSYSCONFDIR=\"ENV:OpenZFS\" \
+     -DZFSEXECDIR=\"SYS:Tools/OpenZFS\" -DPKGDATADIR=\"SYS:Storage/OpenZFS\" \
+diff --git a/cmd/zpool/zpool_main.c b/cmd/zpool/zpool_main.c
+index 6ed75f2..252278e 100644
+--- a/cmd/zpool/zpool_main.c
++++ b/cmd/zpool/zpool_main.c
+@@ -6856,9 +6856,16 @@ print_line(list_cbdata_t *cb, const char *vdev_name)
+  * Given a pool and a list of properties, print out all the properties according
+  * to the described layout. Used by zpool_do_list().
+  */
++#ifdef OZ_LIST_TRACE
++#include <aros/debug.h>
++#endif
+ static void
+ collect_pool(zpool_handle_t *zhp, list_cbdata_t *cb)
+ {
++#ifdef OZ_LIST_TRACE
++	bug("OZ list collect name=%s scripted=%d props=%p\n",
++	    zpool_get_name(zhp), cb->cb_scripted, cb->cb_proplist);
++#endif
+ 	zprop_list_t *pl = cb->cb_proplist;
+ 	boolean_t first = B_TRUE;
+ 	char property[ZPOOL_MAXPROPLEN];
+@@ -6969,6 +6976,11 @@ collect_pool(zpool_handle_t *zhp, list_cbdata_t *cb)
+ 		fnvlist_free(item);
+ 	} else
+ 		(void) fputc('\n', stdout);
++#ifdef OZ_LIST_TRACE
++	int before = ferror(stdout);
++	int flushed = fflush(stdout);
++	bug("OZ list output error=%d flush=%d errno=%d\n", before, flushed, errno);
++#endif
+ }
+ 
+ static void

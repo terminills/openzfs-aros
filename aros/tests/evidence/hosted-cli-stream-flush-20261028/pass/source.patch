@@ -1,0 +1,74 @@
+diff --git a/aros/engine/public-service-test.c b/aros/engine/public-service-test.c
+index ee0cd8e..0fbb8fa 100644
+--- a/aros/engine/public-service-test.c
++++ b/aros/engine/public-service-test.c
+@@ -114,6 +114,7 @@ static const char *storage_directory="RAM:OZPublicPool";
+ static unsigned storage_members=2,storage_layout=OZ_MIRROR,storage_missing=1;
+ static int storage_reply_received;
+ static int native_file_fixture;
++static int hosted_file_fixture;
+ static int storage_replace,storage_replaced;
+ static int storage_dspare;
+ static int storage_dspare_cli;
+@@ -3128,7 +3129,8 @@ static int storage_test(int gui){
+     STORAGE_CHECK(!cli_clear_rewind_unmounted());
+ #ifdef OZ_NATIVE_DISPATCHER
+     STORAGE_CHECK(!oz_public_ioctl_test("public_mirror"));
+-    if(native_file_fixture)STORAGE_CHECK(!oz_public_bootenv_persistence_test("public_mirror",1));
++    if(native_file_fixture||hosted_file_fixture)
++        STORAGE_CHECK(!oz_public_bootenv_persistence_test("public_mirror",1));
+ #ifdef OZ_TEST_UPSTREAM_INIT
+     STORAGE_CHECK(!oz_upstream_mount_test());
+     STORAGE_CHECK(!oz_upstream_promotion_readonly_test(0));
+@@ -4192,7 +4194,7 @@ int main(int argc,char **argv){
+     if(marker){UnLock(marker);storage_directory="OZBACK:OZPublicPool";native_file_fixture=1;}
+     marker=Lock((CONST_STRPTR)"SYS:openzfs-hosted-file-fixture",SHARED_LOCK);
+     if(marker){
+-        UnLock(marker);storage_directory="EMU:OZPublicPool";
++        UnLock(marker);storage_directory="EMU:OZPublicPool";hosted_file_fixture=1;
+         marker=Lock((CONST_STRPTR)"SYS:openzfs-hosted-assign-fixture",SHARED_LOCK);
+         if(marker){UnLock(marker);storage_directory="SYS:OZPublicPool";}
+     }
+diff --git a/aros/engine/test-hosted-security.sh b/aros/engine/test-hosted-security.sh
+index c38fc49..db5ed95 100644
+--- a/aros/engine/test-hosted-security.sh
++++ b/aros/engine/test-hosted-security.sh
+@@ -54,6 +54,9 @@ cp "$library" "$run/Libs/security.library"
+ if [[ -n ${AROS_TEST_POSIX_LIBRARY:-} ]];then
+     cp "$(realpath -e "$AROS_TEST_POSIX_LIBRARY")" "$run/Libs/posixc.library"
+ fi
++if [[ -n ${AROS_TEST_STDC_LIBRARY:-} ]];then
++    cp "$(realpath -e "$AROS_TEST_STDC_LIBRARY")" "$run/Libs/stdc.library"
++fi
+ if [[ -n ${AROS_TEST_DOS_LIBRARY:-} ]];then
+     cp "$AROS_TEST_DOS_LIBRARY" "$run/Libs/dos.library"
+ fi
+@@ -123,6 +126,7 @@ if [[ -n ${AROS_TEST_RUNTIME_CHECK:-} ]];then
+ fi
+ sha256sum "$run/Libs/stdcio.library" >>"$run/inputs.sha256"
+ sha256sum "$run/Libs/posixc.library" >>"$run/inputs.sha256"
++sha256sum "$run/Libs/stdc.library" >>"$run/inputs.sha256"
+ if [[ -n ${AROS_TEST_DOS_LIBRARY:-} ]];then
+     sha256sum "$run/Libs/dos.library" >>"$run/inputs.sha256"
+ fi
+@@ -151,7 +155,19 @@ xpid=$!
+ for attempt in {1..50};do [[ -s "$run/${phase}display.txt" ]] && break;sleep .1;done
+ display=$(<"$run/${phase}display.txt");[[ $display =~ ^[0-9]+$ ]]
+ cd "$run"
+-DISPLAY=":$display" setsid ./boot/linux/AROSBootstrap -c "$run/${phase}hosted.conf" >"$run/${phase}bootstrap.log" 2>&1 &
++if [[ ${AROS_TEST_HOSTED_GDB:-0} == 1 ]];then
++    DISPLAY=":$display" setsid gdb -q -batch \
++        -ex 'set pagination off' -ex 'set follow-fork-mode child' \
++        -ex 'handle SIGUSR1 nostop noprint pass' \
++        -ex 'handle SIGUSR2 nostop noprint pass' \
++        -ex 'handle SIGALRM nostop noprint pass' \
++        -ex run -ex 'info registers' -ex 'thread apply all bt' \
++        -ex 'x/24i $pc-32' -ex 'x/64gx $sp' \
++        --args ./boot/linux/AROSBootstrap -c "$run/${phase}hosted.conf" \
++        >"$run/${phase}gdb.log" 2>&1 &
++else
++    DISPLAY=":$display" setsid ./boot/linux/AROSBootstrap -c "$run/${phase}hosted.conf" >"$run/${phase}bootstrap.log" 2>&1 &
++fi
+ guest=$!;printf '%s\n' "$guest" >"$run/${phase}guest.pid"
+ }
+ start_guest ''

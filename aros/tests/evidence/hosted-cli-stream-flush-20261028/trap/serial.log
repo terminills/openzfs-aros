@@ -1,0 +1,317 @@
+----
+[Bootstrap] RAM memory block allocated: 0x7fff97600000 - 0x7ffff7600000 (1610612736 bytes)
+[Bootstrap] RAM memory block allocated: 0x40000000 - 0x60000000 (536870912 bytes)
+[Bootstrap] Entering kernel at 0x60000000...
+[KRN] Protecting host process stack (0x00007fffffff2880 - 0x00007fffffffc880)
+Xlib:  extension "XFree86-VidModeExtension" missing on display ":3".
+Writable startup denied: configured security.library and system task identity required.
+Public startup invalid-mode and non-root denial PASS
+Native authenticated admission ready
+OpenZFS management API 3 ready; engine initialized
+Public service op=1 status=0 engine=1 rows=0
+Public service op=2 status=0 engine=1 rows=0
+Public service op=3 status=0 engine=1 rows=0
+Service remains resident: active client sessions or admitted operations.
+Public native control descriptors PASS capacity=64 ownership=1 stale=1 session-cleanup=1
+Public task-exit session reclamation PASS cycles=4 sessions=32
+Public authenticated sessions ownership, capacity, stale handles and shutdown guard PASS
+Public mutation requires authenticated admission PASS
+Public fixture directory: System:OZPublicPool
+Public pool alias identity PASS duplicate-refused=1
+Public storage op=5 status=0 Authenticated pool creation returned errno=0
+Public CLI command result=0 ioerr=0: C:zpool destroy public_file_reuse
+Public storage op=5 status=9 Authenticated pool creation returned errno=4096
+Public diagnostic begin T:public-cli-errors.log
+cannot create 'public_file_refused': insufficient replicas
+
+Public diagnostic end
+Public CLI command result=1 ioerr=209: C:zpool create -f -o cachefile=none -O mountpoint=none public_file_refused mirror /RAM/OZFileReuse/disk0 /RAM/OZFileReuse/disk1
+Public storage op=5 status=9 Authenticated pool creation returned errno=4096
+Public diagnostic begin T:public-cli-errors.log
+cannot create 'public_file_refused': insufficient replicas
+
+Public diagnostic end
+Public CLI command result=1 ioerr=209: C:zpool create -f -o cachefile=none -O mountpoint=none public_file_refused mirror /RAM/OZFileReuse/disk0 /RAM/OZFileReuse/disk1
+Public storage op=5 status=9 Authenticated pool creation returned errno=4096
+Public diagnostic begin T:public-cli-errors.log
+cannot create 'public_file_refused': insufficient replicas
+
+Public diagnostic end
+Public CLI command result=1 ioerr=209: C:zpool create -f -o cachefile=none -O mountpoint=none public_file_refused mirror /RAM/OZFileReuse/disk0 /RAM/OZFileReuse/disk1
+Public storage op=5 status=9 Authenticated pool creation returned errno=4096
+Public diagnostic begin T:public-cli-errors.log
+cannot create 'public_file_refused': insufficient replicas
+
+Public diagnostic end
+Public CLI command result=1 ioerr=209: C:zpool create -f -o cachefile=none -O mountpoint=none public_file_refused mirror /RAM/OZFileReuse/disk0 /RAM/OZFileReuse/disk1
+Public storage op=5 status=9 Authenticated pool creation returned errno=17
+Public diagnostic begin T:public-cli-errors.log
+cannot create 'public_file_refused': pool already exists
+
+Public diagnostic end
+Public CLI command result=1 ioerr=209: C:zpool create -f -o cachefile=none -O mountpoint=none public_file_refused mirror /RAM/OZFileReuse/disk0 /RAM/OZFileReuse/disk1
+Public storage op=5 status=9 Authenticated pool creation returned errno=17
+Public diagnostic begin T:public-cli-errors.log
+cannot create 'public_file_refused': pool already exists
+
+Public diagnostic end
+Public CLI command result=1 ioerr=209: C:zpool create -f -o cachefile=none -O mountpoint=none public_file_refused mirror /RAM/OZFileReuse/disk0 /RAM/OZFileReuse/disk1
+Public storage op=5 status=9 Authenticated pool creation returned errno=17
+Public diagnostic begin T:public-cli-errors.log
+cannot create 'public_file_refused': pool already exists
+
+Public diagnostic end
+Public CLI command result=1 ioerr=209: C:zpool create -f -o cachefile=none -O mountpoint=none public_file_refused mirror /RAM/OZFileReuse/disk0 /RAM/OZFileReuse/disk1
+Public storage op=5 status=9 Authenticated pool creation returned errno=17
+Public diagnostic begin T:public-cli-errors.log
+cannot create 'public_file_refused': pool already exists
+
+Public diagnostic end
+Public CLI command result=1 ioerr=209: C:zpool create -f -o cachefile=none -O mountpoint=none public_file_refused mirror /RAM/OZFileReuse/disk0 /RAM/OZFileReuse/disk1
+Public storage op=5 status=9 Authenticated pool creation returned errno=4096
+Public diagnostic begin T:public-cli-errors.log
+cannot create 'public_file_refused': insufficient replicas
+
+Public diagnostic end
+Public CLI command result=1 ioerr=209: C:zpool create -f -o cachefile=none -O mountpoint=none public_file_refused mirror /RAM/OZFileReuse/disk0 /RAM/OZFileReuse/disk1
+Public storage op=5 status=9 Authenticated pool creation returned errno=4096
+Public diagnostic begin T:public-cli-errors.log
+cannot create 'public_file_refused': insufficient replicas
+
+Public diagnostic end
+Public CLI command result=1 ioerr=209: C:zpool create -f -o cachefile=none -O mountpoint=none public_file_refused mirror /RAM/OZFileReuse/disk0 /RAM/OZFileReuse/disk1
+Public storage op=5 status=9 Authenticated pool creation returned errno=4096
+Public diagnostic begin T:public-cli-errors.log
+cannot create 'public_file_refused': insufficient replicas
+
+Public diagnostic end
+Public CLI command result=1 ioerr=209: C:zpool create -f -o cachefile=none -O mountpoint=none public_file_refused mirror /RAM/OZFileReuse/disk0 /RAM/OZFileReuse/disk1
+Public storage op=5 status=9 Authenticated pool creation returned errno=4096
+Public diagnostic begin T:public-cli-errors.log
+cannot create 'public_file_refused': insufficient replicas
+
+Public diagnostic end
+Public CLI command result=1 ioerr=209: C:zpool create -f -o cachefile=none -O mountpoint=none public_file_refused mirror /RAM/OZFileReuse/disk0 /RAM/OZFileReuse/disk1
+Public file label denial PASS corrupt=4 conflicting-member=4 checksum=4 manager-denied=12 forced-cli-denied=12 whole-members-unchanged=12 restored=12
+Public file conflicting label offsets PASS same-position=4
+Public CLI command result=0 ioerr=0: C:zpool create -o cachefile=none -O mountpoint=none public_file_reuse mirror /RAM/OZFileReuse/disk0 /RAM/OZFileReuse/disk1
+Public CLI command result=0 ioerr=0: C:zpool export public_file_reuse
+Public storage op=5 status=9 Authenticated pool creation returned errno=17
+Public diagnostic begin T:public-cli-errors.log
+invalid vdev specification
+use '-f' to override the following errors:
+/RAM Disk/OZFileReuse/disk0 is part of exported pool 'public_file_reuse'
+/RAM Disk/OZFileReuse/disk1 is part of exported pool 'public_file_reuse'
+
+Public diagnostic end
+Public CLI command result=1 ioerr=209: C:zpool create -o cachefile=none -O mountpoint=none public_file_refused mirror /RAM/OZFileReuse/disk0 /RAM/OZFileReuse/disk1
+Public storage op=7 status=0 Authenticated pool import returned errno=0
+Public CLI command result=0 ioerr=0: C:zpool destroy public_file_reuse
+Public storage op=5 status=0 Authenticated pool creation returned errno=0
+Public CLI command result=0 ioerr=0: C:zpool destroy public_file_reuse
+Public CLI command result=0 ioerr=0: C:zpool create -o cachefile=none -o ashift=12 -O mountpoint=none public_reuse_source mirror /RAM/OZReuseChanges/disk0 /RAM/OZReuseChanges/disk1
+Public CLI command result=0 ioerr=0: C:zpool create -o cachefile=none -o ashift=12 -O mountpoint=none public_reuse_target /RAM/OZReuseChanges/disk2
+Public CLI command result=0 ioerr=0: C:zpool create -o cachefile=none -o ashift=12 -O mountpoint=none public_reuse_donor mirror /RAM/OZReuseChanges/disk3 /RAM/OZReuseChanges/disk4
+Public diagnostic begin T:public-cli-errors.log
+invalid vdev specification
+the following errors must be manually repaired:
+/RAM Disk/OZReuseChanges/disk0 is part of active pool 'public_reuse_source'
+
+Public diagnostic end
+Public CLI command result=1 ioerr=209: C:zpool attach -f public_reuse_target 17693228510230764949 /RAM/OZReuseChanges/disk0
+Public diagnostic begin T:public-cli-errors.log
+invalid vdev specification
+the following errors must be manually repaired:
+/RAM Disk/OZReuseChanges/disk0 is part of active pool 'public_reuse_source'
+
+Public diagnostic end
+Public CLI command result=1 ioerr=209: C:zpool replace -f public_reuse_target 17693228510230764949 /RAM/OZReuseChanges/disk0
+Public diagnostic begin T:public-cli-errors.log
+invalid vdev specification
+the following errors must be manually repaired:
+/RAM Disk/OZReuseChanges/disk0 is part of active pool 'public_reuse_source'
+/RAM Disk/OZReuseChanges/disk1 is part of active pool 'public_reuse_source'
+
+Public diagnostic end
+Public CLI command result=1 ioerr=209: C:zpool add -f public_reuse_target mirror /RAM/OZReuseChanges/disk0 /RAM/OZReuseChanges/disk1
+Public CLI command result=0 ioerr=0: C:zpool export public_reuse_source
+Public diagnostic begin T:public-cli-errors.log
+invalid vdev specification
+use '-f' to override the following errors:
+/RAM Disk/OZReuseChanges/disk0 is part of exported pool 'public_reuse_source'
+
+Public diagnostic end
+Public CLI command result=1 ioerr=209: C:zpool attach  public_reuse_target 17693228510230764949 /RAM/OZReuseChanges/disk0
+Public diagnostic begin T:public-cli-errors.log
+invalid vdev specification
+use '-f' to override the following errors:
+/RAM Disk/OZReuseChanges/disk0 is part of exported pool 'public_reuse_source'
+
+Public diagnostic end
+Public CLI command result=1 ioerr=209: C:zpool replace  public_reuse_target 17693228510230764949 /RAM/OZReuseChanges/disk0
+Public diagnostic begin T:public-cli-errors.log
+invalid vdev specification
+use '-f' to override the following errors:
+/RAM Disk/OZReuseChanges/disk0 is part of exported pool 'public_reuse_source'
+/RAM Disk/OZReuseChanges/disk1 is part of exported pool 'public_reuse_source'
+
+Public diagnostic end
+Public CLI command result=1 ioerr=209: C:zpool add  public_reuse_target mirror /RAM/OZReuseChanges/disk0 /RAM/OZReuseChanges/disk1
+Public CLI command result=0 ioerr=0: C:zpool import -N -o cachefile=none -d /RAM/OZReuseChanges/disk0 -d /RAM/OZReuseChanges/disk1 public_reuse_source
+Public CLI command result=0 ioerr=0: C:zpool destroy public_reuse_source
+Public CLI command result=0 ioerr=0: C:zpool attach  public_reuse_target 17693228510230764949 /RAM/OZReuseChanges/disk0
+Public CLI command result=0 ioerr=0: C:zpool wait -t resilver public_reuse_target
+Public CLI command result=0 ioerr=0: C:zpool replace  public_reuse_target 11185556179562351595 /RAM/OZReuseChanges/disk1
+Public CLI command result=0 ioerr=0: C:zpool wait -t resilver,replace public_reuse_target
+Public CLI command result=0 ioerr=0: C:zpool destroy public_reuse_donor
+Public CLI command result=0 ioerr=0: C:zpool add  public_reuse_target mirror /RAM/OZReuseChanges/disk3 /RAM/OZReuseChanges/disk4
+Public CLI command result=0 ioerr=0: C:zpool destroy public_reuse_target
+Public destroyed changes CLI PASS attach=1 replace=1 add=1 active-force-refused=3 exported-refused=3 add-without-force=1 exact-read=5 cleanup=1
+Public CLI command result=0 ioerr=0: C:zpool create -o cachefile=none -o ashift=12 -O mountpoint=none public_reuse_source mirror /RAM/OZReuseChanges/disk0 /RAM/OZReuseChanges/disk1
+Public CLI command result=0 ioerr=0: C:zpool create -o cachefile=none -o ashift=12 -O mountpoint=none public_reuse_target /RAM/OZReuseChanges/disk2
+Public CLI command result=0 ioerr=0: C:zpool create -o cachefile=none -o ashift=12 -O mountpoint=none public_reuse_donor mirror /RAM/OZReuseChanges/disk3 /RAM/OZReuseChanges/disk4
+Public CLI command result=0 ioerr=0: C:zpool export public_reuse_source
+Public CLI command result=0 ioerr=0: C:zpool import -N -o cachefile=none -d /RAM/OZReuseChanges/disk0 -d /RAM/OZReuseChanges/disk1 public_reuse_source
+Public CLI command result=0 ioerr=0: C:zpool destroy public_reuse_source
+Public CLI command result=0 ioerr=0: C:zpool wait -t resilver public_reuse_target
+Public CLI command result=0 ioerr=0: C:zpool wait -t resilver,replace public_reuse_target
+Public CLI command result=0 ioerr=0: C:zpool destroy public_reuse_donor
+Public CLI command result=0 ioerr=0: C:zpool destroy public_reuse_target
+Public destroyed changes Manager PASS attach=1 replace=1 add=1 active-refused=3 exported-refused=3 exact-read=5 cleanup=1
+Public file destroyed reuse PASS cli=1 manager-api=1 old-payload-absent=2 exact-read=3 exported-refused=2 cleanup=1
+Public native engine version value=zfs-2.4.4-1
+Public native engine version PASS query=1 upstream=1 bounds=1 missing=1
+Public native supported tables PASS feature=1 properties=3 unknown=1 missing=1
+Public storage op=5 status=0 Authenticated pool creation returned errno=0
+Public pool assign PASS op=5 kind=0 removed=1
+Public pool root payload PASS written=1 flushed=1 detached=1
+Request failed before command execution: errno=22
+Request failed before command execution: errno=22
+Request failed before command execution: errno=22
+Upstream zpool clear: exit=0, DOS=0, capture errno=0
+
+Upstream zpool clear: exit=0, DOS=0, capture errno=0
+
+Upstream zpool clear: exit=0, DOS=0, capture errno=0
+
+Upstream zpool clear: exit=0, DOS=0, capture errno=0
+
+Public Manager clear recovery PASS unconfirmed=1 force-refused=1 malformed=1 recent=1 extreme=1 assessments=2
+Public CLI command result=0 ioerr=0: C:zpool clear -nF public_mirror
+Public CLI command result=0 ioerr=0: C:zpool clear -F public_mirror
+Public CLI command result=0 ioerr=0: C:zpool clear -nFX public_mirror
+Public CLI command result=0 ioerr=0: C:zpool clear -FX public_mirror
+Public CLI clear rewind healthy PASS preview=1 commit=1 extreme-preview=1 extreme-commit=1
+Public native clear ioctl PASS invalid-guid=1 pool-clear=1
+Public clear rewind wire PASS flat=1 nested=1 mismatched=1 flags=1 missing=1 capacity=1 ambiguous=1 type=1 unknown=1
+RESULT native event cursor PASS tiny-retry=1 seek-start-eid=1 seek-end-empty=1 bad-handle=1
+Public upstream snapshot ioctls PASS create=1 hold=1 onexit=1 release=1 destroy=1 schema=1
+Public clear rewind authorization PASS changed-user=1 own-session-denied=1
+Public upstream snapshot authorization PASS changed-user=1 own-session-denied=1 no-mutation=1
+Public upstream bootenv authorization PASS changed-user=1 own-session-denied=1 reader-get=1 unchanged=1
+Public upstream libzfs_core PASS snapshot=1 temporary-hold=1 destroy=1 reopen=1
+Public upstream bootenv PASS get=1 set=1 invalid-preserved=1 restored=1
+Public upstream enumeration PASS dataset=1 snapshot=1 properties=1 end=1 snapshot-growth=1
+Public upstream dataset ioctls PASS create=1 clone=1 rollback=1 volume=1 handler-ready=1
+Public accounting upgrade authorization PASS changed-user=1 own-session-denied=1
+Public accounting upgrade authorization PASS changed-user=1 own-session-denied=1
+Public accounting upgrade delegation PASS denied=1 granted=1 revoked=1
+Public accounting upgrade PASS writable=1 repeat=1 malformed=1 absent=1
+Public upstream ioctl transport PASS stats=1 configs=1 resize=1 bounds=1 stale=1
+Public CLI command result=0 ioerr=0: C:zfs create -u -o version=3 -o mountpoint=OZVERSION: public_mirror/upgradecheck
+Public CLI command result=0 ioerr=0: C:zfs get -H -o value version public_mirror/upgradecheck >T:cli-package-output.txt
+Public CLI command result=0 ioerr=0: C:zfs mount public_mirror/upgradecheck
+Public CLI command result=0 ioerr=0: C:zfs upgrade -V 5 public_mirror/upgradecheck
+Public CLI command result=0 ioerr=0: C:zfs get -H -o value version public_mirror/upgradecheck >T:cli-package-output.txt
+Public CLI command result=0 ioerr=0: C:zfs unmount public_mirror/upgradecheck
+Public CLI command result=0 ioerr=0: C:zfs mount public_mirror/upgradecheck
+Public CLI command result=0 ioerr=0: C:zfs unmount public_mirror/upgradecheck
+Public CLI command result=0 ioerr=0: C:zfs destroy public_mirror/upgradecheck
+Public CLI filesystem upgrade PASS version3=1 version5=1 remount=1 exact-data=1 cleanup=1
+Public CLI command result=0 ioerr=0: C:zfs create -u -o version=3 -o mountpoint=OZVERSION: public_mirror/upgradecheck
+Public CLI command result=0 ioerr=0: C:zfs get -H -o value version public_mirror/upgradecheck >T:cli-package-output.txt
+Public CLI command result=0 ioerr=0: C:zfs mount public_mirror/upgradecheck
+Request failed before command execution: errno=22
+Request failed before command execution: errno=22
+Public CLI command result=0 ioerr=0: C:zfs get -H -o value version public_mirror/upgradecheck >T:cli-package-output.txt
+Upstream zfs upgrade: exit=0, DOS=0, capture errno=0
+1 filesystems upgraded
+
+Public CLI command result=0 ioerr=0: C:zfs get -H -o value version public_mirror/upgradecheck >T:cli-package-output.txt
+Public CLI command result=0 ioerr=0: C:zfs unmount public_mirror/upgradecheck
+Public CLI command result=0 ioerr=0: C:zfs mount public_mirror/upgradecheck
+Public CLI command result=0 ioerr=0: C:zfs unmount public_mirror/upgradecheck
+Public CLI command result=0 ioerr=0: C:zfs destroy public_mirror/upgradecheck
+Public Manager upgrade worker PASS unconfirmed=1 invalid=1 unchanged=1 version5=1 remount=1 exact-data=1 cleanup=1
+Public accounting upgrade PASS writable=1 repeat=1 malformed=1 absent=1
+Public accounting mounted upgrade PASS writable=1 repeat=1
+Public native shares object PASS absent=1 unmounted=1 missing=1 invalid=1
+Public storage op=41 status=0 Authenticated dataset property set returned errno=0
+Public storage op=41 status=0 Authenticated dataset property set returned errno=0
+Public storage op=41 status=0 Authenticated dataset property set returned errno=0
+Public storage op=41 status=0 Authenticated dataset property set returned errno=0
+Public storage op=41 status=0 Authenticated dataset property set returned errno=0
+Public storage op=41 status=0 Authenticated dataset property set returned errno=0
+Public storage op=41 status=0 Authenticated dataset property set returned errno=0
+Public storage op=41 status=0 Authenticated dataset property set returned errno=0
+Public storage op=41 status=0 Authenticated dataset property set returned errno=0
+Public storage op=41 status=0 Authenticated dataset property set returned errno=0
+Public storage op=41 status=0 Authenticated dataset property set returned errno=0
+Public storage op=41 status=0 Authenticated dataset property set returned errno=0
+Public native mount policy PASS properties=4 transitions=8 missing=1 absent=1
+Public sparse64 PASS write=1 boundary=4294967296 size=4294971392 holes=1 legacy-refused=1
+Public DOS links PASS write=1 hard=1 relative-soft=1 unlinked-source=1 dangling-refused=1
+Metadata observed write=1 comment='OpenZFS native metadata' protection=50 size=8 date=17000/721/1234 DOS=0
+Public DOS metadata PASS write=1 comment=1 protection=1 timestamp=1 exact-data=1
+Public DOS notifications PASS absent-watch=1 create=1 wait-reply=1 coalesced=1 end=1 late-reply-reuse=3
+Public DOS signal notifications PASS initial=1 metadata=1 deletion=1 end=1
+Public desktop directory PASS phase=post-sparse64 stage=exall exnext=1/6 exall=1/6 errno=0 doserr=232
+Public pool self-assign PASS deadlock-refused=1 responsive=1
+Public native root resolution PASS alias=1 file-rejected=1 unrelated=1 absent=1
+Public native path dataset PASS file=1 alias=1 unrelated=1 absent=1 bounds=1
+Public CLI command result=0 ioerr=0: C:zfs create -s -V 2M -b 8K public_mirror/public_volume
+Public zvol PASS create=1 geometry=1 write=1 discard-edges=1 flush=1 exact-read=1 bounds=1 stale-descriptor=1
+Public CLI command result=0 ioerr=0: C:zpool list -H -o name public_mirror >T:cli-package-output.txt
+Public diagnostic begin T:public-cli-errors.log
+cannot trim '/System/OZPublicPool/disk0': trim operations are not supported by this device
+cannot trim '/System/OZPublicPool/disk1': trim operations are not supported by this device
+
+Public diagnostic end
+Public diagnostic begin T:public-cli-errors.log
+cannot trim '/System/OZPublicPool/disk0': trim operations are not supported by this device
+cannot trim '/System/OZPublicPool/disk1': trim operations are not supported by this device
+
+Public diagnostic end
+Public diagnostic begin T:public-cli-errors.log
+cannot trim '/System/OZPublicPool/disk0': trim operations are not supported by this device
+cannot trim '/System/OZPublicPool/disk1': trim operations are not supported by this device
+
+Public diagnostic end
+Public CLI TRIM unsupported PASS start=1 suspend=1 cancel=1 upstream-device-errors=1
+Upstream zpool clear: exit=1, DOS=0, capture errno=0
+cannot clear errors for public_mirror: pool is busy
+
+Upstream zpool clear: exit=1, DOS=0, capture errno=0
+cannot clear errors for public_mirror: pool is busy
+
+Public Manager clear mounted refusal PASS assessment=1 recovery=1
+Public diagnostic begin T:public-clear-errors.log
+cannot clear errors for public_mirror: pool is busy
+
+Public diagnostic end
+Public diagnostic begin T:public-clear-errors.log
+cannot clear errors for public_mirror: pool is busy
+
+Public diagnostic end
+Public CLI clear rewind mounted PASS dryrun-refused=1 commit-refused=1 diagnostic=1
+Public CLI command result=0 ioerr=0: C:zfs list -H -o name public_mirror/files >T:cli-package-output.txt
+Public CLI command result=0 ioerr=0: C:zfs get -H -o value type public_mirror/files >T:cli-package-output.txt
+Public CLI command result=0 ioerr=0: C:zfs create -o mountpoint=none public_mirror/defer_tree
+Public CLI command result=0 ioerr=0: C:zfs create -o mountpoint=none public_mirror/defer_tree/child
+Public CLI command result=0 ioerr=0: C:zfs snapshot -r public_mirror/defer_tree@held
+Public CLI command result=0 ioerr=0: C:zfs hold keep public_mirror/defer_tree/child@held
+Public CLI command result=0 ioerr=0: C:zfs get -H -o value defer_destroy public_mirror/defer_tree@held >T:cli-package-output.txt
+Public CLI command result=0 ioerr=0: C:zfs get -H -o value defer_destroy public_mirror/defer_tree/child@held >T:cli-package-output.txt
+Public CLI command result=0 ioerr=0: C:zfs get -H -o value userrefs public_mirror/defer_tree/child@held >T:cli-package-output.txt
+Public destruction dry-run PASS async=1 recursive-plan=1 deferred-unchanged=1 hold-unchanged=1 dryrun-required=1 force-refused=1 confirmation=1
+Public CLI command result=0 ioerr=0: C:zfs snapshot public_mirror/defer_tree@permission_probe

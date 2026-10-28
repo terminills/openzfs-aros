@@ -1,0 +1,11 @@
+7b47a3c8bb061324ee441389eab03a394ca33094d03e4df2e18367e84e9407c9  /mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/hosted-security-test.yaLFlSLJ/Libs/security.library
+23fcc0ea3d6ea0f858cfded33e80b586cc30b9e07b15e6d081440ee6d7057881  /mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/hosted-security-test.yaLFlSLJ/boot/linux/kernel
+16697bc98243eba5801a601ee3aedb1ae906cd5c1e4fdf7301e9860314ea07cd  /mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/hosted-security-test.yaLFlSLJ/C/OpenZFSSecurityTest
+e860800f09ecfeaea3eeada3ca665d77b599854ee6e0a711aa0724d35eb8b9e6  /mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/hosted-security-test.yaLFlSLJ/Libs/stdcio.library
+32a510b850fc85c322d71b902bb6ca497945ef17e3269a6bfe2cf9a254feede8  /mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/hosted-security-test.yaLFlSLJ/Libs/posixc.library
+716a919653a2f56b527540d8550312ebdcd334b07b8f6e99f445a2667ab16a50  /mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/hosted-security-test.yaLFlSLJ/C/OpenZFSServiceNative
+e7a6d226c7c4353abc31d349decd84def80ad9190d3e96e4820f15abbf6adc0b  /mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/hosted-security-test.yaLFlSLJ/C/OpenZFSPublicServiceTest
+2d33e1afa94de01dd370a7b7269931ca7412775c0c9ff88286a7aecc550269a2  /mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/hosted-security-test.yaLFlSLJ/Libs/openzfs.library
+e19ba9cfd1cd0af5c8a6a0ef6756e35f758637122d80d67c525e89fc4c78468f  /mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/hosted-security-test.yaLFlSLJ/C/zfs
+890a88a55fc0c9f40d57e84cfe5dd82ccc905e3eb810059b87aaad7ee91fdbbd  /mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/hosted-security-test.yaLFlSLJ/C/zpool
+347be83a74d38251b4978d6adbf832d04a6b5b9b20ced5c9bff7e2d1cbbca69b  /mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/hosted-security-test.yaLFlSLJ/L/OpenZFS-Handler

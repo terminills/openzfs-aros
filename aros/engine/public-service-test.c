@@ -114,6 +114,7 @@ static const char *storage_directory="RAM:OZPublicPool";
 static unsigned storage_members=2,storage_layout=OZ_MIRROR,storage_missing=1;
 static int storage_reply_received;
 static int native_file_fixture;
+static int hosted_file_fixture;
 static int storage_replace,storage_replaced;
 static int storage_dspare;
 static int storage_dspare_cli;
@@ -3128,7 +3129,8 @@ static int storage_test(int gui){
     STORAGE_CHECK(!cli_clear_rewind_unmounted());
 #ifdef OZ_NATIVE_DISPATCHER
     STORAGE_CHECK(!oz_public_ioctl_test("public_mirror"));
-    if(native_file_fixture)STORAGE_CHECK(!oz_public_bootenv_persistence_test("public_mirror",1));
+    if(native_file_fixture||hosted_file_fixture)
+        STORAGE_CHECK(!oz_public_bootenv_persistence_test("public_mirror",1));
 #ifdef OZ_TEST_UPSTREAM_INIT
     STORAGE_CHECK(!oz_upstream_mount_test());
     STORAGE_CHECK(!oz_upstream_promotion_readonly_test(0));
@@ -4192,7 +4194,7 @@ int main(int argc,char **argv){
     if(marker){UnLock(marker);storage_directory="OZBACK:OZPublicPool";native_file_fixture=1;}
     marker=Lock((CONST_STRPTR)"SYS:openzfs-hosted-file-fixture",SHARED_LOCK);
     if(marker){
-        UnLock(marker);storage_directory="EMU:OZPublicPool";
+        UnLock(marker);storage_directory="EMU:OZPublicPool";hosted_file_fixture=1;
         marker=Lock((CONST_STRPTR)"SYS:openzfs-hosted-assign-fixture",SHARED_LOCK);
         if(marker){UnLock(marker);storage_directory="SYS:OZPublicPool";}
     }

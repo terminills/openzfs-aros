@@ -1,0 +1,21 @@
+
+build-audit/hosted-security-test.Gp4MPNUY/Libs/stdc.library:     file format elf64-x86-64
+
+
+Disassembly of section .text:
+
+000000000003af60 <__init_atexit>:
+   3af60:	48 8d 87 78 03 00 00 	lea    0x378(%rdi),%rax
+   3af67:	48 c7 87 80 03 00 00 	movq   $0x0,0x380(%rdi)
+   3af6e:	00 00 00 00 
+   3af72:	48 89 87 88 03 00 00 	mov    %rax,0x388(%rdi)
+   3af79:	48 8d 87 80 03 00 00 	lea    0x380(%rdi),%rax
+   3af80:	48 89 87 78 03 00 00 	mov    %rax,0x378(%rdi)
+   3af87:	48 8d 87 90 03 00 00 	lea    0x390(%rdi),%rax
+   3af8e:	48 89 87 a0 03 00 00 	mov    %rax,0x3a0(%rdi)
+   3af95:	48 8d 87 98 03 00 00 	lea    0x398(%rdi),%rax
+   3af9c:	48 89 87 90 03 00 00 	mov    %rax,0x390(%rdi)
+   3afa3:	b8 01 00 00 00       	mov    $0x1,%eax
+   3afa8:	48 c7 87 98 03 00 00 	movq   $0x0,0x398(%rdi)
+   3afaf:	00 00 00 00 
+   3afb3:	c3                   	ret

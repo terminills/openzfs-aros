@@ -1,0 +1,44 @@
+
+build-audit/hosted-security-test.QKtmMJB4/Libs/stdc.library:     file format elf64-x86-64
+
+
+Disassembly of section .text:
+
+000000000004b97f <__init_atexit>:
+   4b97f:	55                   	push   %rbp
+   4b980:	48 89 e5             	mov    %rsp,%rbp
+   4b983:	48 83 ec 28          	sub    $0x28,%rsp
+   4b987:	48 89 7d d8          	mov    %rdi,-0x28(%rbp)
+   4b98b:	48 8b 45 d8          	mov    -0x28(%rbp),%rax
+   4b98f:	48 05 70 03 00 00    	add    $0x370,%rax
+   4b995:	48 89 45 f8          	mov    %rax,-0x8(%rbp)
+   4b999:	48 8b 45 f8          	mov    -0x8(%rbp),%rax
+   4b99d:	48 89 45 f0          	mov    %rax,-0x10(%rbp)
+   4b9a1:	48 8b 45 f0          	mov    -0x10(%rbp),%rax
+   4b9a5:	48 8b 55 f0          	mov    -0x10(%rbp),%rdx
+   4b9a9:	48 89 50 10          	mov    %rdx,0x10(%rax)
+   4b9ad:	48 8b 45 f0          	mov    -0x10(%rbp),%rax
+   4b9b1:	48 c7 40 08 00 00 00 	movq   $0x0,0x8(%rax)
+   4b9b8:	00 
+   4b9b9:	48 8b 45 f0          	mov    -0x10(%rbp),%rax
+   4b9bd:	48 8d 50 08          	lea    0x8(%rax),%rdx
+   4b9c1:	48 8b 45 f0          	mov    -0x10(%rbp),%rax
+   4b9c5:	48 89 10             	mov    %rdx,(%rax)
+   4b9c8:	48 8b 45 d8          	mov    -0x28(%rbp),%rax
+   4b9cc:	48 05 88 03 00 00    	add    $0x388,%rax
+   4b9d2:	48 89 45 e8          	mov    %rax,-0x18(%rbp)
+   4b9d6:	48 8b 45 e8          	mov    -0x18(%rbp),%rax
+   4b9da:	48 89 45 e0          	mov    %rax,-0x20(%rbp)
+   4b9de:	48 8b 45 e0          	mov    -0x20(%rbp),%rax
+   4b9e2:	48 8b 55 e0          	mov    -0x20(%rbp),%rdx
+   4b9e6:	48 89 50 10          	mov    %rdx,0x10(%rax)
+   4b9ea:	48 8b 45 e0          	mov    -0x20(%rbp),%rax
+   4b9ee:	48 c7 40 08 00 00 00 	movq   $0x0,0x8(%rax)
+   4b9f5:	00 
+   4b9f6:	48 8b 45 e0          	mov    -0x20(%rbp),%rax
+   4b9fa:	48 8d 50 08          	lea    0x8(%rax),%rdx
+   4b9fe:	48 8b 45 e0          	mov    -0x20(%rbp),%rax
+   4ba02:	48 89 10             	mov    %rdx,(%rax)
+   4ba05:	b8 01 00 00 00       	mov    $0x1,%eax
+   4ba0a:	c9                   	leave
+   4ba0b:	c3                   	ret

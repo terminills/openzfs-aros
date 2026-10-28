@@ -1,0 +1,23 @@
+----
+[Bootstrap] RAM memory block allocated: 0x7fbb15a00000 - 0x7fbb75a00000 (1610612736 bytes)
+[Bootstrap] RAM memory block allocated: 0x40a7f000 - 0x60a7f000 (536870912 bytes)
+[Bootstrap] Entering kernel at 0x60a7f000...
+[KRN] Protecting host process stack (0x00007fff1a62c900 - 0x00007fff1a636900)
+Xlib:  extension "XFree86-VidModeExtension" missing on display ":2".
+Writable startup denied: configured security.library and system task identity required.
+Public startup invalid-mode and non-root denial PASS
+Native authenticated admission ready
+OpenZFS management API 3 ready; engine initialized
+Public service op=1 status=0 engine=1 rows=0
+Public service op=2 status=0 engine=1 rows=0
+Public service op=3 status=0 engine=1 rows=0
+Service remains resident: active client sessions or admitted operations.
+Public native control descriptors PASS capacity=64 ownership=1 stale=1 session-cleanup=1
+Public task-exit session reclamation PASS cycles=4 sessions=32
+Public authenticated sessions ownership, capacity, stale handles and shutdown guard PASS
+Public mutation requires authenticated admission PASS
+Public storage op=7 status=0 Authenticated pool import returned errno=0
+Public pool assign PASS op=7 kind=1 removed=1
+Public ioctl FAIL line=218
+Public service test line=4373
+RESULT public service storage FAIL

@@ -1,0 +1,67 @@
+
+build-audit/posix-flush-source.taibeuf8/posixc.library:     file format elf64-x86-64
+
+
+Disassembly of section .text:
+
+0000000000009810 <__usergroup_available>:
+    9810:	48 83 bf e8 00 00 00 	cmpq   $0x0,0xe8(%rdi)
+    9817:	00 
+    9818:	74 06                	je     9820 <__usergroup_available+0x10>
+    981a:	b8 01 00 00 00       	mov    $0x1,%eax
+    981f:	c3                   	ret
+    9820:	48 b8 00 00 00 00 00 	movabs $0x0,%rax
+    9827:	00 00 00 
+    982a:	55                   	push   %rbp
+    982b:	48 89 e5             	mov    %rsp,%rbp
+    982e:	53                   	push   %rbx
+    982f:	48 89 fb             	mov    %rdi,%rbx
+    9832:	48 83 ec 18          	sub    $0x18,%rsp
+    9836:	ff d0                	call   *%rax
+    9838:	48 89 45 e8          	mov    %rax,-0x18(%rbp)
+    983c:	48 a1 00 00 00 00 00 	movabs 0x0,%rax
+    9843:	00 00 00 
+    9846:	48 bf 00 00 00 00 00 	movabs $0x0,%rdi
+    984d:	00 00 00 
+    9850:	48 89 c2             	mov    %rax,%rdx
+    9853:	31 f6                	xor    %esi,%esi
+    9855:	ff 90 20 fd ff ff    	call   *-0x2e0(%rax)
+    985b:	48 89 83 e8 00 00 00 	mov    %rax,0xe8(%rbx)
+    9862:	48 85 c0             	test   %rax,%rax
+    9865:	0f 84 92 00 00 00    	je     98fd <__usergroup_available+0xed>
+    986b:	48 83 7d e8 00       	cmpq   $0x0,-0x18(%rbp)
+    9870:	74 5e                	je     98d0 <__usergroup_available+0xc0>
+    9872:	48 89 45 e0          	mov    %rax,-0x20(%rbp)
+    9876:	bf 38 00 00 00       	mov    $0x38,%edi
+    987b:	48 b8 00 00 00 00 00 	movabs $0x0,%rax
+    9882:	00 00 00 
+    9885:	ff d0                	call   *%rax
+    9887:	48 8b 4d e8          	mov    -0x18(%rbp),%rcx
+    988b:	48 85 c0             	test   %rax,%rax
+    988e:	74 4b                	je     98db <__usergroup_available+0xcb>
+    9890:	48 be 00 00 00 00 00 	movabs $0x0,%rsi
+    9897:	00 00 00 
+    989a:	c6 40 10 01          	movb   $0x1,0x10(%rax)
+    989e:	48 8b 91 78 03 00 00 	mov    0x378(%rcx),%rdx
+    98a5:	48 89 70 20          	mov    %rsi,0x20(%rax)
+    98a9:	48 8d b1 78 03 00 00 	lea    0x378(%rcx),%rsi
+    98b0:	66 48 0f 6e c2       	movq   %rdx,%xmm0
+    98b5:	66 48 0f 6e ce       	movq   %rsi,%xmm1
+    98ba:	48 89 40 28          	mov    %rax,0x28(%rax)
+    98be:	66 0f 6c c1          	punpcklqdq %xmm1,%xmm0
+    98c2:	0f 11 00             	movups %xmm0,(%rax)
+    98c5:	48 89 42 08          	mov    %rax,0x8(%rdx)
+    98c9:	48 89 81 78 03 00 00 	mov    %rax,0x378(%rcx)
+    98d0:	b8 01 00 00 00       	mov    $0x1,%eax
+    98d5:	48 8b 5d f8          	mov    -0x8(%rbp),%rbx
+    98d9:	c9                   	leave
+    98da:	c3                   	ret
+    98db:	48 a1 00 00 00 00 00 	movabs 0x0,%rax
+    98e2:	00 00 00 
+    98e5:	48 8b 7d e0          	mov    -0x20(%rbp),%rdi
+    98e9:	48 89 c6             	mov    %rax,%rsi
+    98ec:	ff 90 d8 fd ff ff    	call   *-0x228(%rax)
+    98f2:	48 c7 83 e8 00 00 00 	movq   $0x0,0xe8(%rbx)
+    98f9:	00 00 00 00 
+    98fd:	31 c0                	xor    %eax,%eax
+    98ff:	eb d4                	jmp    98d5 <__usergroup_available+0xc5>

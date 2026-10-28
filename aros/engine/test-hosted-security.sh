@@ -54,6 +54,9 @@ cp "$library" "$run/Libs/security.library"
 if [[ -n ${AROS_TEST_POSIX_LIBRARY:-} ]];then
     cp "$(realpath -e "$AROS_TEST_POSIX_LIBRARY")" "$run/Libs/posixc.library"
 fi
+if [[ -n ${AROS_TEST_STDC_LIBRARY:-} ]];then
+    cp "$(realpath -e "$AROS_TEST_STDC_LIBRARY")" "$run/Libs/stdc.library"
+fi
 if [[ -n ${AROS_TEST_DOS_LIBRARY:-} ]];then
     cp "$AROS_TEST_DOS_LIBRARY" "$run/Libs/dos.library"
 fi
@@ -123,6 +126,7 @@ if [[ -n ${AROS_TEST_RUNTIME_CHECK:-} ]];then
 fi
 sha256sum "$run/Libs/stdcio.library" >>"$run/inputs.sha256"
 sha256sum "$run/Libs/posixc.library" >>"$run/inputs.sha256"
+sha256sum "$run/Libs/stdc.library" >>"$run/inputs.sha256"
 if [[ -n ${AROS_TEST_DOS_LIBRARY:-} ]];then
     sha256sum "$run/Libs/dos.library" >>"$run/inputs.sha256"
 fi
@@ -151,7 +155,19 @@ xpid=$!
 for attempt in {1..50};do [[ -s "$run/${phase}display.txt" ]] && break;sleep .1;done
 display=$(<"$run/${phase}display.txt");[[ $display =~ ^[0-9]+$ ]]
 cd "$run"
-DISPLAY=":$display" setsid ./boot/linux/AROSBootstrap -c "$run/${phase}hosted.conf" >"$run/${phase}bootstrap.log" 2>&1 &
+if [[ ${AROS_TEST_HOSTED_GDB:-0} == 1 ]];then
+    DISPLAY=":$display" setsid gdb -q -batch \
+        -ex 'set pagination off' -ex 'set follow-fork-mode child' \
+        -ex 'handle SIGUSR1 nostop noprint pass' \
+        -ex 'handle SIGUSR2 nostop noprint pass' \
+        -ex 'handle SIGALRM nostop noprint pass' \
+        -ex run -ex 'info registers' -ex 'thread apply all bt' \
+        -ex 'x/24i $pc-32' -ex 'x/64gx $sp' \
+        --args ./boot/linux/AROSBootstrap -c "$run/${phase}hosted.conf" \
+        >"$run/${phase}gdb.log" 2>&1 &
+else
+    DISPLAY=":$display" setsid ./boot/linux/AROSBootstrap -c "$run/${phase}hosted.conf" >"$run/${phase}bootstrap.log" 2>&1 &
+fi
 guest=$!;printf '%s\n' "$guest" >"$run/${phase}guest.pid"
 }
 start_guest ''

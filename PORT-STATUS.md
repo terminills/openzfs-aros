@@ -2,6 +2,22 @@
 
 Experimental development snapshot; not production-qualified storage software.
 
+## Hosted full-service runtime regression (2026-10-28)
+
+The legacy atime SA-upgrade transaction fix passes CLI and Manager dataset
+upgrade/remount/exact-read tests. A later empty CLI-output failure required
+restoring the POSIX stream-flush teardown hook in the source-retained runtime.
+The old hosted stdc library also had a private-layout mismatch with that POSIX
+build; a matching runtime eliminates the delegation-test trap. The harness
+records both libraries and supports explicit private overrides.
+
+The persistent hosted writer now seeds the bootenv marker required by the
+independent cold reader. The full writer/service suite, host zdb integrity
+check, cold DOS read/metadata/directory tests, degraded mirror checks and
+unchanged read-only member hashes pass with the matched private runtime.
+This does not establish stock nightly or physical-device qualification.
+See `aros/tests/evidence/hosted-cli-stream-flush-20261028` for failures and pass.
+
 ## Private hosted debugger regression (2026-10-28)
 
 An isolated hosted AROS copy now exercises shared debugger lifecycle, exact
