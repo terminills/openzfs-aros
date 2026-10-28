@@ -112,3 +112,27 @@ matched before unlinking each uncompressed ISO. About 11.7 GiB was reclaimed;
 `test.iso.zst`, pool images and logs remain. Updated archive/original manifests
 are retained alongside this note. This preserves MAME's next QEMU turn and
 restores storage headroom without deleting another agent's artifacts.
+
+## Complete current-runtime native discovery acceptance
+
+`public-service-run.NQlJU1JU` completed with runner exit zero after the
+explicit block-JIT handoff of `qemu codex slot 2`. The relay records the
+updated user policy (TRIG-1688, reproduced in JOB-0241): each vendor has its
+own one-to-two VM budget, with all Codex tasks sharing two slots and no shared
+writable surfaces. The private launch recipe requires a claimed Codex slot
+and rejects duplicate OpenZFS guests; unrelated Claude guests do not block it.
+No other agent's VM or writable file was used.
+
+The normal native-discovery mode, without NATIVE_COLD, passed create/import,
+DOS write/read, readonly denial, same-extent reuse, corrupt/conflicting native
+labels, same-position offsets, coexistence, and cleanup. The full encrypted
+root path passed its six properties, locked imports, mount refusals, key
+reloads, two wrong-key denials with pools remaining locked, and correct-key
+recovery. The stricter `require_encrypted_root` release gate accepts this run.
+Protected virtual disks remained unchanged. The selected runtime was extracted
+and compared before boot. Evidence is retained under `discovery-pass/`.
+
+The harness's post-verification image cleanup ran successfully; its exact
+reclamation is retained in `image-pruning.log`. Native GUI qualification and
+final combined package assembly are still outstanding; this is not a full-port
+completion or physical-device durability claim.

@@ -1,0 +1,2 @@
+/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/public-service-run.NQlJU1JU/partition.raw: OK
+/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/public-service-run.NQlJU1JU/blank.raw: OK
