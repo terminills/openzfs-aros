@@ -460,6 +460,7 @@ class EvidenceTests(unittest.TestCase):
             valid = (
                 "RESULT public service storage PASS\n"
                 "Public native encrypted root PASS properties=6 locked-import=2 mount-denied=2 key-reload=2 exact-data=1 cleanup=1\n"
+                "Public native encrypted root wrong key PASS denied=2 remains-locked=2 mount-denied=2 correct-recovery=2\n"
                 "Public native discovery data PASS handler-write=1 readonly-import-read=1 readonly-write-denied=1 writable-import-read=1 cleanup=1\n"
                 "Public file label denial PASS corrupt=4 conflicting-member=4 checksum=4 manager-denied=12 forced-cli-denied=12 whole-members-unchanged=12 restored=12\n"
                 "Public file conflicting label offsets PASS same-position=4\n"
@@ -468,6 +469,9 @@ class EvidenceTests(unittest.TestCase):
             stage.require_encrypted_root(root)
             for invalid in (valid.replace("RESULT public service storage PASS\n", ""),
                             valid.replace("key-reload=2", "key-reload=1"),
+                            valid.replace("Public native encrypted root wrong key PASS denied=2 remains-locked=2 mount-denied=2 correct-recovery=2\n", ""),
+                            valid.replace("correct-recovery=2", "correct-recovery=1"),
+                            valid.replace("remains-locked=2", "remains-locked=0"),
                             valid.replace("checksum=4", "checksum=0"),
                             valid.replace("Public file conflicting label offsets PASS same-position=4\n", ""),
                             valid.replace("Public native conflicting label offsets PASS same-position=4\n", ""),

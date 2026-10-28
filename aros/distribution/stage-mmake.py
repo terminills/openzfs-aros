@@ -319,6 +319,7 @@ def require_encrypted_root(run):
     required = (
         "RESULT public service storage PASS",
         "Public native encrypted root PASS properties=6 locked-import=2 mount-denied=2 key-reload=2 exact-data=1 cleanup=1",
+        "Public native encrypted root wrong key PASS denied=2 remains-locked=2 mount-denied=2 correct-recovery=2",
         "Public native discovery data PASS handler-write=1 readonly-import-read=1 readonly-write-denied=1 writable-import-read=1 cleanup=1",
         "Public file label denial PASS corrupt=4 conflicting-member=4 checksum=4 manager-denied=12 forced-cli-denied=12 whole-members-unchanged=12 restored=12",
         "Public file conflicting label offsets PASS same-position=4",

@@ -95,3 +95,20 @@ five selected libraries in `iso-phase-check.OxjiqlFm`. Its manifest is retained
 here as `per-phase-cold-runtime.sha256`. This is an image-content check, not an
 additional native boot. The next native suites will exercise the integrated
 per-phase call sites.
+
+## Encrypted release evidence and retained storage
+
+The encrypted-root staging gate now explicitly requires the native wrong-key
+marker: two denials, both pools remaining locked, both mount denials, and two
+successful recoveries with the correct key. The runner already required this;
+the stager previously checked key reload without independently requiring the
+negative-key result. Tests now reject a missing marker, incomplete recovery,
+and a pool that did not remain locked. All 20 staging tests pass. This does
+not substitute the retained cold-only run for the full discovery suite.
+
+Completed debugger ISOs `LuO2nC45`, `EsMKxiba`, and `CaLV7RkO` were compacted
+after their terminal results and inactive-use checks. Decompressed SHA-256
+matched before unlinking each uncompressed ISO. About 11.7 GiB was reclaimed;
+`test.iso.zst`, pool images and logs remain. Updated archive/original manifests
+are retained alongside this note. This preserves MAME's next QEMU turn and
+restores storage headroom without deleting another agent's artifacts.
