@@ -1,0 +1,5 @@
+/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/hosted-atime-inputs.wcrEExsn/openzfs.library: OK
+/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/hosted-atime-inputs.wcrEExsn/OpenZFSServiceNative: OK
+/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/hosted-atime-inputs.wcrEExsn/OpenZFSPublicServiceTest: OK
+Evidence: /mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/hosted-security-test.dDbEddwZ
+FAIL private hosted security exit/deadline

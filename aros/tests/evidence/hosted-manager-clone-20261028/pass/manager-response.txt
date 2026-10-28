@@ -1,0 +1,2 @@
+Authenticated snapshot creation returned errno=0
+

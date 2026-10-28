@@ -2,6 +2,18 @@
 
 Experimental development snapshot; not production-qualified storage software.
 
+## Rebuilt Manager clone UI qualification (2026-10-28)
+
+The fresh MetaMake Manager creates a clone through its real confirmation UI
+and upstream CLI worker in isolated hosted AROS. Independent post-UI queries
+verify quota=32M, compression=off, mounted=no and the exact snapshot origin;
+the fixture then removes the clone and its source snapshot. A separate UI
+snapshot survives export and fresh read-only import, with unchanged member
+hashes. Both full runtime preflights pass with source-built stdcio/POSIX.
+This is current-binary hosted UI evidence, not QEMU or every UI operation.
+The earlier automation/deadline failure is retained separately. See
+`aros/tests/evidence/hosted-manager-clone-20261028`.
+
 ## Source-retained stdcio runtime (2026-10-28)
 
 `build-stdcio-snapshot.py` replaces the cached-object stdcio overlay workflow

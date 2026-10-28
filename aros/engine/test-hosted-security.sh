@@ -19,6 +19,8 @@ if [[ -n $cli_dir ]];then
 fi
 [[ $mode == STORAGE || $mode == GUI ]]
 if [[ $mode == GUI ]];then [[ -n $service ]];fi
+gui_clone=${AROS_TEST_HOSTED_GUI_CLONE:-0}
+[[ $gui_clone == 0 || ( $gui_clone == 1 && $mode == GUI && -n $cli_dir ) ]]
 persistent=${AROS_TEST_HOSTED_PERSISTENT:-0}
 [[ $persistent == 0 || $persistent == 1 ]]
 if [[ $persistent == 1 ]];then [[ -n $service ]];fi
@@ -92,7 +94,12 @@ if [[ -n $service ]];then
         cp "$cli_dir/zfs" "$cli_dir/zpool" "$run/C/"
         printf '%s\n' 'Actual CLI tests on the disposable public_mirror only' >"$run/openzfs-cli-package-test"
     fi
-    if [[ $mode == GUI ]];then cp "$service/OpenZFSManagerNative" "$run/C/";fi
+    if [[ $mode == GUI ]];then
+        cp "${AROS_TEST_MANAGER_BINARY:-$service/OpenZFSManagerNative}" "$run/C/OpenZFSManagerNative"
+    fi
+    if [[ $gui_clone == 1 ]];then
+        printf '%s\n' 'Verify actual Manager clone properties after GUI exit' >"$run/openzfs-gui-clone-test"
+    fi
     if [[ -n ${AROS_TEST_RUNTIME_CHECK:-} ]];then
         cp "$AROS_TEST_RUNTIME_CHECK" "$run/C/OpenZFSRuntimeCheck"
     fi
@@ -204,6 +211,9 @@ if [[ -n $service ]];then
         rg -q 'Public packaged replication PASS .*incremental=1' "$run/serial.log"
     fi
     if [[ -n $handler ]];then rg -q 'Public packaged handler PASS' "$run/serial.log";fi
+    if [[ $gui_clone == 1 ]];then
+        rg -q 'Public GUI clone PASS quota=1 compression=1 no-mount=1 origin=1 cleanup=1' "$run/serial.log"
+    fi
 fi
 if [[ $persistent == 1 ]];then
     # The writer has reported orderly export. Stop only this private process

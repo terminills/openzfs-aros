@@ -1,0 +1,527 @@
+Dataset public_mirror/files@hosted_gui [ZPL], ID 362, cr_txg 608, 288K, 25 objects, rootbp DVA[0]=<0:761000:1000> DVA[1]=<0:1382000:1000> [L0 DMU objset] fletcher4 uncompressed unencrypted LE contiguous unique double size=1000L/1000P birth=480L/480P fill=25 cksum=0000000a1303b92f:00001fc67cac1fa7:0033d6a83299cbec:3a1123c1de6275fd
+
+    Deadlist: 0 (0/0 comp), 1 entries
+
+mintxg 0 -> obj 351
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+         0    6   128K    16K    56K     512    32K   39.06  DMU dnode
+	dnode flags: USED_BYTES 
+	dnode maxblkid: 1
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+        -1    1   128K    512     8K     512    512  100.00  ZFS user/group/project used
+	dnode flags: USED_BYTES 
+	dnode maxblkid: 0
+	microzap: 512 bytes, 1 entries
+
+		0 = 174080 
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+        -2    1   128K    512     8K     512    512  100.00  ZFS user/group/project used
+	dnode flags: USED_BYTES 
+	dnode maxblkid: 0
+	microzap: 512 bytes, 1 entries
+
+		0 = 174080 
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+         1    1   128K     1K     8K     512     1K  100.00  ZFS master node
+	dnode flags: USED_BYTES USERUSED_ACCOUNTED 
+	dnode maxblkid: 0
+	microzap: 1024 bytes, 13 entries
+
+		utf8only = 0 
+		defaultuserobjquota = 0 
+		casesensitivity = 0 
+		normalization = 0 
+		DELETE_QUEUE = 33 
+		ROOT = 34 
+		defaultprojectobjquota = 0 
+		defaultgroupobjquota = 0 
+		defaultuserquota = 0 
+		SA_ATTRS = 32 
+		VERSION = 5 
+		defaultprojectquota = 0 
+		defaultgroupquota = 0 
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+         5    1   128K    512     4K     512    512  100.00  ZFS plain file
+                                               176   bonus  System attributes
+	dnode flags: USED_BYTES USERUSED_ACCOUNTED 
+	dnode maxblkid: 0
+	uid     0
+	gid     0
+	atime	Sat Dec 31 18:00:18 1977
+	mtime	Sat Dec 31 18:00:18 1977
+	ctime	Sat Dec 31 18:00:18 1977
+	crtime	Sat Dec 31 18:00:18 1977
+	gen	146
+	mode	100666
+	size	27
+	parent	34
+	links	1
+	pflags	40800000004
+	xattr	6
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+         6    1   128K    512     8K     512    512  100.00  ZFS directory
+                                               168   bonus  System attributes
+	dnode flags: USED_BYTES USERUSED_ACCOUNTED 
+	dnode maxblkid: 0
+	uid     0
+	gid     0
+	atime	Sat Dec 31 18:00:18 1977
+	mtime	Sat Dec 31 18:00:18 1977
+	ctime	Sat Dec 31 18:00:18 1977
+	crtime	Sat Dec 31 18:00:18 1977
+	gen	146
+	mode	41777
+	size	3
+	parent	5
+	links	2
+	pflags	40800000145
+	microzap: 512 bytes, 1 entries
+
+		system.aros.protection = 7 (type: Regular File)
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+         7    1   128K    512     4K     512    512  100.00  ZFS plain file
+                                               168   bonus  System attributes
+	dnode flags: USED_BYTES USERUSED_ACCOUNTED 
+	dnode maxblkid: 0
+	uid     0
+	gid     0
+	atime	Sat Dec 31 18:00:18 1977
+	mtime	Sat Dec 31 18:00:18 1977
+	ctime	Sat Dec 31 18:00:18 1977
+	crtime	Sat Dec 31 18:00:18 1977
+	gen	146
+	mode	100644
+	size	8
+	parent	6
+	links	1
+	pflags	40800000005
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+         8    3   128K   128K    64K     512  4.00G    0.01  ZFS plain file
+                                               176   bonus  System attributes
+	dnode flags: USED_BYTES USERUSED_ACCOUNTED 
+	dnode maxblkid: 32768
+	uid     0
+	gid     0
+	atime	Sat Dec 31 18:00:18 1977
+	mtime	Sat Dec 31 18:00:18 1977
+	ctime	Sat Dec 31 18:00:18 1977
+	crtime	Sat Dec 31 18:00:18 1977
+	gen	149
+	mode	100666
+	size	4294971392
+	parent	34
+	links	1
+	pflags	40800000004
+	xattr	9
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+         9    1   128K    512     8K     512    512  100.00  ZFS directory
+                                               168   bonus  System attributes
+	dnode flags: USED_BYTES USERUSED_ACCOUNTED 
+	dnode maxblkid: 0
+	uid     0
+	gid     0
+	atime	Sat Dec 31 18:00:18 1977
+	mtime	Sat Dec 31 18:00:18 1977
+	ctime	Sat Dec 31 18:00:18 1977
+	crtime	Sat Dec 31 18:00:18 1977
+	gen	149
+	mode	41777
+	size	3
+	parent	8
+	links	2
+	pflags	40800000145
+	microzap: 512 bytes, 1 entries
+
+		system.aros.protection = 10 (type: Regular File)
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+        10    1   128K    512     4K     512    512  100.00  ZFS plain file
+                                               168   bonus  System attributes
+	dnode flags: USED_BYTES USERUSED_ACCOUNTED 
+	dnode maxblkid: 0
+	uid     0
+	gid     0
+	atime	Sat Dec 31 18:00:18 1977
+	mtime	Sat Dec 31 18:00:18 1977
+	ctime	Sat Dec 31 18:00:18 1977
+	crtime	Sat Dec 31 18:00:18 1977
+	gen	149
+	mode	100644
+	size	8
+	parent	9
+	links	1
+	pflags	40800000005
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+        11    1   128K    512     4K     512    512  100.00  ZFS plain file
+                                               176   bonus  System attributes
+	dnode flags: USED_BYTES USERUSED_ACCOUNTED 
+	dnode maxblkid: 0
+	uid     0
+	gid     0
+	atime	Sat Dec 31 18:00:19 1977
+	mtime	Sat Dec 31 18:00:18 1977
+	ctime	Sat Dec 31 18:00:18 1977
+	crtime	Sat Dec 31 18:00:18 1977
+	gen	152
+	mode	100666
+	size	28
+	parent	34
+	links	1
+	pflags	40800000004
+	xattr	12
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+        12    1   128K    512     8K     512    512  100.00  ZFS directory
+                                               168   bonus  System attributes
+	dnode flags: USED_BYTES USERUSED_ACCOUNTED 
+	dnode maxblkid: 0
+	uid     0
+	gid     0
+	atime	Sat Dec 31 18:00:18 1977
+	mtime	Sat Dec 31 18:00:18 1977
+	ctime	Sat Dec 31 18:00:18 1977
+	crtime	Sat Dec 31 18:00:18 1977
+	gen	152
+	mode	41777
+	size	3
+	parent	11
+	links	2
+	pflags	40800000145
+	microzap: 512 bytes, 1 entries
+
+		system.aros.protection = 13 (type: Regular File)
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+        13    1   128K    512     4K     512    512  100.00  ZFS plain file
+                                               168   bonus  System attributes
+	dnode flags: USED_BYTES USERUSED_ACCOUNTED 
+	dnode maxblkid: 0
+	uid     0
+	gid     0
+	atime	Sat Dec 31 18:00:18 1977
+	mtime	Sat Dec 31 18:00:18 1977
+	ctime	Sat Dec 31 18:00:18 1977
+	crtime	Sat Dec 31 18:00:18 1977
+	gen	152
+	mode	100644
+	size	8
+	parent	12
+	links	1
+	pflags	40800000005
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+        14    1   128K    512      0     512    512    0.00  ZFS plain file
+                                               200   bonus  System attributes
+	dnode flags: USERUSED_ACCOUNTED 
+	dnode maxblkid: 0
+	target	link-hard
+	uid     0
+	gid     0
+	atime	Sat Dec 31 18:00:18 1977
+	mtime	Sat Dec 31 18:00:18 1977
+	ctime	Sat Dec 31 18:00:18 1977
+	crtime	Sat Dec 31 18:00:18 1977
+	gen	158
+	mode	120777
+	size	9
+	parent	34
+	links	1
+	pflags	40800000104
+	xattr	15
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+        15    1   128K    512     8K     512    512  100.00  ZFS directory
+                                               168   bonus  System attributes
+	dnode flags: USED_BYTES USERUSED_ACCOUNTED 
+	dnode maxblkid: 0
+	uid     0
+	gid     0
+	atime	Sat Dec 31 18:00:18 1977
+	mtime	Sat Dec 31 18:00:18 1977
+	ctime	Sat Dec 31 18:00:18 1977
+	crtime	Sat Dec 31 18:00:18 1977
+	gen	158
+	mode	41777
+	size	3
+	parent	14
+	links	2
+	pflags	40800000145
+	microzap: 512 bytes, 1 entries
+
+		system.aros.protection = 16 (type: Regular File)
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+        16    1   128K    512     4K     512    512  100.00  ZFS plain file
+                                               168   bonus  System attributes
+	dnode flags: USED_BYTES USERUSED_ACCOUNTED 
+	dnode maxblkid: 0
+	uid     0
+	gid     0
+	atime	Sat Dec 31 18:00:19 1977
+	mtime	Sat Dec 31 18:00:18 1977
+	ctime	Sat Dec 31 18:00:18 1977
+	crtime	Sat Dec 31 18:00:18 1977
+	gen	158
+	mode	100644
+	size	8
+	parent	15
+	links	1
+	pflags	40800000005
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+        17    1   128K    512      0     512    512    0.00  ZFS plain file
+                                               200   bonus  System attributes
+	dnode flags: USERUSED_ACCOUNTED 
+	dnode maxblkid: 0
+	target	link-absent
+	uid     0
+	gid     0
+	atime	Sat Dec 31 18:00:18 1977
+	mtime	Sat Dec 31 18:00:18 1977
+	ctime	Sat Dec 31 18:00:18 1977
+	crtime	Sat Dec 31 18:00:18 1977
+	gen	161
+	mode	120777
+	size	11
+	parent	34
+	links	1
+	pflags	40800000104
+	xattr	18
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+        18    1   128K    512     8K     512    512  100.00  ZFS directory
+                                               168   bonus  System attributes
+	dnode flags: USED_BYTES USERUSED_ACCOUNTED 
+	dnode maxblkid: 0
+	uid     0
+	gid     0
+	atime	Sat Dec 31 18:00:18 1977
+	mtime	Sat Dec 31 18:00:18 1977
+	ctime	Sat Dec 31 18:00:18 1977
+	crtime	Sat Dec 31 18:00:18 1977
+	gen	161
+	mode	41777
+	size	3
+	parent	17
+	links	2
+	pflags	40800000145
+	microzap: 512 bytes, 1 entries
+
+		system.aros.protection = 19 (type: Regular File)
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+        19    1   128K    512     4K     512    512  100.00  ZFS plain file
+                                               168   bonus  System attributes
+	dnode flags: USED_BYTES USERUSED_ACCOUNTED 
+	dnode maxblkid: 0
+	uid     0
+	gid     0
+	atime	Sat Dec 31 18:00:19 1977
+	mtime	Sat Dec 31 18:00:18 1977
+	ctime	Sat Dec 31 18:00:18 1977
+	crtime	Sat Dec 31 18:00:18 1977
+	gen	161
+	mode	100644
+	size	8
+	parent	18
+	links	1
+	pflags	40800000005
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+        20    1   128K    512     4K     512    512  100.00  ZFS plain file
+                                               176   bonus  System attributes
+	dnode flags: USED_BYTES USERUSED_ACCOUNTED 
+	dnode maxblkid: 0
+	uid     0
+	gid     0
+	atime	Sat Dec 31 18:00:19 1977
+	mtime	Thu Jul 18 07:01:24 2024
+	ctime	Sat Dec 31 18:00:19 1977
+	crtime	Sat Dec 31 18:00:19 1977
+	gen	170
+	mode	100666
+	size	8
+	parent	34
+	links	1
+	pflags	40800000004
+	xattr	21
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+        21    1   128K    512     8K     512    512  100.00  ZFS directory
+                                               168   bonus  System attributes
+	dnode flags: USED_BYTES USERUSED_ACCOUNTED 
+	dnode maxblkid: 0
+	uid     0
+	gid     0
+	atime	Sat Dec 31 18:00:19 1977
+	mtime	Sat Dec 31 18:00:19 1977
+	ctime	Sat Dec 31 18:00:19 1977
+	crtime	Sat Dec 31 18:00:19 1977
+	gen	170
+	mode	41777
+	size	4
+	parent	20
+	links	2
+	pflags	40800000145
+	microzap: 512 bytes, 2 entries
+
+		system.aros.comment = 23 (type: Regular File)
+		system.aros.protection = 22 (type: Regular File)
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+        22    1   128K    512     4K     512    512  100.00  ZFS plain file
+                                               168   bonus  System attributes
+	dnode flags: USED_BYTES USERUSED_ACCOUNTED 
+	dnode maxblkid: 0
+	uid     0
+	gid     0
+	atime	Sat Dec 31 18:00:19 1977
+	mtime	Sat Dec 31 18:00:19 1977
+	ctime	Sat Dec 31 18:00:19 1977
+	crtime	Sat Dec 31 18:00:19 1977
+	gen	170
+	mode	100644
+	size	8
+	parent	21
+	links	1
+	pflags	40800000005
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+        23    1   128K    512     4K     512    512  100.00  ZFS plain file
+                                               168   bonus  System attributes
+	dnode flags: USED_BYTES USERUSED_ACCOUNTED 
+	dnode maxblkid: 0
+	uid     0
+	gid     0
+	atime	Sat Dec 31 18:00:19 1977
+	mtime	Sat Dec 31 18:00:19 1977
+	ctime	Sat Dec 31 18:00:19 1977
+	crtime	Sat Dec 31 18:00:19 1977
+	gen	173
+	mode	100644
+	size	23
+	parent	21
+	links	1
+	pflags	40800000005
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+        32    1   128K    512     8K     512    512  100.00  SA master node
+	dnode flags: USED_BYTES USERUSED_ACCOUNTED 
+	dnode maxblkid: 0
+	microzap: 512 bytes, 2 entries
+
+		REGISTRY = 35 
+		LAYOUTS = 36 
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+        33    1   128K    512     8K     512    512  100.00  ZFS delete queue
+	dnode flags: USED_BYTES USERUSED_ACCOUNTED 
+	dnode maxblkid: 0
+	microzap: 512 bytes, 0 entries
+
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+        34    1   128K    512     8K     512    512  100.00  ZFS directory
+                                               168   bonus  System attributes
+	dnode flags: USED_BYTES USERUSED_ACCOUNTED 
+	dnode maxblkid: 0
+	uid     0
+	gid     0
+	atime	Sat Dec 31 18:00:16 1977
+	mtime	Sat Dec 31 18:00:29 1977
+	ctime	Sat Dec 31 18:00:29 1977
+	crtime	Sat Dec 31 18:00:16 1977
+	gen	59
+	mode	40755
+	size	8
+	parent	34
+	links	2
+	pflags	40800000144
+	microzap: 512 bytes, 6 entries
+
+		hello.txt = 5 (type: Regular File)
+		large-sparse.bin = 8 (type: Regular File)
+		metadata.txt = 20 (type: Regular File)
+		link-soft = 14 (type: Symbolic Link)
+		link-hard = 11 (type: Regular File)
+		link-dangling = 17 (type: Symbolic Link)
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+        35    1   128K  1.50K     8K     512  1.50K  100.00  SA attr registration
+	dnode flags: USED_BYTES USERUSED_ACCOUNTED 
+	dnode maxblkid: 0
+	microzap: 1536 bytes, 22 entries
+
+		ZPL_CTIME =  10000002 : [16:0:2]
+		ZPL_MTIME =  10000001 : [16:0:1]
+		ZPL_PAD =  2000000e : [32:0:14]
+		ZPL_MODE =  8000005 : [8:0:5]
+		ZPL_SIZE =  8000006 : [8:0:6]
+		ZPL_ZNODE_ACL =  5803000f : [88:3:15]
+		ZPL_FLAGS =  800000b : [8:0:11]
+		ZPL_SCANSTAMP =  20030012 : [32:3:18]
+		ZPL_XATTR =  8000009 : [8:0:9]
+		ZPL_SYMLINK =  30011 : [0:3:17]
+		ZPL_GID =  800000d : [8:0:13]
+		ZPL_PARENT =  8000007 : [8:0:7]
+		ZPL_DACL_COUNT =  8000010 : [8:0:16]
+		ZPL_PROJID =  8000015 : [8:0:21]
+		ZPL_RDEV =  800000a : [8:0:10]
+		ZPL_GEN =  8000004 : [8:0:4]
+		ZPL_ATIME =  10000000 : [16:0:0]
+		ZPL_LINKS =  8000008 : [8:0:8]
+		ZPL_UID =  800000c : [8:0:12]
+		ZPL_CRTIME =  10000003 : [16:0:3]
+		ZPL_DXATTR =  30014 : [0:3:20]
+		ZPL_DACL_ACES =  40013 : [0:4:19]
+
+    Object  lvl   iblk   dblk  dsize  dnsize  lsize   %full  type
+        36    1   128K    16K    16K     512    32K  100.00  SA attr layouts
+	dnode flags: USED_BYTES USERUSED_ACCOUNTED 
+	dnode maxblkid: 1
+	Fat ZAP stats:
+		Pointer table:
+			1024 elements
+			zt_blk: 0
+			zt_numblks: 0
+			zt_shift: 10
+			zt_blks_copied: 0
+			zt_nextblk: 0
+		ZAP entries: 4
+		Leaf blocks: 1
+		Total blocks: 2
+		zap_block_type: 0x8000000000000001
+		zap_magic: 0x2f52ab2ab
+		zap_salt: 0x7017a3b9
+		Leafs with 2^n pointers:
+			  9:      1 *
+		Blocks with n*5 entries:
+			  0:      1 *
+		Blocks n/10 full:
+			  1:      1 *
+		Entries with n chunks:
+			  4:      4 ****
+		Buckets with n entries:
+			  0:    508 ****************************************
+			  1:      4 *
+
+		5 = [ 5  6  4  12  13  7  11  0  1  2  3  8  16  19  17  9 ]
+		2 = [ 5  6  4  12  13  7  11  0  1  2  3  8  16  19 ]
+		3 = [ 5  6  4  12  13  7  11  0  1  2  3  8  16  19  9 ]
+		4 = [ 5  6  4  12  13  7  11  0  1  2  3  8  16  19  17 ]
+
+    Dnode slots:
+	Total used:            25
+	Max used:              36
+	Percent empty:  30.555556
+
