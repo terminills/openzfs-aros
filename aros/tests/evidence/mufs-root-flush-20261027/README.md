@@ -24,7 +24,17 @@ change intermediate flushCache semantics, or suppress the requester.
 Enable it with `AROS_AFS_ROOT_FLUSH_FIX=1`; the qualification candidate also
 uses `AROS_AFS_RENAME_FIX=1`. Build `afs-zvol.7Xv21fSp` has no inhibit tracing.
 
-The full writer/cold/release test is still required. Build success and the
-mechanism above are not a completed startup or physical-durability result.
+The full writer/cold/release test `public-service-run.hUrgoc6C` exited zero.
+The writer passed both rename cases, all four fixed GUIDs, archive inhibit,
+exact DOS data and clean backing detach. The cold reader passed all four
+persistent GUIDs, trusted enabled restore/import/mount, wrong-GUID refusal,
+healthy/degraded import, and unchanged pool member verification. Writable
+cold release passed persisted deletion and an independent host zdb check.
+Results and hashes are retained under `candidate/`.
+
+This verifies the private AFS overlay with the current matched OpenZFS engine,
+frontends and test client in QEMU. It does not verify an unpatched nightly,
+an upstream-integrated AROS build, write-error handling or physical durability.
+An independent repeat with a newly created pool/GUID is being run separately.
 The optional trace patch records skipped dirty pins and up to 16 consecutive
 packet-end root-pin observations per pinned interval. It is disabled by default.
