@@ -2,6 +2,16 @@
 set -euo pipefail
 cd /mnt/short-term/openzfs-bootenv-candidate-20261025
 root=$PWD
+output_parent=$(realpath -e "${OZ_PACKAGE_OUTPUT_PARENT:-$root/build-audit}")
+mode=(--validate-only)
+if [[ ${1:-} == --stage ]]; then
+    source aros/engine/storage-preflight.sh
+    oz_storage_preflight "$output_parent"
+    mode=()
+elif [[ $# != 0 ]]; then
+    echo 'Usage: validate-current-package.sh [--stage]' >&2
+    exit 2
+fi
 assembly=$(mktemp -d "$root/build-audit/qualification-links.XXXXXXXX")
 mkdir -p "$assembly/stage/C" "$assembly/stage/Tools" "$assembly/stage/L" "$assembly/stage/Libs" "$assembly/package"
 for f in "$root"/build-audit/mmake-cli.hG2vWP1T/stage/C/*; do
@@ -19,7 +29,7 @@ done
 echo "Assembly links: $assembly"
 python3 aros/distribution/stage-mmake.py "$assembly" \
     build-audit/gui-replay-20261028 build-audit/public-service-run.rSDRJJ6u \
-    --validate-only --output-parent "$root/build-audit" \
+    "${mode[@]}" --output-parent "$output_parent" \
     --encrypted-root-run build-audit/public-service-run.NQlJU1JU \
     --native-zdb-run build-audit/zdb-label-run.QRkxXhcQ \
     --fat-handler /mnt/short-term/openzfs-qualification-20261024.aGFlVF7T/flush-overlay.tufmbxjd/fat.handler \

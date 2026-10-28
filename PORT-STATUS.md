@@ -23,6 +23,15 @@ SDK/toolchain source packaging, broader completion auditing and physical-device
 qualification remain separate. Earlier dated entries below retain the state
 at their time and must not be read as the latest native-matrix result.
 
+Subsequent staging completed into the private host directory
+`openzfs-package-staging/mmake-bundle.xt1czzqv` after cleanup and destination
+headroom checks. The bundle occupies 69 MiB; all 4,995 manifest entries match,
+no output symlinks remain, and all seven copied platform source inventories
+bind to their packaged binaries. This closes copy verification for this
+development bundle. It does not close SDK/toolchain source distribution,
+independent bootstrap or broader upstream feature qualification. Proof is in
+`aros/tests/evidence/package-validation-20261028/staged`.
+
 ## Current CRT actual-Manager persistence (2026-10-28)
 
 The current Manager with source-built DOS64/POSIX/stdc/stdcio passed an actual
