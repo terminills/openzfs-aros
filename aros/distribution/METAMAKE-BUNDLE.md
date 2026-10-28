@@ -133,3 +133,13 @@ The bundle has no security test credentials and does not install startup records
 Active preferences belong in ENV:, persistent preferences in ENVARC:. Import
 and mount must be tested manually before enabling trusted startup records.
 This port is not the older private AROS ZFS on-disk format.
+# Validation without a bundle
+
+`stage-mmake.py --validate-only` accepts the same required inputs and runs
+the same pre-copy evidence, binary, and retained-source checks. It prints
+JSON containing `result: validated`, `bundle_created: false`, and the selected
+SHA-256 hashes. It does not create a bundle or verify copies that were not made.
+Use this when checking existing inputs before allocating packaging space.
+Symlinked input layouts are supported; both hashes and ELF identification
+inspect the target bytes. An ordinary staging run is still needed to produce
+and verify the distributable files.

@@ -2,6 +2,27 @@
 
 Experimental development snapshot; not production-qualified storage software.
 
+## Matched native package inputs validated (2026-10-28)
+
+The current normal shared engine, CLI, handler, Manager and selected source-built
+DOS64/POSIX/stdc/stdcio now pass the matched native GUI, persistent writer/cold
+reader, encrypted-root discovery and full native GPT debugger acceptance gates.
+The GUI replay saved and verified a raw health response and read exact file data
+after Manager closed with Wanderer still running. Its original interactive run
+was incomplete; the separate fresh-boot replay is the passing evidence.
+See `aros/tests/evidence/current-native-suite-20261028/gui-pass` and sibling
+cold/discovery evidence, plus `native-zdb-gpt-current-crt-20261028`.
+
+The staging validator accepts all 20 selected artifacts, their matching native
+evidence, and retained platform source snapshots. Validation-only output and
+the exact input-selection recipe are in
+`aros/tests/evidence/package-validation-20261028`. No new distributable bundle
+has been created by this validation; output-copy verification remains pending.
+The shared artifact drive was below the 100-GiB allocation reserve. Complete
+SDK/toolchain source packaging, broader completion auditing and physical-device
+qualification remain separate. Earlier dated entries below retain the state
+at their time and must not be read as the latest native-matrix result.
+
 ## Current CRT actual-Manager persistence (2026-10-28)
 
 The current Manager with source-built DOS64/POSIX/stdc/stdcio passed an actual

@@ -6,6 +6,7 @@ import json
 import tempfile
 import unittest
 import shutil
+from unittest import mock
 
 spec = importlib.util.spec_from_file_location("stage", pathlib.Path(__file__).with_name("stage-mmake.py"))
 stage = importlib.util.module_from_spec(spec)
@@ -13,6 +14,25 @@ spec.loader.exec_module(stage)
 
 
 class EvidenceTests(unittest.TestCase):
+    def test_validate_only_does_not_bypass_acceptance_or_allocate_bundle(self):
+        with tempfile.TemporaryDirectory() as directory:
+            argv = ['stage-mmake.py', directory, directory, directory,
+                    '--validate-only']
+            for option in ('output-parent', 'encrypted-root-run', 'native-zdb-run',
+                           'fat-handler', 'fat-source-snapshot', 'dos-package',
+                           'dos-source-snapshot', 'posix-source-snapshot',
+                           'stdcio-source-snapshot', 'stdc-source-snapshot',
+                           'dos64-source-snapshot'):
+                argv.extend(['--' + option, directory])
+            with mock.patch.object(stage.sys, 'argv', argv), \
+                 mock.patch.object(stage, 'require_encrypted_root',
+                                   side_effect=ValueError('rejected acceptance')) as gate, \
+                 mock.patch.object(stage.tempfile, 'mkdtemp') as allocate:
+                with self.assertRaisesRegex(ValueError, 'rejected acceptance'):
+                    stage.main()
+                gate.assert_called_once()
+                allocate.assert_not_called()
+
     def test_dos64_snapshot_binds_source_abi_and_selected_binary(self):
         with tempfile.TemporaryDirectory() as directory:
             root = pathlib.Path(directory)

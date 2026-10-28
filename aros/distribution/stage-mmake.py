@@ -413,6 +413,8 @@ def main():
     parser.add_argument("gui_run", type=pathlib.Path)
     parser.add_argument("cold_run", type=pathlib.Path)
     parser.add_argument("--output-parent", type=pathlib.Path, required=True)
+    parser.add_argument("--validate-only", action="store_true",
+                        help="Validate selected inputs and acceptance evidence without creating a bundle")
     parser.add_argument("--encrypted-root-run", type=pathlib.Path, required=True)
     parser.add_argument("--native-zdb-run", type=pathlib.Path, required=True)
     parser.add_argument("--fat-handler", type=pathlib.Path, required=True)
@@ -469,7 +471,7 @@ def main():
         if name not in ("OpenZFSManagerNative", "zdb"):
             require_match(source, cold, name)
             require_match(source, encrypted, name)
-        description = subprocess.check_output(["file", "-b", str(source)], text=True)
+        description = subprocess.check_output(["file", "-Lb", str(source)], text=True)
         if "ELF 64-bit LSB relocatable, x86-64" not in description or "AROS" not in description:
             raise ValueError(f"Not a native AROS x86-64 module: {source}")
     symbols = subprocess.check_output(["nm", str(selected["Libs/openzfs.library"])], text=True)
@@ -525,6 +527,10 @@ def main():
         selected["C/" + name] = source
     selected_hashes = {name: digest(path) for name, path in selected.items()}
     parent = args.output_parent.resolve(strict=True)
+    if args.validate_only:
+        print(json.dumps({"result": "validated", "bundle_created": False,
+                          "selected_sha256": selected_hashes}, sort_keys=True))
+        return
     output = pathlib.Path(tempfile.mkdtemp(prefix="mmake-bundle.", dir=parent))
     for destination, source in selected.items():
         target = output / destination
