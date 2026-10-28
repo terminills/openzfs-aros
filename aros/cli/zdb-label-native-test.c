@@ -14,17 +14,22 @@
 #ifdef OZ_ZDB_L2ARC
 static int check_l2arc(void)
 {
-    const char *names[]={"little","big","missing"};
-    unsigned count=3;
+    const char *names[]={"little","big","missing"
+#ifdef OZ_ZDB_L2ARC_LOGS
+        ,"log-little","log-big","log-bad","log-little"
+#endif
+    };
+    unsigned iso_count=sizeof(names)/sizeof(names[0]),count=iso_count;
 #ifdef OZ_ZDB_L2ARC_DEVICE
-    count=4;
+    count++;
 #endif
     for(unsigned pass=0;pass<count;pass++){
         char command[160];
-        if(pass<3)snprintf(command,sizeof(command),"C:ZdbAudit -l /SYS/zdb-l2arc/%s >RAM:zdb-l2arc.log",names[pass]);
+        if(pass<iso_count)snprintf(command,sizeof(command),"C:ZdbAudit %s /SYS/zdb-l2arc/%s >RAM:zdb-l2arc.log",
+            pass<3?"-l":"-lll",names[pass]);
 #ifdef OZ_ZDB_L2ARC_DEVICE
         struct Library *secBase=NULL;ULONG previous=0;
-        if(pass==3){
+        if(pass==iso_count){
             secBase=OpenLibrary((CONST_STRPTR)SECURITYNAME,SECURITYVERSION);if(!secBase)return 20;
             previous=secGetTaskOwner(FindTask(NULL));
             struct TagItem root[]={{secT_UserID,(IPTR)"oztestroot"},{secT_Password,(IPTR)""},{TAG_DONE,0}};
@@ -44,10 +49,14 @@ static int check_l2arc(void)
         FILE *report=fopen("RAM:zdb-l2arc.log","r");if(!report)return 20;
         char line[1024];unsigned lines=0;
         while(fgets(line,sizeof(line),report)){bug("ZDBL2[%u] %s",pass,line);lines++;}
-        int failed=ferror(report)||!lines||status!=0;fclose(report);
+        LONG expected=pass<iso_count&&!strcmp(names[pass],"log-bad")?1:0;
+        int failed=ferror(report)||!lines||status!=expected;fclose(report);
         if(failed)return 20;
     }
     bug("RESULT native zdb l2arc PASS headers=3 storage=readonly-iso\n");
+#ifdef OZ_ZDB_L2ARC_LOGS
+    bug("RESULT native zdb l2arc PASS logs=4 endian=2 corrupt=1 recovery=1\n");
+#endif
     return 0;
 }
 #endif

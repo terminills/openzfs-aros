@@ -93,9 +93,21 @@ grep -q 'labels = 0 1 2 3 ' "$run/host-labels.log"
 if [[ -n ${AROS_TEST_ZDB_L2ARC_LIBNVPAIR:-} ]];then
     sha256sum "$AROS_TEST_ZDB_L2ARC_LIBNVPAIR" >>"$run/inputs.sha256"
     cp aros/cli/make-zdb-l2arc.py aros/cli/verify-zdb-l2arc.py "$run/"
-    python3 "$run/make-zdb-l2arc.py" "$AROS_TEST_ZDB_L2ARC_LIBNVPAIR" "$run/l2arc"
-    for fixture in little big missing;do
-        "$AROS_TEST_HOST_ZDB" -l "$run/l2arc/$fixture" >"$run/host-l2arc-$fixture.log" 2>&1
+    l2arc_options=()
+    l2arc_names=(little big missing)
+    if [[ ${AROS_TEST_ZDB_L2ARC_LOGS:-0} == 1 ]];then
+        l2arc_options=(--populated)
+        l2arc_names+=(log-little log-big log-bad)
+        test_flags+=(-DOZ_ZDB_L2ARC_LOGS)
+        printf 'l2arc_log_iso=1\n' >>"$run/mode.txt"
+    fi
+    python3 "$run/make-zdb-l2arc.py" "$AROS_TEST_ZDB_L2ARC_LIBNVPAIR" "$run/l2arc" "${l2arc_options[@]}"
+    for fixture in "${l2arc_names[@]}";do
+        verbosity=-l;[[ $fixture != log-* ]] || verbosity=-lll
+        expected=0;[[ $fixture != log-bad ]] || expected=1
+        status=0
+        "$AROS_TEST_HOST_ZDB" "$verbosity" "$run/l2arc/$fixture" >"$run/host-l2arc-$fixture.log" 2>&1 || status=$?
+        [[ $status == "$expected" ]] || { echo "Unexpected L2ARC $fixture status=$status" >&2;exit 1; }
         sha256sum "$run/l2arc/$fixture" >>"$run/inputs.sha256"
     done
     pool_maps+=(-map "$run/l2arc" /zdb-l2arc)
