@@ -54,3 +54,9 @@ The later `missing-security-pass/` logs prove the subsequent runtime; the earlie
 failed attempt remains unchanged under `failed/`. QEMU was released to the MAME
 lane afterward. Complete public-package GUI/cold/encrypted qualification remains
 open.
+
+Staging now requires the debugger's extracted-ISO manifest for the shared engine
+and all four selected CRT libraries. The 20 staging tests pass, including missing,
+duplicate, malformed and mismatched ISO evidence rejection. The real BygYEOql
+manifest also matches all five selected binaries. This does not imply that the
+whole-device run satisfies the separate native-partition/pool traversal gate.

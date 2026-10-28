@@ -15,6 +15,13 @@ canonical filenames and map/hash the copies. Hosted runners accept DOS64 too;
 the hosted service uses `AROS_TEST_HOSTED_STDCIO_LIBRARY` for its stdcio override.
 No overrides change the runtime template or a user session.
 
+Debugger acceptance additionally requires `iso-runtime.sha256`, produced after
+extracting and byte-comparing the prepared ISO libraries. The selected shared
+engine and all four CRT libraries must match that manifest. Missing, duplicate,
+malformed or mismatched records are rejected: input hashes alone cannot prove
+that the intended mappings reached the boot image. Historical debugger evidence
+without this extraction check must be refreshed, not relabeled.
+
 The current hosted service/cold and debugger combination passes with corrected
 DOS64. The selected CRT set also passes native QEMU debugger qualification,
 including absent-security denial, with actual prepared ISO library bytes verified.

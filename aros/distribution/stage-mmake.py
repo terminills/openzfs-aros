@@ -216,6 +216,22 @@ def require_match(path, run, name=None):
         raise ValueError(f"Selected binary differs from tested input: {path}")
 
 
+def require_iso_match(path, run):
+    """Require the extracted ISO copy, not merely a proposed mapping input."""
+    manifest = run / 'iso-runtime.sha256'
+    if not manifest.is_file():
+        raise ValueError('Missing prepared ISO runtime evidence')
+    matches = []
+    for line in manifest.read_text().splitlines():
+        fields = line.split(maxsplit=1)
+        if len(fields) != 2 or not re.fullmatch(r'[0-9a-f]{64}', fields[0]):
+            raise ValueError('Malformed prepared ISO runtime evidence')
+        if pathlib.Path(fields[1].lstrip('*')).name == path.name:
+            matches.append(fields[0])
+    if matches != [digest(path)]:
+        raise ValueError(f'Missing, duplicate or mismatched ISO runtime: {path.name}')
+
+
 def require_platform_runtime(stage, runs):
     """Bind every selected CRT dependency, including the DOS64 dispatch seam."""
     selected = {}
@@ -223,6 +239,8 @@ def require_platform_runtime(stage, runs):
         source = stage / 'Libs' / name
         for run in runs:
             require_match(source, run)
+            if (run / 'native-debugger.sha256').is_file():
+                require_iso_match(source, run)
         selected['Platform/Libs/' + name] = source
     return selected
 
@@ -349,6 +367,7 @@ def require_native_debugger(run, launcher, engine):
         fields = role.split(maxsplit=1)
         if len(fields) != 2 or fields[0] != digest(path):
             raise ValueError("Selected debugger differs from tested role")
+    require_iso_match(engine, run)
     modes = set((run / "mode.txt").read_text().splitlines())
     if not {"shared_library=1", "pool_traversal=1", "native_pool=1",
             "native_device=1", "native_partitions=1", "damaged_labels=1"} <= modes:
