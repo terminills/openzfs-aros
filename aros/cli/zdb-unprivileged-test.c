@@ -16,8 +16,8 @@ int main(void)
         SECURITYVERSION);
 #endif
 #ifdef OZ_ZDB_MISSING_SECURITY
-    if(secBase){CloseLibrary(secBase);return 20;}
-    if(FindResident((CONST_STRPTR)SECURITYNAME))return 20;
+    if(secBase){bug("FAIL missing-security fixture: OpenLibrary succeeded\n");CloseLibrary(secBase);return 20;}
+    if(FindResident((CONST_STRPTR)SECURITYNAME)){bug("FAIL missing-security fixture: resident module present\n");return 20;}
     int allowed=1;
     bug("RESULT native zdb actual caller security-missing=1\n");
 #else

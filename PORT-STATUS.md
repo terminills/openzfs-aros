@@ -2,6 +2,18 @@
 
 Experimental development snapshot; not production-qualified storage software.
 
+## Native debugger and selected CRT acceptance (2026-10-28)
+
+The current debugger with selected source-built DOS64/POSIX/stdc/stdcio passes
+the isolated native QEMU labels, lifecycle, damaged-label, privileged/unprivileged
+device and L2ARC endian/corruption/bounds suite. Prepared ISO libraries are now
+byte-compared against selected inputs; this caught and fixed a runner map-array
+replacement bug. The missing-security native attempt failed its fixture because
+security.library remained boot-resident. A corrected image removing that module
+while preserving all other BSP records is prepared but not yet boot-qualified.
+The complete native GUI/cold/encrypted package matrix remains open. See
+`aros/tests/evidence/native-zdb-current-crt-20261028`.
+
 ## Large-pool runtime requalification (2026-10-28)
 
 The source-built DOS64/POSIX/stdc/stdcio combination passes a retained 50-TB-class

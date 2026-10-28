@@ -40,6 +40,18 @@ if [[ ${AROS_TEST_ZDB_MISSING_SECURITY:-0} == 1 ]];then
         echo 'Missing-security test requires device mode, without unconfigured or native-pool mode' >&2;exit 1;
     }
     security_remove=(-rm /Libs/security.library --)
+    # security.library is also resident in the native BSP package. Removing
+    # only its disk copy does not exercise missing-security admission.
+    mkdir "$run/missing-security"
+    xorriso -osirrox on -indev "$AROS_TEST_ISO" \
+        -extract /boot/pc-smp/aros-bsp.pkg.xz "$run/missing-security/original.pkg.xz" \
+        >"$run/missing-security/extract.log" 2>&1
+    cp aros/cli/omit-boot-module.py "$run/missing-security/"
+    python3 "$run/missing-security/omit-boot-module.py" \
+        "$run/missing-security/original.pkg.xz" "$run/missing-security/aros-bsp.pkg.xz" \
+        security.library >"$run/missing-security/omit.log"
+    sha256sum "$run/missing-security/"*.pkg.xz "$run/missing-security/omit-boot-module.py" >>"$run/inputs.sha256"
+    pool_maps+=(-map "$run/missing-security/aros-bsp.pkg.xz" /boot/pc-smp/aros-bsp.pkg.xz)
 fi
 if [[ -n ${AROS_TEST_FS_PACKAGE:-} ]];then
     sha256sum "$AROS_TEST_FS_PACKAGE" >>"$run/inputs.sha256"
@@ -73,7 +85,7 @@ if [[ -n ${AROS_TEST_ZDB_LIBRARY:-} ]];then
     # The independent host verifier is also named zdb. Retain exact roles,
     # rather than requiring consumers to infer them from basename collisions.
     sha256sum "$AROS_TEST_ZDB_BINARY" "$AROS_TEST_ZDB_LIBRARY" >"$run/native-debugger.sha256"
-    library_maps=(-map "$AROS_TEST_ZDB_LIBRARY" /Libs/openzfs.library)
+    library_maps+=(-map "$AROS_TEST_ZDB_LIBRARY" /Libs/openzfs.library)
     test_flags=(-DOZ_ZDB_SHARED)
     "$AROS_CC" --sysroot="$AROS_SDK" -B"$AROS_SDK/lib/" -O2 -Wall -Wextra \
         -I"$AROS_TEST_ZDB_INCLUDE" aros/library/zdb-lifetime-test.c \
@@ -214,7 +226,31 @@ xorriso -indev "$AROS_TEST_ISO" -outdev "$run/test.iso" \
     -map aros/cli/Startup-Zdb-Labels /S/Startup-Sequence \
     -boot_image any discard -boot_image grub bin_path=/boot/grub/i386-pc/eltorito.img \
     -boot_image grub boot_info_table=on -boot_image grub grub2_boot_info=on >"$run/iso.log" 2>&1
+# Verify the prepared image, not just input hashes or intended map arguments.
+# A shared-debugger map must not discard the selected CRT maps above.
+mkdir "$run/iso-runtime"
+runtime_specs=("$AROS_TEST_POSIX_LIBRARY:posixc.library")
+if [[ -d $run/runtime-inputs ]];then
+    for selected_library in "$run/runtime-inputs/"*.library;do
+        runtime_specs+=("$selected_library:${selected_library##*/}")
+    done
+fi
+if [[ -n ${AROS_TEST_ZDB_LIBRARY:-} ]];then
+    runtime_specs+=("$AROS_TEST_ZDB_LIBRARY:openzfs.library")
+fi
+for spec in "${runtime_specs[@]}";do
+    selected_library=${spec%:*};name=${spec##*:}
+    xorriso -osirrox on -indev "$run/test.iso" \
+        -extract "/Libs/$name" "$run/iso-runtime/$name" \
+        >>"$run/iso-runtime-verify.log" 2>&1
+    cmp "$selected_library" "$run/iso-runtime/$name"
+    sha256sum "$run/iso-runtime/$name" >>"$run/iso-runtime.sha256"
+done
 if [[ ${AROS_TEST_ZDB_MISSING_SECURITY:-0} == 1 ]];then
+    xorriso -osirrox on -indev "$run/test.iso" \
+        -extract /boot/pc-smp/aros-bsp.pkg.xz "$run/missing-security/prepared.pkg.xz" \
+        >"$run/missing-security/prepared-extract.log" 2>&1
+    cmp "$run/missing-security/aros-bsp.pkg.xz" "$run/missing-security/prepared.pkg.xz"
     # Check the actual prepared image, not merely the xorriso command line.
     xorriso -indev "$run/test.iso" -find / -name security.library -exec lsdl \
         >"$run/security-library-inventory.log" 2>"$run/security-library-inventory.stderr"
