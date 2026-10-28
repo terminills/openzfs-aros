@@ -1,0 +1,13 @@
+7b47a3c8bb061324ee441389eab03a394ca33094d03e4df2e18367e84e9407c9  /mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/hosted-security-test.D5LaYDoJ/Libs/security.library
+23fcc0ea3d6ea0f858cfded33e80b586cc30b9e07b15e6d081440ee6d7057881  /mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/hosted-security-test.D5LaYDoJ/boot/linux/kernel
+16697bc98243eba5801a601ee3aedb1ae906cd5c1e4fdf7301e9860314ea07cd  /mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/hosted-security-test.D5LaYDoJ/C/OpenZFSSecurityTest
+e860800f09ecfeaea3eeada3ca665d77b599854ee6e0a711aa0724d35eb8b9e6  /mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/hosted-security-test.D5LaYDoJ/Libs/stdcio.library
+fcd4753984886b6e5cb2e79a3a4b9975207ede0ab19021d92d3651428ed01077  /mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/hosted-security-test.D5LaYDoJ/Libs/posixc.library
+0de4f228c561a959b7eb7d0839dd0f42e27f1c2d2c07ee5fd3ce669984d1ad91  /mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/hosted-security-test.D5LaYDoJ/Libs/stdc.library
+716a919653a2f56b527540d8550312ebdcd334b07b8f6e99f445a2667ab16a50  /mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/hosted-security-test.D5LaYDoJ/C/OpenZFSServiceNative
+9c79e98e2517c713fad2023aba7ae101c962c38c70e6e7456b598f8c60a75544  /mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/hosted-security-test.D5LaYDoJ/C/OpenZFSPublicServiceTest
+483eb66049f22fd00d267f0f2810241769b5910da2226ae8c8c0d6563e37fee7  /mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/hosted-security-test.D5LaYDoJ/C/OpenZFSManagerNative
+2d33e1afa94de01dd370a7b7269931ca7412775c0c9ff88286a7aecc550269a2  /mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/hosted-security-test.D5LaYDoJ/Libs/openzfs.library
+e19ba9cfd1cd0af5c8a6a0ef6756e35f758637122d80d67c525e89fc4c78468f  /mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/hosted-security-test.D5LaYDoJ/C/zfs
+13f0f9daecf6b0e99ae145208a05c61fb1948eea389614cd688ed41dd1ac795b  /mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/hosted-security-test.D5LaYDoJ/C/zpool
+347be83a74d38251b4978d6adbf832d04a6b5b9b20ced5c9bff7e2d1cbbca69b  /mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/hosted-security-test.D5LaYDoJ/L/OpenZFS-Handler

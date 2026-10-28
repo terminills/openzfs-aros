@@ -18,6 +18,13 @@ unchanged read-only member hashes pass with the matched private runtime.
 This does not establish stock nightly or physical-device qualification.
 See `aros/tests/evidence/hosted-cli-stream-flush-20261028` for failures and pass.
 
+The native Manager also creates a snapshot through its real confirmation and
+authenticated worker path in isolated hosted AROS. Independent zdb and a fresh
+read-only hosted import verify the exact snapshot and unchanged member hashes.
+Screenshots and the preceding timed-out attempt are retained in
+`aros/tests/evidence/hosted-manager-persistence-20261028`; this is one verified
+UI mutation path, not a complete UI or stock-runtime qualification.
+
 ## Private hosted debugger regression (2026-10-28)
 
 An isolated hosted AROS copy now exercises shared debugger lifecycle, exact
