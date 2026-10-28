@@ -21,9 +21,11 @@ breaks external-command execution even when ordinary pool queries work.
 Packaging requires matching GUI/cold input hashes and native real-zpool/output
 capture/missing-executable acceptance, not merely the presence of the file.
 
-**Platform/ is separate and must not be blindly installed.** Its posixc.library
-is the matching alpha18 runtime with the appended pipe2 vector used by the
-native test suite. It is an explicit platform integration dependency, not an
+**Platform/ is separate and must not be blindly installed.** Its posixc.library,
+stdcio.library and stdc.library must match the qualified runtime as a set.
+The POSIX library includes the pipe2 vector and stdio-flush integration; the
+stdio library includes the inherited-stream flush correction. These are
+explicit platform integration dependencies, not an
 application library. A different AROS runtime/SDK can have an incompatible Task
 or Process layout even when the CPU target is identical. See BUILDING.md for
 the ABI, pthread, pipe2, and file-backing flush requirements. The private FAT
@@ -59,6 +61,20 @@ qualification; it is not a source closure for all platform modules.
 The generated ABI include must resolve inside the retained snapshot. Older
 snapshots forwarding to an absolute private build path are rejected, even if
 that path happens to remain available on the packaging machine.
+
+`--stdcio-source-snapshot` is required. `Sources/StdioC/` retains its sources,
+generated ABI headers and hash-bound replay recipe, and can be rebuilt with:
+
+```sh
+python3 Sources/StdioC/rebuild-fat-snapshot.py Sources/StdioC --output-parent /path/on/external/build-drive
+```
+
+Both stdcio.library and stdc.library must be present in the input build's
+`stage/Libs/` and match GUI, cold, encrypted-root and native-debugger evidence.
+Missing evidence is not replaced by hosted-only qualification. The bundled
+stdc.library remains an explicit SDK binary dependency; this stdcio snapshot
+does not provide its corresponding source closure. Old evidence sets lacking
+these runtime hashes cannot qualify a new bundle.
 
 `Sources/DOS/` similarly retains the pinned DOS source/catalog revisions,
 generated sources and headers, execute-policy patch and upstream license

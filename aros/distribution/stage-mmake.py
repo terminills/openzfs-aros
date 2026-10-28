@@ -86,6 +86,26 @@ def require_posix_snapshot(snapshot, binary):
     return paths
 
 
+def require_stdcio_snapshot(snapshot, binary):
+    paths = snapshot_paths(snapshot)
+    required = {pathlib.Path(name) for name in (
+        "rebuild.json", "rebuild-fat-snapshot.py", "source/LICENSE",
+        "provenance.json", "stdcio.library", "source/compiler/crt/stdc/__stdio.c",
+        "generated/include/stdcio_libdefs.h", "generated/include/stdcio_deflibdefs.h",
+        "generated/stdcio_start.c", "generated/stdcio_end.c")}
+    if not required.issubset(paths):
+        raise ValueError("Incomplete stdcio source snapshot")
+    if (snapshot / 'generated/include/stdcio_deflibdefs.h').read_text().strip() != (
+            '#define LC_LIBDEFS_FILE "stdcio_libdefs.h"'):
+        raise ValueError("stdcio ABI include is not snapshot-local")
+    recipe = json.loads((snapshot / "rebuild.json").read_text())
+    if (recipe.get("format") != 1 or recipe.get("artifact") != "stdcio.library"
+            or recipe.get("expected_binary") != digest(binary)
+            or digest(snapshot / "stdcio.library") != digest(binary)):
+        raise ValueError("stdcio source recipe does not bind selected binary")
+    return paths
+
+
 def require_afs_snapshot(snapshot, binary):
     paths = snapshot_paths(snapshot)
     required = {pathlib.Path(name) for name in (
@@ -326,6 +346,7 @@ def main():
     parser.add_argument("--dos-package", type=pathlib.Path, required=True)
     parser.add_argument("--dos-source-snapshot", type=pathlib.Path, required=True)
     parser.add_argument("--posix-source-snapshot", type=pathlib.Path, required=True)
+    parser.add_argument("--stdcio-source-snapshot", type=pathlib.Path, required=True)
     parser.add_argument("--afs-handler", type=pathlib.Path)
     parser.add_argument("--afs-source-snapshot", type=pathlib.Path)
     args = parser.parse_args()
@@ -364,6 +385,8 @@ def main():
         "Tools/OpenZFSManagerNative": stage / "Tools/OpenZFSManagerNative",
         "Tools/OpenZFS/ExecHelper": stage / "Tools/OpenZFS/ExecHelper",
         "Platform/Libs/posixc.library": stage / "Libs/posixc.library",
+        "Platform/Libs/stdcio.library": stage / "Libs/stdcio.library",
+        "Platform/Libs/stdc.library": stage / "Libs/stdc.library",
     }
     for destination, source in selected.items():
         name = pathlib.Path(destination).name
@@ -384,6 +407,8 @@ def main():
             raise ValueError(f"Missing full shared-engine symbol: {symbol}")
     require_native_debugger(debugger, selected["C/zdb"], selected["Libs/openzfs.library"])
     require_match(selected["Platform/Libs/posixc.library"], debugger)
+    require_match(selected["Platform/Libs/stdcio.library"], debugger)
+    require_match(selected["Platform/Libs/stdc.library"], debugger)
     launcher_symbols = subprocess.check_output(["nm", str(selected["C/zdb"])], text=True)
     if any(marker in launcher_symbols for marker in (" T zfsdev_ioctl_common", " T oz_zdb_main", "__wrap_")):
         raise ValueError("Debugger launcher embeds an engine or diagnostic wrapper")
@@ -407,6 +432,8 @@ def main():
     dos_sources = require_dos_snapshot(dos_snapshot, dos)
     posix_snapshot = args.posix_source_snapshot.resolve(strict=True)
     posix_sources = require_posix_snapshot(posix_snapshot, selected["Platform/Libs/posixc.library"])
+    stdcio_snapshot = args.stdcio_source_snapshot.resolve(strict=True)
+    stdcio_sources = require_stdcio_snapshot(stdcio_snapshot, selected["Platform/Libs/stdcio.library"])
     selected["Platform/L/fat-handler"] = fat
     selected["Platform/Boot/aros-base.pkg.xz"] = dos
     afs = args.afs_handler.resolve(strict=True) if args.afs_handler else None
@@ -453,6 +480,13 @@ def main():
         target.parent.mkdir(parents=True, exist_ok=True)
         shutil.copy2(posix_snapshot / relative, target)
     require_posix_snapshot(sources, output / "Platform/Libs/posixc.library")
+    sources = output / "Sources/StdioC"
+    sources.mkdir(parents=True)
+    for relative in [*stdcio_sources, pathlib.Path("retained.sha256")]:
+        target = sources / relative
+        target.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(stdcio_snapshot / relative, target)
+    require_stdcio_snapshot(sources, output / "Platform/Libs/stdcio.library")
     if afs_sources:
         sources = output / 'Sources/AFS'
         sources.mkdir(parents=True)

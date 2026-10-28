@@ -1,0 +1,3 @@
+PASS retained actual stdcio source snapshot: 868 hash-bound files
+stdcio.library SHA256 a1265379f3ae9a1004c3c75bdc7a266c91fb09162acc215086e14b0b3aeb7d48
+No bundle staged: fresh exact-binary native acceptance remains required.

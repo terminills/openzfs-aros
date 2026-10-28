@@ -13,6 +13,44 @@ spec.loader.exec_module(stage)
 
 
 class EvidenceTests(unittest.TestCase):
+    def test_stdcio_snapshot_binds_selected_binary_and_local_abi(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = pathlib.Path(directory)
+            names = ('rebuild-fat-snapshot.py', 'source/LICENSE', 'provenance.json',
+                     'stdcio.library', 'source/compiler/crt/stdc/__stdio.c',
+                     'generated/include/stdcio_libdefs.h',
+                     'generated/include/stdcio_deflibdefs.h',
+                     'generated/stdcio_start.c', 'generated/stdcio_end.c')
+            for name in names:
+                path = root / name
+                path.parent.mkdir(parents=True, exist_ok=True)
+                path.write_text(name)
+            header = root / 'generated/include/stdcio_deflibdefs.h'
+            header.write_text('#define LC_LIBDEFS_FILE "stdcio_libdefs.h"\n')
+            recipe = root / 'rebuild.json'
+            recipe.write_text(json.dumps({'format': 1, 'artifact': 'stdcio.library',
+                                          'expected_binary': stage.digest(root / 'stdcio.library')}))
+            def seal():
+                (root / 'retained.sha256').write_text(''.join(
+                    stage.digest(root / name) + '  ' + name + '\n'
+                    for name in (*names, 'rebuild.json')))
+            seal()
+            stage.require_stdcio_snapshot(root, root / 'stdcio.library')
+            for path, text, diagnostic in (
+                    (header, '#define LC_LIBDEFS_FILE "/private/stdcio_libdefs.h"\n', 'snapshot-local'),
+                    (recipe, recipe.read_text().replace('stdcio.library', 'other.library'), 'bind selected'),
+                    (root / 'stdcio.library', 'untested binary', 'bind selected')):
+                original = path.read_text()
+                path.write_text(text)
+                seal()
+                with self.subTest(path=path.name), self.assertRaisesRegex(ValueError, diagnostic):
+                    stage.require_stdcio_snapshot(root, root / 'stdcio.library')
+                path.write_text(original)
+                seal()
+            (root / 'source/compiler/crt/stdc/__stdio.c').write_text('unrecorded change')
+            with self.assertRaisesRegex(ValueError, 'Retained input changed'):
+                stage.require_stdcio_snapshot(root, root / 'stdcio.library')
+
     def test_afs_snapshot_binds_recipe_headers_and_nontracing_build(self):
         with tempfile.TemporaryDirectory() as directory:
             root = pathlib.Path(directory)
