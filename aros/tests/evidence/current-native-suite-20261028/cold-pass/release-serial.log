@@ -1,0 +1,164 @@
+[bootstrap:multiboot2] smartfb: using VBE mode 0x417a (1280x800x32, fb=0xFD000000)
+[bootstrap:multiboot2] smartfb: KRN_FBAddr=0x00000000FD000000
+0000000000000000 0x0000000000000000 | 000 | AROS64 - The AROS Research OS
+0000000000000000 0x0000000000000000 | 000 | 64-bit SMP build. Compiled Oct 21 2026
+0000000000000000 0x0000000000000000 | 000 | [Kernel] Local APIC: x2APIC
+00000000903541f8 0x0000000000000000 | 000 | ACPI: RSDP 0x00000000000F52E0 000014 (v00 BOCHS )
+0000000090af0c31 0x0000000000000000 | 000 | ACPI: RSDT 0x000000007FFE25BF 000034 (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+00000000915cd460 0x0000000000000000 | 000 | ACPI: FACP 0x000000007FFE243B 000074 (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+0000000091fbee10 0x0000000000000000 | 000 | ACPI: DSDT 0x000000007FFE0040 0023FB (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+00000000929b92b7 0x0000000000000000 | 000 | ACPI: FACS 0x000000007FFE0000 000040
+000000009302684d 0x0000000000000000 | 000 | ACPI: APIC 0x000000007FFE24AF 0000B0 (v03 BOCHS  BXPC     00000001 BXPC 00000001)
+0000000093a21253 0x0000000000000000 | 000 | ACPI: HPET 0x000000007FFE255F 000038 (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+0000000094411a6f 0x0000000000000000 | 000 | ACPI: WAET 0x000000007FFE2597 000028 (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+0000000094e0c524 0x0000000000000000 | 000 | [HPET] 2 units total
+000000009599bef3 0x00000000013d2020 | 000 | ACPI: 1 ACPI AML tables successfully acquired and loaded
+000000009636f7ae 0x00000000013b0130 | 000 | [Kernel:ACPI-IOAPIC] Registering IO-APIC #1 [ID=000] @ 00000000fec00000 [GSI = 0]
+0000000096d7395d 0x00000000013b0130 | 000 | [Kernel:ACPI] System Total APICs: 8, 8 usable
+0000000097847343 0x00000000013b0130 | 000 | [Kernel:APIC-IA32] MSI Interrupts Allocatable
+0000000097f91496 0x00000000013b0130 | 000 | [Kernel:APIC-IA32]     start = 16
+00000000985c6839 0x00000000013b0130 | 000 | [Kernel:APIC-IA32]     total = 198
+00000000b688f5ac 0x00000000013b0130 | 000 | [Kernel:APIC-IA32] Heartbeat timer: TSC deadline
+00000000b88cd940 0x00000000013dbe80 | 001 | [Kernel:APIC-IA32.001] core_APIC_Calibrate: TSC freq inherited from BSP (2496040 kHz) [hypervisor]
+00000000ba2b7117 0x00000000013dbe80 | 001 | [Kernel:APIC-IA32.001] core_APIC_Calibrate: LAPIC timer freq inherited from BSP (1000402070 Hz) [hypervisor]
+00000000bd6e69ec 0x00000000013dc4c0 | 002 | [Kernel:APIC-IA32.002] core_APIC_Calibrate: TSC freq inherited from BSP (2496040 kHz) [hypervisor]
+00000000bf11d0ea 0x00000000013dc4c0 | 002 | [Kernel:APIC-IA32.002] core_APIC_Calibrate: LAPIC timer freq inherited from BSP (1000402070 Hz) [hypervisor]
+00000000c24d2ec6 0x000000000145c4b0 | 003 | [Kernel:APIC-IA32.003] core_APIC_Calibrate: TSC freq inherited from BSP (2496040 kHz) [hypervisor]
+00000000c365ce53 0x000000000145c4b0 | 003 | [Kernel:APIC-IA32.003] core_APIC_Calibrate: LAPIC timer freq inherited from BSP (1000402070 Hz) [hypervisor]
+00000000c614db49 0x0000000001497100 | 004 | [Kernel:APIC-IA32.004] core_APIC_Calibrate: TSC freq inherited from BSP (2496040 kHz) [hypervisor]
+00000000c755df44 0x0000000001497100 | 004 | [Kernel:APIC-IA32.004] core_APIC_Calibrate: LAPIC timer freq inherited from BSP (1000402070 Hz) [hypervisor]
+00000000ca322308 0x00000000014d1db0 | 005 | [Kernel:APIC-IA32.005] core_APIC_Calibrate: TSC freq inherited from BSP (2496040 kHz) [hypervisor]
+00000000cbd0ac6b 0x00000000014d1db0 | 005 | [Kernel:APIC-IA32.005] core_APIC_Calibrate: LAPIC timer freq inherited from BSP (1000402070 Hz) [hypervisor]
+00000000cf1a0868 0x000000000150ca60 | 006 | [Kernel:APIC-IA32.006] core_APIC_Calibrate: TSC freq inherited from BSP (2496040 kHz) [hypervisor]
+00000000d0b6483f 0x000000000150ca60 | 006 | [Kernel:APIC-IA32.006] core_APIC_Calibrate: LAPIC timer freq inherited from BSP (1000402070 Hz) [hypervisor]
+00000000d3edf89a 0x0000000001547710 | 007 | [Kernel:APIC-IA32.007] core_APIC_Calibrate: TSC freq inherited from BSP (2496040 kHz) [hypervisor]
+00000000d52a30f2 0x0000000001547710 | 007 | [Kernel:APIC-IA32.007] core_APIC_Calibrate: LAPIC timer freq inherited from BSP (1000402070 Hz) [hypervisor]
+00000000d71a5c2f 0x00000000013b0130 | 000 | [PCIPC:Driver] PCIPC_InitClass: No ACPI MCFG table
+00000000d9b27c33 0x00000000013b0130 | 000 | [Timer] clock: PIT (no invariant TSC)
+00000001c53fb9f9 0x000000000179f8b0 | 000 | [ATI] Init
+00000001c588e03e 0x000000000179f8b0 | 000 | [ATI] No supported cards found
+00000001dcacc64f 0x000000000179f060 | 000 | [HW] HW__HW__AddDriver: Failed to instantiate Driver Object
+Writable startup denied: configured security.library and system task identity required.
+00000001fcf2d057 0x000000000179ea10 | 000 | Public configuration created-directory owner=65535:65535 protection=8800 type=2
+00000001fdd37666 0x000000000179ea10 | 000 | Public CLI command result=0 ioerr=0: C:OpenZFSHostIdentity 5a465301 SAVE >T:companion-identity.log
+00000001fe885923 0x000000000179ea10 | 000 | Public diagnostic begin T:companion-identity.log
+00000001fefe06eb 0x000000000179ea10 | 000 | Host identity 5A465301 saved to ENVARC and ENV. Start OpenZFS to use it.
+00000001ff92f49a 0x000000000179ea10 | 000 | 
+Public diagnostic end
+0000000202ccc1e0 0x000000000179ea10 | 000 | Public CLI command result=0 ioerr=0: C:OpenZFSStartup 5a46530000000001 CHECK
+00000002062a10e5 0x000000000179ea10 | 000 | Public CLI command result=0 ioerr=0: C:OpenZFSStartup 5a46530000000001
+000000020b8a1814 0x000000000179ea10 | 000 | Public diagnostic begin T:public-cli-errors.log
+000000020c0007e0 0x000000000179ea10 | 000 | Startup check: errno=2; no import attempted
+000000020c6f81f6 0x000000000179ea10 | 000 | 
+Public diagnostic end
+000000020cc6842e 0x000000000179ea10 | 000 | Public CLI command result=1 ioerr=209: C:OpenZFSStartup 5a46530000000001 CHECK
+0000000210478f58 0x000000000179ea10 | 000 | Public CLI command result=0 ioerr=0: C:OpenZFSStartup 5a46530000000001 PREPARE
+0000000213b0ebb7 0x000000000179ea10 | 000 | Public CLI command result=0 ioerr=0: C:OpenZFSStartup 5a46530000000001 RESTORE
+00000002144e94d9 0x000000000179ea10 | 000 | Public companion configuration PASS hostid-save=1 iff-readback=2 trusted-check=1 prepare=1 disabled-restore=1 assigns-restored=1
+0000000215639478 0x000000000179ea10 | 000 | Public CLI command result=0 ioerr=0: C:Mount SYS:OZARCH
+0000000219279c2b 0x000000000179ea10 | 000 | Public diagnostic begin T:public-cli-errors.log
+00000002199cf930 0x000000000179ea10 | 000 | Startup check: errno=2; no import attempted
+000000021a0d3907 0x000000000179ea10 | 000 | 
+Public diagnostic end
+000000021a63b6a1 0x000000000179ea10 | 000 | Public CLI command result=1 ioerr=209: C:OpenZFSStartup 5a46530000000002 CHECK
+000000021dcce51a 0x000000000179ea10 | 000 | Public CLI command result=0 ioerr=0: C:OpenZFSStartup 5a46530000000002 PREPARE >T:persistent-prepare.log
+000000021e8b3457 0x000000000179ea10 | 000 | Public diagnostic begin T:persistent-prepare.log
+000000021f014476 0x000000000179ea10 | 000 | Startup ENV record prepared; no pool import
+000000021f712b56 0x000000000179ea10 | 000 | 
+Public diagnostic end
+00000002229d2cdf 0x000000000179ea10 | 000 | Public CLI command result=0 ioerr=0: C:OpenZFSStartup 5a46530000000002 RESTORE
+000000022338f42b 0x000000000179ea10 | 000 | Public GUID split format=58240c24e63dee45 expected=58240c24e63dee45 published=0 errno=0
+0000000223dfc3e1 0x000000000179ea10 | 000 | Public startup archive inventory phase=guid-cold guid=58240c24e63dee45 root=1
+00000002247a3d63 0x000000000179ea10 | 000 | Public startup archive entry name=OpenZFSHost.prefs size=42 owner=65535
+00000002250f0dad 0x000000000179ea10 | 000 | Public startup archive entry name=OpenZFS-ffffffffffffffff.prefs size=562 owner=65535
+0000000225b310b0 0x000000000179ea10 | 000 | Public startup archive entry name=OpenZFS-58240c24e63dee45.prefs size=562 owner=65535
+00000002265a4a74 0x000000000179ea10 | 000 | Public startup archive entry name=OpenZFS-8000000000000001.prefs size=562 owner=65535
+0000000226fe0e48 0x000000000179ea10 | 000 | Public startup archive entry name=OpenZFS-5a46530000000002.prefs size=562 owner=65535
+0000000227a20322 0x000000000179ea10 | 000 | Public startup archive entry name=OpenZFS-0000000080000000.prefs size=562 owner=65535
+0000000228508d43 0x000000000179ea10 | 000 | Public startup archive entry name=OpenZFS-c0c0e7ed0ff1822e.prefs size=818 owner=65535
+000000022bbfd7cc 0x000000000179ea10 | 000 | Public CLI command result=0 ioerr=0: C:OpenZFSStartup 58240c24e63dee45 PREPARE
+000000022f3fdb4a 0x000000000179ea10 | 000 | Public CLI command result=0 ioerr=0: C:OpenZFSStartup 58240c24e63dee45 RESTORE
+000000022fdc0105 0x000000000179ea10 | 000 | Public persistent GUID 58240c24e63dee45 cold=1 errno=0
+0000000230595bf0 0x000000000179ea10 | 000 | Public GUID split format=8000000000000001 expected=8000000000000001 published=0 errno=0
+0000000230ffec5e 0x000000000179ea10 | 000 | Public startup archive inventory phase=guid-cold guid=8000000000000001 root=1
+00000002319b7ce1 0x000000000179ea10 | 000 | Public startup archive entry name=OpenZFSHost.prefs size=42 owner=65535
+00000002322e3afe 0x000000000179ea10 | 000 | Public startup archive entry name=OpenZFS-ffffffffffffffff.prefs size=562 owner=65535
+0000000232d28d98 0x000000000179ea10 | 000 | Public startup archive entry name=OpenZFS-58240c24e63dee45.prefs size=562 owner=65535
+000000023376e320 0x000000000179ea10 | 000 | Public startup archive entry name=OpenZFS-8000000000000001.prefs size=562 owner=65535
+00000002341b01ad 0x000000000179ea10 | 000 | Public startup archive entry name=OpenZFS-5a46530000000002.prefs size=562 owner=65535
+0000000234c1296b 0x000000000179ea10 | 000 | Public startup archive entry name=OpenZFS-0000000080000000.prefs size=562 owner=65535
+000000023565618e 0x000000000179ea10 | 000 | Public startup archive entry name=OpenZFS-c0c0e7ed0ff1822e.prefs size=818 owner=65535
+0000000238d6ea36 0x000000000179ea10 | 000 | Public CLI command result=0 ioerr=0: C:OpenZFSStartup 8000000000000001 PREPARE
+000000023c4552ac 0x000000000179ea10 | 000 | Public CLI command result=0 ioerr=0: C:OpenZFSStartup 8000000000000001 RESTORE
+000000023ce1857d 0x000000000179ea10 | 000 | Public persistent GUID 8000000000000001 cold=1 errno=0
+000000023d5fb998 0x000000000179ea10 | 000 | Public GUID split format=0000000080000000 expected=0000000080000000 published=0 errno=0
+000000023e0aa335 0x000000000179ea10 | 000 | Public startup archive inventory phase=guid-cold guid=0000000080000000 root=1
+000000023ea522ac 0x000000000179ea10 | 000 | Public startup archive entry name=OpenZFSHost.prefs size=42 owner=65535
+000000023f38172e 0x000000000179ea10 | 000 | Public startup archive entry name=OpenZFS-ffffffffffffffff.prefs size=562 owner=65535
+000000023fdc4f6a 0x000000000179ea10 | 000 | Public startup archive entry name=OpenZFS-58240c24e63dee45.prefs size=562 owner=65535
+00000002408162ca 0x000000000179ea10 | 000 | Public startup archive entry name=OpenZFS-8000000000000001.prefs size=562 owner=65535
+0000000241263e1c 0x000000000179ea10 | 000 | Public startup archive entry name=OpenZFS-5a46530000000002.prefs size=562 owner=65535
+0000000241ca4bc4 0x000000000179ea10 | 000 | Public startup archive entry name=OpenZFS-0000000080000000.prefs size=562 owner=65535
+00000002426e70aa 0x000000000179ea10 | 000 | Public startup archive entry name=OpenZFS-c0c0e7ed0ff1822e.prefs size=818 owner=65535
+0000000245dc31d7 0x000000000179ea10 | 000 | Public CLI command result=0 ioerr=0: C:OpenZFSStartup 0000000080000000 PREPARE
+000000024946294a 0x000000000179ea10 | 000 | Public CLI command result=0 ioerr=0: C:OpenZFSStartup 0000000080000000 RESTORE
+0000000249e1fb54 0x000000000179ea10 | 000 | Public persistent GUID 0000000080000000 cold=1 errno=0
+000000024a5fd100 0x000000000179ea10 | 000 | Public GUID split format=ffffffffffffffff expected=ffffffffffffffff published=0 errno=0
+000000024b05e504 0x000000000179ea10 | 000 | Public startup archive inventory phase=guid-cold guid=ffffffffffffffff root=1
+000000024ba01ce6 0x000000000179ea10 | 000 | Public startup archive entry name=OpenZFSHost.prefs size=42 owner=65535
+000000024c3350fb 0x000000000179ea10 | 000 | Public startup archive entry name=OpenZFS-ffffffffffffffff.prefs size=562 owner=65535
+000000024cd74814 0x000000000179ea10 | 000 | Public startup archive entry name=OpenZFS-58240c24e63dee45.prefs size=562 owner=65535
+000000024d7cc00a 0x000000000179ea10 | 000 | Public startup archive entry name=OpenZFS-8000000000000001.prefs size=562 owner=65535
+000000024e203046 0x000000000179ea10 | 000 | Public startup archive entry name=OpenZFS-5a46530000000002.prefs size=562 owner=65535
+000000024ec3dcaa 0x000000000179ea10 | 000 | Public startup archive entry name=OpenZFS-0000000080000000.prefs size=562 owner=65535
+000000024f68388b 0x000000000179ea10 | 000 | Public startup archive entry name=OpenZFS-c0c0e7ed0ff1822e.prefs size=818 owner=65535
+0000000252dd8a0c 0x000000000179ea10 | 000 | Public CLI command result=0 ioerr=0: C:OpenZFSStartup ffffffffffffffff PREPARE
+000000025655c609 0x000000000179ea10 | 000 | Public CLI command result=0 ioerr=0: C:OpenZFSStartup ffffffffffffffff RESTORE
+0000000256f30a95 0x000000000179ea10 | 000 | Public persistent GUID ffffffffffffffff cold=1 errno=0
+0000000257728446 0x000000000179ea10 | 000 | Public persistent settings PASS write=0 archive-mufs=1 hostid-iff=1 trusted-prepare=1 disabled-restore=1
+0000000258492e47 0x000000000179ea10 | 000 | Public startup invalid-mode and non-root denial PASS
+Native authenticated admission ready
+OpenZFS management API 3 ready; engine initialized
+000000026bd5d54b 0x000000000179ea10 | 000 | Public service op=1 status=0 engine=1 rows=0
+0000000271cf092c 0x000000000179ea10 | 000 | Public service op=2 status=0 engine=1 rows=0
+0000000277c5a949 0x000000000179ea10 | 000 | Public service op=3 status=0 engine=1 rows=0
+Service remains resident: active client sessions or admitted operations.
+00000002c57705d9 0x000000000179ea10 | 000 | Public native control descriptors PASS capacity=64 ownership=1 stale=1 session-cleanup=1
+00000002d07df4a6 0x000000000179ea10 | 000 | Public task-exit session reclamation PASS cycles=4 sessions=32
+00000002d14cd613 0x000000000179ea10 | 000 | Public authenticated sessions ownership, capacity, stale handles and shutdown guard PASS
+00000002d4f9197f 0x000000000179ea10 | 000 | Public mutation requires authenticated admission PASS
+0000000333b19488 0x000000000179ea10 | 000 | Public storage op=7 status=0 Authenticated pool import returned errno=0
+000000034199ce03 0x000000000179ea10 | 000 | Public CLI command result=0 ioerr=0: C:zfs get -H -o value defer_destroy public_mirror/defer_pending@pending >T:cli-package-output.txt
+000000034700e340 0x000000000179ea10 | 000 | Public CLI command result=0 ioerr=0: C:zfs get -H -o value defer_destroy public_mirror/defer_pending/child@pending >T:cli-package-output.txt
+0000000353c39947 0x000000000179ea10 | 000 | Public storage op=56 status=0 Authenticated snapshot release returned errno=0
+00000003e5ed0dbc 0x000000000179ea10 | 000 | Public diagnostic begin T:public-cli-errors.log
+00000003e6a148fe 0x000000000179ea10 | 000 | cannot open 'public_mirror/defer_pending@pending': dataset does not exist
+00000003e751e5c9 0x000000000179ea10 | 000 | 
+Public diagnostic end
+00000003e7aafa79 0x000000000179ea10 | 000 | Public CLI command result=1 ioerr=209: C:zfs list -t snapshot public_mirror/defer_pending@pending
+00000003ec99c1c3 0x000000000179ea10 | 000 | Public diagnostic begin T:public-cli-errors.log
+00000003ed0ec3f6 0x000000000179ea10 | 000 | cannot open 'public_mirror/defer_pending/child@pending': dataset does not exist
+00000003edad9d00 0x000000000179ea10 | 000 | 
+Public diagnostic end
+00000003ee03e28c 0x000000000179ea10 | 000 | Public CLI command result=1 ioerr=209: C:zfs list -t snapshot public_mirror/defer_pending/child@pending
+00000003f37fd518 0x000000000179ea10 | 000 | Public CLI command result=0 ioerr=0: C:zfs get -H -o value type public_mirror/defer_pending/child >T:cli-package-output.txt
+00000003fff74808 0x000000000179ea10 | 000 | Public storage op=8 status=0 Authenticated pool export returned errno=0
+000000042bbea355 0x000000000179ea10 | 000 | Public storage op=7 status=0 Authenticated pool import returned errno=0
+000000043052ddaa 0x000000000179ea10 | 000 | Public diagnostic begin T:public-cli-errors.log
+0000000430c7e21c 0x000000000179ea10 | 000 | cannot open 'public_mirror/defer_pending@pending': dataset does not exist
+00000004315e2565 0x000000000179ea10 | 000 | 
+Public diagnostic end
+0000000431b4219a 0x000000000179ea10 | 000 | Public CLI command result=1 ioerr=209: C:zfs list -t snapshot public_mirror/defer_pending@pending
+00000004366897b1 0x000000000179ea10 | 000 | Public diagnostic begin T:public-cli-errors.log
+0000000436ddd800 0x000000000179ea10 | 000 | cannot open 'public_mirror/defer_pending/child@pending': dataset does not exist
+00000004377a93d4 0x000000000179ea10 | 000 | 
+Public diagnostic end
+0000000437d177ad 0x000000000179ea10 | 000 | Public CLI command result=1 ioerr=209: C:zfs list -t snapshot public_mirror/defer_pending/child@pending
+000000043d3b51e6 0x000000000179ea10 | 000 | Public CLI command result=0 ioerr=0: C:zfs get -H -o value type public_mirror/defer_pending/child >T:cli-package-output.txt
+0000000440bfc59f 0x000000000179ea10 | 000 | Public storage op=8 status=0 Authenticated pool export returned errno=0
+00000004415298d4 0x000000000179ea10 | 000 | Public cold writable release PASS pending-before=1 recursive-release=1 parent-absent=1 child-absent=1 reimport-absent=1 exact-data=1 exported=1
+00000004425b7c73 0x000000000179ea10 | 000 | Public backing clean detach PASS
+Service remains resident: mounted or retired DOS endpoints still require servicing.
+000000048fd50de8 0x000000000179ea10 | 000 | Public service retains retired DOS endpoints after export
+00000004905a3f77 0x000000000179ea10 | 000 | Public service test line=0
+RESULT public service storage PASS

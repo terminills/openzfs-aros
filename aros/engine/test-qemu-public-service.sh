@@ -787,7 +787,8 @@ if [[ $persistent == 1 ]];then
         "${extra_maps[@]}" \
         -map aros/engine/public-service-test-only /openzfs-service-test-only \
         -map "$run/Startup-Cold" /S/Startup-Sequence \
-        -boot_image any discard -boot_image grub bin_path=/boot/grub/i386-pc/eltorito.img \
+        -boot_image any discard -boot_image any system_area=/dev/zero \
+        -boot_image grub bin_path=/boot/grub/i386-pc/eltorito.img \
         -boot_image grub boot_info_table=on -boot_image grub grub2_boot_info=on >"$run/pack-cold.log" 2>&1
     "$qemu" -name "openzfs-public-cold-$$" -machine pc,accel=kvm -cpu host \
         -smp "$cpus" -m 2048 -drive "file=$run/cold.iso,media=cdrom,if=ide,index=2,readonly=on" \
@@ -920,7 +921,8 @@ if [[ $persistent == 1 ]];then
             "${extra_maps[@]}" \
             -map aros/engine/public-service-test-only /openzfs-service-test-only \
             -map "$run/Startup-Release" /S/Startup-Sequence \
-            -boot_image any discard -boot_image grub bin_path=/boot/grub/i386-pc/eltorito.img \
+            -boot_image any discard -boot_image any system_area=/dev/zero \
+            -boot_image grub bin_path=/boot/grub/i386-pc/eltorito.img \
             -boot_image grub boot_info_table=on -boot_image grub grub2_boot_info=on >"$run/pack-release.log" 2>&1
         "$qemu" -name "openzfs-public-release-$$" -machine pc,accel=kvm -cpu host \
             -smp "$cpus" -m 2048 -drive "file=$run/release.iso,media=cdrom,if=ide,index=2,readonly=on" \
@@ -1006,7 +1008,8 @@ if [[ $native_cold == 1 || $all_native == 1 ]];then
         "${extra_maps[@]}" \
         -map aros/engine/public-service-test-only /openzfs-service-test-only \
         -map "$run/Startup-Native-Cold" /S/Startup-Sequence \
-        -boot_image any discard -boot_image grub bin_path=/boot/grub/i386-pc/eltorito.img \
+        -boot_image any discard -boot_image any system_area=/dev/zero \
+        -boot_image grub bin_path=/boot/grub/i386-pc/eltorito.img \
         -boot_image grub boot_info_table=on -boot_image grub grub2_boot_info=on > "$run/pack-native-cold.log" 2>&1
     native_phases=(native-cold)
     if [[ $all_native == 1 ]];then
@@ -1024,7 +1027,8 @@ if [[ $native_cold == 1 || $all_native == 1 ]];then
             -map aros/engine/public-service-test-only /openzfs-service-test-only \
             -map "$run/Startup-Native-Cold" /S/Startup-Sequence \
             -map aros/engine/public-service-test-only /openzfs-native-missing-ata \
-            -boot_image any discard -boot_image grub bin_path=/boot/grub/i386-pc/eltorito.img \
+            -boot_image any discard -boot_image any system_area=/dev/zero \
+            -boot_image grub bin_path=/boot/grub/i386-pc/eltorito.img \
             -boot_image grub boot_info_table=on -boot_image grub grub2_boot_info=on > "$run/pack-native-degraded.log" 2>&1
     fi
     if [[ $native_healing == 1 ]];then
@@ -1044,7 +1048,8 @@ if [[ $native_cold == 1 || $all_native == 1 ]];then
                 "${extra_maps[@]}" "${mode_maps[@]}" \
                 -map aros/engine/public-service-test-only /openzfs-service-test-only \
                 -map "$run/Startup-Native-Cold" /S/Startup-Sequence \
-                -boot_image any discard -boot_image grub bin_path=/boot/grub/i386-pc/eltorito.img \
+                -boot_image any discard -boot_image any system_area=/dev/zero \
+                -boot_image grub bin_path=/boot/grub/i386-pc/eltorito.img \
                 -boot_image grub boot_info_table=on -boot_image grub grub2_boot_info=on > "$run/pack-$mode.log" 2>&1
         done
     fi
