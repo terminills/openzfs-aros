@@ -1,0 +1,85 @@
+------------------------------------
+LABEL 0 
+------------------------------------
+    state: 4
+    guid: 573785173
+    pool_guid: 287454020
+    version: 5000
+    txg: 1
+    name: 'l2arc_fixture'
+    labels = 0 1 2 3 
+
+
+ZFS Label NVList Config Stats:
+  240 bytes used, 114408 bytes free (using  0.2%)
+
+   integers:    5    176 bytes (73.33%)
+    strings:    1     44 bytes (18.33%)
+   booleans:    0      0 bytes ( 0.00%)
+    nvlists:    1     20 bytes ( 8.33%)
+
+
+------------------------------------
+LABEL 1 
+------------------------------------
+    state: 4
+    guid: 573785173
+    pool_guid: 287454020
+    version: 5000
+    txg: 1
+    name: 'l2arc_fixture'
+    labels = 0 1 2 3 
+
+
+ZFS Label NVList Config Stats:
+  240 bytes used, 114408 bytes free (using  0.2%)
+
+   integers:    5    176 bytes (73.33%)
+    strings:    1     44 bytes (18.33%)
+   booleans:    0      0 bytes ( 0.00%)
+    nvlists:    1     20 bytes ( 8.33%)
+
+
+------------------------------------
+LABEL 2 
+------------------------------------
+    state: 4
+    guid: 573785173
+    pool_guid: 287454020
+    version: 5000
+    txg: 1
+    name: 'l2arc_fixture'
+    labels = 0 1 2 3 
+
+
+ZFS Label NVList Config Stats:
+  240 bytes used, 114408 bytes free (using  0.2%)
+
+   integers:    5    176 bytes (73.33%)
+    strings:    1     44 bytes (18.33%)
+   booleans:    0      0 bytes ( 0.00%)
+    nvlists:    1     20 bytes ( 8.33%)
+
+
+------------------------------------
+LABEL 3 
+------------------------------------
+    state: 4
+    guid: 573785173
+    pool_guid: 287454020
+    version: 5000
+    txg: 1
+    name: 'l2arc_fixture'
+    labels = 0 1 2 3 
+
+
+ZFS Label NVList Config Stats:
+  240 bytes used, 114408 bytes free (using  0.2%)
+
+   integers:    5    176 bytes (73.33%)
+    strings:    1     44 bytes (18.33%)
+   booleans:    0      0 bytes ( 0.00%)
+    nvlists:    1     20 bytes ( 8.33%)
+
+
+Invalid L2ARC log entry count: 18446744073709551615

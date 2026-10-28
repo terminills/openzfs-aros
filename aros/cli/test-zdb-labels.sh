@@ -101,10 +101,22 @@ if [[ -n ${AROS_TEST_ZDB_L2ARC_LIBNVPAIR:-} ]];then
         test_flags+=(-DOZ_ZDB_L2ARC_LOGS)
         printf 'l2arc_log_iso=1\n' >>"$run/mode.txt"
     fi
+    if [[ ${AROS_TEST_ZDB_L2ARC_BOUNDS:-0} == 1 ]];then
+        # Never feed deliberately oversized counts to the old control build.
+        for candidate in "$AROS_TEST_HOST_ZDB" "${AROS_TEST_ZDB_LIBRARY:-$AROS_TEST_ZDB_BINARY}";do
+            strings "$candidate" | grep -F 'Invalid L2ARC log entry count:' >/dev/null || {
+                echo 'Bounds test requires guarded host and native debuggers' >&2;exit 1;
+            }
+        done
+        l2arc_options+=(--bounds)
+        l2arc_names+=(count-little count-big)
+        test_flags+=(-DOZ_ZDB_L2ARC_BOUNDS)
+        printf 'l2arc_bounds_iso=1\n' >>"$run/mode.txt"
+    fi
     python3 "$run/make-zdb-l2arc.py" "$AROS_TEST_ZDB_L2ARC_LIBNVPAIR" "$run/l2arc" "${l2arc_options[@]}"
     for fixture in "${l2arc_names[@]}";do
-        verbosity=-l;[[ $fixture != log-* ]] || verbosity=-lll
-        expected=0;[[ $fixture != log-bad ]] || expected=1
+        verbosity=-l;[[ $fixture != log-* && $fixture != count-* ]] || verbosity=-lll
+        expected=0;[[ $fixture != log-bad && $fixture != count-* ]] || expected=1
         status=0
         "$AROS_TEST_HOST_ZDB" "$verbosity" "$run/l2arc/$fixture" >"$run/host-l2arc-$fixture.log" 2>&1 || status=$?
         [[ $status == "$expected" ]] || { echo "Unexpected L2ARC $fixture status=$status" >&2;exit 1; }
@@ -173,6 +185,12 @@ if [[ ${AROS_TEST_ZDB_DEVICE:-0} == 1 ]];then
 fi
 "$AROS_CC" --sysroot="$AROS_SDK" -B"$AROS_SDK/lib/" -O2 -Wall -Wextra \
     "${test_flags[@]}" aros/cli/zdb-label-native-test.c -o "$run/OpenZFSZdbLabelsTest" >"$run/build.log" 2>&1
+if [[ ${AROS_TEST_ZDB_BUILD_ONLY:-0} == 1 ]];then
+    sha256sum -c "$run/inputs.sha256" >"$run/unchanged.log"
+    printf 'Build only: no ISO created and no native runtime executed\n' >"$run/build-only.txt"
+    echo 'Built clients and validated host fixtures; native runtime remains unverified.'
+    exit 0
+fi
 xorriso -indev "$AROS_TEST_ISO" -outdev "$run/test.iso" \
     "${security_remove[@]}" \
     -map aros/engine/grub-qemu-test.cfg /boot/grub/grub.cfg \

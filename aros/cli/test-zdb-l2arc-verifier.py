@@ -56,6 +56,14 @@ class Evidence(unittest.TestCase):
         self.serial.write_text(self.serial.read_text() + "[PF-DBG] fault\n")
         with self.assertRaises(ValueError): self.check()
 
+    def test_extra_pass(self):
+        self.serial.write_text(self.serial.read_text() + "RESULT native zdb l2arc pass=9 exit=0\n")
+        with self.assertRaises(ValueError): self.check()
+
+    def test_extra_report(self):
+        self.serial.write_text(self.serial.read_text() + "ZDBL2[9] unexpected\n")
+        with self.assertRaises(ValueError): self.check()
+
     def test_populated_logs_and_rejections(self):
         (self.root / "mode.txt").write_text("l2arc_log_iso=1\n")
         lines = []
@@ -77,6 +85,28 @@ class Evidence(unittest.TestCase):
                     [x.replace("pass=5 exit=1", "pass=5 exit=0") for x in lines],
                     [x for x in lines if "[6]" not in x and "pass=6" not in x],
                     [x.replace("ZDBL2[4] log_blk_count:", "ZDBL2[4] wrong:") for x in lines]):
+            self.serial.write_text("\n".join(bad))
+            with self.assertRaises(ValueError): self.check()
+
+    def test_bounds_and_healthy_recovery(self):
+        (self.root / "mode.txt").write_text("l2arc_bounds_iso=1\n")
+        lines = []
+        for i, name in enumerate(("little", "big", "missing", "count-little", "count-big", "little")):
+            bad = name.startswith("count-")
+            if bad:
+                count = 1023 if name == "count-little" else (1 << 64)-1
+                report = f"    state: 4\nInvalid L2ARC log entry count: {count}\n"
+                (self.root / f"host-l2arc-{name}.log").write_text(report)
+            else:
+                report = (self.root / f"host-l2arc-{name}.log").read_text()
+            lines.extend(f"ZDBL2[{i}] {line}" for line in report.splitlines())
+            lines.append(f"RESULT native zdb l2arc pass={i} exit={int(bad)}")
+        lines += ["RESULT native zdb l2arc PASS headers=3 storage=readonly-iso",
+                  "RESULT native zdb l2arc PASS bounds=2 recovery=1"]
+        self.serial.write_text("\n".join(lines))
+        self.check()
+        for bad in (lines[:-1], [x.replace("pass=3 exit=1", "pass=3 exit=0") for x in lines],
+                    [x for x in lines if "[5]" not in x and "pass=5" not in x]):
             self.serial.write_text("\n".join(bad))
             with self.assertRaises(ValueError): self.check()
 

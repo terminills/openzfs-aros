@@ -1,0 +1,7 @@
+shared_library=1
+launcher_stack=65536
+l2arc_log_iso=1
+l2arc_bounds_iso=1
+l2arc_header_iso=1
+l2arc_header_device=1
+native_device=1

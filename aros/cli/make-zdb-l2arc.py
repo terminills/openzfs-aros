@@ -52,7 +52,7 @@ def log_fixture(out, endian, corrupt, header_offset, length):
     out.write(block)
 
 
-def prepare(library, destination, populated=False):
+def prepare(library, destination, populated=False, bounds=False):
     lib = C.CDLL(str(Path(library).resolve(strict=True)))
     lib.nvlist_alloc.argtypes = [C.POINTER(C.c_void_p), C.c_uint, C.c_int]
     lib.nvlist_add_uint64.argtypes = [C.c_void_p, C.c_char_p, C.c_uint64]
@@ -87,6 +87,9 @@ def prepare(library, destination, populated=False):
     if populated:
         fixtures += [(name, endian, 0x5a46534341434845) for name, endian in
                      (("log-little", "<"), ("log-big", ">"), ("log-bad", "<"))]
+    if bounds:
+        fixtures += [("count-little", "<", 0x5a46534341434845),
+                     ("count-big", ">", 0x5a46534341434845)]
     for name, endian, magic in fixtures:
         with (destination / name).open("xb") as out:
             out.truncate(length)
@@ -106,12 +109,17 @@ def prepare(library, destination, populated=False):
             out.write(struct.pack(endian + "64Q", *words))
             if name.startswith("log-"):
                 log_fixture(out, endian, name == "log-bad", header_offset, length)
+            if name.startswith("count-"):
+                log_fixture(out, endian, False, header_offset, length)
+                out.seek(header_offset + 4*8)
+                out.write(struct.pack(endian + "Q", 1023 if endian == "<" else (1 << 64)-1))
     (destination / "fixture.json").write_text(json.dumps({
-        "kind": "synthetic-log-l2arc-reader" if populated else "synthetic-empty-l2arc-reader", "size": length,
+        "kind": "synthetic-log-l2arc-reader" if populated or bounds else "synthetic-empty-l2arc-reader", "size": length,
+        "populated_logs": populated, "invalid_entry_counts": bounds,
         "header_offset": header_offset, "pool_guid": 0x11223344,
-        "scope": "synthetic log decoding and checksum rejection; no live cache" if populated else
+        "scope": "synthetic log decoding and malformed-data rejection; no live cache" if populated or bounds else
                  "header decoding only; no cache log records or live cache"}, indent=2) + "\n")
 
 
 if __name__ == "__main__":
-    prepare(sys.argv[1], sys.argv[2], "--populated" in sys.argv[3:])
+    prepare(sys.argv[1], sys.argv[2], "--populated" in sys.argv[3:], "--bounds" in sys.argv[3:])

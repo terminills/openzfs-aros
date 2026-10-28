@@ -18,6 +18,9 @@ static int check_l2arc(void)
 #ifdef OZ_ZDB_L2ARC_LOGS
         ,"log-little","log-big","log-bad","log-little"
 #endif
+#ifdef OZ_ZDB_L2ARC_BOUNDS
+        ,"count-little","count-big","little"
+#endif
     };
     unsigned iso_count=sizeof(names)/sizeof(names[0]),count=iso_count;
 #ifdef OZ_ZDB_L2ARC_DEVICE
@@ -26,7 +29,7 @@ static int check_l2arc(void)
     for(unsigned pass=0;pass<count;pass++){
         char command[160];
         if(pass<iso_count)snprintf(command,sizeof(command),"C:ZdbAudit %s /SYS/zdb-l2arc/%s >RAM:zdb-l2arc.log",
-            pass<3?"-l":"-lll",names[pass]);
+            !strncmp(names[pass],"log-",4)||!strncmp(names[pass],"count-",6)?"-lll":"-l",names[pass]);
 #ifdef OZ_ZDB_L2ARC_DEVICE
         struct Library *secBase=NULL;ULONG previous=0;
         if(pass==iso_count){
@@ -49,13 +52,17 @@ static int check_l2arc(void)
         FILE *report=fopen("RAM:zdb-l2arc.log","r");if(!report)return 20;
         char line[1024];unsigned lines=0;
         while(fgets(line,sizeof(line),report)){bug("ZDBL2[%u] %s",pass,line);lines++;}
-        LONG expected=pass<iso_count&&!strcmp(names[pass],"log-bad")?1:0;
+        LONG expected=pass<iso_count&&(!strcmp(names[pass],"log-bad")||
+            !strncmp(names[pass],"count-",6))?1:0;
         int failed=ferror(report)||!lines||status!=expected;fclose(report);
         if(failed)return 20;
     }
     bug("RESULT native zdb l2arc PASS headers=3 storage=readonly-iso\n");
 #ifdef OZ_ZDB_L2ARC_LOGS
     bug("RESULT native zdb l2arc PASS logs=4 endian=2 corrupt=1 recovery=1\n");
+#endif
+#ifdef OZ_ZDB_L2ARC_BOUNDS
+    bug("RESULT native zdb l2arc PASS bounds=2 recovery=1\n");
 #endif
     return 0;
 }
