@@ -1,0 +1,13 @@
+api.version=3
+engine.available=true
+engine=upstream OpenZFS 2.4.4
+engine.mode=write-capable
+engine.operations=service.hello,service.capabilities,pool.list,pool.status,pool.errors,pool.create,pool.destroy,pool.import,pool.export,pool.add,pool.remove,pool.attach,pool.detach,pool.replace,pool.split,pool.online,pool.offline,pool.clear,pool.scrub,pool.resilver,pool.initialize,pool.trim,pool.checkpoint,pool.reguid,pool.reopen,pool.upgrade,pool.sync,pool.prefetch,pool.ddtprune,pool.labelclear,pool.wait,pool.get,pool.set,pool.history,pool.events,pool.iostat,dataset.list,dataset.create,dataset.destroy,dataset.rename,dataset.get,dataset.set,dataset.inherit,dataset.mount,dataset.unmount,dataset.upgrade,dataset.rewrite,dataset.wait,snapshot.snapshot,snapshot.bookmark,snapshot.clone,snapshot.promote,snapshot.rollback,snapshot.hold,snapshot.release,snapshot.holds,snapshot.diff,snapshot.redact,replication.send,replication.receive,encryption.load-key,encryption.unload-key,encryption.change-key,permission.allow,permission.unallow,permission.list,permission.userspace,permission.groupspace,permission.projectspace,permission.project,advanced.program,advanced.jobs,advanced.cancel-job,replication.abort-receive,vdev.get,vdev.set
+Pool create: authenticated root, typed layout including dRAID, pre-provisioned blank files or explicit native partitions; optional tname=temporary, no force.
+Pool export: authenticated root admission, unmount first; no force/options.
+Explicit member import: root admission, topology.devices without groups/ashift, readonly=on/off; destroyed=on selects destroyed pools only. Dedicated files or admitted native extents required; no external writers.
+Pool set: root admission; comment, delegation, listsnapshots, failmode, ashift, dedup_table_quota, bootfs, explicit cachefile and user properties. Bootfs metadata does not install a boot loader.
+Scrub: authenticated root admission; start/pause/resume/stop. Query pool.status for completion.
+Legacy fixture import: target=pool, argument=/SYS/OpenZFS-test-XXXXXXXX/export.nvlist, options=readonly=on; TEST-WRITE also allows readonly=off. Confirmation required, dry-run unsupported.
+Mount: target=ZPL dataset, argument=DOS name, options=readonly=on. Unmount: target=dataset only. Dynamic mount registry; retired endpoints retained and service stays resident afterward. No automatic physical-device discovery.
+

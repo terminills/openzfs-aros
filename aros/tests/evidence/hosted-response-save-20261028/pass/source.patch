@@ -1,0 +1,83 @@
+diff --git a/aros/ui/build-manager-native.sh b/aros/ui/build-manager-native.sh
+index d1580ef..3ffd4d2 100644
+--- a/aros/ui/build-manager-native.sh
++++ b/aros/ui/build-manager-native.sh
+@@ -46,6 +46,6 @@ sha256sum "$pthread" "$pthread_include/pthread.h" aros/ui/api.c aros/ui/api.h \
+     aros/ui/preferences.c aros/ui/preferences-file.c aros/ui/preferences.h aros/ui/pool-wizard.h aros/ui/encrypted-create.h \
+     aros/ui/startup-settings.c aros/ui/startup-settings-file.c aros/ui/startup-settings.h aros/ui/startup-editor.h aros/ui/settings-file.h \
+     aros/ui/hostid-settings.c aros/ui/hostid-settings.h aros/engine/hostid-record.c aros/engine/hostid-record.h \
+-    aros/ui/simple-pools.h aros/ui/simple-health.h aros/ui/target-abi.c "$output.target-abi.s" "$output.sdk.sha256" \
++    aros/ui/simple-pools.h aros/ui/simple-health.h aros/ui/report-save.h aros/ui/target-abi.c "$output.target-abi.s" "$output.sdk.sha256" \
+     "$output" >"$output.inputs.sha256"
+ sha256sum -c "$output.sdk.sha256" >"$output.sdk-after-check.log"
+diff --git a/aros/ui/manager.c b/aros/ui/manager.c
+index a7483b4..1b8c7d5 100644
+--- a/aros/ui/manager.c
++++ b/aros/ui/manager.c
+@@ -11,6 +11,7 @@
+ #include <proto/muimaster.h>
+ #include <proto/alib.h>
+ #include <libraries/mui.h>
++#include <libraries/asl.h>
+ #include <stdio.h>
+ #include <stdlib.h>
+ #include <string.h>
+@@ -19,6 +20,7 @@
+ #include "iostat-refresh.h"
+ #include "simple-pools.h"
+ #include "simple-health.h"
++#include "report-save.h"
+ static struct oz_rate_history io_history;
+ static struct oz_refresh io_refresh;
+ static Object *auto_iostat;
+@@ -532,7 +534,7 @@ int main(int argc,char **argv) {
+                     Child,HGroup,Child,preview=SimpleButton("Preview request"),Child,execute=SimpleButton("Send request"),End,
+                     Child,HGroup,Child,auto_iostat=make_check(FALSE),Child,Label1("Auto I/O refresh (2s)"),Child,HSpace(0),End,
+                     Child,HGroup,Child,TextObject,MUIA_Text_Contents,"\33bResponse",End,
+-                        Child,next_page=SimpleButton("Next page"),Child,use_token=SimpleButton("Use token"),Child,save_response=SimpleButton("Save response"),End,
++                        Child,next_page=SimpleButton("Next page"),Child,use_token=SimpleButton("Use token"),Child,save_response=SimpleButton("Save response..."),End,
+                     Child,result_view,
+                 End,
+             End,
+@@ -561,6 +563,7 @@ int main(int argc,char **argv) {
+     notify_button(execute,EV_SEND);notify_button(preview,EV_PREVIEW);notify_button(connect_button,EV_CONNECT);
+     notify_button(caps_button,EV_CAPS);notify_button(save,EV_SAVE);notify_button(build_topology,EV_TOPOLOGY);notify_button(clear,EV_CLEAR);
+     notify_button(next_page,EV_NEXT);notify_button(save_response,EV_SAVE_RESPONSE);set(next_page,MUIA_Disabled,TRUE);
++    set(save_response,MUIA_ShortHelp,"Save the current backend response/page to a new file, including details hidden in Simple mode. Choose persistent storage to keep it after reboot. Existing files are never overwritten. Large command reports named in the response remain separate files.");
+     notify_button(use_token,EV_USE_TOKEN);set(use_token,MUIA_Disabled,TRUE);
+     DoMethod(auto_iostat,MUIM_Notify,MUIA_Selected,MUIV_EveryTime,(IPTR)app,2,MUIM_Application_ReturnID,EV_AUTO_IO);
+     set(auto_iostat,MUIA_ShortHelp,"Refresh the displayed I/O page every 2 seconds, retaining histogram options. Stops on query edits, page changes or errors. Pages are live samples, not an atomic pool snapshot. No overlapping requests.");
+@@ -692,7 +695,32 @@ int main(int argc,char **argv) {
+                 if(!rc)set(next_page,MUIA_Disabled,TRUE);
+             } else {ULONG rc=oz_submit(&client,&last_request);set(status,MUIA_Text_Contents,rc==OZ_OK?"Loading next page...":oz_status(rc));}
+         }break;
+-        case EV_SAVE_RESPONSE:{FILE *f=fopen("T:OpenZFS-Response.txt","w");if(f){size_t n=fwrite(response_text,1,strlen(response_text),f);int rc=fclose(f);set(status,MUIA_Text_Contents,n==strlen(response_text)&&!rc?"Saved T:OpenZFS-Response.txt":"Response write failed");}else set(status,MUIA_Text_Contents,"Cannot open response file");break;}
++        case EV_SAVE_RESPONSE:{
++            struct TagItem tags[]={
++                {ASLFR_TitleText,(IPTR)"Save OpenZFS response (new file)"},
++                {ASLFR_Window,value(win,MUIA_Window_Window)},
++                {ASLFR_InitialDrawer,(IPTR)"T:"},
++                {ASLFR_InitialFile,(IPTR)"OpenZFS-Response.txt"},
++                {ASLFR_DoSaveMode,TRUE},{TAG_DONE,0}};
++            struct FileRequester *request=MUI_AllocAslRequest(ASL_FileRequest,tags);
++            if(!request){set(status,MUIA_Text_Contents,"Cannot open file requester; response has not been saved");break;}
++            set(app,MUIA_Application_Sleep,TRUE);
++            BOOL accepted=MUI_AslRequest(request,NULL);
++            set(app,MUIA_Application_Sleep,FALSE);
++            if(accepted){
++                char path[1024],message[1200];int error=ENAMETOOLONG;
++                if(!request->fr_File||!request->fr_File[0])error=EINVAL;
++                else if(strlen(request->fr_Drawer)<sizeof(path)){
++                    strcpy(path,request->fr_Drawer);
++                    if(AddPart((STRPTR)path,(CONST_STRPTR)request->fr_File,sizeof(path)))
++                        error=oz_report_save_new(path,response_text);
++                }
++                if(!error)snprintf(message,sizeof(message),"Saved backend response: %s",path);
++                else if(error==EEXIST)snprintf(message,sizeof(message),"File exists; nothing overwritten. Choose a new filename.");
++                else snprintf(message,sizeof(message),"Response save failed (errno=%d); a partial new file may remain",error);
++                set(status,MUIA_Text_Contents,message);
++            }else set(status,MUIA_Text_Contents,"Save cancelled; nothing written");
++            MUI_FreeAslRequest(request);break;}
+         case EV_SAVE:{FILE *f=fopen("T:OpenZFS-Manager.log","w");if(f){size_t n=fwrite(transcript,1,transcript_used,f);int rc=fclose(f);set(status,MUIA_Text_Contents,n==transcript_used&&!rc?"Saved T:OpenZFS-Manager.log":"Log write failed");}else set(status,MUIA_Text_Contents,"Cannot open T:OpenZFS-Manager.log");break;}
+         }
+         /* Closing keeps the process, task and outstanding packets alive.

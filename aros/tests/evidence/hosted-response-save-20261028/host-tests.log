@@ -1,0 +1,2 @@
+PASS report save: exact bytes, no overwrite, symlink refusal, private mode, empty and invalid inputs
+PASS report save faults: EINTR retry, short writes, ENOSPC, zero write, close failure, incomplete file retained
