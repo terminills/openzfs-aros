@@ -2,6 +2,19 @@
 
 Experimental development snapshot; not production-qualified storage software.
 
+## Source-retained stdcio runtime (2026-10-28)
+
+`build-stdcio-snapshot.py` replaces the cached-object stdcio overlay workflow
+with a complete 69-translation-unit rebuild. Source, generated ABI headers,
+recipe and provenance are retained; SDK headers/archives and the toolchain
+remain explicit hash-bound external prerequisites. Relocated source replay
+produces a byte-identical library without the original object cache.
+The new binary passes both full hosted runtime preflights and the persistent
+writer, CLI/handler, independent zdb, cold/degraded-reader suite. This closes
+the stdcio cached-object dependency, not whole-platform source closure or
+stock-runtime/QEMU qualification. See
+`aros/tests/evidence/stdcio-source-20261028`.
+
 ## Packaged CLI full hosted preflight (2026-10-28)
 
 A fresh generated MetaMake CLI build now passes the full RuntimeCheck with

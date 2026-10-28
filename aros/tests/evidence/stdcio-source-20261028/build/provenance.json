@@ -1,0 +1,7 @@
+{
+  "upstream": "/home/terminills/Documents/GitHub/aros-adt-src",
+  "generated": "/home/terminills/Documents/GitHub/aros-adt-hosted-clean/bin/linux-x86_64/gen/compiler/crt/stdc/stdcio",
+  "stdio_source": "/mnt/short-term/openzfs-old-build-aros-20261027/cli-stdio.TKCE3ewE/compiler/crt/stdc/__stdio.c",
+  "upstream_head": "671efe3b321926332e3330a0e138ed4a3d4e820e",
+  "note": "Source contents retained; HEAD is context, not a clean-tree claim."
+}
