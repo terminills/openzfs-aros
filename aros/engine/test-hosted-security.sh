@@ -62,6 +62,9 @@ fi
 if [[ -n ${AROS_TEST_DOS_LIBRARY:-} ]];then
     cp "$AROS_TEST_DOS_LIBRARY" "$run/Libs/dos.library"
 fi
+if [[ -n ${AROS_TEST_DOS64_LIBRARY:-} ]];then
+    cp "$(realpath -e "$AROS_TEST_DOS64_LIBRARY")" "$run/Libs/dos64.library"
+fi
 if [[ -n ${AROS_TEST_HOSTED_STDCIO_LIBRARY:-} ]];then
     cp "$AROS_TEST_HOSTED_STDCIO_LIBRARY" "$run/Libs/stdcio.library"
 fi
@@ -151,6 +154,7 @@ fi
 sha256sum "$run/Libs/stdcio.library" >>"$run/inputs.sha256"
 sha256sum "$run/Libs/posixc.library" >>"$run/inputs.sha256"
 sha256sum "$run/Libs/stdc.library" >>"$run/inputs.sha256"
+sha256sum "$run/Libs/dos64.library" >>"$run/inputs.sha256"
 if [[ -n ${AROS_TEST_DOS_LIBRARY:-} ]];then
     sha256sum "$run/Libs/dos.library" >>"$run/inputs.sha256"
 fi

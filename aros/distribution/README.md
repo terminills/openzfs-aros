@@ -1,5 +1,25 @@
 # AROS OpenZFS development bundle
 
+## DOS64 runtime binding (2026-10-28)
+
+MetaMake staging includes `Platform/Libs/dos64.library` alongside POSIX, stdc
+and stdcio. All four selected binaries must match the GUI, cold, encrypted-root
+and debugger native acceptance inputs. Missing or ambiguous DOS64 records are
+rejected; an ISO identity alone is not a substitute for the selected library's
+hash. Existing qualification records lacking DOS64 must be refreshed, not edited
+to imply a test which did not happen.
+
+The public-service and debugger QEMU runners accept `AROS_TEST_DOS64_LIBRARY`,
+`AROS_TEST_STDC_LIBRARY` and `AROS_TEST_STDCIO_LIBRARY`, copy them to private
+canonical filenames and map/hash the copies. Hosted runners accept DOS64 too;
+the hosted service uses `AROS_TEST_HOSTED_STDCIO_LIBRARY` for its stdcio override.
+No overrides change the runtime template or a user session.
+
+The current hosted service/cold and debugger combination passes with corrected
+DOS64. This is not native package acceptance: QEMU qualification and retained
+DOS64 source/rebuild packaging remain outstanding. See
+`../tests/evidence/dos64-package-binding-20261028`.
+
 ## Native debugger packaging (2026-10-27)
 
 The legacy `stage.sh` interface is:

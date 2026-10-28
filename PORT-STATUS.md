@@ -2,6 +2,18 @@
 
 Experimental development snapshot; not production-qualified storage software.
 
+## DOS64 packaging and matched hosted runtime (2026-10-28)
+
+Staging now binds the selected DOS64, POSIX, stdc and stdcio binaries across
+all four required native acceptance runs, refusing missing/mismatched evidence.
+The full hosted storage/CLI/handler writer and cold-reader suite passes with
+corrected DOS64. An independent hosted debugger run passes exact labels,
+lifecycle, absent-security denial and L2ARC bounds/corruption/recovery using
+the same runtime set. The QEMU runners now support explicit selected CRT copies.
+These hosted tests do not satisfy the native release gate; matching QEMU runs
+and retained DOS64 source/rebuild packaging remain open. See
+`aros/tests/evidence/dos64-package-binding-20261028`.
+
 ## Explicit DOS64 dependency requalification (2026-10-28)
 
 The current source-built CRT set passes >4 GiB positioned I/O, close/reopen,

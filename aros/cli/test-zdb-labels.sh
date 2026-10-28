@@ -21,6 +21,16 @@ cp "$0" aros/cli/zdb-label-native-test.c aros/cli/zdb-fixture-paths.h aros/cli/S
 sha256sum "$AROS_TEST_ISO" "$AROS_TEST_BASE_DOS_PACKAGE" "$AROS_TEST_POSIX_LIBRARY" \
     "$AROS_TEST_ZDB_BINARY" "$AROS_TEST_ZDB_MEMBER" "$AROS_TEST_HOST_ZDB" >"$run/inputs.sha256"
 library_maps=()
+for spec in 'AROS_TEST_STDC_LIBRARY:stdc.library' 'AROS_TEST_STDCIO_LIBRARY:stdcio.library' 'AROS_TEST_DOS64_LIBRARY:dos64.library';do
+    variable=${spec%%:*};name=${spec#*:}
+    if [[ -n ${!variable:-} ]];then
+        selected_library=$(realpath -e "${!variable}")
+        mkdir -p "$run/runtime-inputs"
+        cp "$selected_library" "$run/runtime-inputs/$name"
+        sha256sum "$run/runtime-inputs/$name" >>"$run/inputs.sha256"
+        library_maps+=(-map "$run/runtime-inputs/$name" "/Libs/$name")
+    fi
+done
 test_flags=()
 pool_maps=()
 device_args=()

@@ -21,6 +21,12 @@ for directory in boot C Classes Devs Fonts L Libs Locale Prefs S System;do
     cp -aL --reflink=auto "$runtime/$directory" "$run/$directory"
 done
 cp "$runtime/AROS.boot" "$run/AROS.boot"
+for spec in 'AROS_TEST_STDC_LIBRARY:stdc.library' 'AROS_TEST_STDCIO_LIBRARY:stdcio.library' 'AROS_TEST_DOS64_LIBRARY:dos64.library' 'AROS_TEST_POSIX_LIBRARY:posixc.library' 'AROS_TEST_DOS_LIBRARY:dos.library';do
+    variable=${spec%%:*};name=${spec#*:}
+    if [[ -n ${!variable:-} ]];then
+        cp "$(realpath -e "${!variable}")" "$run/Libs/$name"
+    fi
+done
 if [[ -e $run/Libs/security.library ]];then unlink "$run/Libs/security.library";fi
 cp "$build/stage/Libs/openzfs.library" "$run/Libs/"
 cp "$build/stage/C/zdb" "$run/C/ZdbAudit"
@@ -46,6 +52,7 @@ done
 printf '%s\n' hosted_runtime=1 missing_security=1 l2arc_log_iso=1 l2arc_bounds_iso=1 >"$run/mode.txt"
 sha256sum "$run/zdb-member" "$run/zdb-l2arc/"{little,big,missing,log-*,count-*} \
     "$run/Libs/openzfs.library" "$run/Libs/posixc.library" "$run/Libs/dos.library" \
+    "$run/Libs/stdc.library" "$run/Libs/stdcio.library" "$run/Libs/dos64.library" \
     "$run/boot/linux/kernel" "$run/C/"OpenZFSZdb* "$run/C/ZdbAudit" >"$run/inputs.sha256"
 sed "s|^logfile .*|logfile $run/serial.log|" aros/engine/hosted.conf >"$run/hosted.conf"
 printf '%s\n' 'FailAt 21' 'MakeDir RAM:T RAM:ENV' 'Assign T: RAM:T' \

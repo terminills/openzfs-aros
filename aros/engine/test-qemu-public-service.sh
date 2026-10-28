@@ -284,6 +284,16 @@ printf '%s\n' "$missing_helper" >"$run/missing-exec-helper.txt"
 cp "$0" "$run/runner.sh"
 sha256sum "$run/runner.sh" >"$run/runner.sha256"
 echo "Evidence: $run"
+for spec in 'AROS_TEST_STDC_LIBRARY:stdc.library' 'AROS_TEST_STDCIO_LIBRARY:stdcio.library' 'AROS_TEST_DOS64_LIBRARY:dos64.library';do
+    variable=${spec%%:*};name=${spec#*:}
+    if [[ -n ${!variable:-} ]];then
+        selected_library=$(realpath -e "${!variable}")
+        mkdir -p "$run/runtime-inputs"
+        cp "$selected_library" "$run/runtime-inputs/$name"
+        platform_maps+=(-map "$run/runtime-inputs/$name" "/Libs/$name")
+        platform_inputs+=("$run/runtime-inputs/$name")
+    fi
+done
 qemu_path=$(command -v "$qemu")
 "$qemu" --version > "$run/qemu-version.txt"
 sha256sum "$(realpath -e "$qemu_path")" > "$run/qemu-binary.sha256"

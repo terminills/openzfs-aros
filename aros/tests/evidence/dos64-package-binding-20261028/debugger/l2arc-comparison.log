@@ -1,0 +1,1 @@
+PASS AROS L2ARC header decoding matches host; ISO endian/missing cases, synthetic log endian/corruption/recovery cases, malformed entry counts and recovery; no device test

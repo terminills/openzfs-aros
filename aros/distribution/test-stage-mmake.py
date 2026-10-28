@@ -13,6 +13,38 @@ spec.loader.exec_module(stage)
 
 
 class EvidenceTests(unittest.TestCase):
+    def test_platform_runtime_requires_dos64_in_every_acceptance_run(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = pathlib.Path(directory)
+            selected = root / 'stage'
+            (selected / 'Libs').mkdir(parents=True)
+            names = ('posixc.library', 'stdcio.library', 'stdc.library', 'dos64.library')
+            for name in names:
+                (selected / 'Libs' / name).write_bytes(name.encode())
+            evidence = ''.join(f'{stage.digest(selected / "Libs" / name)}  /tested/Libs/{name}\n'
+                               for name in names)
+            runs = [root / label for label in ('gui', 'cold', 'encrypted', 'debugger')]
+            for run in runs:
+                run.mkdir()
+                (run / 'inputs.sha256').write_text(evidence)
+            result = stage.require_platform_runtime(selected, runs)
+            self.assertEqual(set(result), {'Platform/Libs/' + name for name in names})
+            for run in runs:
+                manifest = run / 'inputs.sha256'
+                with self.subTest(run=run.name, failure='missing'):
+                    manifest.write_text(''.join(line for line in evidence.splitlines(True)
+                                               if 'dos64.library' not in line))
+                    with self.assertRaisesRegex(ValueError, 'Missing or ambiguous'):
+                        stage.require_platform_runtime(selected, runs)
+                with self.subTest(run=run.name, failure='mismatch'):
+                    manifest.write_text(evidence.replace(stage.digest(selected / 'Libs/dos64.library'), '0' * 64))
+                    with self.assertRaisesRegex(ValueError, 'differs from tested'):
+                        stage.require_platform_runtime(selected, runs)
+                manifest.write_text(evidence)
+            (selected / 'Libs/dos64.library').unlink()
+            with self.assertRaises(FileNotFoundError):
+                stage.require_platform_runtime(selected, runs)
+
     def test_stdc_snapshot_binds_assembly_locale_and_binary(self):
         with tempfile.TemporaryDirectory() as directory:
             root = pathlib.Path(directory)

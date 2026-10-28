@@ -194,6 +194,17 @@ def require_match(path, run, name=None):
         raise ValueError(f"Selected binary differs from tested input: {path}")
 
 
+def require_platform_runtime(stage, runs):
+    """Bind every selected CRT dependency, including the DOS64 dispatch seam."""
+    selected = {}
+    for name in ('posixc.library', 'stdcio.library', 'stdc.library', 'dos64.library'):
+        source = stage / 'Libs' / name
+        for run in runs:
+            require_match(source, run)
+        selected['Platform/Libs/' + name] = source
+    return selected
+
+
 def member_hashes(path):
     values = {}
     for line in path.read_text().splitlines():
@@ -407,10 +418,8 @@ def main():
         "L/OpenZFS-Handler": stage / "L/OpenZFS-handler",
         "Tools/OpenZFSManagerNative": stage / "Tools/OpenZFSManagerNative",
         "Tools/OpenZFS/ExecHelper": stage / "Tools/OpenZFS/ExecHelper",
-        "Platform/Libs/posixc.library": stage / "Libs/posixc.library",
-        "Platform/Libs/stdcio.library": stage / "Libs/stdcio.library",
-        "Platform/Libs/stdc.library": stage / "Libs/stdc.library",
     }
+    selected.update(require_platform_runtime(stage, (gui, cold, encrypted, debugger)))
     for destination, source in selected.items():
         name = pathlib.Path(destination).name
         if name != "zdb":
@@ -429,9 +438,6 @@ def main():
         if not any(line.endswith(" T " + symbol) for line in symbols.splitlines()):
             raise ValueError(f"Missing full shared-engine symbol: {symbol}")
     require_native_debugger(debugger, selected["C/zdb"], selected["Libs/openzfs.library"])
-    require_match(selected["Platform/Libs/posixc.library"], debugger)
-    require_match(selected["Platform/Libs/stdcio.library"], debugger)
-    require_match(selected["Platform/Libs/stdc.library"], debugger)
     launcher_symbols = subprocess.check_output(["nm", str(selected["C/zdb"])], text=True)
     if any(marker in launcher_symbols for marker in (" T zfsdev_ioctl_common", " T oz_zdb_main", "__wrap_")):
         raise ValueError("Debugger launcher embeds an engine or diagnostic wrapper")

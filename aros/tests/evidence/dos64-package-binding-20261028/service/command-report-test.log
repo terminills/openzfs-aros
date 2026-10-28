@@ -1,0 +1,10 @@
+PASS native report reverse cycle=0 pages=33 exact=1
+PASS native report export cycle=0 exact=1 overwrite-refused=1 pager-close-safe=1
+PASS command report cycle=0 bytes=131085 pages=33 exit=23 retained=1
+PASS native report reverse cycle=1 pages=33 exact=1
+PASS native report export cycle=1 exact=1 overwrite-refused=1 pager-close-safe=1
+PASS command report cycle=1 bytes=131085 pages=33 exit=23 retained=1
+PASS native report reverse cycle=2 pages=33 exact=1
+PASS native report export cycle=2 exact=1 overwrite-refused=1 pager-close-safe=1
+PASS command report cycle=2 bytes=131085 pages=33 exit=23 retained=1
+PASS native command reports cycles=3 exact-read=1 no-command-rerun=1
