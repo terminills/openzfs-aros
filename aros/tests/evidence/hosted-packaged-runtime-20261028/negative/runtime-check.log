@@ -1,0 +1,20 @@
+OpenZFS runtime check (no pools or devices opened)
+PASS errno accessor and POSIX writer
+INFO posixc.library 0.43 available
+INFO stdcio.library 0.11 available
+INFO z1.library 1.10 available
+INFO iffparse.library 50.2 available
+INFO muimaster.library 19.80 available
+PASS security.library configured=1
+PASS redirected stdio --stdio-child: transport=0 child=0 stdout=1 stderr=1 visible-out=1 visible-err=1
+PASS redirected stdio --stdio-return-child: transport=0 child=0 stdout=1 stderr=1 visible-out=1 visible-err=1
+PASS redirected stdio --stdio-exit-child: transport=0 child=0 stdout=1 stderr=1 visible-out=1 visible-err=1
+FAIL ExecHelper subprocess: status=-8 lines=0
+Verify SYS:Tools/OpenZFS/ExecHelper and the matching process runtime.
+PASS LoadSeg execute=on loaded=1 DOS=0
+PASS NewLoadSeg execute=on loaded=1 DOS=0
+FAIL LoadSeg execute=off loaded=1 DOS=0
+FAIL NewLoadSeg execute=off loaded=1 DOS=0
+FAIL loader execute protection; verify the matching DOS runtime patch
+Not tested: pipe disconnects, storage I/O, durability, GUI or pool operations.
+FAIL runtime prerequisites; review diagnostics above

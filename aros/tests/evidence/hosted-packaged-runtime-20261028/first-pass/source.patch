@@ -1,0 +1,25 @@
+diff --git a/aros/engine/test-hosted-security.sh b/aros/engine/test-hosted-security.sh
+index c929505..14e43b8 100644
+--- a/aros/engine/test-hosted-security.sh
++++ b/aros/engine/test-hosted-security.sh
+@@ -122,6 +122,10 @@ fi
+ sha256sum "$run/Libs/security.library" "$run/boot/linux/kernel" "$run/C/OpenZFSSecurityTest" >"$run/inputs.sha256"
+ if [[ -n ${AROS_TEST_RUNTIME_CHECK:-} ]];then
+     cp "$AROS_TEST_RUNTIME_CHECK" "$run/C/OpenZFSRuntimeCheck"
++    if [[ -n ${AROS_TEST_EXEC_HELPER:-} ]];then
++        mkdir -p "$run/Tools/OpenZFS"
++        cp "$(realpath -e "$AROS_TEST_EXEC_HELPER")" "$run/Tools/OpenZFS/ExecHelper"
++    fi
+     runtime_args=
+     if [[ ${AROS_TEST_RUNTIME_STREAMS_ONLY:-0} == 1 ]];then runtime_args=--streams-only;fi
+     sed -i "/Echo finished/i C:OpenZFSRuntimeCheck $runtime_args >SYS:runtime-check.log" "$run/S/Startup-Sequence"
+@@ -134,6 +138,9 @@ if [[ -n ${AROS_TEST_DOS_LIBRARY:-} ]];then
+ fi
+ if [[ -n ${AROS_TEST_RUNTIME_CHECK:-} ]];then
+     sha256sum "$run/C/OpenZFSRuntimeCheck" >>"$run/inputs.sha256"
++    if [[ -n ${AROS_TEST_EXEC_HELPER:-} ]];then
++        sha256sum "$run/Tools/OpenZFS/ExecHelper" >>"$run/inputs.sha256"
++    fi
+ fi
+ if [[ -n $service ]];then
+     sha256sum "$run/C/OpenZFSServiceNative" "$run/C/OpenZFSPublicServiceTest" >>"$run/inputs.sha256"

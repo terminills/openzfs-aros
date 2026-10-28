@@ -2,6 +2,20 @@
 
 Experimental development snapshot; not production-qualified storage software.
 
+## Packaged CLI full hosted preflight (2026-10-28)
+
+A fresh generated MetaMake CLI build now passes the full RuntimeCheck with
+the matched private stdc/stdcio/POSIX and loader-policy DOS libraries. This
+includes errno, configured security, three stream teardown paths, the actual
+ExecHelper subprocess, and both loader APIs refusing execute-off files.
+The runner explicitly installs and hashes the selected ExecHelper; writer and
+cold-reader preflight logs are separate and both are checked. The persistent
+storage/CLI/handler suite, independent host zdb, cold degraded reads and
+unchanged member hashes pass with these exact CLI binaries.
+The initial missing-helper/default-DOS failure is retained, not suppressed.
+This remains private hosted evidence, not stock SDK or QEMU qualification.
+See `aros/tests/evidence/hosted-packaged-runtime-20261028`.
+
 ## Runtime teardown preflight (2026-10-28)
 
 OpenZFSRuntimeCheck now tests explicit flush, normal return and exit with an

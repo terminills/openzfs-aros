@@ -1,0 +1,116 @@
+----
+[Bootstrap] RAM memory block allocated: 0x7f9cb5400000 - 0x7f9d15400000 (1610612736 bytes)
+[Bootstrap] RAM memory block allocated: 0x40b0a000 - 0x60b0a000 (536870912 bytes)
+[Bootstrap] Entering kernel at 0x40094000...
+[KRN] Protecting host process stack (0x00007fffe0329d80 - 0x00007fffe0333d80)
+Xlib:  extension "XFree86-VidModeExtension" missing on display ":2".
+Writable startup denied: configured security.library and system task identity required.
+Public startup invalid-mode and non-root denial PASS
+Native authenticated admission ready
+OpenZFS management API 3 ready; engine initialized
+Public service op=1 status=0 engine=1 rows=0
+Public service op=2 status=0 engine=1 rows=0
+Public service op=3 status=0 engine=1 rows=0
+Service remains resident: active client sessions or admitted operations.
+Public native control descriptors PASS capacity=64 ownership=1 stale=1 session-cleanup=1
+Public task-exit session reclamation PASS cycles=4 sessions=32
+Public authenticated sessions ownership, capacity, stale handles and shutdown guard PASS
+Public mutation requires authenticated admission PASS
+Public storage op=7 status=0 Authenticated pool import returned errno=0
+Public pool assign PASS op=7 kind=1 removed=1
+Public upstream bootenv persistence PASS cold=1 marker=1 version=1
+Public cold pool root PASS exact-read=1 readonly-write-denied=1 detached=1
+Public CLI command result=0 ioerr=0: C:zfs get -H -o value defer_destroy public_mirror/defer_pending@pending >T:cli-package-output.txt
+Public CLI command result=0 ioerr=0: C:zfs get -H -o value userrefs public_mirror/defer_pending@pending >T:cli-package-output.txt
+Public CLI command result=0 ioerr=0: C:zfs get -H -o value defer_destroy public_mirror/defer_pending/child@pending >T:cli-package-output.txt
+Public CLI command result=0 ioerr=0: C:zfs get -H -o value userrefs public_mirror/defer_pending/child@pending >T:cli-package-output.txt
+Public diagnostic begin T:public-cli-errors.log
+cannot release: pool is read-only
+
+Public diagnostic end
+Public CLI command result=1 ioerr=209: C:zfs release -r cold_keep public_mirror/defer_pending@pending
+Public CLI command result=0 ioerr=0: C:zfs get -H -o value userrefs public_mirror/defer_pending@pending >T:cli-package-output.txt
+Public CLI command result=0 ioerr=0: C:zfs get -H -o value userrefs public_mirror/defer_pending/child@pending >T:cli-package-output.txt
+Public cold deferred snapshots PASS parent=1 child=1 pending=1 holds=1 readonly-release-refused=1 unchanged=1
+Public sparse64 PASS write=0 boundary=4294967296 size=4294971392 holes=1 legacy-refused=1
+Public DOS links PASS write=0 hard=1 relative-soft=1 unlinked-source=1 dangling-refused=1
+Metadata readonly comment result=0 DOS=214
+Metadata readonly protection result=0 DOS=214
+Metadata readonly timestamp result=0 DOS=214
+Metadata observed write=0 comment='OpenZFS native metadata' protection=55 size=8 date=17000/721/1234 DOS=0
+Public DOS metadata PASS write=0 comment=1 protection=1 timestamp=1 exact-data=1
+Public desktop directory PASS phase=cold-import stage=exall exnext=1/6 exall=1/6 errno=0 doserr=232
+Public readonly clear preview errno=30 expected=30
+Public clear rewind readonly PASS preview-erofs=1 commit-erofs=1
+Public upstream bootenv readonly PASS get=1 set-erofs=1 unchanged=1
+Public cold zvol PASS exact-read=1 discard-edges=1 readonly=1 bounds=1 stale-descriptor=1
+Public storage op=8 status=0 Authenticated pool export returned errno=0
+Public cold hosted DOS PASS exact=1 readonly-refusal=1 exported=1
+Public storage op=7 status=0 Authenticated pool import returned errno=0
+Public pool assign PASS op=7 kind=1 removed=1
+Public upstream bootenv persistence PASS cold=1 marker=1 version=1
+Public cold pool root PASS exact-read=1 readonly-write-denied=1 detached=1
+Public CLI command result=0 ioerr=0: C:zfs get -H -o value defer_destroy public_mirror/defer_pending@pending >T:cli-package-output.txt
+Public CLI command result=0 ioerr=0: C:zfs get -H -o value userrefs public_mirror/defer_pending@pending >T:cli-package-output.txt
+Public CLI command result=0 ioerr=0: C:zfs get -H -o value defer_destroy public_mirror/defer_pending/child@pending >T:cli-package-output.txt
+Public CLI command result=0 ioerr=0: C:zfs get -H -o value userrefs public_mirror/defer_pending/child@pending >T:cli-package-output.txt
+Public diagnostic begin T:public-cli-errors.log
+cannot release: pool is read-only
+
+Public diagnostic end
+Public CLI command result=1 ioerr=209: C:zfs release -r cold_keep public_mirror/defer_pending@pending
+Public CLI command result=0 ioerr=0: C:zfs get -H -o value userrefs public_mirror/defer_pending@pending >T:cli-package-output.txt
+Public CLI command result=0 ioerr=0: C:zfs get -H -o value userrefs public_mirror/defer_pending/child@pending >T:cli-package-output.txt
+Public cold deferred snapshots PASS parent=1 child=1 pending=1 holds=1 readonly-release-refused=1 unchanged=1
+Public sparse64 PASS write=0 boundary=4294967296 size=4294971392 holes=1 legacy-refused=1
+Public DOS links PASS write=0 hard=1 relative-soft=1 unlinked-source=1 dangling-refused=1
+Metadata readonly comment result=0 DOS=214
+Metadata readonly protection result=0 DOS=214
+Metadata readonly timestamp result=0 DOS=214
+Metadata observed write=0 comment='OpenZFS native metadata' protection=55 size=8 date=17000/721/1234 DOS=0
+Public DOS metadata PASS write=0 comment=1 protection=1 timestamp=1 exact-data=1
+Public desktop directory PASS phase=cold-import stage=exall exnext=1/6 exall=1/6 errno=0 doserr=232
+Public readonly clear preview errno=30 expected=30
+Public clear rewind readonly PASS preview-erofs=1 commit-erofs=1
+Public upstream bootenv readonly PASS get=1 set-erofs=1 unchanged=1
+Public cold zvol PASS exact-read=1 discard-edges=1 readonly=1 bounds=1 stale-descriptor=1
+Public storage op=8 status=0 Authenticated pool export returned errno=0
+Public cold hosted DOS PASS exact=1 readonly-refusal=1 exported=1
+Public cold degraded assign PASS missing=1 exact=1 readonly=1 restored=1
+OpenZFS import failed stage=discovery errno=2
+Public storage op=7 status=9 Authenticated pool import returned errno=2
+Public storage op=7 status=0 Authenticated pool import returned errno=0
+Public pool assign PASS op=7 kind=1 removed=1
+Public upstream bootenv persistence PASS cold=1 marker=1 version=1
+Public cold pool root PASS exact-read=1 readonly-write-denied=1 detached=1
+Public CLI command result=0 ioerr=0: C:zfs get -H -o value defer_destroy public_mirror/defer_pending@pending >T:cli-package-output.txt
+Public CLI command result=0 ioerr=0: C:zfs get -H -o value userrefs public_mirror/defer_pending@pending >T:cli-package-output.txt
+Public CLI command result=0 ioerr=0: C:zfs get -H -o value defer_destroy public_mirror/defer_pending/child@pending >T:cli-package-output.txt
+Public CLI command result=0 ioerr=0: C:zfs get -H -o value userrefs public_mirror/defer_pending/child@pending >T:cli-package-output.txt
+Public diagnostic begin T:public-cli-errors.log
+cannot release: pool is read-only
+
+Public diagnostic end
+Public CLI command result=1 ioerr=209: C:zfs release -r cold_keep public_mirror/defer_pending@pending
+Public CLI command result=0 ioerr=0: C:zfs get -H -o value userrefs public_mirror/defer_pending@pending >T:cli-package-output.txt
+Public CLI command result=0 ioerr=0: C:zfs get -H -o value userrefs public_mirror/defer_pending/child@pending >T:cli-package-output.txt
+Public cold deferred snapshots PASS parent=1 child=1 pending=1 holds=1 readonly-release-refused=1 unchanged=1
+Public sparse64 PASS write=0 boundary=4294967296 size=4294971392 holes=1 legacy-refused=1
+Public DOS links PASS write=0 hard=1 relative-soft=1 unlinked-source=1 dangling-refused=1
+Metadata readonly comment result=0 DOS=214
+Metadata readonly protection result=0 DOS=214
+Metadata readonly timestamp result=0 DOS=214
+Metadata observed write=0 comment='OpenZFS native metadata' protection=55 size=8 date=17000/721/1234 DOS=0
+Public DOS metadata PASS write=0 comment=1 protection=1 timestamp=1 exact-data=1
+Public desktop directory PASS phase=cold-import stage=exall exnext=1/6 exall=1/6 errno=0 doserr=232
+Public readonly clear preview errno=30 expected=30
+Public clear rewind readonly PASS preview-erofs=1 commit-erofs=1
+Public upstream bootenv readonly PASS get=1 set-erofs=1 unchanged=1
+Public cold zvol PASS exact-read=1 discard-edges=1 readonly=1 bounds=1 stale-descriptor=1
+Public storage op=8 status=0 Authenticated pool export returned errno=0
+Public cold hosted DOS PASS exact=1 readonly-refusal=1 exported=1
+Public cold beyond-parity PASS missing=2 refused=1 empty=1 responsive=1 restored-read=1
+Service remains resident: mounted or retired DOS endpoints still require servicing.
+Public service retains retired DOS endpoints after export
+Public service test line=0
+RESULT public service storage PASS

@@ -122,6 +122,10 @@ fi
 sha256sum "$run/Libs/security.library" "$run/boot/linux/kernel" "$run/C/OpenZFSSecurityTest" >"$run/inputs.sha256"
 if [[ -n ${AROS_TEST_RUNTIME_CHECK:-} ]];then
     cp "$AROS_TEST_RUNTIME_CHECK" "$run/C/OpenZFSRuntimeCheck"
+    if [[ -n ${AROS_TEST_EXEC_HELPER:-} ]];then
+        mkdir -p "$run/Tools/OpenZFS"
+        cp "$(realpath -e "$AROS_TEST_EXEC_HELPER")" "$run/Tools/OpenZFS/ExecHelper"
+    fi
     runtime_args=
     if [[ ${AROS_TEST_RUNTIME_STREAMS_ONLY:-0} == 1 ]];then runtime_args=--streams-only;fi
     sed -i "/Echo finished/i C:OpenZFSRuntimeCheck $runtime_args >SYS:runtime-check.log" "$run/S/Startup-Sequence"
@@ -134,6 +138,9 @@ if [[ -n ${AROS_TEST_DOS_LIBRARY:-} ]];then
 fi
 if [[ -n ${AROS_TEST_RUNTIME_CHECK:-} ]];then
     sha256sum "$run/C/OpenZFSRuntimeCheck" >>"$run/inputs.sha256"
+    if [[ -n ${AROS_TEST_EXEC_HELPER:-} ]];then
+        sha256sum "$run/Tools/OpenZFS/ExecHelper" >>"$run/inputs.sha256"
+    fi
 fi
 if [[ -n $service ]];then
     sha256sum "$run/C/OpenZFSServiceNative" "$run/C/OpenZFSPublicServiceTest" >>"$run/inputs.sha256"
@@ -185,6 +192,7 @@ cat "$run/security-test.log"
 if [[ -n ${AROS_TEST_RUNTIME_CHECK:-} ]];then
     expected=${AROS_TEST_RUNTIME_EXPECT:-PASS}
     [[ $expected == PASS || $expected == FAIL ]]
+    cp "$run/runtime-check.log" "$run/writer-runtime-check.log"
     cat "$run/runtime-check.log"
     rg -q "^$expected .*runtime prerequisites" "$run/runtime-check.log"
 fi
@@ -213,7 +221,7 @@ if [[ $persistent == 1 ]];then
         rg -q '^Dataset public_mirror/files@hosted_gui ' "$run/zdb-snapshot.log"
     fi
     cp "$run/S/Startup-Sequence" "$run/creator-startup"
-    sed 's/OpenZFSPublicServiceTest \(STORAGE\|GUI\)/OpenZFSPublicServiceTest STORAGE-COLD/; s/security-finished.log/cold-finished.log/; s/service-test.log/cold-service-test.log/; s/security-test.log/cold-security-test.log/' \
+    sed 's/OpenZFSPublicServiceTest \(STORAGE\|GUI\)/OpenZFSPublicServiceTest STORAGE-COLD/; s/security-finished.log/cold-finished.log/; s/service-test.log/cold-service-test.log/; s/security-test.log/cold-security-test.log/; s/SYS:runtime-check.log/SYS:cold-runtime-check.log/' \
         "$run/creator-startup" >"$run/S/Startup-Sequence"
     sed "s|^logfile .*|logfile $run/cold-serial.log|" "$run/hosted.conf" >"$run/cold-hosted.conf"
     start_guest cold-
@@ -225,6 +233,10 @@ if [[ $persistent == 1 ]];then
         sleep 1
     done
     rg -q 'RESULT public service storage PASS' "$run/cold-serial.log"
+    if [[ -n ${AROS_TEST_RUNTIME_CHECK:-} ]];then
+        cat "$run/cold-runtime-check.log"
+        rg -q "^$expected .*runtime prerequisites" "$run/cold-runtime-check.log"
+    fi
     rg -q 'Public cold hosted DOS PASS exact=1 readonly-refusal=1 exported=1' "$run/cold-serial.log"
     rg -q 'Public cold degraded assign PASS missing=1 exact=1 readonly=1 restored=1' "$run/cold-serial.log"
     if [[ $mode == GUI ]];then rg -q 'Public cold GUI snapshot retained PASS' "$run/cold-serial.log";fi
