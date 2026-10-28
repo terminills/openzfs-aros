@@ -22,6 +22,20 @@ int main(void)
         }while(!page.eof);
         CHECK(offset==sizeof(bytes));
         CHECK(!oz_report_page_next(&page,result,capacity)&&!result[0]);
+        size_t count=(sizeof(bytes)+capacity-2)/(capacity-1);
+        for(size_t n=count;n>0;--n){
+            CHECK(!oz_report_page_seek(&page,n-1,capacity));
+            CHECK(!oz_report_page_next(&page,result,capacity));
+            size_t start=(n-1)*(capacity-1),length=sizeof(bytes)-start;
+            if(length>capacity-1)length=capacity-1;
+            CHECK(strlen(result)==length&&!memcmp(bytes+start,result,length));
+            CHECK(page.eof==(start+length==sizeof(bytes)));
+        }
+        CHECK(oz_report_page_seek(&page,UINT64_MAX,capacity)==EOVERFLOW);
+        CHECK(oz_report_page_seek(&page,0,1)==EINVAL);
+        CHECK(!oz_report_page_seek(&page,0,capacity));
+        CHECK(!oz_report_page_next(&page,result,capacity));
+        CHECK(!memcmp(bytes,result,strlen(result)));
         oz_report_page_close(&page);
     }
     fd=open(path,O_WRONLY|O_TRUNC);CHECK(fd>=0);CHECK(!close(fd));
@@ -36,6 +50,6 @@ int main(void)
     CHECK(oz_report_page_next(&page,bytes,sizeof(bytes))==EINVAL);
     CHECK(!unlink(path));
     CHECK(oz_report_page_open(&page,path)==ENOENT);
-    puts("PASS report pages: capacities=257 exact boundaries, long lines, empty, NUL refusal, missing file and closed descriptor");
+    puts("PASS report pages: capacities=257 forward/backward exact bytes, seek bounds, exact boundaries, long lines, empty, NUL refusal, missing file and closed descriptor");
     return 0;
 }

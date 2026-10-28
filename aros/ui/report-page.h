@@ -3,10 +3,23 @@
 #define OZ_REPORT_PAGE_H
 #include <errno.h>
 #include <fcntl.h>
+#include <stdint.h>
 #include <string.h>
 #include <unistd.h>
 
 struct oz_report_page { int fd, pending, eof; };
+
+/* Page numbers are zero-based; callers must keep the same page capacity. */
+static int oz_report_page_seek(struct oz_report_page *page,uint64_t number,size_t capacity)
+{
+    _Static_assert(sizeof(off_t)>=8,"Report paging requires 64-bit offsets");
+    if(!page||page->fd<0||capacity<2)return EINVAL;
+    if(number>INT64_MAX/(capacity-1))return EOVERFLOW;
+    off_t offset=(off_t)(number*(capacity-1));
+    if(lseek(page->fd,offset,SEEK_SET)<0)return errno;
+    page->pending=-1;page->eof=0;
+    return 0;
+}
 
 static void oz_report_page_close(struct oz_report_page *page)
 {

@@ -1,0 +1,79 @@
+/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/hosted-atime-inputs.4SjnTpy6/openzfs.library: OK
+/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/hosted-atime-inputs.4SjnTpy6/OpenZFSServiceNative: OK
+/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/hosted-atime-inputs.4SjnTpy6/OpenZFSPublicServiceTest: OK
+Evidence: /mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/hosted-security-test.kS3cLLIo
+hosted security configured=1
+hosted security authenticated=1 owner=004d0058
+RESULT hosted security login/logout PASS configured=1 uid77gid88=1 restored=1
+PASS native report reverse cycle=0 pages=33 exact=1
+PASS native report export cycle=0 exact=1 overwrite-refused=1 pager-close-safe=1
+PASS command report cycle=0 bytes=131085 pages=33 exit=23 retained=1
+PASS native report reverse cycle=1 pages=33 exact=1
+PASS native report export cycle=1 exact=1 overwrite-refused=1 pager-close-safe=1
+PASS command report cycle=1 bytes=131085 pages=33 exit=23 retained=1
+PASS native report reverse cycle=2 pages=33 exact=1
+PASS native report export cycle=2 exact=1 overwrite-refused=1 pager-close-safe=1
+PASS command report cycle=2 bytes=131085 pages=33 exit=23 retained=1
+PASS native command reports cycles=3 exact-read=1 no-command-rerun=1
+OpenZFS runtime check (no pools or devices opened)
+PASS errno accessor and POSIX writer
+INFO posixc.library 0.43 available
+INFO stdcio.library 0.11 available
+INFO z1.library 1.10 available
+INFO iffparse.library 50.2 available
+INFO muimaster.library 19.80 available
+PASS security.library configured=1
+PASS redirected stdio --stdio-child: transport=0 child=0 stdout=1 stderr=1 visible-out=1 visible-err=1
+PASS redirected stdio --stdio-return-child: transport=0 child=0 stdout=1 stderr=1 visible-out=1 visible-err=1
+PASS redirected stdio --stdio-exit-child: transport=0 child=0 stdout=1 stderr=1 visible-out=1 visible-err=1
+PASS ExecHelper subprocess: status=23 lines=1
+PASS LoadSeg execute=on loaded=1 DOS=0
+PASS NewLoadSeg execute=on loaded=1 DOS=0
+PASS LoadSeg execute=off loaded=0 DOS=224
+PASS NewLoadSeg execute=off loaded=0 DOS=224
+PASS LoadSeg execute=on loaded=1 DOS=0
+PASS NewLoadSeg execute=on loaded=1 DOS=0
+Not tested: pipe disconnects, storage I/O, durability, GUI or pool operations.
+PASS checked runtime prerequisites only
+OpenZFS runtime check (no pools or devices opened)
+PASS errno accessor and POSIX writer
+INFO posixc.library 0.43 available
+INFO stdcio.library 0.11 available
+INFO z1.library 1.10 available
+INFO iffparse.library 50.2 available
+INFO muimaster.library 19.80 available
+PASS security.library configured=1
+PASS redirected stdio --stdio-child: transport=0 child=0 stdout=1 stderr=1 visible-out=1 visible-err=1
+PASS redirected stdio --stdio-return-child: transport=0 child=0 stdout=1 stderr=1 visible-out=1 visible-err=1
+PASS redirected stdio --stdio-exit-child: transport=0 child=0 stdout=1 stderr=1 visible-out=1 visible-err=1
+PASS ExecHelper subprocess: status=23 lines=1
+PASS LoadSeg execute=on loaded=1 DOS=0
+PASS NewLoadSeg execute=on loaded=1 DOS=0
+PASS LoadSeg execute=off loaded=0 DOS=224
+PASS NewLoadSeg execute=off loaded=0 DOS=224
+PASS LoadSeg execute=on loaded=1 DOS=0
+PASS NewLoadSeg execute=on loaded=1 DOS=0
+Not tested: pipe disconnects, storage I/O, durability, GUI or pool operations.
+PASS checked runtime prerequisites only
+/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/hosted-security-test.kS3cLLIo/OZPublicPool/disk0: OK
+/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/hosted-security-test.kS3cLLIo/OZPublicPool/disk1: OK
+PASS persistent hosted mirror: independent zdb, cold DOS read and unchanged files
+/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/hosted-security-test.kS3cLLIo/Libs/security.library: OK
+/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/hosted-security-test.kS3cLLIo/boot/linux/kernel: OK
+/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/hosted-security-test.kS3cLLIo/C/OpenZFSSecurityTest: OK
+/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/hosted-security-test.kS3cLLIo/C/OpenZFSReportChild: OK
+/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/hosted-security-test.kS3cLLIo/C/OpenZFSCommandReportTest: OK
+/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/hosted-security-test.kS3cLLIo/Libs/stdcio.library: OK
+/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/hosted-security-test.kS3cLLIo/Libs/posixc.library: OK
+/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/hosted-security-test.kS3cLLIo/Libs/stdc.library: OK
+/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/hosted-security-test.kS3cLLIo/Libs/dos.library: OK
+/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/hosted-security-test.kS3cLLIo/C/OpenZFSRuntimeCheck: OK
+/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/hosted-security-test.kS3cLLIo/Tools/OpenZFS/ExecHelper: OK
+/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/hosted-security-test.kS3cLLIo/C/OpenZFSServiceNative: OK
+/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/hosted-security-test.kS3cLLIo/C/OpenZFSPublicServiceTest: OK
+/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/hosted-security-test.kS3cLLIo/C/OpenZFSManagerNative: OK
+/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/hosted-security-test.kS3cLLIo/Libs/openzfs.library: OK
+/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/hosted-security-test.kS3cLLIo/C/zfs: OK
+/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/hosted-security-test.kS3cLLIo/C/zpool: OK
+/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/hosted-security-test.kS3cLLIo/L/OpenZFS-Handler: OK
+PASS private hosted authentication: /mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/hosted-security-test.kS3cLLIo

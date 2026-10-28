@@ -25,6 +25,19 @@ int main(void)
             }
         }while(!page.eof);
         CHECK(total==131072+sizeof(tail)-1&&pages>1);
+        for(unsigned reverse=pages;reverse>0;--reverse){
+            CHECK(!oz_report_page_seek(&page,reverse-1,sizeof(text)));
+            CHECK(!oz_report_page_next(&page,text,sizeof(text)));
+            size_t offset=(reverse-1)*(sizeof(text)-1);
+            size_t expected=total-offset;
+            if(expected>=sizeof(text))expected=sizeof(text)-1;
+            CHECK(strlen(text)==expected);
+            for(size_t i=0;i<expected;++i){
+                size_t at=offset+i;
+                CHECK(text[i]==(at<131072?(char)('A'+at%26):tail[at-131072]));
+            }
+        }
+        printf("PASS native report reverse cycle=%u pages=%u exact=1\n",cycle,pages);
         char destination[256];snprintf(destination,sizeof(destination),"%s-export",response.rows[0].name);
         struct oz_report_export *exporter=NULL;
         CHECK(!oz_report_export_start(page.fd,destination,&exporter));

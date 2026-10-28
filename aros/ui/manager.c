@@ -30,7 +30,7 @@ static struct oz_io_view sampled_view;
 
 ULONG __stack=131072;
 enum { EV_CATEGORY=100, EV_OPERATION, EV_SEND, EV_PREVIEW, EV_CONNECT, EV_CAPS,
-       EV_SAVE, EV_TOPOLOGY, EV_CLEAR, EV_NEXT, EV_SAVE_RESPONSE, EV_PROPERTY,
+       EV_SAVE, EV_TOPOLOGY, EV_CLEAR, EV_NEXT, EV_PREVIOUS, EV_SAVE_RESPONSE, EV_PROPERTY,
        EV_GROUP_ADD, EV_GROUP_SELECT, EV_DEVICE_ADD, EV_DEVICE_REMOVE,
        EV_LAYOUT_CLEAR, EV_LAYOUT_APPLY, EV_LAYOUT_CLOSE, EV_USE_TOKEN,
        EV_PREFS_USE, EV_PREFS_SAVE, EV_AUTO_IO, EV_PART_OPEN, EV_PART_QUERY, EV_PART_CLOSE, EV_PART_IMPORT,
@@ -51,7 +51,7 @@ static const char *topologies[]={"stripe","mirror","raidz1","raidz2","raidz3","d
 static Object *app,*win,*category,*actions,*target,*argument,*options,*status,*helptext,*output,*activity,*topology;
 static Object *execute,*preview,*connect_button,*caps_button,*save,*build_topology,*clear;
 static Object *target_label,*argument_label;
-static Object *next_page,*save_response,*use_token;
+static Object *next_page,*previous_page,*save_response,*use_token;
 static Object *prefs_use,*prefs_save;
 static Object *runtime_check;
 static Object *devices_button;
@@ -146,6 +146,7 @@ static void render_response(const char *text) {
 static void show_response(const char *text) {
     if(report_page.fd>=0){next_cursor=0;set(next_page,MUIA_Disabled,TRUE);}
     oz_report_page_close(&report_page);report_page_number=0;
+    set(previous_page,MUIA_Disabled,TRUE);
     set(save_response,MUIA_Text_Contents,"Save response...");
     render_response(text);
 }
@@ -160,6 +161,7 @@ static void show_report_page(void) {
     }
     set(status,MUIA_Text_Contents,message);
     set(next_page,MUIA_Disabled,report_page.eof);
+    set(previous_page,MUIA_Disabled,report_page.fd<0||report_page_number<2);
 }
 static Object *options_label,*options_hint;
 static void update_execute_label(void) {
@@ -557,7 +559,7 @@ int main(int argc,char **argv) {
                     Child,HGroup,Child,preview=SimpleButton("Preview request"),Child,execute=SimpleButton("Send request"),End,
                     Child,HGroup,Child,auto_iostat=make_check(FALSE),Child,Label1("Auto I/O refresh (2s)"),Child,HSpace(0),End,
                     Child,HGroup,Child,TextObject,MUIA_Text_Contents,"\33bResponse",End,
-                        Child,next_page=SimpleButton("Next page"),Child,use_token=SimpleButton("Use token"),Child,save_response=SimpleButton("Save response..."),End,
+                        Child,previous_page=SimpleButton("Previous"),Child,next_page=SimpleButton("Next page"),Child,use_token=SimpleButton("Use token"),Child,save_response=SimpleButton("Save response..."),End,
                     Child,result_view,
                 End,
             End,
@@ -586,6 +588,8 @@ int main(int argc,char **argv) {
     notify_button(execute,EV_SEND);notify_button(preview,EV_PREVIEW);notify_button(connect_button,EV_CONNECT);
     notify_button(caps_button,EV_CAPS);notify_button(save,EV_SAVE);notify_button(build_topology,EV_TOPOLOGY);notify_button(clear,EV_CLEAR);
     notify_button(next_page,EV_NEXT);notify_button(save_response,EV_SAVE_RESPONSE);set(next_page,MUIA_Disabled,TRUE);
+    notify_button(previous_page,EV_PREVIOUS);set(previous_page,MUIA_Disabled,TRUE);
+    set(previous_page,MUIA_ShortHelp,"Read the previous retained command-report page without running the command again. Not available for live service pages.");
     set(save_response,MUIA_ShortHelp,"Save the current backend response, or the entire retained command report when available. Choose persistent storage to keep it after reboot. Existing files are never overwritten.");
     notify_button(use_token,EV_USE_TOKEN);set(use_token,MUIA_Disabled,TRUE);
     DoMethod(auto_iostat,MUIM_Notify,MUIA_Selected,MUIV_EveryTime,(IPTR)app,2,MUIM_Application_ReturnID,EV_AUTO_IO);
@@ -709,6 +713,13 @@ int main(int argc,char **argv) {
                 if(!strcmp(oz_operations[selected].label,"set"))set(argument,MUIA_String_Contents,pair);
                 else {char all[1024];const char *separator=oz_operations[selected].id==37?",":";";snprintf(all,sizeof(all),"%s%s%s",string(options),string(options)[0]?separator:"",pair);set(options,MUIA_String_Contents,all);}}
             break;}
+        case EV_PREVIOUS:stop_auto_io();
+            if(!report_export&&report_page.fd>=0&&report_page_number>1){
+                int error=oz_report_page_seek(&report_page,report_page_number-2,4096);
+                if(error)set(status,MUIA_Text_Contents,"Cannot seek retained report; command was not rerun");
+                else {report_page_number-=2;show_report_page();}
+            }
+            break;
         case EV_NEXT:stop_auto_io();
             if(report_export)break;
             if(report_page.fd>=0){show_report_page();break;}
@@ -745,6 +756,7 @@ int main(int argc,char **argv) {
                 }
                 if(!error&&full_report){
                     set(save_response,MUIA_Disabled,TRUE);set(next_page,MUIA_Disabled,TRUE);
+                    set(previous_page,MUIA_Disabled,TRUE);
                     snprintf(message,sizeof(message),"Saving full report: %s",path);
                 }
                 else if(!error)snprintf(message,sizeof(message),"Saved backend response: %s",path);
@@ -770,6 +782,7 @@ int main(int argc,char **argv) {
                 if(!oz_report_export_free(report_export))report_export=NULL;
                 set(save_response,MUIA_Disabled,FALSE);
                 set(next_page,MUIA_Disabled,report_page.fd>=0?report_page.eof:!next_cursor);
+                set(previous_page,MUIA_Disabled,report_page.fd<0||report_page_number<2);
             }else if(error!=EAGAIN)set(status,MUIA_Text_Contents,"Report exporter join failed; keeping worker alive");
         }
         if(projectworker){

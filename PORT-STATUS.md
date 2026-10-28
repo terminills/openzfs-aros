@@ -2,6 +2,18 @@
 
 Experimental development snapshot; not production-qualified storage software.
 
+## Complete report export and backward paging (2026-10-28)
+
+Manager can export the entire retained command report through a background
+worker with exclusive destination creation, and navigate previous report pages
+without rerunning commands. Export uses a duplicated descriptor and positioned
+reads, so closing or repositioning the pager cannot truncate the exported report.
+Host fault tests and native hosted checks cover exact bytes, overwrite refusal,
+pager-close lifetime and backward traversal. Fresh hosted writer/cold-reader
+regressions pass. Paging remains byte-based, not Unicode/line pagination.
+See `aros/tests/evidence/report-export-20261028` and
+`aros/tests/evidence/report-reverse-20261028` for scope and retained limitations.
+
 ## Retained command-report pages (2026-10-28)
 
 Oversized locally captured command output is now readable through Manager's
@@ -10,8 +22,8 @@ events were captured and paged in isolated hosted AROS; snapshot creation and
 the subsequent cold-import suite still passed. A native fixture independently
 checks all 131085 bytes of a failed command's report over 33 pages, three times.
 Only joined local-worker metadata can open a retained report; service text and
-rows are not treated as file-access instructions. Paging is byte-based; full
-report export and backward navigation are not implemented by this change.
+rows are not treated as file-access instructions. The later export/backward
+paging change above extends this original forward-only implementation.
 See `aros/tests/evidence/command-report-pages-20261028`.
 
 ## Retained stdc source and runtime packaging (2026-10-28)
