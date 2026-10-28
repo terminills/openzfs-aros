@@ -280,6 +280,7 @@ if [[ -z ${AROS_TEST_ARTIFACT_ROOT:-} ]];then
     mkdir -p "$artifact_root"
 fi
 run=$(mktemp -d "$artifact_root/$prefix.XXXXXXXX")
+python3 "$repo/aros/engine/check-qemu-sockets.py" "$run"
 printf '%s\n' "$missing_helper" >"$run/missing-exec-helper.txt"
 cp "$0" "$run/runner.sh"
 sha256sum "$run/runner.sh" >"$run/runner.sha256"
@@ -788,7 +789,7 @@ if [[ $persistent == 1 ]];then
         -drive "file=$run/backing.raw,format=raw,if=ide,index=0" -display none -nic none \
         "${archive_cold_drives[@]}" \
         -boot d -no-reboot -no-shutdown -serial "file:$run/cold-serial.log" \
-        -monitor "unix:$run/cold-monitor,server=on,wait=off" >"$run/cold-qemu.log" 2>&1 &
+        -monitor "unix:$run/c-monitor,server=on,wait=off" >"$run/cold-qemu.log" 2>&1 &
     pid=$!
     trap cleanup EXIT
     deadline=$((SECONDS+duration))
@@ -808,10 +809,10 @@ if [[ $persistent == 1 ]];then
                     (( ffs_cancel_count < 45 )) || { echo 'FFS requester cancellation limit reached' >&2; exit 1; }
                     if (( expected > ffs_captured ));then
                         printf 'screendump %s/ffs-denial-%s.ppm\n' "$run" "$expected" |
-                            socat - "UNIX-CONNECT:$run/cold-monitor" >>"$run/ffs-requester-input.log"
+                            socat - "UNIX-CONNECT:$run/c-monitor" >>"$run/ffs-requester-input.log"
                         ffs_captured=$expected
                     fi
-                    printf 'sendkey meta_l-b\n' | socat - "UNIX-CONNECT:$run/cold-monitor" >>"$run/ffs-requester-input.log"
+                    printf 'sendkey meta_l-b\n' | socat - "UNIX-CONNECT:$run/c-monitor" >>"$run/ffs-requester-input.log"
                     ffs_cancel_count=$((ffs_cancel_count+1))
                 fi
             fi
@@ -823,7 +824,7 @@ if [[ $persistent == 1 ]];then
         if ! kill -0 "$pid" 2>/dev/null || ((SECONDS>=deadline));then echo "Cold timeout/exit: $run" >&2;exit 1;fi
         sleep 1
     done
-    printf 'quit\n' | socat - "UNIX-CONNECT:$run/cold-monitor" >/dev/null
+    printf 'quit\n' | socat - "UNIX-CONNECT:$run/c-monitor" >/dev/null
     wait "$pid"
     trap - EXIT
     rg -q '^Public backing clean detach PASS' "$run/cold-results.log"
@@ -923,7 +924,7 @@ if [[ $persistent == 1 ]];then
             -drive "file=$run/backing.raw,format=raw,if=ide,index=0" -display none -nic none \
             "${archive_cold_drives[@]}" \
             -boot d -no-reboot -no-shutdown -serial "file:$run/release-serial.log" \
-            -monitor "unix:$run/release-monitor,server=on,wait=off" >"$run/release-qemu.log" 2>&1 &
+            -monitor "unix:$run/r-monitor,server=on,wait=off" >"$run/release-qemu.log" 2>&1 &
         pid=$!
         trap cleanup EXIT
         deadline=$((SECONDS+duration))
@@ -936,7 +937,7 @@ if [[ $persistent == 1 ]];then
             if ! kill -0 "$pid" 2>/dev/null || ((SECONDS>=deadline));then echo "Release timeout/exit: $run" >&2;exit 1;fi
             sleep 1
         done
-        printf 'quit\n' | socat - "UNIX-CONNECT:$run/release-monitor" >/dev/null
+        printf 'quit\n' | socat - "UNIX-CONNECT:$run/r-monitor" >/dev/null
         wait "$pid"
         trap - EXIT
         rg -q '^Public cold writable release PASS pending-before=1 recursive-release=1 parent-absent=1 child-absent=1 reimport-absent=1 exact-data=1 exported=1' "$run/release-results.log"
