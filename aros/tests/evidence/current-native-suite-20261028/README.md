@@ -79,3 +79,19 @@ the separate native discovery/corrupt/conflicting-label scenarios are not
 executed by NATIVE_COLD mode and remain required. The original full harness
 exited nonzero at launch; the explicit resumed reader exited zero. Neither
 result is relabeled as a complete combined acceptance run.
+
+## Per-phase image verification
+
+`verify-iso-runtime.sh` now supplies the image check for every writer, cold,
+release, and native recovery launch in the public-service harness. Each phase
+extracts its own libraries into a new evidence directory and records hashes;
+it does not infer cold-image contents from the writer manifest. The verifier
+rejects existing output, duplicate selected basenames, empty selection, absent
+guest files, and content mismatch. xorriso errors remain fatal.
+
+Four host-only tests passed using small generated ISO fixtures. The same helper
+also passed against the retained real `XMxcRVST/native-cold.iso`, binding its
+five selected libraries in `iso-phase-check.OxjiqlFm`. Its manifest is retained
+here as `per-phase-cold-runtime.sha256`. This is an image-content check, not an
+additional native boot. The next native suites will exercise the integrated
+per-phase call sites.

@@ -534,24 +534,16 @@ xorriso -indev "$base" -outdev "$run/test.iso" \
     -boot_image grub bin_path=/boot/grub/i386-pc/eltorito.img \
     -boot_image grub boot_info_table=on -boot_image grub grub2_boot_info=on >"$run/pack.log" 2>&1
 # Verify runtime bytes in the image, not just the intended xorriso maps.
-mkdir "$run/iso-runtime"
-runtime_specs=("$posix:posixc.library")
+runtime_libraries=("$posix")
 if [[ -d $run/runtime-inputs ]];then
     for selected_library in "$run/runtime-inputs/"*.library;do
-        runtime_specs+=("$selected_library:${selected_library##*/}")
+        runtime_libraries+=("$selected_library")
     done
 fi
 if [[ -n $shared ]];then
-    runtime_specs+=("$shared_library:openzfs.library")
+    runtime_libraries+=("$shared_library")
 fi
-for spec in "${runtime_specs[@]}";do
-    selected_library=${spec%:*};name=${spec##*:}
-    xorriso -osirrox on -indev "$run/test.iso" \
-        -extract "/Libs/$name" "$run/iso-runtime/$name" \
-        >>"$run/iso-runtime-verify.log" 2>&1
-    cmp "$selected_library" "$run/iso-runtime/$name"
-    sha256sum "$run/iso-runtime/$name" >>"$run/iso-runtime.sha256"
-done
+bash aros/engine/verify-iso-runtime.sh "$run/test.iso" "$run/iso-runtime" "${runtime_libraries[@]}"
 "${launcher[@]}" "$qemu" -name "openzfs-public-service-$$" -machine pc,accel=kvm -cpu host -smp "$cpus" -m 2048 \
     "${trace_args[@]}" \
     -drive "file=$run/test.iso,media=cdrom,if=ide,index=2,readonly=on" \
@@ -790,6 +782,7 @@ if [[ $persistent == 1 ]];then
         -boot_image any discard -boot_image any system_area=/dev/zero \
         -boot_image grub bin_path=/boot/grub/i386-pc/eltorito.img \
         -boot_image grub boot_info_table=on -boot_image grub grub2_boot_info=on >"$run/pack-cold.log" 2>&1
+    bash aros/engine/verify-iso-runtime.sh "$run/cold.iso" "$run/cold-iso-runtime" "${runtime_libraries[@]}"
     "$qemu" -name "openzfs-public-cold-$$" -machine pc,accel=kvm -cpu host \
         -smp "$cpus" -m 2048 -drive "file=$run/cold.iso,media=cdrom,if=ide,index=2,readonly=on" \
         -drive "file=$run/backing.raw,format=raw,if=ide,index=0" -display none -nic none \
@@ -924,6 +917,7 @@ if [[ $persistent == 1 ]];then
             -boot_image any discard -boot_image any system_area=/dev/zero \
             -boot_image grub bin_path=/boot/grub/i386-pc/eltorito.img \
             -boot_image grub boot_info_table=on -boot_image grub grub2_boot_info=on >"$run/pack-release.log" 2>&1
+        bash aros/engine/verify-iso-runtime.sh "$run/release.iso" "$run/release-iso-runtime" "${runtime_libraries[@]}"
         "$qemu" -name "openzfs-public-release-$$" -machine pc,accel=kvm -cpu host \
             -smp "$cpus" -m 2048 -drive "file=$run/release.iso,media=cdrom,if=ide,index=2,readonly=on" \
             -drive "file=$run/backing.raw,format=raw,if=ide,index=0" -display none -nic none \
@@ -1075,6 +1069,7 @@ if [[ $native_cold == 1 || $all_native == 1 ]];then
           native_iso="$run/$native_phase.iso"
           expected_reader='Public native healed cold PASS exact-data=1 readonly-write-denied=1 exported=1' ;;
       esac
+      bash aros/engine/verify-iso-runtime.sh "$native_iso" "$run/$native_phase-iso-runtime" "${runtime_libraries[@]}"
       "$qemu" -name "openzfs-$native_phase-$$" -machine pc,accel=kvm -cpu host \
         -smp "$cpus" -m 2048 -drive "file=$native_iso,media=cdrom,if=ide,index=2,readonly=on" \
         "${native_first[@]}" \
