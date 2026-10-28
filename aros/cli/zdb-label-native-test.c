@@ -6,6 +6,11 @@
 #include <stdio.h>
 #include <string.h>
 #include "zdb-fixture-paths.h"
+#ifdef OZ_ZDB_HOSTED
+#define OZ_ZDB_STORAGE "private-hosted"
+#else
+#define OZ_ZDB_STORAGE "readonly-iso"
+#endif
 #ifdef OZ_ZDB_DEVICE
 #include <proto/exec.h>
 #include <proto/security.h>
@@ -57,7 +62,7 @@ static int check_l2arc(void)
         int failed=ferror(report)||!lines||status!=expected;fclose(report);
         if(failed)return 20;
     }
-    bug("RESULT native zdb l2arc PASS headers=3 storage=readonly-iso\n");
+    bug("RESULT native zdb l2arc PASS headers=3 storage=" OZ_ZDB_STORAGE "\n");
 #ifdef OZ_ZDB_L2ARC_LOGS
     bug("RESULT native zdb l2arc PASS logs=4 endian=2 corrupt=1 recovery=1\n");
 #endif
@@ -245,6 +250,9 @@ int main(void)
         if (!report) return 20;
         while (fgets(line, sizeof(line), report)) {
             bug("ZDB[%u] %s", run, line);
+            /* A final unterminated report line must not absorb the next
+             * result marker in the serial evidence stream. */
+            if (!strchr(line, '\n')) bug("\n");
             name |= strstr(line, "name: 'topo_source'") != NULL;
             labels |= strstr(line, "labels = 0 1 2 3 ") != NULL;
             failed |= strstr(line, "failed to ") != NULL;
@@ -285,6 +293,6 @@ int main(void)
         bug("RESULT native zdb labels FAIL l2arc\n");return 20;
     }
 #endif
-    bug("RESULT native zdb labels PASS runs=2 storage=readonly-iso\n");
+    bug("RESULT native zdb labels PASS runs=2 storage=" OZ_ZDB_STORAGE "\n");
     return 0;
 }

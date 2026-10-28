@@ -11,6 +11,10 @@ def verify(run):
     native = "l2arc_header_device=1" in (run / "mode.txt").read_text().splitlines()
     logs = "l2arc_log_iso=1" in (run / "mode.txt").read_text().splitlines()
     bounds = "l2arc_bounds_iso=1" in (run / "mode.txt").read_text().splitlines()
+    hosted = "hosted_runtime=1" in (run / "mode.txt").read_text().splitlines()
+    storage = "private-hosted" if hosted else "readonly-iso"
+    if hosted and native:
+        raise ValueError("hosted evidence cannot claim the native ATA fixture")
     names = (("little", "big", "missing") +
              (("log-little", "log-big", "log-bad", "log-little") if logs else ()) +
              (("count-little", "count-big", "little") if bounds else ()) +
@@ -39,7 +43,7 @@ def verify(run):
             rf"(?:^| \| )RESULT native zdb l2arc pass={index} exit=(-?\d+)$", line))]
         if exits != ["1" if name == "log-bad" or name.startswith("count-") else "0"]:
             raise ValueError("missing or failed native invocation")
-    if sum(line.endswith("RESULT native zdb l2arc PASS headers=3 storage=readonly-iso") for line in serial) != 1:
+    if sum(line.endswith("RESULT native zdb l2arc PASS headers=3 storage=" + storage) for line in serial) != 1:
         raise ValueError("missing completion")
     if logs and sum(line.endswith("RESULT native zdb l2arc PASS logs=4 endian=2 corrupt=1 recovery=1") for line in serial) != 1:
         raise ValueError("missing populated-log completion")

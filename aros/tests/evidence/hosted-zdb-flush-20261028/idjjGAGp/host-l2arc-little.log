@@ -1,0 +1,33 @@
+------------------------------------
+LABEL 0 
+------------------------------------
+    state: 4
+    guid: 573785173
+    pool_guid: 287454020
+    version: 5000
+    txg: 1
+    name: 'l2arc_fixture'
+    labels = 0 1 2 3 
+------------------------------------
+L2ARC device header
+------------------------------------
+    magic: 6504978260106102853
+    version: 1
+    pool_guid: 287454020
+    flags: 0
+    start_lbps[0]: 0
+    start_lbps[1]: 0
+    log_blk_ent: 0
+    start: 4194816
+    end: 66584576
+    evict: 4194816
+    lb_asize_refcount: 0
+    lb_count_refcount: 0
+    trim_action_time: 0
+    trim_state: 0
+
+------------------------------------
+L2ARC device log blocks
+------------------------------------
+No log blocks to read
+

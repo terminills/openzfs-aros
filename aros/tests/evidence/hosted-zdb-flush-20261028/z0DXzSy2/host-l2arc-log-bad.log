@@ -1,0 +1,119 @@
+------------------------------------
+LABEL 0 
+------------------------------------
+    state: 4
+    guid: 573785173
+    pool_guid: 287454020
+    version: 5000
+    txg: 1
+    name: 'l2arc_fixture'
+    labels = 0 1 2 3 
+
+
+ZFS Label NVList Config Stats:
+  240 bytes used, 114408 bytes free (using  0.2%)
+
+   integers:    5    176 bytes (73.33%)
+    strings:    1     44 bytes (18.33%)
+   booleans:    0      0 bytes ( 0.00%)
+    nvlists:    1     20 bytes ( 8.33%)
+
+
+------------------------------------
+LABEL 1 
+------------------------------------
+    state: 4
+    guid: 573785173
+    pool_guid: 287454020
+    version: 5000
+    txg: 1
+    name: 'l2arc_fixture'
+    labels = 0 1 2 3 
+
+
+ZFS Label NVList Config Stats:
+  240 bytes used, 114408 bytes free (using  0.2%)
+
+   integers:    5    176 bytes (73.33%)
+    strings:    1     44 bytes (18.33%)
+   booleans:    0      0 bytes ( 0.00%)
+    nvlists:    1     20 bytes ( 8.33%)
+
+
+------------------------------------
+LABEL 2 
+------------------------------------
+    state: 4
+    guid: 573785173
+    pool_guid: 287454020
+    version: 5000
+    txg: 1
+    name: 'l2arc_fixture'
+    labels = 0 1 2 3 
+
+
+ZFS Label NVList Config Stats:
+  240 bytes used, 114408 bytes free (using  0.2%)
+
+   integers:    5    176 bytes (73.33%)
+    strings:    1     44 bytes (18.33%)
+   booleans:    0      0 bytes ( 0.00%)
+    nvlists:    1     20 bytes ( 8.33%)
+
+
+------------------------------------
+LABEL 3 
+------------------------------------
+    state: 4
+    guid: 573785173
+    pool_guid: 287454020
+    version: 5000
+    txg: 1
+    name: 'l2arc_fixture'
+    labels = 0 1 2 3 
+
+
+ZFS Label NVList Config Stats:
+  240 bytes used, 114408 bytes free (using  0.2%)
+
+   integers:    5    176 bytes (73.33%)
+    strings:    1     44 bytes (18.33%)
+   booleans:    0      0 bytes ( 0.00%)
+    nvlists:    1     20 bytes ( 8.33%)
+
+
+------------------------------------
+L2ARC device header
+------------------------------------
+    magic: 6504978260106102853
+    version: 1
+    pool_guid: 287454020
+    flags: 1
+    start_lbps[0]: 4259840
+    start_lbps[1]: 0
+    log_blk_ent: 2
+    start: 4194816
+    end: 66584576
+    evict: 4194816
+    lb_asize_refcount: 65536
+    lb_count_refcount: 1
+    trim_action_time: 0
+    trim_state: 0
+
+------------------------------------
+L2ARC device log blocks
+------------------------------------
+Invalid cksum
+|		daddr: 4259840
+|		payload_asize: 8192
+|		payload_start: 4194816
+|		lsize: 65536
+|		asize: 65536
+|		compralgo: 2
+|		cksumalgo: 7
+|
+
+log_blk_count:	 0 with valid cksum
+		 1 with invalid cksum
+log_blk_asize:	 0
+

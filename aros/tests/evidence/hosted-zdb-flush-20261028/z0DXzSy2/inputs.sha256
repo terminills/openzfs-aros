@@ -1,0 +1,17 @@
+1e9e4e67497aab454d57842af800c03738647d6679cdb6b0a5caeb9a40e1c433  /mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/hosted-zdb.z0DXzSy2/zdb-member
+cf2287facc13cfb6b63237d6bcf05b3b96065316472d899f6d7dcd2a5120a2da  /mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/hosted-zdb.z0DXzSy2/zdb-l2arc/little
+85b1956a96642b3eca1c84b31ff9e0a1b047b7d1bb8089a44305e0c7d9733a70  /mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/hosted-zdb.z0DXzSy2/zdb-l2arc/big
+b18bae24cdf6214fde8d7e26867e161ba8a780b47923ce7b90d9cd11814ebdc2  /mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/hosted-zdb.z0DXzSy2/zdb-l2arc/missing
+4179a1b8920dcdc35fc9aa76aad80a203cc1090b2283ded7f12c5978ee24bae7  /mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/hosted-zdb.z0DXzSy2/zdb-l2arc/log-bad
+089211bb68eb402fbb83c6b88af968a712da75ca8b7aa393f29c98f187637d75  /mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/hosted-zdb.z0DXzSy2/zdb-l2arc/log-big
+a09cf5ad75726097097e91bff788bbc9b0aeedd77924af22d021275bf2060a99  /mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/hosted-zdb.z0DXzSy2/zdb-l2arc/log-little
+f548846dfc4b174467404ba86198bbe049c485a44e627803b57bcddebf0818dd  /mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/hosted-zdb.z0DXzSy2/zdb-l2arc/count-big
+5850a699f188973ecff15b5a22ac3abbe726e6bf3fc850163ffc98c09535a371  /mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/hosted-zdb.z0DXzSy2/zdb-l2arc/count-little
+0f5c99a8ca6bd6c56d19832a9f7e8ad19f036df94af90f647f113332091c74c9  /mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/hosted-zdb.z0DXzSy2/Libs/openzfs.library
+9adeebd73561ef493fd0bee741290b6334abb39e27037b06d5741d05f6ca7932  /mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/hosted-zdb.z0DXzSy2/Libs/posixc.library
+e8da5d9654956410ee32200e64b7ee6f80ab14b388bd2ee8167d11128a714f6b  /mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/hosted-zdb.z0DXzSy2/Libs/dos.library
+23fcc0ea3d6ea0f858cfded33e80b586cc30b9e07b15e6d081440ee6d7057881  /mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/hosted-zdb.z0DXzSy2/boot/linux/kernel
+7ce07a53dbc655dd4338d183d3e34196cdf919f29c4915dcaf953e9f67c9cf49  /mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/hosted-zdb.z0DXzSy2/C/OpenZFSZdbLabelsTest
+d62526da55992a705f910341a444feb1f959bbcb46c09743fcf4418da3d4af6c  /mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/hosted-zdb.z0DXzSy2/C/OpenZFSZdbLifetimeTest
+8595f66b94e6d9bb75687916f029c5de07b9add4f0a0fb8a55900d030036943a  /mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/hosted-zdb.z0DXzSy2/C/OpenZFSZdbUserTest
+a26fe543642402356dd555289d4f1e15a296cd7c3ad1212ad0423456dd7d4f07  /mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/hosted-zdb.z0DXzSy2/C/ZdbAudit

@@ -64,6 +64,11 @@ class Evidence(unittest.TestCase):
         self.serial.write_text(self.serial.read_text() + "ZDBL2[9] unexpected\n")
         with self.assertRaises(ValueError): self.check()
 
+    def test_hosted_cannot_claim_native_device(self):
+        with (self.root / "mode.txt").open("a") as out:
+            out.write("hosted_runtime=1\n")
+        with self.assertRaises(ValueError): self.check()
+
     def test_populated_logs_and_rejections(self):
         (self.root / "mode.txt").write_text("l2arc_log_iso=1\n")
         lines = []

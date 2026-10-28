@@ -2,13 +2,25 @@
 
 Experimental development snapshot; not production-qualified storage software.
 
+## Private hosted debugger regression (2026-10-28)
+
+An isolated hosted AROS copy now exercises shared debugger lifecycle, exact
+label output, absent-security native-path denial, synthetic populated L2ARC
+logs in both byte orders, checksum rejection, oversized entry-count rejection
+and healthy recovery. It exposed final buffered output being lost when the
+library returned from nixmain. The library now flushes stdout/stderr before
+restoring its caller's runtime; output errors cannot become success.
+No physical device or QEMU ATA read is established by this hosted run.
+See `aros/tests/evidence/hosted-zdb-flush-20261028` for controls and repeats.
+
 ## L2ARC debugger bounds (2026-10-28)
 
 The debugger now rejects on-disk log-entry counts exceeding its fixed array
 before traversal. A private host candidate passes 16 valid/boundary/malformed
 invocations across both byte orders and verbosity levels. The changed AROS
-shared library and debugger link through MetaMake, but are not yet native
-runtime-qualified. Existing bundle qualification still names the prior binary.
+shared library and debugger link through MetaMake and pass the isolated hosted
+regression above; QEMU runtime qualification remains pending. Existing bundle
+qualification still names the prior binary.
 See `aros/tests/evidence/l2arc-entry-bound-20261028`.
 
 ## Native zdb build audit (2026-10-27)
@@ -48,9 +60,10 @@ GPT paths now pass with the private partition-gap fix (and fail with the
 stock partition library); see `aros/tests/evidence/native-zdb-gpt-20261027`.
 Synthetic empty L2ARC headers also pass through ISO and authenticated native
 device reads; this does not cover populated cache logs or rebuild behavior.
-See `aros/tests/evidence/native-zdb-l2arc-20261027`. Missing-library denial has
-a separate cross-built harness and prepared ISO, but still needs native
-execution; unconfigured-library denial does not substitute for that result.
+See `aros/tests/evidence/native-zdb-l2arc-20261027`. Missing-library denial now
+passes in isolated hosted AROS with actual OpenLibrary(name, 0) failure and
+no resident; the prepared QEMU/device case is still pending. Unconfigured
+library denial does not substitute for that result.
 Broader diagnostic/corruption coverage and
 public release-bundle qualification remain unfinished. See
 `aros/tests/evidence/native-zdb-pool-20261027`.

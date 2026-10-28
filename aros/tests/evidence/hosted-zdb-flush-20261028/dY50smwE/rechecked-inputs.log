@@ -1,0 +1,17 @@
+/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/hosted-zdb.dY50smwE/zdb-member: OK
+/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/hosted-zdb.dY50smwE/zdb-l2arc/little: OK
+/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/hosted-zdb.dY50smwE/zdb-l2arc/big: OK
+/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/hosted-zdb.dY50smwE/zdb-l2arc/missing: OK
+/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/hosted-zdb.dY50smwE/zdb-l2arc/log-bad: OK
+/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/hosted-zdb.dY50smwE/zdb-l2arc/log-big: OK
+/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/hosted-zdb.dY50smwE/zdb-l2arc/log-little: OK
+/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/hosted-zdb.dY50smwE/zdb-l2arc/count-big: OK
+/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/hosted-zdb.dY50smwE/zdb-l2arc/count-little: OK
+/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/hosted-zdb.dY50smwE/Libs/openzfs.library: OK
+/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/hosted-zdb.dY50smwE/Libs/posixc.library: OK
+/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/hosted-zdb.dY50smwE/Libs/dos.library: OK
+/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/hosted-zdb.dY50smwE/boot/linux/kernel: OK
+/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/hosted-zdb.dY50smwE/C/OpenZFSZdbLabelsTest: OK
+/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/hosted-zdb.dY50smwE/C/OpenZFSZdbLifetimeTest: OK
+/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/hosted-zdb.dY50smwE/C/OpenZFSZdbUserTest: OK
+/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/hosted-zdb.dY50smwE/C/ZdbAudit: OK

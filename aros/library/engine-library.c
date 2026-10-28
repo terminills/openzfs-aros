@@ -7,6 +7,7 @@
 #include <aros/symbolsets.h>
 #include <proto/exec.h>
 #include <setjmp.h>
+#include <stdio.h>
 
 /* The real service owns the upstream engine, admission workers and DOS
  * endpoints. Clients continue to use authenticated IPC, never raw engine
@@ -56,6 +57,14 @@ static LONG run_entry(int (*entry)(int,char **),int argc,char **argv)
         __stdc_set_exitjmp(guard,state->saved);
         result=__posixc_nixmain(entry,argc,argv);
     }
+    /* nixmain returns without executable CRT teardown. In particular, a
+     * final putchar can still be buffered in the redirected DOS handle.
+     * Flush while this library's runtime and exit-status slot are alive,
+     * before restoring the caller or expunging the module. Attempt both
+     * streams even if one fails; do not turn an existing error into success. */
+    int stdout_error=fflush(stdout);
+    int stderr_error=fflush(stderr);
+    if((stdout_error||stderr_error)&&result==0)result=20;
     __stdc_set_exitjmp(state->saved,state->discard);
     __stdc_set_errorptr(previous);
     FreeVec(state);

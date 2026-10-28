@@ -27,7 +27,10 @@ for run in range(2):
     marker = rf"(?:^| \| )RESULT native zdb labels run={run} exit=0$"
     if sum(bool(re.search(marker, line)) for line in serial) != 1:
         raise SystemExit(f"FAIL run {run} missing/duplicate zero-exit marker")
-marker = r"(?:^| \| )RESULT native zdb labels PASS runs=2 storage=readonly-iso$"
+storage = "private-hosted" if sys.argv[3:] == ["--hosted"] else "readonly-iso"
+if sys.argv[3:] not in ([], ["--hosted"]):
+    raise SystemExit("FAIL unknown evidence mode")
+marker = r"(?:^| \| )RESULT native zdb labels PASS runs=2 storage=" + storage + "$"
 if sum(bool(re.search(marker, line)) for line in serial) != 1:
     raise SystemExit("FAIL missing/duplicate final marker")
-print(f"PASS native labels match host exactly: runs=2 lines={len(expected)}")
+print(f"PASS AROS labels match host exactly: storage={storage} runs=2 lines={len(expected)}")

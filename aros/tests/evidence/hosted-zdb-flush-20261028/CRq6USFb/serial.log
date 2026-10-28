@@ -1,0 +1,928 @@
+----
+[Bootstrap] RAM memory block allocated: 0x7f1941e00000 - 0x7f19a1e00000 (1610612736 bytes)
+[Bootstrap] RAM memory block allocated: 0x41d38000 - 0x61d38000 (536870912 bytes)
+[Bootstrap] Entering kernel at 0x40d60000...
+[KRN] Protecting host process stack (0x00007ffd2b294430 - 0x00007ffd2b29e430)
+Xlib:  extension "XFree86-VidModeExtension" missing on display ":2".
+RESULT native zdb labels BEGIN
+RESULT native zdb labels run=0 exit=0
+ZDB[0] ------------------------------------
+ZDB[0] LABEL 0 
+ZDB[0] ------------------------------------
+ZDB[0]     version: 5000
+ZDB[0]     name: 'topo_source'
+ZDB[0]     state: 1
+ZDB[0]     txg: 43
+ZDB[0]     pool_guid: 14234554318354544387
+ZDB[0]     errata: 0
+ZDB[0]     min_alloc: 512
+ZDB[0]     max_alloc: 512
+ZDB[0]     hostname: 'localhost.localdomain'
+ZDB[0]     top_guid: 6400177601317808579
+ZDB[0]     guid: 6400177601317808579
+ZDB[0]     vdev_children: 2
+ZDB[0]     vdev_tree:
+ZDB[0]         type: 'file'
+ZDB[0]         id: 0
+ZDB[0]         guid: 6400177601317808579
+ZDB[0]         path: '/Ozfiles/split-topology-0'
+ZDB[0]         metaslab_array: 143
+ZDB[0]         metaslab_shift: 24
+ZDB[0]         ashift: 9
+ZDB[0]         asize: 62390272
+ZDB[0]         min_alloc: 512
+ZDB[0]         is_log: 0
+ZDB[0]         create_txg: 4
+ZDB[0]         orig_guid: 3050965855516911264
+ZDB[0]     features_for_read:
+ZDB[0]         com.delphix:hole_birth
+ZDB[0]         com.delphix:embedded_data
+ZDB[0]         com.klarasystems:vdev_zaps_v2
+ZDB[0]     labels = 0 1 2 3 
+RESULT native zdb labels run=1 exit=0
+ZDB[1] ------------------------------------
+ZDB[1] LABEL 0 
+ZDB[1] ------------------------------------
+ZDB[1]     version: 5000
+ZDB[1]     name: 'topo_source'
+ZDB[1]     state: 1
+ZDB[1]     txg: 43
+ZDB[1]     pool_guid: 14234554318354544387
+ZDB[1]     errata: 0
+ZDB[1]     min_alloc: 512
+ZDB[1]     max_alloc: 512
+ZDB[1]     hostname: 'localhost.localdomain'
+ZDB[1]     top_guid: 6400177601317808579
+ZDB[1]     guid: 6400177601317808579
+ZDB[1]     vdev_children: 2
+ZDB[1]     vdev_tree:
+ZDB[1]         type: 'file'
+ZDB[1]         id: 0
+ZDB[1]         guid: 6400177601317808579
+ZDB[1]         path: '/Ozfiles/split-topology-0'
+ZDB[1]         metaslab_array: 143
+ZDB[1]         metaslab_shift: 24
+ZDB[1]         ashift: 9
+ZDB[1]         asize: 62390272
+ZDB[1]         min_alloc: 512
+ZDB[1]         is_log: 0
+ZDB[1]         create_txg: 4
+ZDB[1]         orig_guid: 3050965855516911264
+ZDB[1]     features_for_read:
+ZDB[1]         com.delphix:hole_birth
+ZDB[1]         com.delphix:embedded_data
+ZDB[1]         com.klarasystems:vdev_zaps_v2
+ZDB[1]     labels = 0 1 2 3 
+RESULT shared zdb lifecycle PASS cycle=0 invalid=5 repeated=10 service=10
+RESULT shared zdb lifecycle PASS cycle=1 invalid=5 repeated=10 service=10
+RESULT shared zdb caller exit PASS status=7
+RESULT native zdb actual caller security-missing=1
+RESULT native zdb device pass=0 exit=1
+ZDBDEV[0] cannot open '/AROS/ata.device/0': Permission denied
+RESULT native zdb device PASS missing-security=1
+RESULT native zdb l2arc pass=0 exit=0
+ZDBL2[0] ------------------------------------
+ZDBL2[0] LABEL 0 
+ZDBL2[0] ------------------------------------
+ZDBL2[0]     state: 4
+ZDBL2[0]     guid: 573785173
+ZDBL2[0]     pool_guid: 287454020
+ZDBL2[0]     version: 5000
+ZDBL2[0]     txg: 1
+ZDBL2[0]     name: 'l2arc_fixture'
+ZDBL2[0]     labels = 0 1 2 3 
+ZDBL2[0] ------------------------------------
+ZDBL2[0] L2ARC device header
+ZDBL2[0] ------------------------------------
+ZDBL2[0]     magic: 6504978260106102853
+ZDBL2[0]     version: 1
+ZDBL2[0]     pool_guid: 287454020
+ZDBL2[0]     flags: 0
+ZDBL2[0]     start_lbps[0]: 0
+ZDBL2[0]     start_lbps[1]: 0
+ZDBL2[0]     log_blk_ent: 0
+ZDBL2[0]     start: 4194816
+ZDBL2[0]     end: 66584576
+ZDBL2[0]     evict: 4194816
+ZDBL2[0]     lb_asize_refcount: 0
+ZDBL2[0]     lb_count_refcount: 0
+ZDBL2[0]     trim_action_time: 0
+ZDBL2[0]     trim_state: 0
+ZDBL2[0] 
+ZDBL2[0] ------------------------------------
+ZDBL2[0] L2ARC device log blocks
+ZDBL2[0] ------------------------------------
+ZDBL2[0] No log blocks to read
+ZDBL2[0] 
+RESULT native zdb l2arc pass=1 exit=0
+ZDBL2[1] ------------------------------------
+ZDBL2[1] LABEL 0 
+ZDBL2[1] ------------------------------------
+ZDBL2[1]     state: 4
+ZDBL2[1]     guid: 573785173
+ZDBL2[1]     pool_guid: 287454020
+ZDBL2[1]     version: 5000
+ZDBL2[1]     txg: 1
+ZDBL2[1]     name: 'l2arc_fixture'
+ZDBL2[1]     labels = 0 1 2 3 
+ZDBL2[1] ------------------------------------
+ZDBL2[1] L2ARC device header
+ZDBL2[1] ------------------------------------
+ZDBL2[1]     magic: 6504978260106102853
+ZDBL2[1]     version: 1
+ZDBL2[1]     pool_guid: 287454020
+ZDBL2[1]     flags: 0
+ZDBL2[1]     start_lbps[0]: 0
+ZDBL2[1]     start_lbps[1]: 0
+ZDBL2[1]     log_blk_ent: 0
+ZDBL2[1]     start: 4194816
+ZDBL2[1]     end: 66584576
+ZDBL2[1]     evict: 4194816
+ZDBL2[1]     lb_asize_refcount: 0
+ZDBL2[1]     lb_count_refcount: 0
+ZDBL2[1]     trim_action_time: 0
+ZDBL2[1]     trim_state: 0
+ZDBL2[1] 
+ZDBL2[1] ------------------------------------
+ZDBL2[1] L2ARC device log blocks
+ZDBL2[1] ------------------------------------
+ZDBL2[1] No log blocks to read
+ZDBL2[1] 
+RESULT native zdb l2arc pass=2 exit=0
+ZDBL2[2] ------------------------------------
+ZDBL2[2] LABEL 0 
+ZDBL2[2] ------------------------------------
+ZDBL2[2]     state: 4
+ZDBL2[2]     guid: 573785173
+ZDBL2[2]     pool_guid: 287454020
+ZDBL2[2]     version: 5000
+ZDBL2[2]     txg: 1
+ZDBL2[2]     name: 'l2arc_fixture'
+ZDBL2[2]     labels = 0 1 2 3 
+ZDBL2[2] L2ARC device header not found
+ZDBL2[2] 
+RESULT native zdb l2arc pass=3 exit=0
+ZDBL2[3] ------------------------------------
+ZDBL2[3] LABEL 0 
+ZDBL2[3] ------------------------------------
+ZDBL2[3]     state: 4
+ZDBL2[3]     guid: 573785173
+ZDBL2[3]     pool_guid: 287454020
+ZDBL2[3]     version: 5000
+ZDBL2[3]     txg: 1
+ZDBL2[3]     name: 'l2arc_fixture'
+ZDBL2[3]     labels = 0 1 2 3 
+ZDBL2[3] 
+ZDBL2[3] 
+ZDBL2[3] ZFS Label NVList Config Stats:
+ZDBL2[3]   240 bytes used, 114408 bytes free (using  0.2%)
+ZDBL2[3] 
+ZDBL2[3]    integers:    5    176 bytes (73.33%)
+ZDBL2[3]     strings:    1     44 bytes (18.33%)
+ZDBL2[3]    booleans:    0      0 bytes ( 0.00%)
+ZDBL2[3]     nvlists:    1     20 bytes ( 8.33%)
+ZDBL2[3] 
+ZDBL2[3] 
+ZDBL2[3] ------------------------------------
+ZDBL2[3] LABEL 1 
+ZDBL2[3] ------------------------------------
+ZDBL2[3]     state: 4
+ZDBL2[3]     guid: 573785173
+ZDBL2[3]     pool_guid: 287454020
+ZDBL2[3]     version: 5000
+ZDBL2[3]     txg: 1
+ZDBL2[3]     name: 'l2arc_fixture'
+ZDBL2[3]     labels = 0 1 2 3 
+ZDBL2[3] 
+ZDBL2[3] 
+ZDBL2[3] ZFS Label NVList Config Stats:
+ZDBL2[3]   240 bytes used, 114408 bytes free (using  0.2%)
+ZDBL2[3] 
+ZDBL2[3]    integers:    5    176 bytes (73.33%)
+ZDBL2[3]     strings:    1     44 bytes (18.33%)
+ZDBL2[3]    booleans:    0      0 bytes ( 0.00%)
+ZDBL2[3]     nvlists:    1     20 bytes ( 8.33%)
+ZDBL2[3] 
+ZDBL2[3] 
+ZDBL2[3] ------------------------------------
+ZDBL2[3] LABEL 2 
+ZDBL2[3] ------------------------------------
+ZDBL2[3]     state: 4
+ZDBL2[3]     guid: 573785173
+ZDBL2[3]     pool_guid: 287454020
+ZDBL2[3]     version: 5000
+ZDBL2[3]     txg: 1
+ZDBL2[3]     name: 'l2arc_fixture'
+ZDBL2[3]     labels = 0 1 2 3 
+ZDBL2[3] 
+ZDBL2[3] 
+ZDBL2[3] ZFS Label NVList Config Stats:
+ZDBL2[3]   240 bytes used, 114408 bytes free (using  0.2%)
+ZDBL2[3] 
+ZDBL2[3]    integers:    5    176 bytes (73.33%)
+ZDBL2[3]     strings:    1     44 bytes (18.33%)
+ZDBL2[3]    booleans:    0      0 bytes ( 0.00%)
+ZDBL2[3]     nvlists:    1     20 bytes ( 8.33%)
+ZDBL2[3] 
+ZDBL2[3] 
+ZDBL2[3] ------------------------------------
+ZDBL2[3] LABEL 3 
+ZDBL2[3] ------------------------------------
+ZDBL2[3]     state: 4
+ZDBL2[3]     guid: 573785173
+ZDBL2[3]     pool_guid: 287454020
+ZDBL2[3]     version: 5000
+ZDBL2[3]     txg: 1
+ZDBL2[3]     name: 'l2arc_fixture'
+ZDBL2[3]     labels = 0 1 2 3 
+ZDBL2[3] 
+ZDBL2[3] 
+ZDBL2[3] ZFS Label NVList Config Stats:
+ZDBL2[3]   240 bytes used, 114408 bytes free (using  0.2%)
+ZDBL2[3] 
+ZDBL2[3]    integers:    5    176 bytes (73.33%)
+ZDBL2[3]     strings:    1     44 bytes (18.33%)
+ZDBL2[3]    booleans:    0      0 bytes ( 0.00%)
+ZDBL2[3]     nvlists:    1     20 bytes ( 8.33%)
+ZDBL2[3] 
+ZDBL2[3] 
+ZDBL2[3] ------------------------------------
+ZDBL2[3] L2ARC device header
+ZDBL2[3] ------------------------------------
+ZDBL2[3]     magic: 6504978260106102853
+ZDBL2[3]     version: 1
+ZDBL2[3]     pool_guid: 287454020
+ZDBL2[3]     flags: 1
+ZDBL2[3]     start_lbps[0]: 4259840
+ZDBL2[3]     start_lbps[1]: 0
+ZDBL2[3]     log_blk_ent: 2
+ZDBL2[3]     start: 4194816
+ZDBL2[3]     end: 66584576
+ZDBL2[3]     evict: 4194816
+ZDBL2[3]     lb_asize_refcount: 65536
+ZDBL2[3]     lb_count_refcount: 1
+ZDBL2[3]     trim_action_time: 0
+ZDBL2[3]     trim_state: 0
+ZDBL2[3] 
+ZDBL2[3] ------------------------------------
+ZDBL2[3] L2ARC device log blocks
+ZDBL2[3] ------------------------------------
+ZDBL2[3] lb[   1]	magic: 5498692020116080708
+ZDBL2[3] |		daddr: 4259840
+ZDBL2[3] |		payload_asize: 8192
+ZDBL2[3] |		payload_start: 4194816
+ZDBL2[3] |		lsize: 65536
+ZDBL2[3] |		asize: 65536
+ZDBL2[3] |		compralgo: 2
+ZDBL2[3] |		cksumalgo: 7
+ZDBL2[3] |
+ZDBL2[3] 
+ZDBL2[3] lb[   1]	le[   1]	DVA asize: 4096, vdev: 0, offset: 16384
+ZDBL2[3] |				birth: 42
+ZDBL2[3] |				lsize: 4096
+ZDBL2[3] |				psize: 4096
+ZDBL2[3] |				compr: 2
+ZDBL2[3] |				complevel: 0
+ZDBL2[3] |				type: 0
+ZDBL2[3] |				protected: 0
+ZDBL2[3] |				prefetch: 0
+ZDBL2[3] |				address: 4194816
+ZDBL2[3] |				ARC state: 1
+ZDBL2[3] |
+ZDBL2[3] lb[   1]	le[   2]	DVA asize: 4096, vdev: 0, offset: 20480
+ZDBL2[3] |				birth: 43
+ZDBL2[3] |				lsize: 4096
+ZDBL2[3] |				psize: 4096
+ZDBL2[3] |				compr: 2
+ZDBL2[3] |				complevel: 0
+ZDBL2[3] |				type: 0
+ZDBL2[3] |				protected: 0
+ZDBL2[3] |				prefetch: 0
+ZDBL2[3] |				address: 4198912
+ZDBL2[3] |				ARC state: 1
+ZDBL2[3] |
+ZDBL2[3] 
+ZDBL2[3] log_blk_count:	 1 with valid cksum
+ZDBL2[3] 		 0 with invalid cksum
+ZDBL2[3] log_blk_asize:	 65536
+ZDBL2[3] 
+RESULT native zdb l2arc pass=4 exit=0
+ZDBL2[4] ------------------------------------
+ZDBL2[4] LABEL 0 
+ZDBL2[4] ------------------------------------
+ZDBL2[4]     state: 4
+ZDBL2[4]     guid: 573785173
+ZDBL2[4]     pool_guid: 287454020
+ZDBL2[4]     version: 5000
+ZDBL2[4]     txg: 1
+ZDBL2[4]     name: 'l2arc_fixture'
+ZDBL2[4]     labels = 0 1 2 3 
+ZDBL2[4] 
+ZDBL2[4] 
+ZDBL2[4] ZFS Label NVList Config Stats:
+ZDBL2[4]   240 bytes used, 114408 bytes free (using  0.2%)
+ZDBL2[4] 
+ZDBL2[4]    integers:    5    176 bytes (73.33%)
+ZDBL2[4]     strings:    1     44 bytes (18.33%)
+ZDBL2[4]    booleans:    0      0 bytes ( 0.00%)
+ZDBL2[4]     nvlists:    1     20 bytes ( 8.33%)
+ZDBL2[4] 
+ZDBL2[4] 
+ZDBL2[4] ------------------------------------
+ZDBL2[4] LABEL 1 
+ZDBL2[4] ------------------------------------
+ZDBL2[4]     state: 4
+ZDBL2[4]     guid: 573785173
+ZDBL2[4]     pool_guid: 287454020
+ZDBL2[4]     version: 5000
+ZDBL2[4]     txg: 1
+ZDBL2[4]     name: 'l2arc_fixture'
+ZDBL2[4]     labels = 0 1 2 3 
+ZDBL2[4] 
+ZDBL2[4] 
+ZDBL2[4] ZFS Label NVList Config Stats:
+ZDBL2[4]   240 bytes used, 114408 bytes free (using  0.2%)
+ZDBL2[4] 
+ZDBL2[4]    integers:    5    176 bytes (73.33%)
+ZDBL2[4]     strings:    1     44 bytes (18.33%)
+ZDBL2[4]    booleans:    0      0 bytes ( 0.00%)
+ZDBL2[4]     nvlists:    1     20 bytes ( 8.33%)
+ZDBL2[4] 
+ZDBL2[4] 
+ZDBL2[4] ------------------------------------
+ZDBL2[4] LABEL 2 
+ZDBL2[4] ------------------------------------
+ZDBL2[4]     state: 4
+ZDBL2[4]     guid: 573785173
+ZDBL2[4]     pool_guid: 287454020
+ZDBL2[4]     version: 5000
+ZDBL2[4]     txg: 1
+ZDBL2[4]     name: 'l2arc_fixture'
+ZDBL2[4]     labels = 0 1 2 3 
+ZDBL2[4] 
+ZDBL2[4] 
+ZDBL2[4] ZFS Label NVList Config Stats:
+ZDBL2[4]   240 bytes used, 114408 bytes free (using  0.2%)
+ZDBL2[4] 
+ZDBL2[4]    integers:    5    176 bytes (73.33%)
+ZDBL2[4]     strings:    1     44 bytes (18.33%)
+ZDBL2[4]    booleans:    0      0 bytes ( 0.00%)
+ZDBL2[4]     nvlists:    1     20 bytes ( 8.33%)
+ZDBL2[4] 
+ZDBL2[4] 
+ZDBL2[4] ------------------------------------
+ZDBL2[4] LABEL 3 
+ZDBL2[4] ------------------------------------
+ZDBL2[4]     state: 4
+ZDBL2[4]     guid: 573785173
+ZDBL2[4]     pool_guid: 287454020
+ZDBL2[4]     version: 5000
+ZDBL2[4]     txg: 1
+ZDBL2[4]     name: 'l2arc_fixture'
+ZDBL2[4]     labels = 0 1 2 3 
+ZDBL2[4] 
+ZDBL2[4] 
+ZDBL2[4] ZFS Label NVList Config Stats:
+ZDBL2[4]   240 bytes used, 114408 bytes free (using  0.2%)
+ZDBL2[4] 
+ZDBL2[4]    integers:    5    176 bytes (73.33%)
+ZDBL2[4]     strings:    1     44 bytes (18.33%)
+ZDBL2[4]    booleans:    0      0 bytes ( 0.00%)
+ZDBL2[4]     nvlists:    1     20 bytes ( 8.33%)
+ZDBL2[4] 
+ZDBL2[4] 
+ZDBL2[4] ------------------------------------
+ZDBL2[4] L2ARC device header
+ZDBL2[4] ------------------------------------
+ZDBL2[4]     magic: 6504978260106102853
+ZDBL2[4]     version: 1
+ZDBL2[4]     pool_guid: 287454020
+ZDBL2[4]     flags: 1
+ZDBL2[4]     start_lbps[0]: 4259840
+ZDBL2[4]     start_lbps[1]: 0
+ZDBL2[4]     log_blk_ent: 2
+ZDBL2[4]     start: 4194816
+ZDBL2[4]     end: 66584576
+ZDBL2[4]     evict: 4194816
+ZDBL2[4]     lb_asize_refcount: 65536
+ZDBL2[4]     lb_count_refcount: 1
+ZDBL2[4]     trim_action_time: 0
+ZDBL2[4]     trim_state: 0
+ZDBL2[4] 
+ZDBL2[4] ------------------------------------
+ZDBL2[4] L2ARC device log blocks
+ZDBL2[4] ------------------------------------
+ZDBL2[4] lb[   1]	magic: 5498692020116080708
+ZDBL2[4] |		daddr: 4259840
+ZDBL2[4] |		payload_asize: 8192
+ZDBL2[4] |		payload_start: 4194816
+ZDBL2[4] |		lsize: 65536
+ZDBL2[4] |		asize: 65536
+ZDBL2[4] |		compralgo: 2
+ZDBL2[4] |		cksumalgo: 7
+ZDBL2[4] |
+ZDBL2[4] 
+ZDBL2[4] lb[   1]	le[   1]	DVA asize: 4096, vdev: 0, offset: 16384
+ZDBL2[4] |				birth: 42
+ZDBL2[4] |				lsize: 4096
+ZDBL2[4] |				psize: 4096
+ZDBL2[4] |				compr: 2
+ZDBL2[4] |				complevel: 0
+ZDBL2[4] |				type: 0
+ZDBL2[4] |				protected: 0
+ZDBL2[4] |				prefetch: 0
+ZDBL2[4] |				address: 4194816
+ZDBL2[4] |				ARC state: 1
+ZDBL2[4] |
+ZDBL2[4] lb[   1]	le[   2]	DVA asize: 4096, vdev: 0, offset: 20480
+ZDBL2[4] |				birth: 43
+ZDBL2[4] |				lsize: 4096
+ZDBL2[4] |				psize: 4096
+ZDBL2[4] |				compr: 2
+ZDBL2[4] |				complevel: 0
+ZDBL2[4] |				type: 0
+ZDBL2[4] |				protected: 0
+ZDBL2[4] |				prefetch: 0
+ZDBL2[4] |				address: 4198912
+ZDBL2[4] |				ARC state: 1
+ZDBL2[4] |
+ZDBL2[4] 
+ZDBL2[4] log_blk_count:	 1 with valid cksum
+ZDBL2[4] 		 0 with invalid cksum
+ZDBL2[4] log_blk_asize:	 65536
+ZDBL2[4] 
+RESULT native zdb l2arc pass=5 exit=1
+ZDBL2[5] ------------------------------------
+ZDBL2[5] LABEL 0 
+ZDBL2[5] ------------------------------------
+ZDBL2[5]     state: 4
+ZDBL2[5]     guid: 573785173
+ZDBL2[5]     pool_guid: 287454020
+ZDBL2[5]     version: 5000
+ZDBL2[5]     txg: 1
+ZDBL2[5]     name: 'l2arc_fixture'
+ZDBL2[5]     labels = 0 1 2 3 
+ZDBL2[5] 
+ZDBL2[5] 
+ZDBL2[5] ZFS Label NVList Config Stats:
+ZDBL2[5]   240 bytes used, 114408 bytes free (using  0.2%)
+ZDBL2[5] 
+ZDBL2[5]    integers:    5    176 bytes (73.33%)
+ZDBL2[5]     strings:    1     44 bytes (18.33%)
+ZDBL2[5]    booleans:    0      0 bytes ( 0.00%)
+ZDBL2[5]     nvlists:    1     20 bytes ( 8.33%)
+ZDBL2[5] 
+ZDBL2[5] 
+ZDBL2[5] ------------------------------------
+ZDBL2[5] LABEL 1 
+ZDBL2[5] ------------------------------------
+ZDBL2[5]     state: 4
+ZDBL2[5]     guid: 573785173
+ZDBL2[5]     pool_guid: 287454020
+ZDBL2[5]     version: 5000
+ZDBL2[5]     txg: 1
+ZDBL2[5]     name: 'l2arc_fixture'
+ZDBL2[5]     labels = 0 1 2 3 
+ZDBL2[5] 
+ZDBL2[5] 
+ZDBL2[5] ZFS Label NVList Config Stats:
+ZDBL2[5]   240 bytes used, 114408 bytes free (using  0.2%)
+ZDBL2[5] 
+ZDBL2[5]    integers:    5    176 bytes (73.33%)
+ZDBL2[5]     strings:    1     44 bytes (18.33%)
+ZDBL2[5]    booleans:    0      0 bytes ( 0.00%)
+ZDBL2[5]     nvlists:    1     20 bytes ( 8.33%)
+ZDBL2[5] 
+ZDBL2[5] 
+ZDBL2[5] ------------------------------------
+ZDBL2[5] LABEL 2 
+ZDBL2[5] ------------------------------------
+ZDBL2[5]     state: 4
+ZDBL2[5]     guid: 573785173
+ZDBL2[5]     pool_guid: 287454020
+ZDBL2[5]     version: 5000
+ZDBL2[5]     txg: 1
+ZDBL2[5]     name: 'l2arc_fixture'
+ZDBL2[5]     labels = 0 1 2 3 
+ZDBL2[5] 
+ZDBL2[5] 
+ZDBL2[5] ZFS Label NVList Config Stats:
+ZDBL2[5]   240 bytes used, 114408 bytes free (using  0.2%)
+ZDBL2[5] 
+ZDBL2[5]    integers:    5    176 bytes (73.33%)
+ZDBL2[5]     strings:    1     44 bytes (18.33%)
+ZDBL2[5]    booleans:    0      0 bytes ( 0.00%)
+ZDBL2[5]     nvlists:    1     20 bytes ( 8.33%)
+ZDBL2[5] 
+ZDBL2[5] 
+ZDBL2[5] ------------------------------------
+ZDBL2[5] LABEL 3 
+ZDBL2[5] ------------------------------------
+ZDBL2[5]     state: 4
+ZDBL2[5]     guid: 573785173
+ZDBL2[5]     pool_guid: 287454020
+ZDBL2[5]     version: 5000
+ZDBL2[5]     txg: 1
+ZDBL2[5]     name: 'l2arc_fixture'
+ZDBL2[5]     labels = 0 1 2 3 
+ZDBL2[5] 
+ZDBL2[5] 
+ZDBL2[5] ZFS Label NVList Config Stats:
+ZDBL2[5]   240 bytes used, 114408 bytes free (using  0.2%)
+ZDBL2[5] 
+ZDBL2[5]    integers:    5    176 bytes (73.33%)
+ZDBL2[5]     strings:    1     44 bytes (18.33%)
+ZDBL2[5]    booleans:    0      0 bytes ( 0.00%)
+ZDBL2[5]     nvlists:    1     20 bytes ( 8.33%)
+ZDBL2[5] 
+ZDBL2[5] 
+ZDBL2[5] ------------------------------------
+ZDBL2[5] L2ARC device header
+ZDBL2[5] ------------------------------------
+ZDBL2[5]     magic: 6504978260106102853
+ZDBL2[5]     version: 1
+ZDBL2[5]     pool_guid: 287454020
+ZDBL2[5]     flags: 1
+ZDBL2[5]     start_lbps[0]: 4259840
+ZDBL2[5]     start_lbps[1]: 0
+ZDBL2[5]     log_blk_ent: 2
+ZDBL2[5]     start: 4194816
+ZDBL2[5]     end: 66584576
+ZDBL2[5]     evict: 4194816
+ZDBL2[5]     lb_asize_refcount: 65536
+ZDBL2[5]     lb_count_refcount: 1
+ZDBL2[5]     trim_action_time: 0
+ZDBL2[5]     trim_state: 0
+ZDBL2[5] 
+ZDBL2[5] ------------------------------------
+ZDBL2[5] L2ARC device log blocks
+ZDBL2[5] ------------------------------------
+ZDBL2[5] Invalid cksum
+ZDBL2[5] |		daddr: 4259840
+ZDBL2[5] |		payload_asize: 8192
+ZDBL2[5] |		payload_start: 4194816
+ZDBL2[5] |		lsize: 65536
+ZDBL2[5] |		asize: 65536
+ZDBL2[5] |		compralgo: 2
+ZDBL2[5] |		cksumalgo: 7
+ZDBL2[5] |
+ZDBL2[5] 
+ZDBL2[5] log_blk_count:	 0 with valid cksum
+ZDBL2[5] 		 1 with invalid cksum
+ZDBL2[5] log_blk_asize:	 0
+ZDBL2[5] 
+RESULT native zdb l2arc pass=6 exit=0
+ZDBL2[6] ------------------------------------
+ZDBL2[6] LABEL 0 
+ZDBL2[6] ------------------------------------
+ZDBL2[6]     state: 4
+ZDBL2[6]     guid: 573785173
+ZDBL2[6]     pool_guid: 287454020
+ZDBL2[6]     version: 5000
+ZDBL2[6]     txg: 1
+ZDBL2[6]     name: 'l2arc_fixture'
+ZDBL2[6]     labels = 0 1 2 3 
+ZDBL2[6] 
+ZDBL2[6] 
+ZDBL2[6] ZFS Label NVList Config Stats:
+ZDBL2[6]   240 bytes used, 114408 bytes free (using  0.2%)
+ZDBL2[6] 
+ZDBL2[6]    integers:    5    176 bytes (73.33%)
+ZDBL2[6]     strings:    1     44 bytes (18.33%)
+ZDBL2[6]    booleans:    0      0 bytes ( 0.00%)
+ZDBL2[6]     nvlists:    1     20 bytes ( 8.33%)
+ZDBL2[6] 
+ZDBL2[6] 
+ZDBL2[6] ------------------------------------
+ZDBL2[6] LABEL 1 
+ZDBL2[6] ------------------------------------
+ZDBL2[6]     state: 4
+ZDBL2[6]     guid: 573785173
+ZDBL2[6]     pool_guid: 287454020
+ZDBL2[6]     version: 5000
+ZDBL2[6]     txg: 1
+ZDBL2[6]     name: 'l2arc_fixture'
+ZDBL2[6]     labels = 0 1 2 3 
+ZDBL2[6] 
+ZDBL2[6] 
+ZDBL2[6] ZFS Label NVList Config Stats:
+ZDBL2[6]   240 bytes used, 114408 bytes free (using  0.2%)
+ZDBL2[6] 
+ZDBL2[6]    integers:    5    176 bytes (73.33%)
+ZDBL2[6]     strings:    1     44 bytes (18.33%)
+ZDBL2[6]    booleans:    0      0 bytes ( 0.00%)
+ZDBL2[6]     nvlists:    1     20 bytes ( 8.33%)
+ZDBL2[6] 
+ZDBL2[6] 
+ZDBL2[6] ------------------------------------
+ZDBL2[6] LABEL 2 
+ZDBL2[6] ------------------------------------
+ZDBL2[6]     state: 4
+ZDBL2[6]     guid: 573785173
+ZDBL2[6]     pool_guid: 287454020
+ZDBL2[6]     version: 5000
+ZDBL2[6]     txg: 1
+ZDBL2[6]     name: 'l2arc_fixture'
+ZDBL2[6]     labels = 0 1 2 3 
+ZDBL2[6] 
+ZDBL2[6] 
+ZDBL2[6] ZFS Label NVList Config Stats:
+ZDBL2[6]   240 bytes used, 114408 bytes free (using  0.2%)
+ZDBL2[6] 
+ZDBL2[6]    integers:    5    176 bytes (73.33%)
+ZDBL2[6]     strings:    1     44 bytes (18.33%)
+ZDBL2[6]    booleans:    0      0 bytes ( 0.00%)
+ZDBL2[6]     nvlists:    1     20 bytes ( 8.33%)
+ZDBL2[6] 
+ZDBL2[6] 
+ZDBL2[6] ------------------------------------
+ZDBL2[6] LABEL 3 
+ZDBL2[6] ------------------------------------
+ZDBL2[6]     state: 4
+ZDBL2[6]     guid: 573785173
+ZDBL2[6]     pool_guid: 287454020
+ZDBL2[6]     version: 5000
+ZDBL2[6]     txg: 1
+ZDBL2[6]     name: 'l2arc_fixture'
+ZDBL2[6]     labels = 0 1 2 3 
+ZDBL2[6] 
+ZDBL2[6] 
+ZDBL2[6] ZFS Label NVList Config Stats:
+ZDBL2[6]   240 bytes used, 114408 bytes free (using  0.2%)
+ZDBL2[6] 
+ZDBL2[6]    integers:    5    176 bytes (73.33%)
+ZDBL2[6]     strings:    1     44 bytes (18.33%)
+ZDBL2[6]    booleans:    0      0 bytes ( 0.00%)
+ZDBL2[6]     nvlists:    1     20 bytes ( 8.33%)
+ZDBL2[6] 
+ZDBL2[6] 
+ZDBL2[6] ------------------------------------
+ZDBL2[6] L2ARC device header
+ZDBL2[6] ------------------------------------
+ZDBL2[6]     magic: 6504978260106102853
+ZDBL2[6]     version: 1
+ZDBL2[6]     pool_guid: 287454020
+ZDBL2[6]     flags: 1
+ZDBL2[6]     start_lbps[0]: 4259840
+ZDBL2[6]     start_lbps[1]: 0
+ZDBL2[6]     log_blk_ent: 2
+ZDBL2[6]     start: 4194816
+ZDBL2[6]     end: 66584576
+ZDBL2[6]     evict: 4194816
+ZDBL2[6]     lb_asize_refcount: 65536
+ZDBL2[6]     lb_count_refcount: 1
+ZDBL2[6]     trim_action_time: 0
+ZDBL2[6]     trim_state: 0
+ZDBL2[6] 
+ZDBL2[6] ------------------------------------
+ZDBL2[6] L2ARC device log blocks
+ZDBL2[6] ------------------------------------
+ZDBL2[6] lb[   1]	magic: 5498692020116080708
+ZDBL2[6] |		daddr: 4259840
+ZDBL2[6] |		payload_asize: 8192
+ZDBL2[6] |		payload_start: 4194816
+ZDBL2[6] |		lsize: 65536
+ZDBL2[6] |		asize: 65536
+ZDBL2[6] |		compralgo: 2
+ZDBL2[6] |		cksumalgo: 7
+ZDBL2[6] |
+ZDBL2[6] 
+ZDBL2[6] lb[   1]	le[   1]	DVA asize: 4096, vdev: 0, offset: 16384
+ZDBL2[6] |				birth: 42
+ZDBL2[6] |				lsize: 4096
+ZDBL2[6] |				psize: 4096
+ZDBL2[6] |				compr: 2
+ZDBL2[6] |				complevel: 0
+ZDBL2[6] |				type: 0
+ZDBL2[6] |				protected: 0
+ZDBL2[6] |				prefetch: 0
+ZDBL2[6] |				address: 4194816
+ZDBL2[6] |				ARC state: 1
+ZDBL2[6] |
+ZDBL2[6] lb[   1]	le[   2]	DVA asize: 4096, vdev: 0, offset: 20480
+ZDBL2[6] |				birth: 43
+ZDBL2[6] |				lsize: 4096
+ZDBL2[6] |				psize: 4096
+ZDBL2[6] |				compr: 2
+ZDBL2[6] |				complevel: 0
+ZDBL2[6] |				type: 0
+ZDBL2[6] |				protected: 0
+ZDBL2[6] |				prefetch: 0
+ZDBL2[6] |				address: 4198912
+ZDBL2[6] |				ARC state: 1
+ZDBL2[6] |
+ZDBL2[6] 
+ZDBL2[6] log_blk_count:	 1 with valid cksum
+ZDBL2[6] 		 0 with invalid cksum
+ZDBL2[6] log_blk_asize:	 65536
+ZDBL2[6] 
+RESULT native zdb l2arc pass=7 exit=1
+ZDBL2[7] ------------------------------------
+ZDBL2[7] LABEL 0 
+ZDBL2[7] ------------------------------------
+ZDBL2[7]     state: 4
+ZDBL2[7]     guid: 573785173
+ZDBL2[7]     pool_guid: 287454020
+ZDBL2[7]     version: 5000
+ZDBL2[7]     txg: 1
+ZDBL2[7]     name: 'l2arc_fixture'
+ZDBL2[7]     labels = 0 1 2 3 
+ZDBL2[7] 
+ZDBL2[7] 
+ZDBL2[7] ZFS Label NVList Config Stats:
+ZDBL2[7]   240 bytes used, 114408 bytes free (using  0.2%)
+ZDBL2[7] 
+ZDBL2[7]    integers:    5    176 bytes (73.33%)
+ZDBL2[7]     strings:    1     44 bytes (18.33%)
+ZDBL2[7]    booleans:    0      0 bytes ( 0.00%)
+ZDBL2[7]     nvlists:    1     20 bytes ( 8.33%)
+ZDBL2[7] 
+ZDBL2[7] 
+ZDBL2[7] ------------------------------------
+ZDBL2[7] LABEL 1 
+ZDBL2[7] ------------------------------------
+ZDBL2[7]     state: 4
+ZDBL2[7]     guid: 573785173
+ZDBL2[7]     pool_guid: 287454020
+ZDBL2[7]     version: 5000
+ZDBL2[7]     txg: 1
+ZDBL2[7]     name: 'l2arc_fixture'
+ZDBL2[7]     labels = 0 1 2 3 
+ZDBL2[7] 
+ZDBL2[7] 
+ZDBL2[7] ZFS Label NVList Config Stats:
+ZDBL2[7]   240 bytes used, 114408 bytes free (using  0.2%)
+ZDBL2[7] 
+ZDBL2[7]    integers:    5    176 bytes (73.33%)
+ZDBL2[7]     strings:    1     44 bytes (18.33%)
+ZDBL2[7]    booleans:    0      0 bytes ( 0.00%)
+ZDBL2[7]     nvlists:    1     20 bytes ( 8.33%)
+ZDBL2[7] 
+ZDBL2[7] 
+ZDBL2[7] ------------------------------------
+ZDBL2[7] LABEL 2 
+ZDBL2[7] ------------------------------------
+ZDBL2[7]     state: 4
+ZDBL2[7]     guid: 573785173
+ZDBL2[7]     pool_guid: 287454020
+ZDBL2[7]     version: 5000
+ZDBL2[7]     txg: 1
+ZDBL2[7]     name: 'l2arc_fixture'
+ZDBL2[7]     labels = 0 1 2 3 
+ZDBL2[7] 
+ZDBL2[7] 
+ZDBL2[7] ZFS Label NVList Config Stats:
+ZDBL2[7]   240 bytes used, 114408 bytes free (using  0.2%)
+ZDBL2[7] 
+ZDBL2[7]    integers:    5    176 bytes (73.33%)
+ZDBL2[7]     strings:    1     44 bytes (18.33%)
+ZDBL2[7]    booleans:    0      0 bytes ( 0.00%)
+ZDBL2[7]     nvlists:    1     20 bytes ( 8.33%)
+ZDBL2[7] 
+ZDBL2[7] 
+ZDBL2[7] ------------------------------------
+ZDBL2[7] LABEL 3 
+ZDBL2[7] ------------------------------------
+ZDBL2[7]     state: 4
+ZDBL2[7]     guid: 573785173
+ZDBL2[7]     pool_guid: 287454020
+ZDBL2[7]     version: 5000
+ZDBL2[7]     txg: 1
+ZDBL2[7]     name: 'l2arc_fixture'
+ZDBL2[7]     labels = 0 1 2 3 
+ZDBL2[7] 
+ZDBL2[7] 
+ZDBL2[7] ZFS Label NVList Config Stats:
+ZDBL2[7]   240 bytes used, 114408 bytes free (using  0.2%)
+ZDBL2[7] 
+ZDBL2[7]    integers:    5    176 bytes (73.33%)
+ZDBL2[7]     strings:    1     44 bytes (18.33%)
+ZDBL2[7]    booleans:    0      0 bytes ( 0.00%)
+ZDBL2[7]     nvlists:    1     20 bytes ( 8.33%)
+ZDBL2[7] 
+ZDBL2[7] 
+ZDBL2[7] Invalid L2ARC log entry count: 1023
+RESULT native zdb l2arc pass=8 exit=1
+ZDBL2[8] ------------------------------------
+ZDBL2[8] LABEL 0 
+ZDBL2[8] ------------------------------------
+ZDBL2[8]     state: 4
+ZDBL2[8]     guid: 573785173
+ZDBL2[8]     pool_guid: 287454020
+ZDBL2[8]     version: 5000
+ZDBL2[8]     txg: 1
+ZDBL2[8]     name: 'l2arc_fixture'
+ZDBL2[8]     labels = 0 1 2 3 
+ZDBL2[8] 
+ZDBL2[8] 
+ZDBL2[8] ZFS Label NVList Config Stats:
+ZDBL2[8]   240 bytes used, 114408 bytes free (using  0.2%)
+ZDBL2[8] 
+ZDBL2[8]    integers:    5    176 bytes (73.33%)
+ZDBL2[8]     strings:    1     44 bytes (18.33%)
+ZDBL2[8]    booleans:    0      0 bytes ( 0.00%)
+ZDBL2[8]     nvlists:    1     20 bytes ( 8.33%)
+ZDBL2[8] 
+ZDBL2[8] 
+ZDBL2[8] ------------------------------------
+ZDBL2[8] LABEL 1 
+ZDBL2[8] ------------------------------------
+ZDBL2[8]     state: 4
+ZDBL2[8]     guid: 573785173
+ZDBL2[8]     pool_guid: 287454020
+ZDBL2[8]     version: 5000
+ZDBL2[8]     txg: 1
+ZDBL2[8]     name: 'l2arc_fixture'
+ZDBL2[8]     labels = 0 1 2 3 
+ZDBL2[8] 
+ZDBL2[8] 
+ZDBL2[8] ZFS Label NVList Config Stats:
+ZDBL2[8]   240 bytes used, 114408 bytes free (using  0.2%)
+ZDBL2[8] 
+ZDBL2[8]    integers:    5    176 bytes (73.33%)
+ZDBL2[8]     strings:    1     44 bytes (18.33%)
+ZDBL2[8]    booleans:    0      0 bytes ( 0.00%)
+ZDBL2[8]     nvlists:    1     20 bytes ( 8.33%)
+ZDBL2[8] 
+ZDBL2[8] 
+ZDBL2[8] ------------------------------------
+ZDBL2[8] LABEL 2 
+ZDBL2[8] ------------------------------------
+ZDBL2[8]     state: 4
+ZDBL2[8]     guid: 573785173
+ZDBL2[8]     pool_guid: 287454020
+ZDBL2[8]     version: 5000
+ZDBL2[8]     txg: 1
+ZDBL2[8]     name: 'l2arc_fixture'
+ZDBL2[8]     labels = 0 1 2 3 
+ZDBL2[8] 
+ZDBL2[8] 
+ZDBL2[8] ZFS Label NVList Config Stats:
+ZDBL2[8]   240 bytes used, 114408 bytes free (using  0.2%)
+ZDBL2[8] 
+ZDBL2[8]    integers:    5    176 bytes (73.33%)
+ZDBL2[8]     strings:    1     44 bytes (18.33%)
+ZDBL2[8]    booleans:    0      0 bytes ( 0.00%)
+ZDBL2[8]     nvlists:    1     20 bytes ( 8.33%)
+ZDBL2[8] 
+ZDBL2[8] 
+ZDBL2[8] ------------------------------------
+ZDBL2[8] LABEL 3 
+ZDBL2[8] ------------------------------------
+ZDBL2[8]     state: 4
+ZDBL2[8]     guid: 573785173
+ZDBL2[8]     pool_guid: 287454020
+ZDBL2[8]     version: 5000
+ZDBL2[8]     txg: 1
+ZDBL2[8]     name: 'l2arc_fixture'
+ZDBL2[8]     labels = 0 1 2 3 
+ZDBL2[8] 
+ZDBL2[8] 
+ZDBL2[8] ZFS Label NVList Config Stats:
+ZDBL2[8]   240 bytes used, 114408 bytes free (using  0.2%)
+ZDBL2[8] 
+ZDBL2[8]    integers:    5    176 bytes (73.33%)
+ZDBL2[8]     strings:    1     44 bytes (18.33%)
+ZDBL2[8]    booleans:    0      0 bytes ( 0.00%)
+ZDBL2[8]     nvlists:    1     20 bytes ( 8.33%)
+ZDBL2[8] 
+ZDBL2[8] 
+ZDBL2[8] Invalid L2ARC log entry count: 18446744073709551615
+RESULT native zdb l2arc pass=9 exit=0
+ZDBL2[9] ------------------------------------
+ZDBL2[9] LABEL 0 
+ZDBL2[9] ------------------------------------
+ZDBL2[9]     state: 4
+ZDBL2[9]     guid: 573785173
+ZDBL2[9]     pool_guid: 287454020
+ZDBL2[9]     version: 5000
+ZDBL2[9]     txg: 1
+ZDBL2[9]     name: 'l2arc_fixture'
+ZDBL2[9]     labels = 0 1 2 3 
+ZDBL2[9] ------------------------------------
+ZDBL2[9] L2ARC device header
+ZDBL2[9] ------------------------------------
+ZDBL2[9]     magic: 6504978260106102853
+ZDBL2[9]     version: 1
+ZDBL2[9]     pool_guid: 287454020
+ZDBL2[9]     flags: 0
+ZDBL2[9]     start_lbps[0]: 0
+ZDBL2[9]     start_lbps[1]: 0
+ZDBL2[9]     log_blk_ent: 0
+ZDBL2[9]     start: 4194816
+ZDBL2[9]     end: 66584576
+ZDBL2[9]     evict: 4194816
+ZDBL2[9]     lb_asize_refcount: 0
+ZDBL2[9]     lb_count_refcount: 0
+ZDBL2[9]     trim_action_time: 0
+ZDBL2[9]     trim_state: 0
+ZDBL2[9] 
+ZDBL2[9] ------------------------------------
+ZDBL2[9] L2ARC device log blocks
+ZDBL2[9] ------------------------------------
+ZDBL2[9] No log blocks to read
+ZDBL2[9] 
+RESULT native zdb l2arc PASS headers=3 storage=private-hosted
+RESULT native zdb l2arc PASS logs=4 endian=2 corrupt=1 recovery=1
+RESULT native zdb l2arc PASS bounds=2 recovery=1
+RESULT native zdb labels PASS runs=2 storage=private-hosted
