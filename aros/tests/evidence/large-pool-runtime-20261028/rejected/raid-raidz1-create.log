@@ -1,0 +1,19 @@
+Disposable native pool directory: /SYS/OpenZFS-test-f9a0638d
+file /SYS/OpenZFS-test-f9a0638d/disk0 truncate=0 stat=0 size=8589934592
+file /SYS/OpenZFS-test-f9a0638d/disk1 truncate=0 stat=0 size=8589934592
+file /SYS/OpenZFS-test-f9a0638d/disk2 truncate=0 stat=0 size=8589934592
+Starting upstream read/write engine, explicit test hostid=0xf9a0638d
+Creating upstream raidz1 aros_raidz1_f9a0638d
+spa_create=0
+spa_open=0
+native pool guid=2608190054497928612
+dataset payload write=0 object=1 bytes=16384
+real ZPL fixture creation=0
+spa_export=0
+Exported upstream XDR configuration: /SYS/OpenZFS-test-f9a0638d/export.nvlist
+Reinitializing read-only engine for on-disk import
+spa_import=0
+dataset payload read/compare=0 bytes=16384
+read-only export refusal=30 expected=30
+RESULT native raidz1 data roundtrip PASS
+RESULT native raidz1 create/open/export PASS

@@ -1,0 +1,21 @@
+Disposable native pool directory: /SYS/OpenZFS-test-88ec4304
+file /SYS/OpenZFS-test-88ec4304/disk0 truncate=0 stat=0 size=14293651161088
+file /SYS/OpenZFS-test-88ec4304/disk1 truncate=0 stat=0 size=14293651161088
+file /SYS/OpenZFS-test-88ec4304/disk2 truncate=0 stat=0 size=14293651161088
+file /SYS/OpenZFS-test-88ec4304/disk3 truncate=0 stat=0 size=14293651161088
+file /SYS/OpenZFS-test-88ec4304/disk4 truncate=0 stat=0 size=14293651161088
+Starting upstream read/write engine, explicit test hostid=0x88ec4304
+Creating upstream raidz1 aros_raidz1_88ec4304
+spa_create=0
+spa_open=0
+native pool guid=6573047104160249170
+dataset payload write=0 object=1 bytes=16384
+real ZPL fixture creation=0
+spa_export=0
+Exported upstream XDR configuration: /SYS/OpenZFS-test-88ec4304/export.nvlist
+Reinitializing read-only engine for on-disk import
+spa_import=0
+dataset payload read/compare=0 bytes=16384
+read-only export refusal=30 expected=30
+RESULT native raidz1 data roundtrip PASS
+RESULT native raidz1 create/open/export PASS

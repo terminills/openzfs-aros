@@ -1,0 +1,6 @@
+pool-binary=/mnt/short-term/openzfs-old-build-aros-20261027/hosted-large-pools.rquSqHhV/C/OpenZFSPoolTest
+reader=/mnt/short-term/openzfs-old-build-aros-20261027/hosted-large-pools.rquSqHhV/C/OpenZFSRAIDReadTest
+runtime-template=/mnt/short-term/openzfs-old-hosted-20261026/hosted
+host-zdb=/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/host-zdb-overlay.a4R8NlmV/zdb
+host-library-path=/home/terminills/Documents/GitHub/openzfs-aros/build-control/.libs:/home/terminills/Documents/GitHub/openzfs-aros/build-control/deps/usr/lib/x86_64-linux-gnu
+array50=1

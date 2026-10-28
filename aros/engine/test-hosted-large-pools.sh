@@ -1,14 +1,19 @@
 #!/usr/bin/env bash
 # Private hosted pool creation only; never operates an existing AROS instance.
 set -euo pipefail
-repo=$(cd -- "$(dirname -- "$0")/../.." && pwd)
+repo=${AROS_LARGE_POOL_SOURCE_ROOT:-$(cd -- "$(dirname -- "$0")/../.." && pwd)}
 cd "$repo"
+source "$repo/aros/engine/storage-preflight.sh"
+artifact_root=$(oz_artifact_root "$repo" "${AROS_ARTIFACT_ROOT:-}")
+runtime=$(realpath -e "${AROS_TEST_HOSTED_RUNTIME:?explicit isolated runtime template required}")
+host_zdb=$(realpath -e "${AROS_TEST_HOST_ZDB:?explicit independent host zdb required}")
+host_libs=${AROS_TEST_HOST_ZDB_LIBRARY_PATH:?explicit host zdb library path required}
 # Bash reads long-running scripts incrementally. Execute an immutable private
 # snapshot so later development edits cannot change an active test's tail.
 if [[ ${AROS_LARGE_POOL_RUNNER_SNAPSHOT:-} != "$0" ]];then
-    snapshot=$(mktemp -d "$repo/build-aros/large-pool-runner.XXXXXXXX")
+    snapshot=$(mktemp -d "$artifact_root/large-pool-runner.XXXXXXXX")
     cp "$0" "$snapshot/run.sh"
-    exec env AROS_LARGE_POOL_RUNNER_SNAPSHOT="$snapshot/run.sh" bash "$snapshot/run.sh"
+    exec env AROS_LARGE_POOL_SOURCE_ROOT="$repo" AROS_LARGE_POOL_RUNNER_SNAPSHOT="$snapshot/run.sh" bash "$snapshot/run.sh"
 fi
 binary=$(realpath -e "${AROS_TEST_POOL_BINARY:?explicit pool test binary required}")
 dos64=$(realpath -e "${AROS_TEST_DOS64_LIBRARY:?qualified DOS64 library required}")
@@ -34,12 +39,20 @@ if [[ $array50 == 1 ]];then
     topologies=(raidz1);member_bytes=14293651161088
 fi
 if [[ -n $reader ]];then reader=$(realpath -e "$reader");fi
-run=$(mktemp -d "$repo/build-aros/hosted-large-pools.XXXXXXXX")
+run=$(mktemp -d "$artifact_root/hosted-large-pools.XXXXXXXX")
 echo "Evidence: $run"
+printf 'pool-binary=%s\nreader=%s\nruntime-template=%s\nhost-zdb=%s\nhost-library-path=%s\narray50=%s\n' \
+    "$binary" "$reader" "$runtime" "$host_zdb" "$host_libs" "$array50" >"$run/selected-inputs.txt"
 for dir in boot C Classes Devs Fonts L Libs Locale Prefs S System;do
-    cp -a --reflink=auto "build-aros/hosted/$dir" "$run/$dir"
+    cp -aL --reflink=auto "$runtime/$dir" "$run/$dir"
 done
-cp build-aros/hosted/AROS.boot "$run/AROS.boot"
+cp "$runtime/AROS.boot" "$run/AROS.boot"
+for spec in POSIX:posixc STDC:stdc STDCIO:stdcio DOS:dos;do
+    variable="AROS_TEST_${spec%%:*}_LIBRARY"
+    if [[ -n ${!variable:-} ]];then
+        cp -- "$(realpath -e "${!variable}")" "$run/Libs/${spec#*:}.library"
+    fi
+done
 if [[ -n $diskinfo ]];then cp "$diskinfo" "$run/System/Wanderer/Tools/DiskInfo";fi
 cp "$binary" "$run/C/OpenZFSPoolTest"
 if [[ -n $reader ]];then
@@ -65,7 +78,8 @@ git diff --binary >"$run/source.patch"
 sed "s|^logfile .*|logfile $run/serial.log|" aros/engine/hosted.conf >"$run/hosted.conf"
 sha256sum "$run/C/OpenZFSPoolTest" "$run/Libs/dos64.library" \
     "$run/Libs/posixc.library" "$run/Libs/dos.library" \
-    "$run/boot/linux/L/emul-handler" "$repo/build-control/zdb" >"$run/inputs.sha256"
+    "$run/Libs/stdc.library" "$run/Libs/stdcio.library" \
+    "$run/boot/linux/L/emul-handler" "$host_zdb" >"$run/inputs.sha256"
 if [[ -n $reader ]];then sha256sum "$run/C/OpenZFSRAIDReadTest" >>"$run/inputs.sha256";fi
 if [[ $array50 == 1 ]];then sha256sum "$run/sparse-digest.py" >>"$run/inputs.sha256";fi
 if [[ -n $diskinfo ]];then sha256sum "$run/System/Wanderer/Tools/DiskInfo" >>"$run/inputs.sha256";fi
@@ -112,11 +126,19 @@ for topology in "${topologies[@]}";do
     expected=2
     case "$topology" in raidz1) expected=3;; raidz2) expected=4;; raidz3) expected=5;; esac
     if [[ $array50 == 1 ]];then expected=5;fi
-    [[ ${#members[@]} == "$expected" ]]
-    for member in "${members[@]}";do [[ -f $member && $(stat -c %s "$member") == "$member_bytes" ]];done
+    if [[ ${#members[@]} != "$expected" ]];then
+        echo "FAIL: $topology fixture has ${#members[@]} members; expected $expected (array50=$array50)" >&2
+        exit 1
+    fi
+    for member in "${members[@]}";do
+        if [[ ! -f $member || $(stat -c %s "$member") != "$member_bytes" ]];then
+            echo "FAIL: fixture member $member must have $member_bytes bytes" >&2
+            exit 1
+        fi
+    done
     all_members+=("${members[@]}")
-    LD_LIBRARY_PATH="$repo/build-control/.libs:$repo/build-control/deps/usr/lib/x86_64-linux-gnu" \
-        "$repo/build-control/zdb" -e -p "$run/${dir#/SYS/}" -bcc "$pool" >"$run/$topology-zdb.log" 2>&1
+    LD_LIBRARY_PATH="$host_libs" \
+        "$host_zdb" -e -p "$run/${dir#/SYS/}" -bcc "$pool" >"$run/$topology-zdb.log" 2>&1
     rg -q 'No leaks' "$run/$topology-zdb.log"
     printf '%s member-bytes=%s members=%s native roundtrip and independent zdb PASS\n' "$topology" "$member_bytes" "$expected" | tee -a "$run/results.txt"
 done

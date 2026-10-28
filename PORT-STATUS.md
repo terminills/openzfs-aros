@@ -2,6 +2,17 @@
 
 Experimental development snapshot; not production-qualified storage software.
 
+## Large-pool runtime requalification (2026-10-28)
+
+The source-built DOS64/POSIX/stdc/stdcio combination passes a retained 50-TB-class
+RAIDZ1 fixture in isolated hosted AROS, independent host zdb verification and a
+cold DOS-handler reader with unchanged sparse member digests. This requalifies
+the runtime combination using historical fixture executables, not the current
+engine source or native QEMU. The large-pool runner now uses explicit runtime
+and host-tool selection, external storage safeguards and complete CRT hashes.
+See `aros/tests/evidence/large-pool-runtime-20261028` for both the passing run
+and the rejected older fixture attempt.
+
 ## Source-rebuilt DOS64 dependency (2026-10-28)
 
 DOS64 now builds from a complete retained source inventory without cached module
