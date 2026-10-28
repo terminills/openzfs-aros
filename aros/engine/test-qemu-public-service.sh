@@ -532,6 +532,25 @@ xorriso -indev "$base" -outdev "$run/test.iso" \
     -map "$run/Startup-Sequence" /S/Startup-Sequence \
     -boot_image any discard -boot_image grub bin_path=/boot/grub/i386-pc/eltorito.img \
     -boot_image grub boot_info_table=on -boot_image grub grub2_boot_info=on >"$run/pack.log" 2>&1
+# Verify runtime bytes in the image, not just the intended xorriso maps.
+mkdir "$run/iso-runtime"
+runtime_specs=("$posix:posixc.library")
+if [[ -d $run/runtime-inputs ]];then
+    for selected_library in "$run/runtime-inputs/"*.library;do
+        runtime_specs+=("$selected_library:${selected_library##*/}")
+    done
+fi
+if [[ -n $shared ]];then
+    runtime_specs+=("$shared_library:openzfs.library")
+fi
+for spec in "${runtime_specs[@]}";do
+    selected_library=${spec%:*};name=${spec##*:}
+    xorriso -osirrox on -indev "$run/test.iso" \
+        -extract "/Libs/$name" "$run/iso-runtime/$name" \
+        >>"$run/iso-runtime-verify.log" 2>&1
+    cmp "$selected_library" "$run/iso-runtime/$name"
+    sha256sum "$run/iso-runtime/$name" >>"$run/iso-runtime.sha256"
+done
 "${launcher[@]}" "$qemu" -name "openzfs-public-service-$$" -machine pc,accel=kvm -cpu host -smp "$cpus" -m 2048 \
     "${trace_args[@]}" \
     -drive "file=$run/test.iso,media=cdrom,if=ide,index=2,readonly=on" \
