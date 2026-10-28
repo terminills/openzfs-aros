@@ -21,6 +21,7 @@
 #include "simple-pools.h"
 #include "simple-health.h"
 #include "report-save.h"
+#include "report-page.h"
 static struct oz_rate_history io_history;
 static struct oz_refresh io_refresh;
 static Object *auto_iostat;
@@ -60,6 +61,8 @@ static struct oz_message last_request;
 static struct oz_topology pool_layout,import_files,pool_add_layout;
 static UQUAD next_cursor;
 static char response_text[32768];
+static struct oz_report_page report_page={-1,-1,1};
+static unsigned report_page_number;
 static struct oz_client client;
 static struct oz_admission_worker *auth_worker;
 static struct oz_project_worker *projectworker;
@@ -121,7 +124,7 @@ static void save_preferences(int permanent) {
         permanent?"saved to ENVARC and ENV":"applied to ENV");
     set(status,MUIA_Text_Contents,line);logline(line);
 }
-static void show_response(const char *text) {
+static void render_response(const char *text) {
     static char copy[32768];char *line;snprintf(copy,sizeof(copy),"%s",text);
     snprintf(response_text,sizeof(response_text),"%s\n",text);
     DoMethod(output,MUIM_List_Clear);
@@ -137,6 +140,22 @@ static void show_response(const char *text) {
             line+=cut;while(*line==' ')line++;
         }
         DoMethod(output,MUIM_List_InsertSingle,(IPTR)line,MUIV_List_Insert_Bottom);line=strtok(NULL,"\n");}
+}
+static void show_response(const char *text) {
+    oz_report_page_close(&report_page);report_page_number=0;
+    render_response(text);
+}
+static void show_report_page(void) {
+    char text[4096],message[160];
+    int error=oz_report_page_next(&report_page,text,sizeof(text));
+    if(error)snprintf(message,sizeof(message),"Cannot read retained report (errno=%d); command was not rerun",error);
+    else {
+        render_response(text);++report_page_number;
+        snprintf(message,sizeof(message),"Retained report page %u%s; no command rerun",report_page_number,
+            report_page.eof?" (last)":"");
+    }
+    set(status,MUIA_Text_Contents,message);
+    set(next_page,MUIA_Disabled,report_page.eof);
 }
 static Object *options_label,*options_hint;
 static void update_execute_label(void) {
@@ -686,7 +705,9 @@ int main(int argc,char **argv) {
                 if(!strcmp(oz_operations[selected].label,"set"))set(argument,MUIA_String_Contents,pair);
                 else {char all[1024];const char *separator=oz_operations[selected].id==37?",":";";snprintf(all,sizeof(all),"%s%s%s",string(options),string(options)[0]?separator:"",pair);set(options,MUIA_String_Contents,all);}}
             break;}
-        case EV_NEXT:stop_auto_io();if(next_cursor&&!auth_worker){
+        case EV_NEXT:stop_auto_io();
+            if(report_page.fd>=0){show_report_page();break;}
+            if(next_cursor&&!auth_worker){
             last_request.cursor=next_cursor;
             if(last_request.operation==33||last_request.operation==79||last_request.operation==80||
                 (last_request.operation>=67&&last_request.operation<=69)) {
@@ -732,6 +753,13 @@ int main(int argc,char **argv) {
             if(!error){show_response(response.detail);logline(response.detail);set(status,MUIA_Text_Contents,
                 response.operation?oz_status(response.status):response.status==OZ_OK?
                 "Runtime prerequisites passed; storage health not tested":"Runtime check failed; see diagnostics (not a pool-health result)");
+                /* Only our joined local command worker can supply this path.
+                 * Never open a filename parsed from service text or rows. */
+                if(response.row_count==1&&!strcmp(response.rows[0].kind,"command-report")){
+                    int report_error=oz_report_page_open(&report_page,response.rows[0].name);
+                    next_cursor=0;set(next_page,MUIA_Disabled,report_error!=0);
+                    if(report_error)set(status,MUIA_Text_Contents,"Retained report could not be opened; command was not rerun");
+                }
                 if(response.operation==76&&response.status==OZ_OK){
                     auth_reply=AllocVec(sizeof(*auth_reply),MEMF_ANY);
                     if(auth_reply)*auth_reply=response;
@@ -936,6 +964,7 @@ int main(int argc,char **argv) {
         }
         Delay(1); /* yield to AROS; asynchronous replies never block Zune input */
     }
+    oz_report_page_close(&report_page);
     set(win,MUIA_Window_Open,FALSE);MUI_DisposeObject(app);oz_client_close(&client);
     puts("OpenZFS Manager closed; authenticated worker drained");fflush(stdout);return 0;
 }

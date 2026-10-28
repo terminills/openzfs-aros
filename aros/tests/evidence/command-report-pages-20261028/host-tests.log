@@ -1,0 +1,3 @@
+PASS report save: exact bytes, no overwrite, symlink refusal, private mode, empty and invalid inputs
+PASS report save faults: EINTR retry, short writes, ENOSPC, zero write, close failure, incomplete file retained
+PASS report pages: capacities=257 exact boundaries, long lines, empty, NUL refusal, missing file and closed descriptor

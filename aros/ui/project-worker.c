@@ -478,9 +478,16 @@ static int command_capture(struct oz_message *m,char **args)
         args[1]?"Upstream":"Runtime checker",args[0]+2,args[1]?args[1]:"",result.status,result.dos_error,error);
     for(int i=0;i<nlines&&used<sizeof(m->detail);i++)
         used+=snprintf(m->detail+used,sizeof(m->detail)-used,"%s\n",lines[i]);
-    if(retained)snprintf(m->detail+used,sizeof(m->detail)-used,
-        "Output exceeds the response window. Full output: %s\n"
-        "This temporary report is not persistent; copy it before reboot.\n",temporary);
+    if(retained){
+        /* Local worker metadata only, not a service-provided path to open.
+         * The Manager consumes this before rendering any remote replies. */
+        memset(&m->rows[0],0,sizeof(m->rows[0]));m->row_count=1;
+        strcpy(m->rows[0].kind,"command-report");
+        strcpy(m->rows[0].name,temporary);
+        snprintf(m->detail+used,sizeof(m->detail)-used,
+            "Output exceeds the response window. Full output: %s\n"
+            "Use Next page to read it. Temporary report: copy before reboot.\n",temporary);
+    }
     oz_cli_free_lines(lines,nlines);
     if(output&&!Close(output)&&!error)error=EIO;
     if(close(reserved)&&!error)error=errno;

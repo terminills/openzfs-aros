@@ -131,6 +131,13 @@ if [[ -n $service ]];then
         'Echo finished >SYS:security-finished.log' 'EndCLI' >"$run/S/Startup-Sequence"
 fi
 sha256sum "$run/Libs/security.library" "$run/boot/linux/kernel" "$run/C/OpenZFSSecurityTest" >"$run/inputs.sha256"
+if [[ -n ${AROS_TEST_COMMAND_REPORT_DIR:-} ]];then
+    for name in OpenZFSReportChild OpenZFSCommandReportTest;do
+        cp "$(realpath -e "$AROS_TEST_COMMAND_REPORT_DIR/$name")" "$run/C/$name"
+        sha256sum "$run/C/$name" >>"$run/inputs.sha256"
+    done
+    sed -i '/Echo finished/i C:OpenZFSCommandReportTest >SYS:command-report-test.log' "$run/S/Startup-Sequence"
+fi
 if [[ -n ${AROS_TEST_RUNTIME_CHECK:-} ]];then
     cp "$AROS_TEST_RUNTIME_CHECK" "$run/C/OpenZFSRuntimeCheck"
     if [[ -n ${AROS_TEST_EXEC_HELPER:-} ]];then
@@ -200,6 +207,11 @@ while [[ ! -f "$run/security-finished.log" ]];do
     sleep 1
 done
 cat "$run/security-test.log"
+if [[ -n ${AROS_TEST_COMMAND_REPORT_DIR:-} ]];then
+    cat "$run/command-report-test.log"
+    rg -q '^PASS native command reports cycles=3 exact-read=1 no-command-rerun=1$' "$run/command-report-test.log"
+    if rg -q '^FAIL' "$run/command-report-test.log";then exit 1;fi
+fi
 if [[ -n ${AROS_TEST_RUNTIME_CHECK:-} ]];then
     expected=${AROS_TEST_RUNTIME_EXPECT:-PASS}
     [[ $expected == PASS || $expected == FAIL ]]

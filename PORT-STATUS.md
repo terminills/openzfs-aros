@@ -2,6 +2,18 @@
 
 Experimental development snapshot; not production-qualified storage software.
 
+## Retained command-report pages (2026-10-28)
+
+Oversized locally captured command output is now readable through Manager's
+Next page control without rerunning the command. Actual upstream verbose pool
+events were captured and paged in isolated hosted AROS; snapshot creation and
+the subsequent cold-import suite still passed. A native fixture independently
+checks all 131085 bytes of a failed command's report over 33 pages, three times.
+Only joined local-worker metadata can open a retained report; service text and
+rows are not treated as file-access instructions. Paging is byte-based; full
+report export and backward navigation are not implemented by this change.
+See `aros/tests/evidence/command-report-pages-20261028`.
+
 ## Retained stdc source and runtime packaging (2026-10-28)
 
 The runtime snapshot builder now rebuilds all 518 selected stdc objects,
