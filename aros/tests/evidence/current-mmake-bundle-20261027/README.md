@@ -38,3 +38,9 @@ Sources/AFS produced byte-identical `afs-handler` in `fat-replay.pyvck03e`.
 SDK headers/link archives remain explicit external prerequisites. The platform
 overlays are separate integration inputs, not automatic installation changes.
 Hardware power-loss behavior and stock SDK/runtime closure remain unproven.
+
+The shipped Sources/PosixC replay also reproduced the tested library exactly
+in `fat-replay.ztf1ijnl`. The sealed archive is
+`build-audit/mmake-bundle.utejexbb.tar.xz` (about 6.1 MiB); its hash is retained
+here. Archive verification streams every regular member against SHA256SUMS
+and rejects missing/extra members, without extracting a new runtime image.
