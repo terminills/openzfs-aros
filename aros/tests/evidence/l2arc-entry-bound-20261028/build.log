@@ -1,0 +1,30 @@
+/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/host-zdb-overlay.a4R8NlmV/zdb.c: In function ‘verify_livelist_allocs’:
+/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/host-zdb-overlay.a4R8NlmV/zdb.c:410:9: warning: missing initializer for field ‘svb_allocated_txg’ of ‘sublivelist_verify_block_t’ {aka ‘struct sublivelist_verify_block’} [-Wmissing-field-initializers]
+  410 |         sublivelist_verify_block_t svb = {{{0}}};
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~
+In file included from /mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/host-zdb-overlay.a4R8NlmV/zdb.c:97:
+/mnt/short-term/openzfs-bootenv-candidate-20261025/include/libzdb.h:64:18: note: ‘svb_allocated_txg’ declared here
+   64 |         uint64_t svb_allocated_txg;
+      |                  ^~~~~~~~~~~~~~~~~
+/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/host-zdb-overlay.a4R8NlmV/zdb.c: In function ‘dump_label’:
+/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/host-zdb-overlay.a4R8NlmV/zdb.c:5494:9: warning: missing initializer for field ‘vl_be’ of ‘vdev_label_t’ {aka ‘struct vdev_label’} [-Wmissing-field-initializers]
+ 5494 |         zdb_label_t labels[VDEV_LABELS] = {{{{0}}}};
+      |         ^~~~~~~~~~~
+In file included from /mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/host-zdb-overlay.a4R8NlmV/zdb.c:60:
+/mnt/short-term/openzfs-bootenv-candidate-20261025/include/sys/vdev_impl.h:537:33: note: ‘vl_be’ declared here
+  537 |         vdev_boot_envblock_t    vl_be;                          /*  8K */
+      |                                 ^~~~~
+/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/host-zdb-overlay.a4R8NlmV/zdb.c:5494:9: warning: missing initializer for field ‘label_offset’ of ‘zdb_label_t’ {aka ‘struct zdb_label’} [-Wmissing-field-initializers]
+ 5494 |         zdb_label_t labels[VDEV_LABELS] = {{{{0}}}};
+      |         ^~~~~~~~~~~
+/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/host-zdb-overlay.a4R8NlmV/zdb.c:4827:18: note: ‘label_offset’ declared here
+ 4827 |         uint64_t label_offset;
+      |                  ^~~~~~~~~~~~
+/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/host-zdb-overlay.a4R8NlmV/zdb.c: In function ‘zdb_embedded_block’:
+/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/host-zdb-overlay.a4R8NlmV/zdb.c:9475:9: warning: missing initializer for field ‘blk_prop’ of ‘blkptr_t’ {aka ‘struct blkptr’} [-Wmissing-field-initializers]
+ 9475 |         blkptr_t bp = {{{{0}}}};
+      |         ^~~~~~~~
+In file included from /mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/host-zdb-overlay.a4R8NlmV/zdb.c:49:
+/mnt/short-term/openzfs-bootenv-candidate-20261025/include/sys/spa.h:376:25: note: ‘blk_prop’ declared here
+  376 |         uint64_t        blk_prop;       /* size, compression, type, etc     */
+      |                         ^~~~~~~~

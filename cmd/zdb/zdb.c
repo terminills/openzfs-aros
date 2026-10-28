@@ -5064,7 +5064,17 @@ dump_l2arc_header(zdb_label_reader_t *reader)
 		(void) printf("L2ARC device header not found\n\n");
 		/* Do not return an error here for backward compatibility */
 		return (0);
-	} else if (!dump_opt['q']) {
+	}
+	/*
+	 * The header is untrusted, and dump_l2arc_log_entries() indexes a
+	 * fixed-size lb_entries array using this count. Validate even when
+	 * verbosity would otherwise hide the entries. */
+	if (l2dhdr.dh_log_entries > L2ARC_LOG_BLK_MAX_ENTRIES) {
+		(void) printf("Invalid L2ARC log entry count: %llu\n",
+		    (u_longlong_t)l2dhdr.dh_log_entries);
+		return (1);
+	}
+	if (!dump_opt['q']) {
 		print_l2arc_header();
 
 		(void) printf("    magic: %llu\n",

@@ -2,6 +2,15 @@
 
 Experimental development snapshot; not production-qualified storage software.
 
+## L2ARC debugger bounds (2026-10-28)
+
+The debugger now rejects on-disk log-entry counts exceeding its fixed array
+before traversal. A private host candidate passes 16 valid/boundary/malformed
+invocations across both byte orders and verbosity levels. The changed AROS
+shared library and debugger link through MetaMake, but are not yet native
+runtime-qualified. Existing bundle qualification still names the prior binary.
+See `aros/tests/evidence/l2arc-entry-bound-20261028`.
+
 ## Native zdb build audit (2026-10-27)
 
 All three upstream `zdb`/`libzdb` translation units now cross-compile against

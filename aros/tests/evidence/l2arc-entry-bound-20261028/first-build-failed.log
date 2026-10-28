@@ -1,0 +1,9 @@
+In file included from <command-line>:
+/home/terminills/Documents/GitHub/openzfs-aros/build-control/zfs_config.h:894:9: warning: ‘ZFS_META_ALIAS’ redefined
+  894 | #define ZFS_META_ALIAS "zfs-2.4.4-1"
+      |         ^~~~~~~~~~~~~~
+<command-line>: note: this is the location of the previous definition
+/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/host-zdb-overlay.JXiS4hXI/zdb.c:106:10: fatal error: zdb_label_io.h: No such file or directory
+  106 | #include "zdb_label_io.h"
+      |          ^~~~~~~~~~~~~~~~
+compilation terminated.

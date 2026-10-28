@@ -1,0 +1,11 @@
+------------------------------------
+LABEL 0 
+------------------------------------
+    state: 4
+    guid: 573785173
+    pool_guid: 287454020
+    version: 5000
+    txg: 1
+    name: 'l2arc_fixture'
+    labels = 0 1 2 3 
+Invalid L2ARC log entry count: 1023

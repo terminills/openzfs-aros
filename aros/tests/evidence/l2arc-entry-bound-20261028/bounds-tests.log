@@ -1,0 +1,17 @@
+PASS log-little entries=2 -l exit=0
+PASS log-little entries=2 -lll exit=0
+PASS log-little entries=1022 -l exit=0
+PASS log-little entries=1022 -lll exit=0
+PASS log-little entries=1023 -l exit=1
+PASS log-little entries=1023 -lll exit=1
+PASS log-little entries=18446744073709551615 -l exit=1
+PASS log-little entries=18446744073709551615 -lll exit=1
+PASS log-big entries=2 -l exit=0
+PASS log-big entries=2 -lll exit=0
+PASS log-big entries=1022 -l exit=0
+PASS log-big entries=1022 -lll exit=0
+PASS log-big entries=1023 -l exit=1
+PASS log-big entries=1023 -lll exit=1
+PASS log-big entries=18446744073709551615 -l exit=1
+PASS log-big entries=18446744073709551615 -lll exit=1
+PASS 16 real host debugger invocations; native runtime still required

@@ -1,0 +1,9 @@
+/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/host-zdb-overlay.a4R8NlmV/zdb.c: OK
+/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/host-zdb-overlay.a4R8NlmV/zdb_il.c: OK
+/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/host-zdb-overlay.a4R8NlmV/zdb.h: OK
+/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/host-zdb-overlay.a4R8NlmV/zdb_label_io.h: OK
+/home/terminills/Documents/GitHub/openzfs-aros/build-control/zfs_config.h: OK
+/home/terminills/Documents/GitHub/openzfs-aros/build-control/.libs/libzdb.a: OK
+/home/terminills/Documents/GitHub/openzfs-aros/build-control/.libs/libzpool.so: OK
+/home/terminills/Documents/GitHub/openzfs-aros/build-control/.libs/libzfs_core.so: OK
+/home/terminills/Documents/GitHub/openzfs-aros/build-control/.libs/libnvpair.so: OK
