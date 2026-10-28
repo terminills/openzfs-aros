@@ -51,6 +51,9 @@ done
 cp "$runtime/AROS.boot" "$run/AROS.boot"
 cp -a aros/engine/security-fixture "$run/Security"
 cp "$library" "$run/Libs/security.library"
+if [[ -n ${AROS_TEST_POSIX_LIBRARY:-} ]];then
+    cp "$(realpath -e "$AROS_TEST_POSIX_LIBRARY")" "$run/Libs/posixc.library"
+fi
 if [[ -n ${AROS_TEST_DOS_LIBRARY:-} ]];then
     cp "$AROS_TEST_DOS_LIBRARY" "$run/Libs/dos.library"
 fi
@@ -119,6 +122,7 @@ if [[ -n ${AROS_TEST_RUNTIME_CHECK:-} ]];then
     sed -i '/Echo finished/i C:OpenZFSRuntimeCheck >SYS:runtime-check.log' "$run/S/Startup-Sequence"
 fi
 sha256sum "$run/Libs/stdcio.library" >>"$run/inputs.sha256"
+sha256sum "$run/Libs/posixc.library" >>"$run/inputs.sha256"
 if [[ -n ${AROS_TEST_DOS_LIBRARY:-} ]];then
     sha256sum "$run/Libs/dos.library" >>"$run/inputs.sha256"
 fi
