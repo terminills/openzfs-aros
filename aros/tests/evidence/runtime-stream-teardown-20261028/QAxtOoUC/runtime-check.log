@@ -1,0 +1,4 @@
+PASS redirected stdio --stdio-child: transport=0 child=0 stdout=1 stderr=1 visible-out=1 visible-err=1
+PASS redirected stdio --stdio-return-child: transport=0 child=0 stdout=1 stderr=1 visible-out=1 visible-err=1
+PASS redirected stdio --stdio-exit-child: transport=0 child=0 stdout=1 stderr=1 visible-out=1 visible-err=1
+PASS checked stdio runtime prerequisites only

@@ -2,6 +2,17 @@
 
 Experimental development snapshot; not production-qualified storage software.
 
+## Runtime teardown preflight (2026-10-28)
+
+OpenZFSRuntimeCheck now tests explicit flush, normal return and exit with an
+independent reader before parent-side flushing. The old checker could recover
+and conceal missing child output. Private hosted controls reject the no-hook
+POSIX library and accept the stream-flush variant with matched stdc and the
+retained stdcio flag-restoration fix. SDK-installed stdcio still fails the
+inherited-handle check in this hosted setup; stock-runtime acceptance remains
+open. `--streams-only` deliberately reports only this narrow check.
+See `aros/tests/evidence/runtime-stream-teardown-20261028`.
+
 ## Hosted full-service runtime regression (2026-10-28)
 
 The legacy atime SA-upgrade transaction fix passes CLI and Manager dataset

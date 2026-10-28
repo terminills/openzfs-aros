@@ -122,7 +122,9 @@ fi
 sha256sum "$run/Libs/security.library" "$run/boot/linux/kernel" "$run/C/OpenZFSSecurityTest" >"$run/inputs.sha256"
 if [[ -n ${AROS_TEST_RUNTIME_CHECK:-} ]];then
     cp "$AROS_TEST_RUNTIME_CHECK" "$run/C/OpenZFSRuntimeCheck"
-    sed -i '/Echo finished/i C:OpenZFSRuntimeCheck >SYS:runtime-check.log' "$run/S/Startup-Sequence"
+    runtime_args=
+    if [[ ${AROS_TEST_RUNTIME_STREAMS_ONLY:-0} == 1 ]];then runtime_args=--streams-only;fi
+    sed -i "/Echo finished/i C:OpenZFSRuntimeCheck $runtime_args >SYS:runtime-check.log" "$run/S/Startup-Sequence"
 fi
 sha256sum "$run/Libs/stdcio.library" >>"$run/inputs.sha256"
 sha256sum "$run/Libs/posixc.library" >>"$run/inputs.sha256"

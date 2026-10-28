@@ -1,0 +1,10 @@
+FAIL inherited Flush DOS=219
+FAIL redirected stdio --stdio-child: transport=0 child=0 stdout=0 stderr=1 visible-out=1 visible-err=1
+FAIL cleanup; inspect RAM:OpenZFSCheck-00000000416ced00--stdio-child
+FAIL inherited Flush DOS=219
+FAIL redirected stdio --stdio-return-child: transport=0 child=0 stdout=0 stderr=1 visible-out=0 visible-err=1
+FAIL cleanup; inspect RAM:OpenZFSCheck-00000000416ced00--stdio-return-child
+FAIL inherited Flush DOS=219
+FAIL redirected stdio --stdio-exit-child: transport=0 child=0 stdout=0 stderr=1 visible-out=0 visible-err=1
+FAIL cleanup; inspect RAM:OpenZFSCheck-00000000416ced00--stdio-exit-child
+FAIL stdio runtime prerequisites

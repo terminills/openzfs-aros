@@ -1,0 +1,5 @@
+FAIL redirected stdio --stdio-child: transport=0 child=0 stdout=0 stderr=1 visible-out=0 visible-err=0
+FAIL cleanup; inspect RAM:OpenZFSCheck-0000000041a3ed00
+FAIL temporary RAM directory (DOS error 203)
+FAIL temporary RAM directory (DOS error 203)
+FAIL stdio runtime prerequisites

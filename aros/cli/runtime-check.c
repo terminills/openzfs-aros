@@ -9,14 +9,18 @@
 #include <proto/security.h>
 #include <libraries/security.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
 
 static int exact(BPTR handle,const char *wanted)
 {
     char bytes[128];
-    if(!Flush(handle)||Seek(handle,0,OFFSET_BEGINNING)==-1)return 0;
+    if(!Flush(handle)){printf("FAIL inherited Flush DOS=%ld\n",(long)IoErr());return 0;}
+    if(Seek(handle,0,OFFSET_BEGINNING)==-1){printf("FAIL inherited Seek DOS=%ld\n",(long)IoErr());return 0;}
     LONG n=Read(handle,bytes,sizeof(bytes));
+    if(n!=(LONG)strlen(wanted)||memcmp(bytes,wanted,n<0?0:(size_t)n))
+        printf("FAIL inherited read count=%ld expected=%lu DOS=%ld\n",(long)n,(unsigned long)strlen(wanted),(long)IoErr());
     return n==(LONG)strlen(wanted)&&!memcmp(bytes,wanted,n);
 }
 static int execution(void)
@@ -52,27 +56,39 @@ static int execution(void)
     if(!ok)puts("FAIL loader execute protection; verify the matching DOS runtime patch");
     return ok;
 }
-static int streams(void)
+static int visible_file(const char *path,const char *wanted)
+{
+    /* Reopen independently BEFORE flushing or closing the parent's inherited
+     * output handle. Otherwise the parent masks missing child CRT teardown. */
+    BPTR input=Open((CONST_STRPTR)path,MODE_OLDFILE);
+    if(!input){printf("FAIL independent stream read %s DOS=%ld\n",path,(long)IoErr());return 0;}
+    char bytes[128];LONG count=Read(input,bytes,sizeof(bytes));
+    int closed=Close(input);
+    return closed&&count==(LONG)strlen(wanted)&&!memcmp(bytes,wanted,count);
+}
+static int streams_mode(const char *mode)
 {
     char directory[96],outname[112],errname[112];
-    snprintf(directory,sizeof(directory),"RAM:OpenZFSCheck-%p",(void *)FindTask(NULL));
+    snprintf(directory,sizeof(directory),"RAM:OpenZFSCheck-%p%s",(void *)FindTask(NULL),mode);
     BPTR lock=CreateDir((CONST_STRPTR)directory);
     if(!lock){printf("FAIL temporary RAM directory (DOS error %ld)\n",(long)IoErr());return 0;}
     UnLock(lock);
     snprintf(outname,sizeof(outname),"%s/stdout",directory);
     snprintf(errname,sizeof(errname),"%s/stderr",directory);
-    BPTR output=Open((CONST_STRPTR)outname,MODE_NEWFILE);
-    BPTR errors=Open((CONST_STRPTR)errname,MODE_NEWFILE);
+    BPTR output=Open((CONST_STRPTR)outname,MODE_READWRITE);
+    BPTR errors=Open((CONST_STRPTR)errname,MODE_READWRITE);
     int ok=0;
     if(output&&errors){
-        char *args[]={"OpenZFSRuntimeCheck","--stdio-child",NULL};
+        char *args[]={"OpenZFSRuntimeCheck",(char *)mode,NULL};
         struct oz_cli_result result;
         int error=oz_cli_spawn_exact("PROGDIR:OpenZFSRuntimeCheck",args,output,errors,&result);
+        int visible_out=visible_file(outname,"OpenZFS stdout probe\n");
+        int visible_err=visible_file(errname,"OpenZFS stderr probe\n");
         int outok=exact(output,"OpenZFS stdout probe\n");
         int errok=exact(errors,"OpenZFS stderr probe\n");
-        ok=!error&&result.status==0&&outok&&errok;
-        printf("%s redirected stdio: transport=%d child=%ld stdout=%d stderr=%d\n",
-            ok?"PASS":"FAIL",error,result.status,outok,errok);
+        ok=!error&&result.status==0&&outok&&errok&&visible_out&&visible_err;
+        printf("%s redirected stdio %s: transport=%d child=%ld stdout=%d stderr=%d visible-out=%d visible-err=%d\n",
+            ok?"PASS":"FAIL",mode,error,result.status,outok,errok,visible_out,visible_err);
         /* A broken child runtime may already have closed inherited handles.
          * Do not close them again after the ownership check fails. */
         if(outok){if(!Close(output))ok=0;} output=0;
@@ -86,6 +102,13 @@ static int streams(void)
         printf("FAIL cleanup; inspect %s\n",directory);ok=0;
     }
     return ok;
+}
+static int streams(void)
+{
+    int explicit_flush=streams_mode("--stdio-child");
+    int normal_return=streams_mode("--stdio-return-child");
+    int explicit_exit=streams_mode("--stdio-exit-child");
+    return explicit_flush&&normal_return&&explicit_exit;
 }
 static int subprocess(void)
 {
@@ -118,13 +141,21 @@ int main(int argc,char **argv)
         if(puts("OpenZFS exec probe")==EOF||fflush(stdout))return 20;
         return 23;
     }
-    if(argc==2&&!strcmp(argv[1],"--stdio-child")){
+    if(argc==2&&!strcmp(argv[1],"--streams-only")){
+        int ok=streams();
+        puts(ok?"PASS checked stdio runtime prerequisites only":"FAIL stdio runtime prerequisites");
+        return ok?0:20;
+    }
+    if(argc==2&&(!strcmp(argv[1],"--stdio-child")||
+        !strcmp(argv[1],"--stdio-return-child")||!strcmp(argv[1],"--stdio-exit-child"))){
         if(isatty(STDOUT_FILENO)||isatty(STDERR_FILENO))return 20;
         if(fputs("OpenZFS stdout probe\n",stdout)<0||
             fputs("OpenZFS stderr probe\n",stderr)<0)return 20;
+        if(!strcmp(argv[1],"--stdio-exit-child"))exit(0);
+        if(!strcmp(argv[1],"--stdio-return-child"))return 0;
         return fflush(stdout)||fflush(stderr)?20:0;
     }
-    if(argc!=1){puts("Usage: OpenZFSRuntimeCheck [--errno-only|--errno-serial]");return 20;}
+    if(argc!=1){puts("Usage: OpenZFSRuntimeCheck [--errno-only|--errno-serial|--streams-only]");return 20;}
     puts("OpenZFS runtime check (no pools or devices opened)");
     int ok=oz_errno_check();
     puts(ok?"PASS errno accessor and POSIX writer":"FAIL errno accessor or POSIX writer");
