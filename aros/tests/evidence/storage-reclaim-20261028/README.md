@@ -39,3 +39,13 @@ This reclaimed 10,137,989,120 allocated bytes (9.44 GiB) on short-term storage.
 All archive contents and their existing manifests/logs remain recoverable on
 the external drive. Source checkouts, current builds, test-pool disks and
 `build-control/zdb` were not removed by this operation.
+
+## Additional pool-archive relocation in progress
+
+`move-retired-pools.py` targets only the `admission-service-run.*` directories
+in the explicitly named quarantine. The first broad copy was stopped before
+any source deletion because it encountered a 3-TiB sparse AHCI capacity image.
+That fixture remains in place. The scoped copy verifies every pool file before
+removing enumerated originals and installs per-run path aliases afterward.
+Only a completed `moved-retired-pools.jsonl` plus the installed aliases proves
+that relocation finished; the script or a partial destination alone does not.

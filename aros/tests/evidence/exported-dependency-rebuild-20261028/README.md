@@ -23,7 +23,10 @@ cover 107/108-byte paths and UTF-8 byte counts; they do not replace a native
 retest of the release phase.
 
 A separate full source build, `source-engine.3f4plKUL`, compiled all 248 source
-inventory entries and produced a fresh engine and management binaries. It is
-not yet linked and runtime-qualified as a replacement for the tested bundle.
+inventory entries and produced a fresh engine and management binaries. It was
+then successfully linked into `shared-engine.ld5CZgji` against the newly rebuilt
+dependencies. Input and output hashes and the compile summary are retained
+under `build/fresh-engine-*`. This fresh-engine library is not yet runtime-
+qualified as a replacement for the tested bundle.
 The exported dependency script's six invalid-manifest rejection cases and
 the two socket-path tests passed again after recovery. No DUT was used.
