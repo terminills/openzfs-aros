@@ -2,6 +2,18 @@
 
 Experimental development snapshot; not production-qualified storage software.
 
+## Exported-source engine rebuild (2026-10-28)
+
+Retained dependency sources now rebuild private pthread, Crypto and nvpair
+without cached archives. A fresh 248-unit engine build links against them and
+passes eight-CPU native RAM and three-boot persistent service tests, including
+DOS readback, degraded import, beyond-parity refusal and deferred snapshot
+release with independent zdb checks. These use the selected patched platform
+libraries, not a stock nightly. Fresh-Manager GUI and the rest of the matched
+native package matrix remain open; the previously qualified bundle is unchanged.
+See `aros/tests/evidence/exported-dependency-rebuild-20261028` and the rebuild
+command in `BUILDING.md` for exact inputs and scope.
+
 ## Matched native package inputs validated (2026-10-28)
 
 The current normal shared engine, CLI, handler, Manager and selected source-built

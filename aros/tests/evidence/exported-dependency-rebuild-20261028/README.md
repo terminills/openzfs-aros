@@ -36,6 +36,21 @@ inventory entries and produced a fresh engine and management binaries. It was
 then successfully linked into `shared-engine.ld5CZgji` against the newly rebuilt
 dependencies. Input and output hashes and the compile summary are retained
 under `build/fresh-engine-*`. This fresh-engine library is not yet runtime-
-qualified as a replacement for the tested bundle.
+qualified as a complete replacement for the tested bundle.
 The exported dependency script's six invalid-manifest rejection cases and
 the two socket-path tests passed again after recovery. No DUT was used.
+
+## Fresh engine native verification
+
+The new full engine/shared library, freshly compiled acceptance client and
+Manager passed `public-service-run.d0TprxPE` (RAM-backed full service suite)
+and `public-service-run.Sf2PsAeA` (persistent writer, independent cold reader,
+and writable cold-release boots). The latter runner exited zero with exact
+DOS readback, degraded/beyond-parity handling, persisted release, clean FAT,
+unchanged startup archive and independent zdb checks. Selected CLI, handler
+and platform libraries remained the previously qualified dependencies.
+
+Actual ISO runtime hashes and serial/host results are retained in
+`fresh-native/`. This does not yet qualify actual fresh-Manager GUI interaction,
+encrypted native discovery or the separate native debugger matrix; it does
+not silently replace the existing matched development bundle.

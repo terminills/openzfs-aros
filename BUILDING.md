@@ -28,6 +28,33 @@ records describe original build paths; they are not automatically rewritten
 or sourced. SDK/toolchain distribution and independent rebuild qualification
 remain separate.
 
+### Rebuild an exported dependency snapshot
+
+The export can now be rebuilt without sourcing its original absolute-path
+environment file or downloading replacement sources:
+
+```sh
+export AROS_CC=/path/to/x86_64-aros-gcc
+export AROS_CXX=/path/to/x86_64-aros-g++
+export AROS_SDK=/path/to/Developer
+export AROS_HOST_GO=/path/to/go/bin/go
+export AROS_ARTIFACT_ROOT=/path/to/external/builds
+export AROS_BUILD_JOBS=8
+bash aros/engine/rebuild-exported-dependencies.sh /path/to/dependency-sources.EXPORT
+```
+
+The helper verifies the complete source inventory before allocating outputs,
+builds private pthread, Crypto and nvpair archives and the PBKDF2 test, then
+rechecks the input hashes. It publishes `dependencies.env` and `outputs.sha256`
+only after success. Inspect that newly generated environment before sourcing
+it for `build-source.sh` or the shared-library builder. Its paths identify this
+new build, not the machine that originally exported the sources.
+
+This still requires an explicitly selected compatible SDK, cross compiler and
+host Go. It is not an SDK bootstrap, installation command or target-runtime
+test. Native evidence for the recorded exported-source rebuild is under
+`aros/tests/evidence/exported-dependency-rebuild-20261028`.
+
 ### Check SDK link prerequisites first
 
 Before an expensive build against a different SDK, run:
