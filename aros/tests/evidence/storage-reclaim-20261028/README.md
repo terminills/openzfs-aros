@@ -40,12 +40,17 @@ All archive contents and their existing manifests/logs remain recoverable on
 the external drive. Source checkouts, current builds, test-pool disks and
 `build-control/zdb` were not removed by this operation.
 
-## Additional pool-archive relocation in progress
+## Additional pool-archive relocation completed
 
 `move-retired-pools.py` targets only the `admission-service-run.*` directories
 in the explicitly named quarantine. The first broad copy was stopped before
 any source deletion because it encountered a 3-TiB sparse AHCI capacity image.
 That fixture remains in place. The scoped copy verifies every pool file before
 removing enumerated originals and installs per-run path aliases afterward.
-Only a completed `moved-retired-pools.jsonl` plus the installed aliases proves
-that relocation finished; the script or a partial destination alone does not.
+The process exited zero after verifying and relocating 382 files, reclaiming
+50,227,908,608 allocated bytes (46.78 GiB). `moved-retired-pools.jsonl` records
+their hashes and destinations; per-run aliases preserve prior paths. The
+quarantine now occupies 1.1 MiB locally, including its original metadata and
+the untouched sparse capacity fixture. Together with the historical build
+archives this pass reclaimed 56.22 GiB, all recoverable externally. Shared
+short-term free space measured 101 GiB afterward and may change independently.
