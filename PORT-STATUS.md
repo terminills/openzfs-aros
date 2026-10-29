@@ -14,8 +14,14 @@ query/save and post-UI filesystem readback with Wanderer in native QEMU.
 Encrypted native discovery and the separate GPT debugger matrix subsequently
 passed for these binaries. The matching new development bundle
 `mmake-bundle.1hwujvsn` passed all 5,012 copied manifest entries. It retains the
-previously qualified CLI, handler and explicit platform prerequisites; a fresh
-CLI build is separate. The previous development bundle remains unchanged.
+previously qualified CLI, handler and explicit platform prerequisites.
+Subsequently, nine MetaMake command/Manager targets were rebuilt and qualified
+through matching native GUI, three-boot persistence and encrypted discovery.
+Their later bundle `mmake-bundle.nc0742ch` also passes all 5,012 checksums and
+contains no symlinks. A further end-to-end build using freshly generated POSIX
+imports produces byte-identical copies of all nine tested binaries. The handler
+and explicit platform prerequisites remain retained qualified inputs; this does
+not establish a fully independent SDK bootstrap. Earlier bundles are unchanged.
 See `aros/tests/evidence/exported-dependency-rebuild-20261028` and the rebuild
 command in `BUILDING.md` for exact inputs and scope.
 
