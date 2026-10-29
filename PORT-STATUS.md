@@ -2,6 +2,18 @@
 
 Experimental development snapshot; not production-qualified storage software.
 
+## Fresh handler and matching bundle (2026-10-29)
+
+The newly rebuilt handler passes eight-CPU QEMU RAM, three-boot persistent
+writer/cold-reader/release, encrypted native discovery and actual Manager
+health-save/Wanderer readback checks. The matching development bundle
+`mmake-bundle.c1f3jhi8` passes all 5,012 copied SHA-256 entries with no symlinks.
+It uses the rebuilt engine and command tools plus this fresh handler, retaining
+explicit qualified platform prerequisites. Evidence and assembly recipe are in
+`aros/tests/evidence/exported-dependency-rebuild-20261028/fresh-handler-*`.
+This is software qualification, not a production filesystem release, complete
+SDK bootstrap, physical-device validation or proof of every upstream feature.
+
 ## Exported-source engine rebuild (2026-10-28)
 
 Retained dependency sources now rebuild private pthread, Crypto and nvpair

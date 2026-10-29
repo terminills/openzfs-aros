@@ -1,0 +1,97 @@
+{
+  "packaging_commit": "12be93ce714cf57eb42c06575f47e1d4940dffee",
+  "gui_run": "/run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/native-gui-run.qNAU3Rvr",
+  "cold_run": "/run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/public-service-run.3eBZivSx",
+  "encrypted_root_run": "/run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/public-service-run.vFUy9dxL",
+  "build": "/run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-package-links.wZoqhJnm",
+  "native_zdb_run": "/run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/zdb-label-run.068Hkwv9",
+  "build_only_utilities": [],
+  "native_companion_utilities": [
+    "OpenZFSStartup",
+    "OpenZFSStartupMount",
+    "OpenZFSRuntimeCheck",
+    "OpenZFSHostIdentity"
+  ],
+  "inputs": {
+    "C/zfs": {
+      "path": "/run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-package-links.wZoqhJnm/stage/C/zfs",
+      "sha256": "79683b92f620cc052219dc48dec48c6e3c5b8279a4d5ad51f07bc2661ad7d150"
+    },
+    "C/zpool": {
+      "path": "/run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-package-links.wZoqhJnm/stage/C/zpool",
+      "sha256": "3519233a940bdfe42921e27b08089c487043860ba7907d76ed40709f0ba22f6b"
+    },
+    "C/zdb": {
+      "path": "/run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-package-links.wZoqhJnm/stage/C/zdb",
+      "sha256": "7a3cb65ef117bba89e2924fa6fb922d9d81ecd34198b548a46010fd86ff1a2dd"
+    },
+    "C/OpenZFSServiceNative": {
+      "path": "/run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-package-links.wZoqhJnm/package/OpenZFSServiceNative",
+      "sha256": "3b596f449de2583d1e5a24c2104e5710f0b56a815971c381bbbc2e97fad7bf0b"
+    },
+    "C/OpenZFSDevice": {
+      "path": "/run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-package-links.wZoqhJnm/stage/C/OpenZFSDevice",
+      "sha256": "941f21021c2d28e1b17c45812d685074a36e2d41f0b162d4cfe580fee32ebd27"
+    },
+    "Libs/openzfs.library": {
+      "path": "/run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-package-links.wZoqhJnm/package/openzfs.library",
+      "sha256": "7afb171b5704e23e73a7c5e8abc6a82b42bac7f739a157a47245273c2add3580"
+    },
+    "L/OpenZFS-Handler": {
+      "path": "/run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-package-links.wZoqhJnm/stage/L/OpenZFS-handler",
+      "sha256": "4b249520bc6809f502c26600a4fe3983dfd9b52161223a4ab4366a5cbf178dfa"
+    },
+    "Tools/OpenZFSManagerNative": {
+      "path": "/run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-package-links.wZoqhJnm/stage/Tools/OpenZFSManagerNative",
+      "sha256": "26fa7e2b112814c7416a5fb7e0479fb74452cb0ac86fe9c05096ac09058920b6"
+    },
+    "Tools/OpenZFS/ExecHelper": {
+      "path": "/run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-package-links.wZoqhJnm/stage/Tools/OpenZFS/ExecHelper",
+      "sha256": "0e05b9a192068e1325c816de59c6664d6a0a279ddb0ecd8928a8311bb6b0350e"
+    },
+    "Platform/Libs/posixc.library": {
+      "path": "/run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-package-links.wZoqhJnm/stage/Libs/posixc.library",
+      "sha256": "8f7eaf59a32d2d2b14e2e7b0dc67056fe1f9af8ea12487ff6d91243184b2c422"
+    },
+    "Platform/Libs/stdcio.library": {
+      "path": "/run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-package-links.wZoqhJnm/stage/Libs/stdcio.library",
+      "sha256": "a1265379f3ae9a1004c3c75bdc7a266c91fb09162acc215086e14b0b3aeb7d48"
+    },
+    "Platform/Libs/stdc.library": {
+      "path": "/run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-package-links.wZoqhJnm/stage/Libs/stdc.library",
+      "sha256": "41152036cec6d3da3eac703e2931ea622b60a31201e6d16204b48c5217697cee"
+    },
+    "Platform/Libs/dos64.library": {
+      "path": "/run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-package-links.wZoqhJnm/stage/Libs/dos64.library",
+      "sha256": "6ee73efba58908a6e30b59d2449c1a8939b34a4cd1a440a14cf174ae73dbc6e2"
+    },
+    "Platform/L/fat-handler": {
+      "path": "/mnt/short-term/openzfs-qualification-20261024.aGFlVF7T/flush-overlay.tufmbxjd/fat.handler",
+      "sha256": "7e15a444306fe0a1b901fcd66c7a403cca17e925385475bdaedec3760881cad3"
+    },
+    "Platform/Boot/aros-base.pkg.xz": {
+      "path": "/mnt/short-term/openzfs-qualification-20261024.aGFlVF7T/dos-revision.Pa9psAFv/aros-base.pkg.xz",
+      "sha256": "0a6d8c05a0bc33142f6d2f1ac0363f93771edf936b583ccdc3872ec0f37175b9"
+    },
+    "Platform/L/afs-handler": {
+      "path": "/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/afs-source.wg6ei6nj/afs-handler",
+      "sha256": "b50d82a5e1759f5acfafc48de074aaf45d58cba962919100e8c21080710173fb"
+    },
+    "C/OpenZFSStartup": {
+      "path": "/run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-package-links.wZoqhJnm/stage/C/OpenZFSStartup",
+      "sha256": "c33be4475e183ecf87959c49abdd1eeb590412ac555d7c4de27ff72cbca9b2a2"
+    },
+    "C/OpenZFSStartupMount": {
+      "path": "/run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-package-links.wZoqhJnm/stage/C/OpenZFSStartupMount",
+      "sha256": "9494532d1ed3c9b6711a4ff27653774fd172c78281011e47889e026494ad7cb8"
+    },
+    "C/OpenZFSRuntimeCheck": {
+      "path": "/run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-package-links.wZoqhJnm/stage/C/OpenZFSRuntimeCheck",
+      "sha256": "5991aaccc5342e42ab8fe0462d66ed364b6e67831e3ae27c8b05265423764424"
+    },
+    "C/OpenZFSHostIdentity": {
+      "path": "/run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-package-links.wZoqhJnm/stage/C/OpenZFSHostIdentity",
+      "sha256": "cb476ad337919de9b40e7462e96229f1761fd59555353e0771a7b84c87dd4bad"
+    }
+  }
+}
