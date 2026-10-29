@@ -51,6 +51,22 @@ unchanged startup archive and independent zdb checks. Selected CLI, handler
 and platform libraries remained the previously qualified dependencies.
 
 Actual ISO runtime hashes and serial/host results are retained in
-`fresh-native/`. This does not yet qualify actual fresh-Manager GUI interaction,
-encrypted native discovery or the separate native debugger matrix; it does
+`fresh-native/`. This does not yet qualify encrypted native discovery or the
+separate native debugger matrix; it does
 not silently replace the existing matched development bundle.
+
+## Fresh Manager and Wanderer
+
+`native-gui-run.vYw278Jq` exited zero using the same fresh engine, client and
+Manager. The mounted OZPUBLIC drawer visibly contained its files. Through the
+actual Simple-mode UI, Pool health queried `public_mirror`, displayed both
+members ONLINE and saved the raw response to `T:OpenZFS-Response.txt` using the
+native requester. The acceptance client verified raw topology, counters, scan
+and checkpoint content rather than accepting the display summary. After the
+drawer and Manager closed, exact DOS readback passed with Wanderer still alive.
+Screenshots, serial log and input/actual-ISO hashes are in `fresh-gui/`.
+
+An earlier preparation attempt refused allocation because the short-term
+checkout filesystem was below the 100-GiB reserve. The successful run used
+the existing independent external checkout and external artifacts; the guard
+was not lowered. Fresh encrypted-device and debugger qualification remain.
