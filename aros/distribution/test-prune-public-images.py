@@ -5,6 +5,7 @@ import hashlib
 import importlib.util
 import io
 import json
+import os
 from pathlib import Path
 import tempfile
 import unittest
@@ -67,8 +68,23 @@ class Retention(unittest.TestCase):
         self.assertFalse(prune.eligible(self.run))
 
     def test_external_root_rejects_same_filesystem(self):
+        # /tmp may be tmpfs; model matching devices instead of assuming the
+        # temporary fixture shares the host root filesystem.
+        original_stat = Path.stat
+        fixture_device = self.run.parent.stat().st_dev
+
+        def same_device(path, *args, **kwargs):
+            result = original_stat(path, *args, **kwargs)
+            if path == Path('/'):
+                fields = list(result)
+                fields[2] = fixture_device
+                return os.stat_result(fields)
+            return result
+
         with patch("sys.argv", ["prune", "--run", self.run.name,
-                                 "--artifact-root", str(self.run.parent)]), contextlib.redirect_stderr(io.StringIO()):
+                                 "--artifact-root", str(self.run.parent)]), \
+                patch.object(Path, "stat", same_device), \
+                contextlib.redirect_stderr(io.StringIO()):
             with self.assertRaises(SystemExit):
                 prune.main()
         self.assertTrue((self.run / "test.iso").exists())
