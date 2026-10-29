@@ -118,3 +118,12 @@ output and binary identities: pool health, saved raw response and exact
 post-UI desktop readback passed. `fresh-cli-discovery/` retains encrypted-root
 and wrong-key recovery results, conflicting-label protection and disk checks.
 These are QEMU results, not physical-device qualification or full port completion.
+
+The matching later development bundle is
+`Amiwest/openzfs-source-replay-20261028/build/mmake-bundle.nc0742ch`.
+Independent `sha256sum --quiet -c SHA256SUMS` passed all 5,012 entries;
+`find . -type l` found no symlinks. Its manifest, qualification record and
+assembly recipe are retained in `fresh-cli-staged/`. It selects the rebuilt
+MetaMake commands and Manager and the matching GUI, cold, discovery and
+debugger runs above. The previously qualified handler and platform libraries
+remain selected; this is not a fully bootstrapped SDK or a new hardware test.
