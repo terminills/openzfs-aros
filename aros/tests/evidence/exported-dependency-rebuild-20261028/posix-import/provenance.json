@@ -1,0 +1,36 @@
+{
+  "symbol": "pipe2",
+  "vector": 799,
+  "selected_library": "/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/posix-flush-source.j099bkwp/posixc.library",
+  "inputs": {
+    "/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/posix-flush-source.j099bkwp/posixc.library": "8f7eaf59a32d2d2b14e2e7b0dc67056fe1f9af8ea12487ff6d91243184b2c422",
+    "/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/posix-flush-source.j099bkwp/source/compiler/crt/posixc/posixc.conf": "0e005062bbec914791288cd2a14dabe803c8a5d428d2ecbdd43af0efde705dc2",
+    "/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/posix-flush-source.j099bkwp/generated/posixc_start.c": "4b61c9b539457ac3aa8071e3f34e1a77d7e338d4ecc4264fcf542613f4ed6022",
+    "/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/shared-tools.7guw1X1e/genmodule": "c7c76fa9ca53f3ac84c86658f24001658721602416e1e6d64034f34d2189cd3d",
+    "/home/terminills/Documents/GitHub/aros-adt-crosstools/x86_64-aros-gcc": "d42ff89f5177ef1638b65a8e11721d4571aa41999cab4ef1c23aa5ef143e9f7e"
+  },
+  "commands": [
+    [
+      "build-audit/shared-tools.7guw1X1e/genmodule",
+      "-c",
+      "/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/posix-flush-source.j099bkwp/source/compiler/crt/posixc/posixc.conf",
+      "-d",
+      "/run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/posix-import.1is7a5bs",
+      "-l",
+      "/run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/posix-import.1is7a5bs/stubs",
+      "writefiles",
+      "posixc",
+      "library"
+    ],
+    [
+      "/home/terminills/Documents/GitHub/aros-adt-crosstools/x86_64-aros-gcc",
+      "--sysroot=/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer",
+      "-B/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/lib/",
+      "-c",
+      "/run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/posix-import.1is7a5bs/stubs/posixc_pipe2_stub.c",
+      "-o",
+      "/run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/posix-import.1is7a5bs/pipe2.o"
+    ]
+  ],
+  "runtime_tested": false
+}

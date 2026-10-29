@@ -57,6 +57,22 @@ test. Native evidence for the recorded exported-source rebuild is under
 
 ### Check SDK link prerequisites first
 
+For a selected, source-snapshotted POSIX runtime whose SDK lacks the `pipe2`
+import, generate it from that runtime's verified configuration rather than
+reusing an unrelated cached stub:
+
+```sh
+python3 aros/cli/build-posix-import.py /path/to/posix-source-snapshot \
+  --library /path/to/posixc.library --cc "$AROS_CC" --sdk "$AROS_SDK" \
+  --genmodule /path/to/genmodule --output-parent /path/to/external/builds
+```
+
+The helper verifies the snapshot and selected library, checks the generated
+stub and regenerated entry table against the retained runtime's `pipe2` vector,
+then compiles `pipe2.o`. Pass that object as `OPENZFS_PIPE2_OBJECT` to MetaMake.
+It neither implements `pipe2` nor patches the SDK/runtime. A mismatch is an
+error, not permission to guess a vector or use a non-atomic pipe fallback.
+
 Before an expensive build against a different SDK, run:
 
 ```sh

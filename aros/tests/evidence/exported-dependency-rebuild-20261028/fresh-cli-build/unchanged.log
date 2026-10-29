@@ -1,0 +1,5 @@
+/mnt/short-term/openzfs-bootenv-candidate-20261025/build-audit/force-create/pipe-input/stubs/posixc_pipe2_stub.c: OK
+/run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/exported-dependencies.jjAcgPAs/nvpair/libnvpair.a: OK
+/run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/exported-dependencies.jjAcgPAs/pthread-consistent.U8ZznVl2/libpthread.a: OK
+/run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/exported-dependencies.jjAcgPAs/crypto-source.1VFDhoxW/build/crypto/libcrypto.a: OK
+/run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/genmodule: OK

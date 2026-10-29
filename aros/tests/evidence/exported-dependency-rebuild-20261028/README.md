@@ -88,3 +88,25 @@ qualification record, manifest and verification log are in `staged/`.
 The old bundle remains available and unchanged. This new bundle contains the
 fresh engine, Manager and debugger, but retains the previously qualified CLI,
 handler and platform prerequisites; it is not a fully bootstrapped SDK release.
+
+## Fresh MetaMake command tools
+
+`fresh-mmake-cli.yqLYANrY` rebuilt zfs, zpool, startup tools, ExecHelper,
+RuntimeCheck, HostIdentity, Manager and the device tool through the actual
+generated MetaMake targets against the new exported-source archives. The full
+three-boot run `public-service-run.ahyOZbBB` passed with these commands, the
+fresh engine and its selected platform prerequisites. Retained build records
+are in `fresh-cli-build/`, and native records in `fresh-cli-native/`. Actual GUI
+and encrypted-discovery matching for this later CLI/Manager set are separate
+from the earlier fresh-engine bundle; that bundle was not overwritten.
+
+The build originally used a retained generated pipe2 import source. The new
+`aros/cli/build-posix-import.py` instead verifies the matching POSIX source
+snapshot and runtime hash, regenerates its ABI stubs, checks pipe2's vector
+against the retained and regenerated entry tables, and compiles the import.
+Actual run `posix-import.1is7a5bs` yielded vector 799; its object is byte-identical
+to `fresh-mmake-cli.yqLYANrY/pipe2.o` (SHA-256
+`e54cadcc9ba78ddd2714194dab24bbb0ecfd9b793e3869162641c7bc0f8d828f`).
+The generator does not implement or install pipe2. Three unit tests cover exact,
+missing/duplicate/invalid and mismatched vectors. The native evidence above
+covers the identical import object, not a changed runtime implementation.

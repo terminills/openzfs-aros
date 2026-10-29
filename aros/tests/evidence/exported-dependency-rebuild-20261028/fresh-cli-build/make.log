@@ -1,0 +1,1400 @@
+python3 /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/source/openzfs/aros/cli/generate-metadata.py /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/source/openzfs/META /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/gen/openzfs/cli/metadata.h
+cd /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/gen/openzfs/cli && bash /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/source/openzfs/scripts/make_gitrev.sh zfs_gitrev.h
+Makedepend  openzfs/cmd/zfs/zfs_main.c ...
+Makedepend  openzfs/cmd/zfs/zfs_iter.c ...
+Makedepend  openzfs/cmd/zfs/zfs_project.c ...
+Makedepend  openzfs/lib/libzfs/libzfs_changelist.c ...
+Makedepend  openzfs/lib/libzfs/libzfs_config.c ...
+Makedepend  openzfs/lib/libzfs/libzfs_crypto.c ...
+Makedepend  openzfs/lib/libzfs/libzfs_dataset.c ...
+Makedepend  openzfs/lib/libzfs/libzfs_diff.c ...
+Makedepend  openzfs/lib/libzfs/libzfs_import.c ...
+Makedepend  openzfs/lib/libzfs/libzfs_iter.c ...
+Makedepend  openzfs/lib/libzfs/libzfs_mount.c ...
+Makedepend  openzfs/lib/libzfs/libzfs_pool.c ...
+Makedepend  openzfs/lib/libzfs/libzfs_sendrecv.c ...
+Makedepend  openzfs/lib/libzfs/libzfs_status.c ...
+Makedepend  openzfs/lib/libzfs/libzfs_util.c ...
+Makedepend  openzfs/lib/libzfs_core/libzfs_core.c ...
+Makedepend  openzfs/lib/libzutil/zutil_device_path.c ...
+Makedepend  openzfs/lib/libzutil/zutil_import.c ...
+Makedepend  openzfs/lib/libzutil/zutil_nicenum.c ...
+Makedepend  openzfs/lib/libzutil/zutil_pool.c ...
+Makedepend  openzfs/lib/libshare/libshare.c ...
+Makedepend  openzfs/aros/cli/key-prompt.c ...
+Makedepend  openzfs/aros/cli/gpt.c ...
+Makedepend  openzfs/aros/cli/share-unavailable.c ...
+Makedepend  openzfs/aros/cli/project.c ...
+Makedepend  openzfs/aros/cli/rewrite.c ...
+Makedepend  openzfs/aros/cli/stream-client.c ...
+Makedepend  openzfs/aros/cli/stream-channel.c ...
+Makedepend  openzfs/aros/cli/arguments.c ...
+Makedepend  openzfs/aros/cli/process.c ...
+Makedepend  openzfs/aros/cli/output.c ...
+Makedepend  openzfs/aros/cli/identity.c ...
+Makedepend  openzfs/aros/cli/progress-wait.c ...
+Makedepend  openzfs/aros/cli/title.c ...
+Makedepend  openzfs/aros/cli/version.c ...
+Makedepend  openzfs/aros/cli/lifecycle.c ...
+Makedepend  openzfs/aros/cli/platform-hooks.c ...
+Makedepend  openzfs/aros/cli/shares-object.c ...
+Makedepend  openzfs/aros/cli/control-client.c ...
+Makedepend  openzfs/aros/ui/api.c ...
+Makedepend  openzfs/aros/ui/admission-client.c ...
+Makedepend  openzfs/aros/cli/import-files.c ...
+Makedepend  openzfs/aros/cli/file-vdev.c ...
+Makedepend  openzfs/aros/cli/device-path.c ...
+Makedepend  openzfs/aros/cli/native-device.c ...
+Makedepend  openzfs/aros/cli/device-wait.c ...
+Makedepend  openzfs/aros/cli/native-label.c ...
+Makedepend  openzfs/aros/cli/mount.c ...
+Makedepend  openzfs/aros/platform/cpu.c ...
+Makedepend  openzfs/aros/cli/zone.c ...
+Makedepend  openzfs/aros/cli/hostid.c ...
+Makedepend  openzfs/module/avl/avl.c ...
+Makedepend  openzfs/module/zcommon/zfs_namecheck.c ...
+Makedepend  openzfs/module/zcommon/zfs_comutil.c ...
+Makedepend  openzfs/module/zcommon/zfs_prop.c ...
+Makedepend  openzfs/module/zcommon/zpool_prop.c ...
+Makedepend  openzfs/module/zcommon/zprop_common.c ...
+Makedepend  openzfs/module/zcommon/zfeature_common.c ...
+Makedepend  openzfs/module/zcommon/zfs_fletcher.c ...
+Makedepend  openzfs/module/zcommon/zfs_fletcher_superscalar.c ...
+Makedepend  openzfs/module/zcommon/zfs_fletcher_superscalar4.c ...
+Makedepend  openzfs/module/zcommon/zfs_valstr.c ...
+Makedepend  openzfs/lib/libuutil/uu_avl.c ...
+Makedepend  openzfs/lib/libuutil/uu_alloc.c ...
+Makedepend  openzfs/lib/libuutil/uu_misc.c ...
+Makedepend  openzfs/lib/libuutil/uu_ident.c ...
+Makedepend  openzfs/lib/libuutil/uu_list.c ...
+Makedepend  openzfs/lib/libuutil/uu_string.c ...
+Makedepend  openzfs/lib/libspl/atomic.c ...
+Makedepend  openzfs/lib/libspl/list.c ...
+Makedepend  openzfs/lib/libspl/page.c ...
+Makedepend  openzfs/lib/libspl/timestamp.c ...
+Makedepend  openzfs/lib/libnvpair/libnvpair.c ...
+Makedepend  openzfs/lib/libnvpair/libnvpair_json.c ...
+Makedepend  openzfs/lib/libtpool/thread_pool.c ...
+cd /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/gen/openzfs/cli && bash /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/source/openzfs/scripts/make_gitrev.sh zfs_gitrev.h
+Compiling  openzfs/cmd/zfs/zfs_main.c 
+Compiling  openzfs/cmd/zfs/zfs_iter.c 
+Compiling  openzfs/cmd/zfs/zfs_project.c 
+Compiling  openzfs/lib/libzfs/libzfs_changelist.c 
+Compiling  openzfs/lib/libzfs/libzfs_config.c 
+Compiling  openzfs/lib/libzfs/libzfs_crypto.c 
+Compiling  openzfs/lib/libzfs/libzfs_dataset.c 
+Compiling  openzfs/lib/libzfs/libzfs_diff.c 
+In file included from /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/source/openzfs/include/sys/zfs_context.h:96,
+                 from /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/source/openzfs/include/sys/dmu.h:48,
+                 from lib/libzfs/libzfs_impl.h:35,
+                 from lib/libzfs/libzfs_changelist.c:43:
+/run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/exported-dependencies.jjAcgPAs/pthread-consistent.U8ZznVl2/source/pthread.h:57:9: warning: 'PTHREAD_KEYS_MAX' redefined
+   57 | #define PTHREAD_KEYS_MAX                      64
+      |         ^~~~~~~~~~~~~~~~
+In file included from /home/terminills/Documents/GitHub/aros-adt-crosstools/lib/gcc/x86_64-aros/15.2.0/include/limits.h:210,
+                 from /home/terminills/Documents/GitHub/aros-adt-crosstools/lib/gcc/x86_64-aros/15.2.0/include/syslimits.h:9,
+                 from /home/terminills/Documents/GitHub/aros-adt-crosstools/lib/gcc/x86_64-aros/15.2.0/include/limits.h:34,
+                 from /home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/sys/param.h:19,
+                 from /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/source/openzfs/lib/libspl/include/os/linux/sys/param.h:31,
+                 from /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/source/openzfs/lib/libspl/include/sys/types.h:55,
+                 from /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/source/openzfs/include/libuutil.h:29,
+                 from lib/libzfs/libzfs_changelist.c:34:
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/limits.h:40:9: note: this is the location of the previous definition
+   40 | #define PTHREAD_KEYS_MAX                        _POSIX_THREAD_KEYS_MAX
+      |         ^~~~~~~~~~~~~~~~
+/run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/exported-dependencies.jjAcgPAs/pthread-consistent.U8ZznVl2/source/pthread.h:58:9: warning: 'PTHREAD_STACK_MIN' redefined
+   58 | #define PTHREAD_STACK_MIN                     40960
+      |         ^~~~~~~~~~~~~~~~~
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/limits.h:41:9: note: this is the location of the previous definition
+   41 | #define PTHREAD_STACK_MIN                       0
+      |         ^~~~~~~~~~~~~~~~~
+/run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/exported-dependencies.jjAcgPAs/pthread-consistent.U8ZznVl2/source/pthread.h:59:9: warning: 'PTHREAD_THREADS_MAX' redefined
+   59 | #define PTHREAD_THREADS_MAX                   2019
+      |         ^~~~~~~~~~~~~~~~~~~
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/limits.h:42:9: note: this is the location of the previous definition
+   42 | #define PTHREAD_THREADS_MAX                     _POSIX_THREAD_THREADS_MAX
+      |         ^~~~~~~~~~~~~~~~~~~
+/run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/exported-dependencies.jjAcgPAs/pthread-consistent.U8ZznVl2/source/pthread.h:60:9: warning: 'PTHREAD_DESTRUCTOR_ITERATIONS' redefined
+   60 | #define PTHREAD_DESTRUCTOR_ITERATIONS         4
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/limits.h:39:9: note: this is the location of the previous definition
+   39 | #define PTHREAD_DESTRUCTOR_ITERATIONS           _POSIX_THREAD_DESTRUCTOR_ITERATIONS
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+          _POSIX_THREAD_DESTRUCTOR_ITERATIONS
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Compiling  openzfs/lib/libzfs/libzfs_import.c 
+In file included from /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/source/openzfs/include/sys/zfs_context.h:96,
+                 from /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/source/openzfs/include/sys/dmu.h:48,
+                 from /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/source/openzfs/include/sys/bpobj.h:30,
+                 from /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/source/openzfs/include/sys/vdev_impl.h:33,
+                 from lib/libzfs/libzfs_import.c:38:
+/run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/exported-dependencies.jjAcgPAs/pthread-consistent.U8ZznVl2/source/pthread.h:57:9: warning: 'PTHREAD_KEYS_MAX' redefined
+   57 | #define PTHREAD_KEYS_MAX                      64
+      |         ^~~~~~~~~~~~~~~~
+In file included from /home/terminills/Documents/GitHub/aros-adt-crosstools/lib/gcc/x86_64-aros/15.2.0/include/limits.h:210,
+                 from /home/terminills/Documents/GitHub/aros-adt-crosstools/lib/gcc/x86_64-aros/15.2.0/include/syslimits.h:9,
+                 from /home/terminills/Documents/GitHub/aros-adt-crosstools/lib/gcc/x86_64-aros/15.2.0/include/limits.h:34,
+                 from /home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/sys/param.h:19,
+                 from /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/source/openzfs/lib/libspl/include/os/linux/sys/param.h:31,
+                 from /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/source/openzfs/lib/libspl/include/sys/types.h:55,
+                 from /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/source/openzfs/lib/libspl/include/libgen.h:31,
+                 from lib/libzfs/libzfs_import.c:32:
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/limits.h:40:9: note: this is the location of the previous definition
+   40 | #define PTHREAD_KEYS_MAX                        _POSIX_THREAD_KEYS_MAX
+      |         ^~~~~~~~~~~~~~~~
+/run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/exported-dependencies.jjAcgPAs/pthread-consistent.U8ZznVl2/source/pthread.h:58:9: warning: 'PTHREAD_STACK_MIN' redefined
+   58 | #define PTHREAD_STACK_MIN                     40960
+      |         ^~~~~~~~~~~~~~~~~
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/limits.h:41:9: note: this is the location of the previous definition
+   41 | #define PTHREAD_STACK_MIN                       0
+      |         ^~~~~~~~~~~~~~~~~
+/run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/exported-dependencies.jjAcgPAs/pthread-consistent.U8ZznVl2/source/pthread.h:59:9: warning: 'PTHREAD_THREADS_MAX' redefined
+   59 | #define PTHREAD_THREADS_MAX                   2019
+      |         ^~~~~~~~~~~~~~~~~~~
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/limits.h:42:9: note: this is the location of the previous definition
+   42 | #define PTHREAD_THREADS_MAX                     _POSIX_THREAD_THREADS_MAX
+      |         ^~~~~~~~~~~~~~~~~~~
+/run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/exported-dependencies.jjAcgPAs/pthread-consistent.U8ZznVl2/source/pthread.h:60:9: warning: 'PTHREAD_DESTRUCTOR_ITERATIONS' redefined
+   60 | #define PTHREAD_DESTRUCTOR_ITERATIONS         4
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/limits.h:39:9: note: this is the location of the previous definition
+   39 | #define PTHREAD_DESTRUCTOR_ITERATIONS           _POSIX_THREAD_DESTRUCTOR_ITERATIONS
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Compiling  openzfs/lib/libzfs/libzfs_iter.c 
+Compiling  openzfs/lib/libzfs/libzfs_mount.c 
+In file included from /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/source/openzfs/include/sys/zfs_context.h:96,
+                 from /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/source/openzfs/include/sys/dmu.h:48,
+                 from /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/source/openzfs/include/sys/dmu_tx.h:35,
+                 from /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/source/openzfs/include/sys/dsl_crypt.h:24,
+                 from lib/libzfs/libzfs_mount.c:76:
+/run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/exported-dependencies.jjAcgPAs/pthread-consistent.U8ZznVl2/source/pthread.h:57:9: warning: 'PTHREAD_KEYS_MAX' redefined
+   57 | #define PTHREAD_KEYS_MAX                      64
+      |         ^~~~~~~~~~~~~~~~
+In file included from /home/terminills/Documents/GitHub/aros-adt-crosstools/lib/gcc/x86_64-aros/15.2.0/include/limits.h:210,
+                 from /home/terminills/Documents/GitHub/aros-adt-crosstools/lib/gcc/x86_64-aros/15.2.0/include/syslimits.h:9,
+                 from /home/terminills/Documents/GitHub/aros-adt-crosstools/lib/gcc/x86_64-aros/15.2.0/include/limits.h:34,
+                 from /home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/dirent.h:15,
+                 from lib/libzfs/libzfs_mount.c:60:
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/limits.h:40:9: note: this is the location of the previous definition
+   40 | #define PTHREAD_KEYS_MAX                        _POSIX_THREAD_KEYS_MAX
+      |         ^~~~~~~~~~~~~~~~
+/run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/exported-dependencies.jjAcgPAs/pthread-consistent.U8ZznVl2/source/pthread.h:58:9: warning: 'PTHREAD_STACK_MIN' redefined
+   58 | #define PTHREAD_STACK_MIN                     40960
+      |         ^~~~~~~~~~~~~~~~~
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/limits.h:41:9: note: this is the location of the previous definition
+   41 | #define PTHREAD_STACK_MIN                       0
+      |         ^~~~~~~~~~~~~~~~~
+/run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/exported-dependencies.jjAcgPAs/pthread-consistent.U8ZznVl2/source/pthread.h:59:9: warning: 'PTHREAD_THREADS_MAX' redefined
+   59 | #define PTHREAD_THREADS_MAX                   2019
+      |         ^~~~~~~~~~~~~~~~~~~
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/limits.h:42:9: note: this is the location of the previous definition
+   42 | #define PTHREAD_THREADS_MAX                     _POSIX_THREAD_THREADS_MAX
+      |         ^~~~~~~~~~~~~~~~~~~
+/run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/exported-dependencies.jjAcgPAs/pthread-consistent.U8ZznVl2/source/pthread.h:60:9: warning: 'PTHREAD_DESTRUCTOR_ITERATIONS' redefined
+   60 | #define PTHREAD_DESTRUCTOR_ITERATIONS         4
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/limits.h:39:9: note: this is the location of the previous definition
+   39 | #define PTHREAD_DESTRUCTOR_ITERATIONS           _POSIX_THREAD_DESTRUCTOR_ITERATIONS
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+on of the previous definition
+   39 | #define PTHREAD_DESTRUCTOR_ITERATIONS           _POSIX_THREAD_DESTRUCTOR_ITERATIONS
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Compiling  openzfs/lib/libzfs/libzfs_pool.c 
+In file included from /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/source/openzfs/include/sys/zfs_context.h:96,
+                 from /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/source/openzfs/include/sys/dmu.h:48,
+                 from /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/source/openzfs/include/sys/zfs_ioctl.h:34,
+                 from lib/libzfs/libzfs_pool.c:48:
+/run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/exported-dependencies.jjAcgPAs/pthread-consistent.U8ZznVl2/source/pthread.h:57:9: warning: 'PTHREAD_KEYS_MAX' redefined
+   57 | #define PTHREAD_KEYS_MAX                      64
+      |         ^~~~~~~~~~~~~~~~
+In file included from /home/terminills/Documents/GitHub/aros-adt-crosstools/lib/gcc/x86_64-aros/15.2.0/include/limits.h:210,
+                 from /home/terminills/Documents/GitHub/aros-adt-crosstools/lib/gcc/x86_64-aros/15.2.0/include/syslimits.h:9,
+                 from /home/terminills/Documents/GitHub/aros-adt-crosstools/lib/gcc/x86_64-aros/15.2.0/include/limits.h:34,
+                 from /home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/sys/param.h:19,
+                 from /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/source/openzfs/lib/libspl/include/os/linux/sys/param.h:31,
+                 from /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/source/openzfs/lib/libspl/include/sys/types.h:55,
+                 from /home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/sys/ioctl.h:13,
+                 from /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/source/openzfs/lib/libspl/include/unistd.h:33,
+                 from lib/libzfs/libzfs_pool.c:42:
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/limits.h:40:9: note: this is the location of the previous definition
+   40 | #define PTHREAD_KEYS_MAX                        _POSIX_THREAD_KEYS_MAX
+      |         ^~~~~~~~~~~~~~~~
+/run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/exported-dependencies.jjAcgPAs/pthread-consistent.U8ZznVl2/source/pthread.h:58:9: warning: 'PTHREAD_STACK_MIN' redefined
+   58 | #define PTHREAD_STACK_MIN                     40960
+      |         ^~~~~~~~~~~~~~~~~
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/limits.h:41:9: note: this is the location of the previous definition
+   41 | #define PTHREAD_STACK_MIN                       0
+      |         ^~~~~~~~~~~~~~~~~
+/run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/exported-dependencies.jjAcgPAs/pthread-consistent.U8ZznVl2/source/pthread.h:59:9: warning: 'PTHREAD_THREADS_MAX' redefined
+   59 | #define PTHREAD_THREADS_MAX                   2019
+      |         ^~~~~~~~~~~~~~~~~~~
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/limits.h:42:9: note: this is the location of the previous definition
+   42 | #define PTHREAD_THREADS_MAX                     _POSIX_THREAD_THREADS_MAX
+      |         ^~~~~~~~~~~~~~~~~~~
+/run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/exported-dependencies.jjAcgPAs/pthread-consistent.U8ZznVl2/source/pthread.h:60:9: warning: 'PTHREAD_DESTRUCTOR_ITERATIONS' redefined
+   60 | #define PTHREAD_DESTRUCTOR_ITERATIONS         4
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/limits.h:39:9: note: this is the location of the previous definition
+   39 | #define PTHREAD_DESTRUCTOR_ITERATIONS           _POSIX_THREAD_DESTRUCTOR_ITERATIONS
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Compiling  openzfs/lib/libzfs/libzfs_sendrecv.c 
+Compiling  openzfs/lib/libzfs/libzfs_status.c 
+In file included from /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/source/openzfs/include/libzutil.h:31,
+                 from lib/libzfs/libzfs_status.c:47:
+/run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/exported-dependencies.jjAcgPAs/pthread-consistent.U8ZznVl2/source/pthread.h:57:9: warning: 'PTHREAD_KEYS_MAX' redefined
+   57 | #define PTHREAD_KEYS_MAX                      64
+      |         ^~~~~~~~~~~~~~~~
+In file included from /home/terminills/Documents/GitHub/aros-adt-crosstools/lib/gcc/x86_64-aros/15.2.0/include/limits.h:210,
+                 from /home/terminills/Documents/GitHub/aros-adt-crosstools/lib/gcc/x86_64-aros/15.2.0/include/syslimits.h:9,
+                 from /home/terminills/Documents/GitHub/aros-adt-crosstools/lib/gcc/x86_64-aros/15.2.0/include/limits.h:34,
+                 from /home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/sys/param.h:19,
+                 from /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/source/openzfs/lib/libspl/include/os/linux/sys/param.h:31,
+                 from /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/source/openzfs/lib/libspl/include/sys/types.h:55,
+                 from /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/source/openzfs/lib/libspl/include/assert.h:36,
+                 from /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/source/openzfs/include/libzfs.h:39,
+                 from lib/libzfs/libzfs_status.c:46:
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/limits.h:40:9: note: this is the location of the previous definition
+   40 | #define PTHREAD_KEYS_MAX                        _POSIX_THREAD_KEYS_MAX
+      |         ^~~~~~~~~~~~~~~~
+/run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/exported-dependencies.jjAcgPAs/pthread-consistent.U8ZznVl2/source/pthread.h:58:9: warning: 'PTHREAD_STACK_MIN' redefined
+   58 | #define PTHREAD_STACK_MIN                     40960
+      |         ^~~~~~~~~~~~~~~~~
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/limits.h:41:9: note: this is the location of the previous definition
+   41 | #define PTHREAD_STACK_MIN                       0
+      |         ^~~~~~~~~~~~~~~~~
+/run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/exported-dependencies.jjAcgPAs/pthread-consistent.U8ZznVl2/source/pthread.h:59:9: warning: 'PTHREAD_THREADS_MAX' redefined
+   59 | #define PTHREAD_THREADS_MAX                   2019
+      |         ^~~~~~~~~~~~~~~~~~~
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/limits.h:42:9: note: this is the location of the previous definition
+   42 | #define PTHREAD_THREADS_MAX                     _POSIX_THREAD_THREADS_MAX
+      |         ^~~~~~~~~~~~~~~~~~~
+/run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/exported-dependencies.jjAcgPAs/pthread-consistent.U8ZznVl2/source/pthread.h:60:9: warning: 'PTHREAD_DESTRUCTOR_ITERATIONS' redefined
+   60 | #define PTHREAD_DESTRUCTOR_ITERATIONS         4
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/limits.h:39:9: note: this is the location of the previous definition
+   39 | #define PTHREAD_DESTRUCTOR_ITERATIONS           _POSIX_THREAD_DESTRUCTOR_ITERATIONS
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Compiling  openzfs/lib/libzfs/libzfs_util.c 
+In file included from /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/source/openzfs/include/libzutil.h:31,
+                 from lib/libzfs/libzfs_status.c:47:
+/run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/exported-dependencies.jjAcgPAs/pthread-consistent.U8ZznVl2/source/pthread.h:57:9: warning: 'PTHREAD_KEYS_MAX' redefined
+   57 | #define PTHREAD_KEYS_MAX                      64
+      |         ^~~~~~~~~~~~~~~~
+In file included from /home/terminills/Documents/GitHub/aros-adt-crosstools/lib/gcc/x86_64-aros/15.2.0/include/limits.h:210,
+                 from /home/terminills/Documents/GitHub/aros-adt-crosstools/lib/gcc/x86_64-aros/15.2.0/include/syslimits.h:9,
+                 from /home/terminills/Documents/GitHub/aros-adt-crosstools/lib/gcc/x86_64-aros/15.2.0/include/limits.h:34,
+                 from /home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/sys/param.h:19,
+                 from /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/source/openzfs/lib/libspl/include/os/linux/sys/param.h:31,
+                 from /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/source/openzfs/lib/libspl/include/sys/types.h:55,
+                 from /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/source/openzfs/lib/libspl/include/assert.h:36,
+                 from /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/source/openzfs/include/libzfs.h:39,
+                 from lib/libzfs/libzfs_status.c:46:
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/limits.h:40:9: note: this is the location of the previous definition
+   40 | #define PTHREAD_KEYS_MAX                        _POSIX_THREAD_KEYS_MAX
+      |         ^~~~~~~~~~~~~~~~
+/run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/exported-dependencies.jjAcgPAs/pthread-consistent.U8ZznVl2/source/pthread.h:58:9: warning: 'PTHREAD_STACK_MIN' redefined
+   58 | #define PTHREAD_STACK_MIN                     40960
+      |         ^~~~~~~~~~~~~~~~~
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/limits.h:41:9: note: this is the location of the previous definition
+   41 | #define PTHREAD_STACK_MIN                       0
+      |         ^~~~~~~~~~~~~~~~~
+/run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/exported-dependencies.jjAcgPAs/pthread-consistent.U8ZznVl2/source/pthread.h:59:9: warning: 'PTHREAD_THREADS_MAX' redefined
+   59 | #define PTHREAD_THREADS_MAX                   2019
+      |         ^~~~~~~~~~~~~~~~~~~
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/limits.h:42:9: note: this is the location of the previous definition
+   42 | #define PTHREAD_THREADS_MAX                     _POSIX_THREAD_THREADS_MAX
+      |         ^~~~~~~~~~~~~~~~~~~
+/run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/exported-dependencies.jjAcgPAs/pthread-consistent.U8ZznVl2/source/pthread.h:60:9: warning: 'PTHREAD_DESTRUCTOR_ITERATIONS' redefined
+   60 | #define PTHREAD_DESTRUCTOR_ITERATIONS         4
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/limits.h:39:9: note: this is the location of the previous definition
+   39 | #define PTHREAD_DESTRUCTOR_ITERATIONS           _POSIX_THREAD_DESTRUCTOR_ITERATIONS
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Compiling  openzfs/lib/libzfs_core/libzfs_core.c 
+In file included from /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/source/openzfs/include/sys/zfs_context.h:96,
+                 from /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/source/openzfs/include/sys/dmu.h:48,
+                 from lib/libzfs/libzfs_impl.h:35,
+                 from lib/libzfs/libzfs_util.c:60:
+/run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/exported-dependencies.jjAcgPAs/pthread-consistent.U8ZznVl2/source/pthread.h:57:9: warning: 'PTHREAD_KEYS_MAX' redefined
+   57 | #define PTHREAD_KEYS_MAX                      64
+      |         ^~~~~~~~~~~~~~~~
+In file included from /home/terminills/Documents/GitHub/aros-adt-crosstools/lib/gcc/x86_64-aros/15.2.0/include/limits.h:210,
+                 from /home/terminills/Documents/GitHub/aros-adt-crosstools/lib/gcc/x86_64-aros/15.2.0/include/syslimits.h:9,
+                 from /home/terminills/Documents/GitHub/aros-adt-crosstools/lib/gcc/x86_64-aros/15.2.0/include/limits.h:34,
+                 from /home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/sys/param.h:19,
+                 from /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/source/openzfs/lib/libspl/include/os/linux/sys/param.h:31,
+                 from /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/source/openzfs/lib/libspl/include/sys/types.h:55,
+                 from /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/source/openzfs/aros/engine/include/sys/stat.h:4,
+                 from /home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/fcntl.h:14,
+                 from lib/libzfs/libzfs_util.c:40:
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/limits.h:40:9: note: this is the location of the previous definition
+   40 | #define PTHREAD_KEYS_MAX                        _POSIX_THREAD_KEYS_MAX
+      |         ^~~~~~~~~~~~~~~~
+/run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/exported-dependencies.jjAcgPAs/pthread-consistent.U8ZznVl2/source/pthread.h:58:9: warning: 'PTHREAD_STACK_MIN' redefined
+   58 | #define PTHREAD_STACK_MIN                     40960
+      |         ^~~~~~~~~~~~~~~~~
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/limits.h:41:9: note: this is the location of the previous definition
+   41 | #define PTHREAD_STACK_MIN                       0
+      |         ^~~~~~~~~~~~~~~~~
+/run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/exported-dependencies.jjAcgPAs/pthread-consistent.U8ZznVl2/source/pthread.h:59:9: warning: 'PTHREAD_THREADS_MAX' redefined
+   59 | #define PTHREAD_THREADS_MAX                   2019
+      |         ^~~~~~~~~~~~~~~~~~~
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/limits.h:42:9: note: this is the location of the previous definition
+   42 | #define PTHREAD_THREADS_MAX                     _POSIX_THREAD_THREADS_MAX
+      |         ^~~~~~~~~~~~~~~~~~~
+/run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/exported-dependencies.jjAcgPAs/pthread-consistent.U8ZznVl2/source/pthread.h:60:9: warning: 'PTHREAD_DESTRUCTOR_ITERATIONS' redefined
+   60 | #define PTHREAD_DESTRUCTOR_ITERATIONS         4
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/limits.h:39:9: note: this is the location of the previous definition
+   39 | #define PTHREAD_DESTRUCTOR_ITERATIONS           _POSIX_THREAD_DESTRUCTOR_ITERATIONS
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Compiling  openzfs/lib/libzutil/zutil_device_path.c 
+Compiling  openzfs/lib/libzutil/zutil_import.c 
+In file included from /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/source/openzfs/include/sys/zfs_context.h:96,
+                 from /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/source/openzfs/include/sys/dmu.h:48,
+                 from /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/source/openzfs/include/sys/bpobj.h:30,
+                 from /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/source/openzfs/include/sys/vdev_impl.h:33,
+                 from lib/libzutil/zutil_import.c:66:
+/run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/exported-dependencies.jjAcgPAs/pthread-consistent.U8ZznVl2/source/pthread.h:57:9: warning: 'PTHREAD_KEYS_MAX' redefined
+   57 | #define PTHREAD_KEYS_MAX                      64
+      |         ^~~~~~~~~~~~~~~~
+In file included from /home/terminills/Documents/GitHub/aros-adt-crosstools/lib/gcc/x86_64-aros/15.2.0/include/limits.h:210,
+                 from /home/terminills/Documents/GitHub/aros-adt-crosstools/lib/gcc/x86_64-aros/15.2.0/include/syslimits.h:9,
+                 from /home/terminills/Documents/GitHub/aros-adt-crosstools/lib/gcc/x86_64-aros/15.2.0/include/limits.h:34,
+                 from /home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/dirent.h:15,
+                 from lib/libzutil/zutil_import.c:55:
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/limits.h:40:9: note: this is the location of the previous definition
+   40 | #define PTHREAD_KEYS_MAX                        _POSIX_THREAD_KEYS_MAX
+      |         ^~~~~~~~~~~~~~~~
+/run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/exported-dependencies.jjAcgPAs/pthread-consistent.U8ZznVl2/source/pthread.h:58:9: warning: 'PTHREAD_STACK_MIN' redefined
+   58 | #define PTHREAD_STACK_MIN                     40960
+      |         ^~~~~~~~~~~~~~~~~
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/limits.h:41:9: note: this is the location of the previous definition
+   41 | #define PTHREAD_STACK_MIN                       0
+      |         ^~~~~~~~~~~~~~~~~
+/run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/exported-dependencies.jjAcgPAs/pthread-consistent.U8ZznVl2/source/pthread.h:59:9: warning: 'PTHREAD_THREADS_MAX' redefined
+   59 | #define PTHREAD_THREADS_MAX                   2019
+      |         ^~~~~~~~~~~~~~~~~~~
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/limits.h:42:9: note: this is the location of the previous definition
+   42 | #define PTHREAD_THREADS_MAX                     _POSIX_THREAD_THREADS_MAX
+      |         ^~~~~~~~~~~~~~~~~~~
+/run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/exported-dependencies.jjAcgPAs/pthread-consistent.U8ZznVl2/source/pthread.h:60:9: warning: 'PTHREAD_DESTRUCTOR_ITERATIONS' redefined
+   60 | #define PTHREAD_DESTRUCTOR_ITERATIONS         4
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/limits.h:39:9: note: this is the location of the previous definition
+   39 | #define PTHREAD_DESTRUCTOR_ITERATIONS           _POSIX_THREAD_DESTRUCTOR_ITERATIONS
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+is the location of the previous definition
+   39 | #define PTHREAD_DESTRUCTOR_ITERATIONS           _POSIX_THREAD_DESTRUCTOR_ITERATIONS
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Compiling  openzfs/lib/libzutil/zutil_nicenum.c 
+In file included from /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/source/openzfs/include/libzutil.h:31,
+                 from lib/libzutil/zutil_nicenum.c:38:
+/run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/exported-dependencies.jjAcgPAs/pthread-consistent.U8ZznVl2/source/pthread.h:57:9: warning: 'PTHREAD_KEYS_MAX' redefined
+   57 | #define PTHREAD_KEYS_MAX                      64
+      |         ^~~~~~~~~~~~~~~~
+In file included from /home/terminills/Documents/GitHub/aros-adt-crosstools/lib/gcc/x86_64-aros/15.2.0/include/limits.h:210,
+                 from /home/terminills/Documents/GitHub/aros-adt-crosstools/lib/gcc/x86_64-aros/15.2.0/include/syslimits.h:9,
+                 from /home/terminills/Documents/GitHub/aros-adt-crosstools/lib/gcc/x86_64-aros/15.2.0/include/limits.h:34,
+                 from /home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/stdc/math.h:23,
+                 from lib/libzutil/zutil_nicenum.c:35:
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/limits.h:40:9: note: this is the location of the previous definition
+   40 | #define PTHREAD_KEYS_MAX                        _POSIX_THREAD_KEYS_MAX
+      |         ^~~~~~~~~~~~~~~~
+/run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/exported-dependencies.jjAcgPAs/pthread-consistent.U8ZznVl2/source/pthread.h:58:9: warning: 'PTHREAD_STACK_MIN' redefined
+   58 | #define PTHREAD_STACK_MIN                     40960
+      |         ^~~~~~~~~~~~~~~~~
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/limits.h:41:9: note: this is the location of the previous definition
+   41 | #define PTHREAD_STACK_MIN                       0
+      |         ^~~~~~~~~~~~~~~~~
+/run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/exported-dependencies.jjAcgPAs/pthread-consistent.U8ZznVl2/source/pthread.h:59:9: warning: 'PTHREAD_THREADS_MAX' redefined
+   59 | #define PTHREAD_THREADS_MAX                   2019
+      |         ^~~~~~~~~~~~~~~~~~~
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/limits.h:42:9: note: this is the location of the previous definition
+   42 | #define PTHREAD_THREADS_MAX                     _POSIX_THREAD_THREADS_MAX
+      |         ^~~~~~~~~~~~~~~~~~~
+/run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/exported-dependencies.jjAcgPAs/pthread-consistent.U8ZznVl2/source/pthread.h:60:9: warning: 'PTHREAD_DESTRUCTOR_ITERATIONS' redefined
+   60 | #define PTHREAD_DESTRUCTOR_ITERATIONS         4
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/limits.h:39:9: note: this is the location of the previous definition
+   39 | #define PTHREAD_DESTRUCTOR_ITERATIONS           _POSIX_THREAD_DESTRUCTOR_ITERATIONS
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Compiling  openzfs/lib/libzutil/zutil_pool.c 
+Compiling  openzfs/lib/libshare/libshare.c 
+In file included from /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/source/openzfs/include/libzutil.h:31,
+                 from lib/libzutil/zutil_pool.c:35:
+/run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/exported-dependencies.jjAcgPAs/pthread-consistent.U8ZznVl2/source/pthread.h:57:9: warning: 'PTHREAD_KEYS_MAX' redefined
+   57 | #define PTHREAD_KEYS_MAX                      64
+      |         ^~~~~~~~~~~~~~~~
+In file included from /home/terminills/Documents/GitHub/aros-adt-crosstools/lib/gcc/x86_64-aros/15.2.0/include/limits.h:210,
+                 from /home/terminills/Documents/GitHub/aros-adt-crosstools/lib/gcc/x86_64-aros/15.2.0/include/syslimits.h:9,
+                 from /home/terminills/Documents/GitHub/aros-adt-crosstools/lib/gcc/x86_64-aros/15.2.0/include/limits.h:34,
+                 from /home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/sys/param.h:19,
+                 from /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/source/openzfs/lib/libspl/include/os/linux/sys/param.h:31,
+                 from /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/source/openzfs/lib/libspl/include/sys/types.h:55,
+                 from /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/source/openzfs/include/sys/nvpair.h:30,
+                 from lib/libzutil/zutil_pool.c:30:
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/limits.h:40:9: note: this is the location of the previous definition
+   40 | #define PTHREAD_KEYS_MAX                        _POSIX_THREAD_KEYS_MAX
+      |         ^~~~~~~~~~~~~~~~
+/run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/exported-dependencies.jjAcgPAs/pthread-consistent.U8ZznVl2/source/pthread.h:58:9: warning: 'PTHREAD_STACK_MIN' redefined
+   58 | #define PTHREAD_STACK_MIN                     40960
+      |         ^~~~~~~~~~~~~~~~~
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/limits.h:41:9: note: this is the location of the previous definition
+   41 | #define PTHREAD_STACK_MIN                       0
+      |         ^~~~~~~~~~~~~~~~~
+/run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/exported-dependencies.jjAcgPAs/pthread-consistent.U8ZznVl2/source/pthread.h:59:9: warning: 'PTHREAD_THREADS_MAX' redefined
+   59 | #define PTHREAD_THREADS_MAX                   2019
+      |         ^~~~~~~~~~~~~~~~~~~
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/limits.h:42:9: note: this is the location of the previous definition
+   42 | #define PTHREAD_THREADS_MAX                     _POSIX_THREAD_THREADS_MAX
+      |         ^~~~~~~~~~~~~~~~~~~
+/run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/exported-dependencies.jjAcgPAs/pthread-consistent.U8ZznVl2/source/pthread.h:60:9: warning: 'PTHREAD_DESTRUCTOR_ITERATIONS' redefined
+   60 | #define PTHREAD_DESTRUCTOR_ITERATIONS         4
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/limits.h:39:9: note: this is the location of the previous definition
+   39 | #define PTHREAD_DESTRUCTOR_ITERATIONS           _POSIX_THREAD_DESTRUCTOR_ITERATIONS
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In file included from /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/source/openzfs/include/libzutil.h:31,
+                 from lib/libzutil/zutil_pool.c:35:
+/run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/exported-dependencies.jjAcgPAs/pthread-consistent.U8ZznVl2/source/pthread.h:57:9: warning: 'PTHREAD_KEYS_MAX' redefined
+   57 | #define PTHREAD_KEYS_MAX                      64
+      |         ^~~~~~~~~~~~~~~~
+In file included from /home/terminills/Documents/GitHub/aros-adt-crosstools/lib/gcc/x86_64-aros/15.2.0/include/limits.h:210,
+                 from /home/terminills/Documents/GitHub/aros-adt-crosstools/lib/gcc/x86_64-aros/15.2.0/include/syslimits.h:9,
+                 from /home/terminills/Documents/GitHub/aros-adt-crosstools/lib/gcc/x86_64-aros/15.2.0/include/limits.h:34,
+                 from /home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/sys/param.h:19,
+                 from /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/source/openzfs/lib/libspl/include/os/linux/sys/param.h:31,
+                 from /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/source/openzfs/lib/libspl/include/sys/types.h:55,
+                 from /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/source/openzfs/include/sys/nvpair.h:30,
+                 from lib/libzutil/zutil_pool.c:30:
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/limits.h:40:9: note: this is the location of the previous definition
+   40 | #define PTHREAD_KEYS_MAX                        _POSIX_THREAD_KEYS_MAX
+      |         ^~~~~~~~~~~~~~~~
+/run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/exported-dependencies.jjAcgPAs/pthread-consistent.U8ZznVl2/source/pthread.h:58:9: warning: 'PTHREAD_STACK_MIN' redefined
+   58 | #define PTHREAD_STACK_MIN                     40960
+      |         ^~~~~~~~~~~~~~~~~
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/limits.h:41:9: note: this is the location of the previous definition
+   41 | #define PTHREAD_STACK_MIN                       0
+      |         ^~~~~~~~~~~~~~~~~
+/run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/exported-dependencies.jjAcgPAs/pthread-consistent.U8ZznVl2/source/pthread.h:59:9: warning: 'PTHREAD_THREADS_MAX' redefined
+   59 | #define PTHREAD_THREADS_MAX                   2019
+      |         ^~~~~~~~~~~~~~~~~~~
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/limits.h:42:9: note: this is the location of the previous definition
+   42 | #define PTHREAD_THREADS_MAX                     _POSIX_THREAD_THREADS_MAX
+      |         ^~~~~~~~~~~~~~~~~~~
+/run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/exported-dependencies.jjAcgPAs/pthread-consistent.U8ZznVl2/source/pthread.h:60:9: warning: 'PTHREAD_DESTRUCTOR_ITERATIONS' redefined
+   60 | #define PTHREAD_DESTRUCTOR_ITERATIONS         4
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/limits.h:39:9: note: this is the location of the previous definition
+   39 | #define PTHREAD_DESTRUCTOR_ITERATIONS           _POSIX_THREAD_DESTRUCTOR_ITERATIONS
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Compiling  openzfs/aros/cli/key-prompt.c 
+Compiling  openzfs/aros/cli/gpt.c 
+In file included from /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/source/openzfs/include/sys/zfs_context.h:96,
+                 from /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/source/openzfs/include/sys/dmu.h:48,
+                 from aros/cli/../../lib/libzfs/libzfs_impl.h:35,
+                 from aros/cli/gpt.c:5:
+/run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/exported-dependencies.jjAcgPAs/pthread-consistent.U8ZznVl2/source/pthread.h:57:9: warning: 'PTHREAD_KEYS_MAX' redefined
+   57 | #define PTHREAD_KEYS_MAX                      64
+      |         ^~~~~~~~~~~~~~~~
+In file included from /home/terminills/Documents/GitHub/aros-adt-crosstools/lib/gcc/x86_64-aros/15.2.0/include/limits.h:210,
+                 from /home/terminills/Documents/GitHub/aros-adt-crosstools/lib/gcc/x86_64-aros/15.2.0/include/syslimits.h:9,
+                 from /home/terminills/Documents/GitHub/aros-adt-crosstools/lib/gcc/x86_64-aros/15.2.0/include/limits.h:34,
+                 from /home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/sys/param.h:19,
+                 from /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/source/openzfs/lib/libspl/include/os/linux/sys/param.h:31,
+                 from /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/source/openzfs/lib/libspl/include/sys/types.h:55,
+                 from /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/source/openzfs/lib/libspl/include/sys/time.h:32,
+                 from /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/source/openzfs/include/sys/fs/zfs.h:40,
+                 from aros/cli/../../lib/libzfs/libzfs_impl.h:33:
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/limits.h:40:9: note: this is the location of the previous definition
+   40 | #define PTHREAD_KEYS_MAX                        _POSIX_THREAD_KEYS_MAX
+      |         ^~~~~~~~~~~~~~~~
+/run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/exported-dependencies.jjAcgPAs/pthread-consistent.U8ZznVl2/source/pthread.h:58:9: warning: 'PTHREAD_STACK_MIN' redefined
+   58 | #define PTHREAD_STACK_MIN                     40960
+      |         ^~~~~~~~~~~~~~~~~
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/limits.h:41:9: note: this is the location of the previous definition
+   41 | #define PTHREAD_STACK_MIN                       0
+      |         ^~~~~~~~~~~~~~~~~
+/run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/exported-dependencies.jjAcgPAs/pthread-consistent.U8ZznVl2/source/pthread.h:59:9: warning: 'PTHREAD_THREADS_MAX' redefined
+   59 | #define PTHREAD_THREADS_MAX                   2019
+      |         ^~~~~~~~~~~~~~~~~~~
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/limits.h:42:9: note: this is the location of the previous definition
+   42 | #define PTHREAD_THREADS_MAX                     _POSIX_THREAD_THREADS_MAX
+      |         ^~~~~~~~~~~~~~~~~~~
+/run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/exported-dependencies.jjAcgPAs/pthread-consistent.U8ZznVl2/source/pthread.h:60:9: warning: 'PTHREAD_DESTRUCTOR_ITERATIONS' redefined
+   60 | #define PTHREAD_DESTRUCTOR_ITERATIONS         4
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/limits.h:39:9: note: this is the location of the previous definition
+   39 | #define PTHREAD_DESTRUCTOR_ITERATIONS           _POSIX_THREAD_DESTRUCTOR_ITERATIONS
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Compiling  openzfs/aros/cli/share-unavailable.c 
+Compiling  openzfs/aros/cli/project.c 
+Compiling  openzfs/aros/cli/rewrite.c 
+Compiling  openzfs/aros/cli/stream-client.c 
+Compiling  openzfs/aros/cli/stream-channel.c 
+Compiling  openzfs/aros/cli/arguments.c 
+Compiling  openzfs/aros/cli/process.c 
+Compiling  openzfs/aros/cli/output.c 
+Compiling  openzfs/aros/cli/identity.c 
+Compiling  openzfs/aros/cli/progress-wait.c 
+Compiling  openzfs/aros/cli/title.c 
+Compiling  openzfs/aros/cli/version.c 
+Compiling  openzfs/aros/cli/lifecycle.c 
+Compiling  openzfs/aros/cli/platform-hooks.c 
+Compiling  openzfs/aros/cli/shares-object.c 
+In file included from /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/source/openzfs/include/sys/zfs_context.h:96,
+                 from /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/source/openzfs/include/sys/dmu.h:48,
+                 from aros/cli/../../lib/libzfs/libzfs_impl.h:35,
+                 from aros/cli/shares-object.c:5:
+/run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/exported-dependencies.jjAcgPAs/pthread-consistent.U8ZznVl2/source/pthread.h:57:9: warning: 'PTHREAD_KEYS_MAX' redefined
+   57 | #define PTHREAD_KEYS_MAX                      64
+      |         ^~~~~~~~~~~~~~~~
+In file included from /home/terminills/Documents/GitHub/aros-adt-crosstools/lib/gcc/x86_64-aros/15.2.0/include/limits.h:210,
+                 from /home/terminills/Documents/GitHub/aros-adt-crosstools/lib/gcc/x86_64-aros/15.2.0/include/syslimits.h:9,
+                 from /home/terminills/Documents/GitHub/aros-adt-crosstools/lib/gcc/x86_64-aros/15.2.0/include/limits.h:34,
+                 from /home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/sys/param.h:19,
+                 from /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/source/openzfs/lib/libspl/include/os/linux/sys/param.h:31,
+                 from /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/source/openzfs/lib/libspl/include/sys/types.h:55,
+                 from /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/source/openzfs/lib/libspl/include/assert.h:36,
+                 from /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/source/openzfs/include/libzfs.h:39,
+                 from aros/cli/shares-object.c:2:
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/limits.h:40:9: note: this is the location of the previous definition
+   40 | #define PTHREAD_KEYS_MAX                        _POSIX_THREAD_KEYS_MAX
+      |         ^~~~~~~~~~~~~~~~
+/run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/exported-dependencies.jjAcgPAs/pthread-consistent.U8ZznVl2/source/pthread.h:58:9: warning: 'PTHREAD_STACK_MIN' redefined
+   58 | #define PTHREAD_STACK_MIN                     40960
+      |         ^~~~~~~~~~~~~~~~~
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/limits.h:41:9: note: this is the location of the previous definition
+   41 | #define PTHREAD_STACK_MIN                       0
+      |         ^~~~~~~~~~~~~~~~~
+/run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/exported-dependencies.jjAcgPAs/pthread-consistent.U8ZznVl2/source/pthread.h:59:9: warning: 'PTHREAD_THREADS_MAX' redefined
+   59 | #define PTHREAD_THREADS_MAX                   2019
+      |         ^~~~~~~~~~~~~~~~~~~
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/limits.h:42:9: note: this is the location of the previous definition
+   42 | #define PTHREAD_THREADS_MAX                     _POSIX_THREAD_THREADS_MAX
+      |         ^~~~~~~~~~~~~~~~~~~
+/run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/exported-dependencies.jjAcgPAs/pthread-consistent.U8ZznVl2/source/pthread.h:60:9: warning: 'PTHREAD_DESTRUCTOR_ITERATIONS' redefined
+   60 | #define PTHREAD_DESTRUCTOR_ITERATIONS         4
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/limits.h:39:9: note: this is the location of the previous definition
+   39 | #define PTHREAD_DESTRUCTOR_ITERATIONS           _POSIX_THREAD_DESTRUCTOR_ITERATIONS
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In file included from /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/source/openzfs/include/sys/zfs_context.h:96,
+                 from /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/source/openzfs/include/sys/dmu.h:48,
+                 from aros/cli/../../lib/libzfs/libzfs_impl.h:35,
+                 from aros/cli/shares-object.c:5:
+/run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/exported-dependencies.jjAcgPAs/pthread-consistent.U8ZznVl2/source/pthread.h:57:9: warning: 'PTHREAD_KEYS_MAX' redefined
+   57 | #define PTHREAD_KEYS_MAX                      64
+      |         ^~~~~~~~~~~~~~~~
+In file included from /home/terminills/Documents/GitHub/aros-adt-crosstools/lib/gcc/x86_64-aros/15.2.0/include/limits.h:210,
+                 from /home/terminills/Documents/GitHub/aros-adt-crosstools/lib/gcc/x86_64-aros/15.2.0/include/syslimits.h:9,
+                 from /home/terminills/Documents/GitHub/aros-adt-crosstools/lib/gcc/x86_64-aros/15.2.0/include/limits.h:34,
+                 from /home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/sys/param.h:19,
+                 from /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/source/openzfs/lib/libspl/include/os/linux/sys/param.h:31,
+                 from /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/source/openzfs/lib/libspl/include/sys/types.h:55,
+                 from /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/source/openzfs/lib/libspl/include/assert.h:36,
+                 from /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/source/openzfs/include/libzfs.h:39,
+                 from aros/cli/shares-object.c:2:
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/limits.h:40:9: note: this is the location of the previous definition
+   40 | #define PTHREAD_KEYS_MAX                        _POSIX_THREAD_KEYS_MAX
+      |         ^~~~~~~~~~~~~~~~
+/run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/exported-dependencies.jjAcgPAs/pthread-consistent.U8ZznVl2/source/pthread.h:58:9: warning: 'PTHREAD_STACK_MIN' redefined
+   58 | #define PTHREAD_STACK_MIN                     40960
+      |         ^~~~~~~~~~~~~~~~~
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/limits.h:41:9: note: this is the location of the previous definition
+   41 | #define PTHREAD_STACK_MIN                       0
+      |         ^~~~~~~~~~~~~~~~~
+/run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/exported-dependencies.jjAcgPAs/pthread-consistent.U8ZznVl2/source/pthread.h:59:9: warning: 'PTHREAD_THREADS_MAX' redefined
+   59 | #define PTHREAD_THREADS_MAX                   2019
+      |         ^~~~~~~~~~~~~~~~~~~
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/limits.h:42:9: note: this is the location of the previous definition
+   42 | #define PTHREAD_THREADS_MAX                     _POSIX_THREAD_THREADS_MAX
+      |         ^~~~~~~~~~~~~~~~~~~
+/run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/exported-dependencies.jjAcgPAs/pthread-consistent.U8ZznVl2/source/pthread.h:60:9: warning: 'PTHREAD_DESTRUCTOR_ITERATIONS' redefined
+   60 | #define PTHREAD_DESTRUCTOR_ITERATIONS         4
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/limits.h:39:9: note: this is the location of the previous definition
+   39 | #define PTHREAD_DESTRUCTOR_ITERATIONS           _POSIX_THREAD_DESTRUCTOR_ITERATIONS
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Compiling  openzfs/aros/cli/control-client.c 
+Compiling  openzfs/aros/ui/api.c 
+In file included from /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/source/openzfs/include/sys/zfs_context.h:96,
+                 from /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/source/openzfs/include/sys/dmu.h:48,
+                 from aros/cli/../../lib/libzfs/libzfs_impl.h:35,
+                 from aros/cli/shares-object.c:5:
+/run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/exported-dependencies.jjAcgPAs/pthread-consistent.U8ZznVl2/source/pthread.h:57:9: warning: 'PTHREAD_KEYS_MAX' redefined
+   57 | #define PTHREAD_KEYS_MAX                      64
+      |         ^~~~~~~~~~~~~~~~
+In file included from /home/terminills/Documents/GitHub/aros-adt-crosstools/lib/gcc/x86_64-aros/15.2.0/include/limits.h:210,
+                 from /home/terminills/Documents/GitHub/aros-adt-crosstools/lib/gcc/x86_64-aros/15.2.0/include/syslimits.h:9,
+                 from /home/terminills/Documents/GitHub/aros-adt-crosstools/lib/gcc/x86_64-aros/15.2.0/include/limits.h:34,
+                 from /home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/sys/param.h:19,
+                 from /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/source/openzfs/lib/libspl/include/os/linux/sys/param.h:31,
+                 from /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/source/openzfs/lib/libspl/include/sys/types.h:55,
+                 from /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/source/openzfs/lib/libspl/include/assert.h:36,
+                 from /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/source/openzfs/include/libzfs.h:39,
+                 from aros/cli/shares-object.c:2:
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/limits.h:40:9: note: this is the location of the previous definition
+   40 | #define PTHREAD_KEYS_MAX                        _POSIX_THREAD_KEYS_MAX
+      |         ^~~~~~~~~~~~~~~~
+/run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/exported-dependencies.jjAcgPAs/pthread-consistent.U8ZznVl2/source/pthread.h:58:9: warning: 'PTHREAD_STACK_MIN' redefined
+   58 | #define PTHREAD_STACK_MIN                     40960
+      |         ^~~~~~~~~~~~~~~~~
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/limits.h:41:9: note: this is the location of the previous definition
+   41 | #define PTHREAD_STACK_MIN                       0
+      |         ^~~~~~~~~~~~~~~~~
+/run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/exported-dependencies.jjAcgPAs/pthread-consistent.U8ZznVl2/source/pthread.h:59:9: warning: 'PTHREAD_THREADS_MAX' redefined
+   59 | #define PTHREAD_THREADS_MAX                   2019
+      |         ^~~~~~~~~~~~~~~~~~~
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/limits.h:42:9: note: this is the location of the previous definition
+   42 | #define PTHREAD_THREADS_MAX                     _POSIX_THREAD_THREADS_MAX
+      |         ^~~~~~~~~~~~~~~~~~~
+/run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/exported-dependencies.jjAcgPAs/pthread-consistent.U8ZznVl2/source/pthread.h:60:9: warning: 'PTHREAD_DESTRUCTOR_ITERATIONS' redefined
+   60 | #define PTHREAD_DESTRUCTOR_ITERATIONS         4
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/limits.h:39:9: note: this is the location of the previous definition
+   39 | #define PTHREAD_DESTRUCTOR_ITERATIONS           _POSIX_THREAD_DESTRUCTOR_ITERATIONS
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Compiling  openzfs/aros/ui/admission-client.c 
+Compiling  openzfs/aros/cli/import-files.c 
+In file included from /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/source/openzfs/include/sys/zfs_context.h:96,
+                 from aros/cli/control-client.c:3:
+/run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/exported-dependencies.jjAcgPAs/pthread-consistent.U8ZznVl2/source/pthread.h:57:9: warning: 'PTHREAD_KEYS_MAX' redefined
+   57 | #define PTHREAD_KEYS_MAX                      64
+      |         ^~~~~~~~~~~~~~~~
+In file included from /home/terminills/Documents/GitHub/aros-adt-crosstools/lib/gcc/x86_64-aros/15.2.0/include/limits.h:210,
+                 from /home/terminills/Documents/GitHub/aros-adt-crosstools/lib/gcc/x86_64-aros/15.2.0/include/syslimits.h:9,
+                 from /home/terminills/Documents/GitHub/aros-adt-crosstools/lib/gcc/x86_64-aros/15.2.0/include/limits.h:34,
+                 from /home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/sys/param.h:19,
+                 from /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/source/openzfs/lib/libspl/include/os/linux/sys/param.h:31,
+                 from /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/source/openzfs/lib/libspl/include/sys/types.h:55,
+                 from /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/source/openzfs/aros/engine/include/sys/stat.h:4,
+                 from /home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/fcntl.h:14,
+                 from /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/source/openzfs/include/sys/zfs_context.h:92:
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/limits.h:40:9: note: this is the location of the previous definition
+   40 | #define PTHREAD_KEYS_MAX                        _POSIX_THREAD_KEYS_MAX
+      |         ^~~~~~~~~~~~~~~~
+/run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/exported-dependencies.jjAcgPAs/pthread-consistent.U8ZznVl2/source/pthread.h:58:9: warning: 'PTHREAD_STACK_MIN' redefined
+   58 | #define PTHREAD_STACK_MIN                     40960
+      |         ^~~~~~~~~~~~~~~~~
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/limits.h:41:9: note: this is the location of the previous definition
+   41 | #define PTHREAD_STACK_MIN                       0
+      |         ^~~~~~~~~~~~~~~~~
+/run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/exported-dependencies.jjAcgPAs/pthread-consistent.U8ZznVl2/source/pthread.h:59:9: warning: 'PTHREAD_THREADS_MAX' redefined
+   59 | #define PTHREAD_THREADS_MAX                   2019
+      |         ^~~~~~~~~~~~~~~~~~~
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/limits.h:42:9: note: this is the location of the previous definition
+   42 | #define PTHREAD_THREADS_MAX                     _POSIX_THREAD_THREADS_MAX
+      |         ^~~~~~~~~~~~~~~~~~~
+/run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/exported-dependencies.jjAcgPAs/pthread-consistent.U8ZznVl2/source/pthread.h:60:9: warning: 'PTHREAD_DESTRUCTOR_ITERATIONS' redefined
+   60 | #define PTHREAD_DESTRUCTOR_ITERATIONS         4
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/limits.h:39:9: note: this is the location of the previous definition
+   39 | #define PTHREAD_DESTRUCTOR_ITERATIONS           _POSIX_THREAD_DESTRUCTOR_ITERATIONS
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Compiling  openzfs/aros/cli/file-vdev.c 
+In file included from /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/source/openzfs/include/libzutil.h:31,
+                 from aros/cli/../../cmd/zpool/zpool_util.h:31,
+                 from aros/cli/file-vdev.c:6:
+/run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/exported-dependencies.jjAcgPAs/pthread-consistent.U8ZznVl2/source/pthread.h:57:9: warning: 'PTHREAD_KEYS_MAX' redefined
+   57 | #define PTHREAD_KEYS_MAX                      64
+      |         ^~~~~~~~~~~~~~~~
+In file included from /home/terminills/Documents/GitHub/aros-adt-crosstools/lib/gcc/x86_64-aros/15.2.0/include/limits.h:210,
+                 from /home/terminills/Documents/GitHub/aros-adt-crosstools/lib/gcc/x86_64-aros/15.2.0/include/syslimits.h:9,
+                 from /home/terminills/Documents/GitHub/aros-adt-crosstools/lib/gcc/x86_64-aros/15.2.0/include/limits.h:34,
+                 from /home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/sys/param.h:19,
+                 from /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/source/openzfs/lib/libspl/include/os/linux/sys/param.h:31,
+                 from /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/source/openzfs/lib/libspl/include/sys/types.h:55,
+                 from /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/source/openzfs/lib/libspl/include/assert.h:36,
+                 from /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/source/openzfs/include/libzfs.h:39,
+                 from aros/cli/file-vdev.c:2:
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/limits.h:40:9: note: this is the location of the previous definition
+   40 | #define PTHREAD_KEYS_MAX                        _POSIX_THREAD_KEYS_MAX
+      |         ^~~~~~~~~~~~~~~~
+/run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/exported-dependencies.jjAcgPAs/pthread-consistent.U8ZznVl2/source/pthread.h:58:9: warning: 'PTHREAD_STACK_MIN' redefined
+   58 | #define PTHREAD_STACK_MIN                     40960
+      |         ^~~~~~~~~~~~~~~~~
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/limits.h:41:9: note: this is the location of the previous definition
+   41 | #define PTHREAD_STACK_MIN                       0
+      |         ^~~~~~~~~~~~~~~~~
+/run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/exported-dependencies.jjAcgPAs/pthread-consistent.U8ZznVl2/source/pthread.h:59:9: warning: 'PTHREAD_THREADS_MAX' redefined
+   59 | #define PTHREAD_THREADS_MAX                   2019
+      |         ^~~~~~~~~~~~~~~~~~~
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/limits.h:42:9: note: this is the location of the previous definition
+   42 | #define PTHREAD_THREADS_MAX                     _POSIX_THREAD_THREADS_MAX
+      |         ^~~~~~~~~~~~~~~~~~~
+/run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/exported-dependencies.jjAcgPAs/pthread-consistent.U8ZznVl2/source/pthread.h:60:9: warning: 'PTHREAD_DESTRUCTOR_ITERATIONS' redefined
+   60 | #define PTHREAD_DESTRUCTOR_ITERATIONS         4
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/limits.h:39:9: note: this is the location of the previous definition
+   39 | #define PTHREAD_DESTRUCTOR_ITERATIONS           _POSIX_THREAD_DESTRUCTOR_ITERATIONS
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ITERATIONS
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Compiling  openzfs/aros/cli/device-path.c 
+Compiling  openzfs/aros/cli/native-device.c 
+Compiling  openzfs/aros/cli/device-wait.c 
+Compiling  openzfs/aros/cli/native-label.c 
+Compiling  openzfs/aros/platform/cpu.c 
+Compiling  openzfs/aros/cli/mount.c 
+Compiling  openzfs/aros/cli/zone.c 
+Compiling  openzfs/aros/cli/hostid.c 
+Compiling  openzfs/module/avl/avl.c 
+Compiling  openzfs/module/zcommon/zfs_namecheck.c 
+Compiling  openzfs/module/zcommon/zfs_comutil.c 
+Compiling  openzfs/module/zcommon/zfs_prop.c 
+In file included from /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/source/openzfs/include/sys/zfs_context.h:96,
+                 from /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/source/openzfs/include/sys/dmu.h:48,
+                 from /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/source/openzfs/include/sys/dsl_dir.h:32,
+                 from module/zcommon/zfs_namecheck.c:44:
+/run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/exported-dependencies.jjAcgPAs/pthread-consistent.U8ZznVl2/source/pthread.h:57:9: warning: 'PTHREAD_KEYS_MAX' redefined
+   57 | #define PTHREAD_KEYS_MAX                      64
+      |         ^~~~~~~~~~~~~~~~
+In file included from /home/terminills/Documents/GitHub/aros-adt-crosstools/lib/gcc/x86_64-aros/15.2.0/include/limits.h:210,
+                 from /home/terminills/Documents/GitHub/aros-adt-crosstools/lib/gcc/x86_64-aros/15.2.0/include/syslimits.h:9,
+                 from /home/terminills/Documents/GitHub/aros-adt-crosstools/lib/gcc/x86_64-aros/15.2.0/include/limits.h:34,
+                 from /home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/sys/param.h:19,
+                 from /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/source/openzfs/lib/libspl/include/os/linux/sys/param.h:31,
+                 from /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/source/openzfs/lib/libspl/include/sys/types.h:55,
+                 from /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/source/openzfs/aros/engine/include/sys/stat.h:4,
+                 from /home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/fcntl.h:14,
+                 from /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/source/openzfs/include/sys/zfs_context.h:92:
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/limits.h:40:9: note: this is the location of the previous definition
+   40 | #define PTHREAD_KEYS_MAX                        _POSIX_THREAD_KEYS_MAX
+      |         ^~~~~~~~~~~~~~~~
+/run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/exported-dependencies.jjAcgPAs/pthread-consistent.U8ZznVl2/source/pthread.h:58:9: warning: 'PTHREAD_STACK_MIN' redefined
+   58 | #define PTHREAD_STACK_MIN                     40960
+      |         ^~~~~~~~~~~~~~~~~
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/limits.h:41:9: note: this is the location of the previous definition
+   41 | #define PTHREAD_STACK_MIN                       0
+      |         ^~~~~~~~~~~~~~~~~
+/run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/exported-dependencies.jjAcgPAs/pthread-consistent.U8ZznVl2/source/pthread.h:59:9: warning: 'PTHREAD_THREADS_MAX' redefined
+   59 | #define PTHREAD_THREADS_MAX                   2019
+      |         ^~~~~~~~~~~~~~~~~~~
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/limits.h:42:9: note: this is the location of the previous definition
+   42 | #define PTHREAD_THREADS_MAX                     _POSIX_THREAD_THREADS_MAX
+      |         ^~~~~~~~~~~~~~~~~~~
+/run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/exported-dependencies.jjAcgPAs/pthread-consistent.U8ZznVl2/source/pthread.h:60:9: warning: 'PTHREAD_DESTRUCTOR_ITERATIONS' redefined
+   60 | #define PTHREAD_DESTRUCTOR_ITERATIONS         4
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/limits.h:39:9: note: this is the location of the previous definition
+   39 | #define PTHREAD_DESTRUCTOR_ITERATIONS           _POSIX_THREAD_DESTRUCTOR_ITERATIONS
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Compiling  openzfs/module/zcommon/zpool_prop.c 
+In file included from /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/source/openzfs/include/sys/zfs_context.h:96,
+                 from /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/source/openzfs/include/sys/dmu.h:48,
+                 from /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/source/openzfs/include/sys/dsl_dir.h:32,
+                 from module/zcommon/zfs_namecheck.c:44:
+/run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/exported-dependencies.jjAcgPAs/pthread-consistent.U8ZznVl2/source/pthread.h:57:9: warning: 'PTHREAD_KEYS_MAX' redefined
+   57 | #define PTHREAD_KEYS_MAX                      64
+      |         ^~~~~~~~~~~~~~~~
+In file included from /home/terminills/Documents/GitHub/aros-adt-crosstools/lib/gcc/x86_64-aros/15.2.0/include/limits.h:210,
+                 from /home/terminills/Documents/GitHub/aros-adt-crosstools/lib/gcc/x86_64-aros/15.2.0/include/syslimits.h:9,
+                 from /home/terminills/Documents/GitHub/aros-adt-crosstools/lib/gcc/x86_64-aros/15.2.0/include/limits.h:34,
+                 from /home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/sys/param.h:19,
+                 from /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/source/openzfs/lib/libspl/include/os/linux/sys/param.h:31,
+                 from /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/source/openzfs/lib/libspl/include/sys/types.h:55,
+                 from /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/source/openzfs/aros/engine/include/sys/stat.h:4,
+                 from /home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/fcntl.h:14,
+                 from /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/source/openzfs/include/sys/zfs_context.h:92:
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/limits.h:40:9: note: this is the location of the previous definition
+   40 | #define PTHREAD_KEYS_MAX                        _POSIX_THREAD_KEYS_MAX
+      |         ^~~~~~~~~~~~~~~~
+/run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/exported-dependencies.jjAcgPAs/pthread-consistent.U8ZznVl2/source/pthread.h:58:9: warning: 'PTHREAD_STACK_MIN' redefined
+   58 | #define PTHREAD_STACK_MIN                     40960
+      |         ^~~~~~~~~~~~~~~~~
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/limits.h:41:9: note: this is the location of the previous definition
+   41 | #define PTHREAD_STACK_MIN                       0
+      |         ^~~~~~~~~~~~~~~~~
+/run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/exported-dependencies.jjAcgPAs/pthread-consistent.U8ZznVl2/source/pthread.h:59:9: warning: 'PTHREAD_THREADS_MAX' redefined
+   59 | #define PTHREAD_THREADS_MAX                   2019
+      |         ^~~~~~~~~~~~~~~~~~~
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/limits.h:42:9: note: this is the location of the previous definition
+   42 | #define PTHREAD_THREADS_MAX                     _POSIX_THREAD_THREADS_MAX
+      |         ^~~~~~~~~~~~~~~~~~~
+/run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/exported-dependencies.jjAcgPAs/pthread-consistent.U8ZznVl2/source/pthread.h:60:9: warning: 'PTHREAD_DESTRUCTOR_ITERATIONS' redefined
+   60 | #define PTHREAD_DESTRUCTOR_ITERATIONS         4
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/limits.h:39:9: note: this is the location of the previous definition
+   39 | #define PTHREAD_DESTRUCTOR_ITERATIONS           _POSIX_THREAD_DESTRUCTOR_ITERATIONS
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Compiling  openzfs/module/zcommon/zprop_common.c 
+In file included from /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/source/openzfs/include/sys/zfs_context.h:96,
+                 from /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/source/openzfs/include/sys/zio.h:39,
+                 from module/zcommon/zprop_common.c:34:
+/run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/exported-dependencies.jjAcgPAs/pthread-consistent.U8ZznVl2/source/pthread.h:57:9: warning: 'PTHREAD_KEYS_MAX' redefined
+   57 | #define PTHREAD_KEYS_MAX                      64
+      |         ^~~~~~~~~~~~~~~~
+In file included from /home/terminills/Documents/GitHub/aros-adt-crosstools/lib/gcc/x86_64-aros/15.2.0/include/limits.h:210,
+                 from /home/terminills/Documents/GitHub/aros-adt-crosstools/lib/gcc/x86_64-aros/15.2.0/include/syslimits.h:9,
+                 from /home/terminills/Documents/GitHub/aros-adt-crosstools/lib/gcc/x86_64-aros/15.2.0/include/limits.h:34,
+                 from /home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/sys/param.h:19,
+                 from /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/source/openzfs/lib/libspl/include/os/linux/sys/param.h:31,
+                 from /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/source/openzfs/lib/libspl/include/sys/types.h:55,
+                 from /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/source/openzfs/aros/engine/include/sys/stat.h:4,
+                 from /home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/fcntl.h:14,
+                 from /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/source/openzfs/include/sys/zfs_context.h:92:
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/limits.h:40:9: note: this is the location of the previous definition
+   40 | #define PTHREAD_KEYS_MAX                        _POSIX_THREAD_KEYS_MAX
+      |         ^~~~~~~~~~~~~~~~
+/run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/exported-dependencies.jjAcgPAs/pthread-consistent.U8ZznVl2/source/pthread.h:58:9: warning: 'PTHREAD_STACK_MIN' redefined
+   58 | #define PTHREAD_STACK_MIN                     40960
+      |         ^~~~~~~~~~~~~~~~~
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/limits.h:41:9: note: this is the location of the previous definition
+   41 | #define PTHREAD_STACK_MIN                       0
+      |         ^~~~~~~~~~~~~~~~~
+/run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/exported-dependencies.jjAcgPAs/pthread-consistent.U8ZznVl2/source/pthread.h:59:9: warning: 'PTHREAD_THREADS_MAX' redefined
+   59 | #define PTHREAD_THREADS_MAX                   2019
+      |         ^~~~~~~~~~~~~~~~~~~
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/limits.h:42:9: note: this is the location of the previous definition
+   42 | #define PTHREAD_THREADS_MAX                     _POSIX_THREAD_THREADS_MAX
+      |         ^~~~~~~~~~~~~~~~~~~
+/run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/exported-dependencies.jjAcgPAs/pthread-consistent.U8ZznVl2/source/pthread.h:60:9: warning: 'PTHREAD_DESTRUCTOR_ITERATIONS' redefined
+   60 | #define PTHREAD_DESTRUCTOR_ITERATIONS         4
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/limits.h:39:9: note: this is the location of the previous definition
+   39 | #define PTHREAD_DESTRUCTOR_ITERATIONS           _POSIX_THREAD_DESTRUCTOR_ITERATIONS
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Compiling  openzfs/module/zcommon/zfeature_common.c 
+Compiling  openzfs/module/zcommon/zfs_fletcher.c 
+In file included from /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/source/openzfs/include/sys/zfs_context.h:96,
+                 from /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/source/openzfs/include/sys/spa.h:39,
+                 from module/zcommon/zfs_fletcher.c:141:
+/run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/exported-dependencies.jjAcgPAs/pthread-consistent.U8ZznVl2/source/pthread.h:57:9: warning: 'PTHREAD_KEYS_MAX' redefined
+   57 | #define PTHREAD_KEYS_MAX                      64
+      |         ^~~~~~~~~~~~~~~~
+In file included from /home/terminills/Documents/GitHub/aros-adt-crosstools/lib/gcc/x86_64-aros/15.2.0/include/limits.h:210,
+                 from /home/terminills/Documents/GitHub/aros-adt-crosstools/lib/gcc/x86_64-aros/15.2.0/include/syslimits.h:9,
+                 from /home/terminills/Documents/GitHub/aros-adt-crosstools/lib/gcc/x86_64-aros/15.2.0/include/limits.h:34,
+                 from /home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/sys/param.h:19,
+                 from /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/source/openzfs/lib/libspl/include/os/linux/sys/param.h:31,
+                 from /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/source/openzfs/lib/libspl/include/sys/types.h:55,
+                 from module/zcommon/zfs_fletcher.c:137:
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/limits.h:40:9: note: this is the location of the previous definition
+   40 | #define PTHREAD_KEYS_MAX                        _POSIX_THREAD_KEYS_MAX
+      |         ^~~~~~~~~~~~~~~~
+/run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/exported-dependencies.jjAcgPAs/pthread-consistent.U8ZznVl2/source/pthread.h:58:9: warning: 'PTHREAD_STACK_MIN' redefined
+   58 | #define PTHREAD_STACK_MIN                     40960
+      |         ^~~~~~~~~~~~~~~~~
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/limits.h:41:9: note: this is the location of the previous definition
+   41 | #define PTHREAD_STACK_MIN                       0
+      |         ^~~~~~~~~~~~~~~~~
+/run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/exported-dependencies.jjAcgPAs/pthread-consistent.U8ZznVl2/source/pthread.h:59:9: warning: 'PTHREAD_THREADS_MAX' redefined
+   59 | #define PTHREAD_THREADS_MAX                   2019
+      |         ^~~~~~~~~~~~~~~~~~~
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/limits.h:42:9: note: this is the location of the previous definition
+   42 | #define PTHREAD_THREADS_MAX                     _POSIX_THREAD_THREADS_MAX
+      |         ^~~~~~~~~~~~~~~~~~~
+/run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/exported-dependencies.jjAcgPAs/pthread-consistent.U8ZznVl2/source/pthread.h:60:9: warning: 'PTHREAD_DESTRUCTOR_ITERATIONS' redefined
+   60 | #define PTHREAD_DESTRUCTOR_ITERATIONS         4
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/limits.h:39:9: note: this is the location of the previous definition
+   39 | #define PTHREAD_DESTRUCTOR_ITERATIONS           _POSIX_THREAD_DESTRUCTOR_ITERATIONS
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In file included from /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/source/openzfs/include/sys/nvpair.h:32,
+                 from /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/source/openzfs/include/sys/zfs_debug.h:42,
+                 from /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/source/openzfs/include/sys/zfs_context.h:117:
+/run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/source/openzfs/aros/engine/include/sys/errno.h:11:9: warning: 'ESHUTDOWN' redefined
+   11 | #define ESHUTDOWN 4100
+      |         ^~~~~~~~~
+In file included from /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/source/openzfs/aros/engine/include/sys/stat.h:7,
+                 from /home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/fcntl.h:14,
+                 from /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/source/openzfs/include/sys/zfs_context.h:92:
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/errno.h:134:9: note: this is the location of the previous definition
+  134 | #define ESHUTDOWN       58              /* Can't send after socket shutdown */
+      |         ^~~~~~~~~
+/run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/source/openzfs/aros/engine/include/sys/errno.h:12:9: warning: 'ERESTART' redefined
+   12 | #define ERESTART 4101
+      |         ^~~~~~~~
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/errno.h:132:9: note: this is the location of the previous definition
+  132 | #define ERESTART        -1              /* restart syscall */
+      |         ^~~~~~~~
+Compiling  openzfs/module/zcommon/zfs_fletcher_superscalar.c 
+Compiling  openzfs/module/zcommon/zfs_fletcher_superscalar4.c 
+Compiling  openzfs/module/zcommon/zfs_valstr.c 
+Compiling  openzfs/lib/libuutil/uu_avl.c 
+Compiling  openzfs/lib/libuutil/uu_alloc.c 
+Compiling  openzfs/lib/libuutil/uu_misc.c 
+Compiling  openzfs/lib/libuutil/uu_ident.c 
+In file included from /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/source/openzfs/include/libuutil_impl.h:34,
+                 from /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/source/openzfs/include/libuutil_common.h:34,
+                 from lib/libuutil/uu_misc.c:27:
+/run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/exported-dependencies.jjAcgPAs/pthread-consistent.U8ZznVl2/source/pthread.h:57:9: warning: 'PTHREAD_KEYS_MAX' redefined
+   57 | #define PTHREAD_KEYS_MAX                      64
+      |         ^~~~~~~~~~~~~~~~
+In file included from /home/terminills/Documents/GitHub/aros-adt-crosstools/lib/gcc/x86_64-aros/15.2.0/include/limits.h:210,
+                 from /home/terminills/Documents/GitHub/aros-adt-crosstools/lib/gcc/x86_64-aros/15.2.0/include/syslimits.h:9,
+                 from /home/terminills/Documents/GitHub/aros-adt-crosstools/lib/gcc/x86_64-aros/15.2.0/include/limits.h:34,
+                 from /home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/sys/param.h:19,
+                 from /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/source/openzfs/lib/libspl/include/os/linux/sys/param.h:31,
+                 from /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/source/openzfs/lib/libspl/include/sys/types.h:55,
+                 from /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/source/openzfs/include/libuutil.h:29,
+                 from /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/source/openzfs/include/libuutil_common.h:33:
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/limits.h:40:9: note: this is the location of the previous definition
+   40 | #define PTHREAD_KEYS_MAX                        _POSIX_THREAD_KEYS_MAX
+      |         ^~~~~~~~~~~~~~~~
+/run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/exported-dependencies.jjAcgPAs/pthread-consistent.U8ZznVl2/source/pthread.h:58:9: warning: 'PTHREAD_STACK_MIN' redefined
+   58 | #define PTHREAD_STACK_MIN                     40960
+      |         ^~~~~~~~~~~~~~~~~
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/limits.h:41:9: note: this is the location of the previous definition
+   41 | #define PTHREAD_STACK_MIN                       0
+      |         ^~~~~~~~~~~~~~~~~
+/run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/exported-dependencies.jjAcgPAs/pthread-consistent.U8ZznVl2/source/pthread.h:59:9: warning: 'PTHREAD_THREADS_MAX' redefined
+   59 | #define PTHREAD_THREADS_MAX                   2019
+      |         ^~~~~~~~~~~~~~~~~~~
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/limits.h:42:9: note: this is the location of the previous definition
+   42 | #define PTHREAD_THREADS_MAX                     _POSIX_THREAD_THREADS_MAX
+      |         ^~~~~~~~~~~~~~~~~~~
+/run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/exported-dependencies.jjAcgPAs/pthread-consistent.U8ZznVl2/source/pthread.h:60:9: warning: 'PTHREAD_DESTRUCTOR_ITERATIONS' redefined
+   60 | #define PTHREAD_DESTRUCTOR_ITERATIONS         4
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/limits.h:39:9: note: this is the location of the previous definition
+   39 | #define PTHREAD_DESTRUCTOR_ITERATIONS           _POSIX_THREAD_DESTRUCTOR_ITERATIONS
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Compiling  openzfs/lib/libuutil/uu_list.c 
+Compiling  openzfs/lib/libuutil/uu_string.c 
+Compiling  openzfs/lib/libspl/atomic.c 
+Compiling  openzfs/lib/libspl/list.c 
+Compiling  openzfs/lib/libspl/page.c 
+Compiling  openzfs/lib/libspl/timestamp.c 
+Compiling  openzfs/lib/libnvpair/libnvpair.c 
+Compiling  openzfs/lib/libnvpair/libnvpair_json.c 
+Compiling  openzfs/lib/libtpool/thread_pool.c 
+Compiling  openzfs/cmd/zpool/zpool_vdev.c 
+In file included from /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/source/openzfs/include/thread_pool.h:32,
+                 from lib/libtpool/thread_pool_impl.h:31,
+                 from lib/libtpool/thread_pool.c:33:
+/run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/exported-dependencies.jjAcgPAs/pthread-consistent.U8ZznVl2/source/pthread.h:57:9: warning: 'PTHREAD_KEYS_MAX' redefined
+   57 | #define PTHREAD_KEYS_MAX                      64
+      |         ^~~~~~~~~~~~~~~~
+In file included from /home/terminills/Documents/GitHub/aros-adt-crosstools/lib/gcc/x86_64-aros/15.2.0/include/limits.h:210,
+                 from /home/terminills/Documents/GitHub/aros-adt-crosstools/lib/gcc/x86_64-aros/15.2.0/include/syslimits.h:9,
+                 from /home/terminills/Documents/GitHub/aros-adt-crosstools/lib/gcc/x86_64-aros/15.2.0/include/limits.h:34,
+                 from /home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/sys/param.h:19,
+                 from /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/source/openzfs/lib/libspl/include/os/linux/sys/param.h:31,
+                 from /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/source/openzfs/lib/libspl/include/sys/types.h:55,
+                 from /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/source/openzfs/lib/libspl/include/assert.h:36,
+                 from lib/libtpool/thread_pool.c:31:
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/limits.h:40:9: note: this is the location of the previous definition
+   40 | #define PTHREAD_KEYS_MAX                        _POSIX_THREAD_KEYS_MAX
+      |         ^~~~~~~~~~~~~~~~
+/run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/exported-dependencies.jjAcgPAs/pthread-consistent.U8ZznVl2/source/pthread.h:58:9: warning: 'PTHREAD_STACK_MIN' redefined
+   58 | #define PTHREAD_STACK_MIN                     40960
+      |         ^~~~~~~~~~~~~~~~~
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/limits.h:41:9: note: this is the location of the previous definition
+   41 | #define PTHREAD_STACK_MIN                       0
+      |         ^~~~~~~~~~~~~~~~~
+/run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/exported-dependencies.jjAcgPAs/pthread-consistent.U8ZznVl2/source/pthread.h:59:9: warning: 'PTHREAD_THREADS_MAX' redefined
+   59 | #define PTHREAD_THREADS_MAX                   2019
+      |         ^~~~~~~~~~~~~~~~~~~
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/limits.h:42:9: note: this is the location of the previous definition
+   42 | #define PTHREAD_THREADS_MAX                     _POSIX_THREAD_THREADS_MAX
+      |         ^~~~~~~~~~~~~~~~~~~
+/run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/exported-dependencies.jjAcgPAs/pthread-consistent.U8ZznVl2/source/pthread.h:60:9: warning: 'PTHREAD_DESTRUCTOR_ITERATIONS' redefined
+   60 | #define PTHREAD_DESTRUCTOR_ITERATIONS         4
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/limits.h:39:9: note: this is the location of the previous definition
+   39 | #define PTHREAD_DESTRUCTOR_ITERATIONS           _POSIX_THREAD_DESTRUCTOR_ITERATIONS
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In file included from /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/source/openzfs/include/libzutil.h:31,
+                 from cmd/zpool/zpool_vdev.c:72:
+/run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/exported-dependencies.jjAcgPAs/pthread-consistent.U8ZznVl2/source/pthread.h:57:9: warning: 'PTHREAD_KEYS_MAX' redefined
+   57 | #define PTHREAD_KEYS_MAX                      64
+      |         ^~~~~~~~~~~~~~~~
+In file included from /home/terminills/Documents/GitHub/aros-adt-crosstools/lib/gcc/x86_64-aros/15.2.0/include/limits.h:210,
+                 from /home/terminills/Documents/GitHub/aros-adt-crosstools/lib/gcc/x86_64-aros/15.2.0/include/syslimits.h:9,
+                 from /home/terminills/Documents/GitHub/aros-adt-crosstools/lib/gcc/x86_64-aros/15.2.0/include/limits.h:34,
+                 from /home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/sys/param.h:19,
+                 from /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/source/openzfs/lib/libspl/include/os/linux/sys/param.h:31,
+                 from /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/source/openzfs/lib/libspl/include/sys/types.h:55,
+                 from /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/source/openzfs/lib/libspl/include/assert.h:36,
+                 from cmd/zpool/zpool_vdev.c:66:
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/limits.h:40:9: note: this is the location of the previous definition
+   40 | #define PTHREAD_KEYS_MAX                        _POSIX_THREAD_KEYS_MAX
+      |         ^~~~~~~~~~~~~~~~
+/run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/exported-dependencies.jjAcgPAs/pthread-consistent.U8ZznVl2/source/pthread.h:58:9: warning: 'PTHREAD_STACK_MIN' redefined
+   58 | #define PTHREAD_STACK_MIN                     40960
+      |         ^~~~~~~~~~~~~~~~~
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/limits.h:41:9: note: this is the location of the previous definition
+   41 | #define PTHREAD_STACK_MIN                       0
+      |         ^~~~~~~~~~~~~~~~~
+/run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/exported-dependencies.jjAcgPAs/pthread-consistent.U8ZznVl2/source/pthread.h:59:9: warning: 'PTHREAD_THREADS_MAX' redefined
+   59 | #define PTHREAD_THREADS_MAX                   2019
+      |         ^~~~~~~~~~~~~~~~~~~
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/limits.h:42:9: note: this is the location of the previous definition
+   42 | #define PTHREAD_THREADS_MAX                     _POSIX_THREAD_THREADS_MAX
+      |         ^~~~~~~~~~~~~~~~~~~
+/run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/exported-dependencies.jjAcgPAs/pthread-consistent.U8ZznVl2/source/pthread.h:60:9: warning: 'PTHREAD_DESTRUCTOR_ITERATIONS' redefined
+   60 | #define PTHREAD_DESTRUCTOR_ITERATIONS         4
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/limits.h:39:9: note: this is the location of the previous definition
+   39 | #define PTHREAD_DESTRUCTOR_ITERATIONS           _POSIX_THREAD_DESTRUCTOR_ITERATIONS
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+_DESTRUCTOR_ITERATIONS
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In file included from /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/source/openzfs/include/libzutil.h:31,
+                 from cmd/zpool/zpool_vdev.c:72:
+/run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/exported-dependencies.jjAcgPAs/pthread-consistent.U8ZznVl2/source/pthread.h:57:9: warning: 'PTHREAD_KEYS_MAX' redefined
+   57 | #define PTHREAD_KEYS_MAX                      64
+      |         ^~~~~~~~~~~~~~~~
+In file included from /home/terminills/Documents/GitHub/aros-adt-crosstools/lib/gcc/x86_64-aros/15.2.0/include/limits.h:210,
+                 from /home/terminills/Documents/GitHub/aros-adt-crosstools/lib/gcc/x86_64-aros/15.2.0/include/syslimits.h:9,
+                 from /home/terminills/Documents/GitHub/aros-adt-crosstools/lib/gcc/x86_64-aros/15.2.0/include/limits.h:34,
+                 from /home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/sys/param.h:19,
+                 from /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/source/openzfs/lib/libspl/include/os/linux/sys/param.h:31,
+                 from /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/source/openzfs/lib/libspl/include/sys/types.h:55,
+                 from /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/source/openzfs/lib/libspl/include/assert.h:36,
+                 from cmd/zpool/zpool_vdev.c:66:
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/limits.h:40:9: note: this is the location of the previous definition
+   40 | #define PTHREAD_KEYS_MAX                        _POSIX_THREAD_KEYS_MAX
+      |         ^~~~~~~~~~~~~~~~
+/run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/exported-dependencies.jjAcgPAs/pthread-consistent.U8ZznVl2/source/pthread.h:58:9: warning: 'PTHREAD_STACK_MIN' redefined
+   58 | #define PTHREAD_STACK_MIN                     40960
+      |         ^~~~~~~~~~~~~~~~~
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/limits.h:41:9: note: this is the location of the previous definition
+   41 | #define PTHREAD_STACK_MIN                       0
+      |         ^~~~~~~~~~~~~~~~~
+/run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/exported-dependencies.jjAcgPAs/pthread-consistent.U8ZznVl2/source/pthread.h:59:9: warning: 'PTHREAD_THREADS_MAX' redefined
+   59 | #define PTHREAD_THREADS_MAX                   2019
+      |         ^~~~~~~~~~~~~~~~~~~
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/limits.h:42:9: note: this is the location of the previous definition
+   42 | #define PTHREAD_THREADS_MAX                     _POSIX_THREAD_THREADS_MAX
+      |         ^~~~~~~~~~~~~~~~~~~
+/run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/exported-dependencies.jjAcgPAs/pthread-consistent.U8ZznVl2/source/pthread.h:60:9: warning: 'PTHREAD_DESTRUCTOR_ITERATIONS' redefined
+   60 | #define PTHREAD_DESTRUCTOR_ITERATIONS         4
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/limits.h:39:9: note: this is the location of the previous definition
+   39 | #define PTHREAD_DESTRUCTOR_ITERATIONS           _POSIX_THREAD_DESTRUCTOR_ITERATIONS
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+_DESTRUCTOR_ITERATIONS
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In file included from /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/source/openzfs/include/libzutil.h:31,
+                 from cmd/zpool/zpool_vdev.c:72:
+/run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/exported-dependencies.jjAcgPAs/pthread-consistent.U8ZznVl2/source/pthread.h:57:9: warning: 'PTHREAD_KEYS_MAX' redefined
+   57 | #define PTHREAD_KEYS_MAX                      64
+      |         ^~~~~~~~~~~~~~~~
+In file included from /home/terminills/Documents/GitHub/aros-adt-crosstools/lib/gcc/x86_64-aros/15.2.0/include/limits.h:210,
+                 from /home/terminills/Documents/GitHub/aros-adt-crosstools/lib/gcc/x86_64-aros/15.2.0/include/syslimits.h:9,
+                 from /home/terminills/Documents/GitHub/aros-adt-crosstools/lib/gcc/x86_64-aros/15.2.0/include/limits.h:34,
+                 from /home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/sys/param.h:19,
+                 from /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/source/openzfs/lib/libspl/include/os/linux/sys/param.h:31,
+                 from /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/source/openzfs/lib/libspl/include/sys/types.h:55,
+                 from /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/source/openzfs/lib/libspl/include/assert.h:36,
+                 from cmd/zpool/zpool_vdev.c:66:
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/limits.h:40:9: note: this is the location of the previous definition
+   40 | #define PTHREAD_KEYS_MAX                        _POSIX_THREAD_KEYS_MAX
+      |         ^~~~~~~~~~~~~~~~
+/run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/exported-dependencies.jjAcgPAs/pthread-consistent.U8ZznVl2/source/pthread.h:58:9: warning: 'PTHREAD_STACK_MIN' redefined
+   58 | #define PTHREAD_STACK_MIN                     40960
+      |         ^~~~~~~~~~~~~~~~~
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/limits.h:41:9: note: this is the location of the previous definition
+   41 | #define PTHREAD_STACK_MIN                       0
+      |         ^~~~~~~~~~~~~~~~~
+/run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/exported-dependencies.jjAcgPAs/pthread-consistent.U8ZznVl2/source/pthread.h:59:9: warning: 'PTHREAD_THREADS_MAX' redefined
+   59 | #define PTHREAD_THREADS_MAX                   2019
+      |         ^~~~~~~~~~~~~~~~~~~
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/limits.h:42:9: note: this is the location of the previous definition
+   42 | #define PTHREAD_THREADS_MAX                     _POSIX_THREAD_THREADS_MAX
+      |         ^~~~~~~~~~~~~~~~~~~
+/run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/exported-dependencies.jjAcgPAs/pthread-consistent.U8ZznVl2/source/pthread.h:60:9: warning: 'PTHREAD_DESTRUCTOR_ITERATIONS' redefined
+   60 | #define PTHREAD_DESTRUCTOR_ITERATIONS         4
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/limits.h:39:9: note: this is the location of the previous definition
+   39 | #define PTHREAD_DESTRUCTOR_ITERATIONS           _POSIX_THREAD_DESTRUCTOR_ITERATIONS
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+_DESTRUCTOR_ITERATIONS
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In file included from /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/source/openzfs/include/libzutil.h:31,
+                 from cmd/zpool/zpool_vdev.c:72:
+/run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/exported-dependencies.jjAcgPAs/pthread-consistent.U8ZznVl2/source/pthread.h:57:9: warning: 'PTHREAD_KEYS_MAX' redefined
+   57 | #define PTHREAD_KEYS_MAX                      64
+      |         ^~~~~~~~~~~~~~~~
+In file included from /home/terminills/Documents/GitHub/aros-adt-crosstools/lib/gcc/x86_64-aros/15.2.0/include/limits.h:210,
+                 from /home/terminills/Documents/GitHub/aros-adt-crosstools/lib/gcc/x86_64-aros/15.2.0/include/syslimits.h:9,
+                 from /home/terminills/Documents/GitHub/aros-adt-crosstools/lib/gcc/x86_64-aros/15.2.0/include/limits.h:34,
+                 from /home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/sys/param.h:19,
+                 from /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/source/openzfs/lib/libspl/include/os/linux/sys/param.h:31,
+                 from /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/source/openzfs/lib/libspl/include/sys/types.h:55,
+                 from /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/source/openzfs/lib/libspl/include/assert.h:36,
+                 from cmd/zpool/zpool_vdev.c:66:
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/limits.h:40:9: note: this is the location of the previous definition
+   40 | #define PTHREAD_KEYS_MAX                        _POSIX_THREAD_KEYS_MAX
+      |         ^~~~~~~~~~~~~~~~
+/run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/exported-dependencies.jjAcgPAs/pthread-consistent.U8ZznVl2/source/pthread.h:58:9: warning: 'PTHREAD_STACK_MIN' redefined
+   58 | #define PTHREAD_STACK_MIN                     40960
+      |         ^~~~~~~~~~~~~~~~~
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/limits.h:41:9: note: this is the location of the previous definition
+   41 | #define PTHREAD_STACK_MIN                       0
+      |         ^~~~~~~~~~~~~~~~~
+/run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/exported-dependencies.jjAcgPAs/pthread-consistent.U8ZznVl2/source/pthread.h:59:9: warning: 'PTHREAD_THREADS_MAX' redefined
+   59 | #define PTHREAD_THREADS_MAX                   2019
+      |         ^~~~~~~~~~~~~~~~~~~
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/limits.h:42:9: note: this is the location of the previous definition
+   42 | #define PTHREAD_THREADS_MAX                     _POSIX_THREAD_THREADS_MAX
+      |         ^~~~~~~~~~~~~~~~~~~
+/run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/exported-dependencies.jjAcgPAs/pthread-consistent.U8ZznVl2/source/pthread.h:60:9: warning: 'PTHREAD_DESTRUCTOR_ITERATIONS' redefined
+   60 | #define PTHREAD_DESTRUCTOR_ITERATIONS         4
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/limits.h:39:9: note: this is the location of the previous definition
+   39 | #define PTHREAD_DESTRUCTOR_ITERATIONS           _POSIX_THREAD_DESTRUCTOR_ITERATIONS
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+_DESTRUCTOR_ITERATIONS
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In file included from /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/source/openzfs/include/libzutil.h:31,
+                 from cmd/zpool/zpool_vdev.c:72:
+/run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/exported-dependencies.jjAcgPAs/pthread-consistent.U8ZznVl2/source/pthread.h:57:9: warning: 'PTHREAD_KEYS_MAX' redefined
+   57 | #define PTHREAD_KEYS_MAX                      64
+      |         ^~~~~~~~~~~~~~~~
+In file included from /home/terminills/Documents/GitHub/aros-adt-crosstools/lib/gcc/x86_64-aros/15.2.0/include/limits.h:210,
+                 from /home/terminills/Documents/GitHub/aros-adt-crosstools/lib/gcc/x86_64-aros/15.2.0/include/syslimits.h:9,
+                 from /home/terminills/Documents/GitHub/aros-adt-crosstools/lib/gcc/x86_64-aros/15.2.0/include/limits.h:34,
+                 from /home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/sys/param.h:19,
+                 from /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/source/openzfs/lib/libspl/include/os/linux/sys/param.h:31,
+                 from /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/source/openzfs/lib/libspl/include/sys/types.h:55,
+                 from /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/source/openzfs/lib/libspl/include/assert.h:36,
+                 from cmd/zpool/zpool_vdev.c:66:
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/limits.h:40:9: note: this is the location of the previous definition
+   40 | #define PTHREAD_KEYS_MAX                        _POSIX_THREAD_KEYS_MAX
+      |         ^~~~~~~~~~~~~~~~
+/run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/exported-dependencies.jjAcgPAs/pthread-consistent.U8ZznVl2/source/pthread.h:58:9: warning: 'PTHREAD_STACK_MIN' redefined
+   58 | #define PTHREAD_STACK_MIN                     40960
+      |         ^~~~~~~~~~~~~~~~~
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/limits.h:41:9: note: this is the location of the previous definition
+   41 | #define PTHREAD_STACK_MIN                       0
+      |         ^~~~~~~~~~~~~~~~~
+/run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/exported-dependencies.jjAcgPAs/pthread-consistent.U8ZznVl2/source/pthread.h:59:9: warning: 'PTHREAD_THREADS_MAX' redefined
+   59 | #define PTHREAD_THREADS_MAX                   2019
+      |         ^~~~~~~~~~~~~~~~~~~
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/limits.h:42:9: note: this is the location of the previous definition
+   42 | #define PTHREAD_THREADS_MAX                     _POSIX_THREAD_THREADS_MAX
+      |         ^~~~~~~~~~~~~~~~~~~
+/run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/exported-dependencies.jjAcgPAs/pthread-consistent.U8ZznVl2/source/pthread.h:60:9: warning: 'PTHREAD_DESTRUCTOR_ITERATIONS' redefined
+   60 | #define PTHREAD_DESTRUCTOR_ITERATIONS         4
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/limits.h:39:9: note: this is the location of the previous definition
+   39 | #define PTHREAD_DESTRUCTOR_ITERATIONS           _POSIX_THREAD_DESTRUCTOR_ITERATIONS
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+_DESTRUCTOR_ITERATIONS
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In file included from /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/source/openzfs/include/libzutil.h:31,
+                 from cmd/zpool/zpool_vdev.c:72:
+/run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/exported-dependencies.jjAcgPAs/pthread-consistent.U8ZznVl2/source/pthread.h:57:9: warning: 'PTHREAD_KEYS_MAX' redefined
+   57 | #define PTHREAD_KEYS_MAX                      64
+      |         ^~~~~~~~~~~~~~~~
+In file included from /home/terminills/Documents/GitHub/aros-adt-crosstools/lib/gcc/x86_64-aros/15.2.0/include/limits.h:210,
+                 from /home/terminills/Documents/GitHub/aros-adt-crosstools/lib/gcc/x86_64-aros/15.2.0/include/syslimits.h:9,
+                 from /home/terminills/Documents/GitHub/aros-adt-crosstools/lib/gcc/x86_64-aros/15.2.0/include/limits.h:34,
+                 from /home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/sys/param.h:19,
+                 from /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/source/openzfs/lib/libspl/include/os/linux/sys/param.h:31,
+                 from /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/source/openzfs/lib/libspl/include/sys/types.h:55,
+                 from /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/source/openzfs/lib/libspl/include/assert.h:36,
+                 from cmd/zpool/zpool_vdev.c:66:
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/limits.h:40:9: note: this is the location of the previous definition
+   40 | #define PTHREAD_KEYS_MAX                        _POSIX_THREAD_KEYS_MAX
+      |         ^~~~~~~~~~~~~~~~
+/run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/exported-dependencies.jjAcgPAs/pthread-consistent.U8ZznVl2/source/pthread.h:58:9: warning: 'PTHREAD_STACK_MIN' redefined
+   58 | #define PTHREAD_STACK_MIN                     40960
+      |         ^~~~~~~~~~~~~~~~~
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/limits.h:41:9: note: this is the location of the previous definition
+   41 | #define PTHREAD_STACK_MIN                       0
+      |         ^~~~~~~~~~~~~~~~~
+/run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/exported-dependencies.jjAcgPAs/pthread-consistent.U8ZznVl2/source/pthread.h:59:9: warning: 'PTHREAD_THREADS_MAX' redefined
+   59 | #define PTHREAD_THREADS_MAX                   2019
+      |         ^~~~~~~~~~~~~~~~~~~
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/limits.h:42:9: note: this is the location of the previous definition
+   42 | #define PTHREAD_THREADS_MAX                     _POSIX_THREAD_THREADS_MAX
+      |         ^~~~~~~~~~~~~~~~~~~
+/run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/exported-dependencies.jjAcgPAs/pthread-consistent.U8ZznVl2/source/pthread.h:60:9: warning: 'PTHREAD_DESTRUCTOR_ITERATIONS' redefined
+   60 | #define PTHREAD_DESTRUCTOR_ITERATIONS         4
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/limits.h:39:9: note: this is the location of the previous definition
+   39 | #define PTHREAD_DESTRUCTOR_ITERATIONS           _POSIX_THREAD_DESTRUCTOR_ITERATIONS
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+_DESTRUCTOR_ITERATIONS
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/linux-x86_64/tools/x86_64-pc-smp-aros-ld -r --gc-sections -u check_file_generic /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/gen/openzfs/cli/cmd/zpool/zpool_vdev.o -o /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/gen/openzfs/cli/check-file-generic.o
+Linking    /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/stage/C/zfs...
+cd /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/gen/openzfs/cli && bash /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/source/openzfs/scripts/make_gitrev.sh zfs_gitrev.h
+Makedepend  openzfs/cmd/zpool/zpool_main.c ...
+Makedepend  openzfs/cmd/zpool/zpool_iter.c ...
+Makedepend  openzfs/cmd/zpool/zpool_util.c ...
+cd /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/gen/openzfs/cli && bash /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/source/openzfs/scripts/make_gitrev.sh zfs_gitrev.h
+Compiling  openzfs/cmd/zpool/zpool_main.c 
+Compiling  openzfs/cmd/zpool/zpool_iter.c 
+Compiling  openzfs/cmd/zpool/zpool_util.c 
+In file included from /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/source/openzfs/include/libzutil.h:31,
+                 from cmd/zpool/zpool_util.h:31,
+                 from cmd/zpool/zpool_util.c:40:
+/run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/exported-dependencies.jjAcgPAs/pthread-consistent.U8ZznVl2/source/pthread.h:57:9: warning: 'PTHREAD_KEYS_MAX' redefined
+   57 | #define PTHREAD_KEYS_MAX                      64
+      |         ^~~~~~~~~~~~~~~~
+In file included from /home/terminills/Documents/GitHub/aros-adt-crosstools/lib/gcc/x86_64-aros/15.2.0/include/limits.h:210,
+                 from /home/terminills/Documents/GitHub/aros-adt-crosstools/lib/gcc/x86_64-aros/15.2.0/include/syslimits.h:9,
+                 from /home/terminills/Documents/GitHub/aros-adt-crosstools/lib/gcc/x86_64-aros/15.2.0/include/limits.h:34,
+                 from /home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/sys/param.h:19,
+                 from /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/source/openzfs/lib/libspl/include/os/linux/sys/param.h:31,
+                 from /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/source/openzfs/lib/libspl/include/sys/types.h:55,
+                 from /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/source/openzfs/lib/libspl/include/libgen.h:31,
+                 from cmd/zpool/zpool_util.c:28:
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/limits.h:40:9: note: this is the location of the previous definition
+   40 | #define PTHREAD_KEYS_MAX                        _POSIX_THREAD_KEYS_MAX
+      |         ^~~~~~~~~~~~~~~~
+/run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/exported-dependencies.jjAcgPAs/pthread-consistent.U8ZznVl2/source/pthread.h:58:9: warning: 'PTHREAD_STACK_MIN' redefined
+   58 | #define PTHREAD_STACK_MIN                     40960
+      |         ^~~~~~~~~~~~~~~~~
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/limits.h:41:9: note: this is the location of the previous definition
+   41 | #define PTHREAD_STACK_MIN                       0
+      |         ^~~~~~~~~~~~~~~~~
+/run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/exported-dependencies.jjAcgPAs/pthread-consistent.U8ZznVl2/source/pthread.h:59:9: warning: 'PTHREAD_THREADS_MAX' redefined
+   59 | #define PTHREAD_THREADS_MAX                   2019
+      |         ^~~~~~~~~~~~~~~~~~~
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/limits.h:42:9: note: this is the location of the previous definition
+   42 | #define PTHREAD_THREADS_MAX                     _POSIX_THREAD_THREADS_MAX
+      |         ^~~~~~~~~~~~~~~~~~~
+/run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/exported-dependencies.jjAcgPAs/pthread-consistent.U8ZznVl2/source/pthread.h:60:9: warning: 'PTHREAD_DESTRUCTOR_ITERATIONS' redefined
+   60 | #define PTHREAD_DESTRUCTOR_ITERATIONS         4
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/limits.h:39:9: note: this is the location of the previous definition
+   39 | #define PTHREAD_DESTRUCTOR_ITERATIONS           _POSIX_THREAD_DESTRUCTOR_ITERATIONS
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In file included from /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/source/openzfs/include/libzutil.h:31,
+                 from cmd/zpool/zpool_util.h:31,
+                 from cmd/zpool/zpool_util.c:40:
+/run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/exported-dependencies.jjAcgPAs/pthread-consistent.U8ZznVl2/source/pthread.h:57:9: warning: 'PTHREAD_KEYS_MAX' redefined
+   57 | #define PTHREAD_KEYS_MAX                      64
+      |         ^~~~~~~~~~~~~~~~
+In file included from /home/terminills/Documents/GitHub/aros-adt-crosstools/lib/gcc/x86_64-aros/15.2.0/include/limits.h:210,
+                 from /home/terminills/Documents/GitHub/aros-adt-crosstools/lib/gcc/x86_64-aros/15.2.0/include/syslimits.h:9,
+                 from /home/terminills/Documents/GitHub/aros-adt-crosstools/lib/gcc/x86_64-aros/15.2.0/include/limits.h:34,
+                 from /home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/sys/param.h:19,
+                 from /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/source/openzfs/lib/libspl/include/os/linux/sys/param.h:31,
+                 from /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/source/openzfs/lib/libspl/include/sys/types.h:55,
+                 from /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/source/openzfs/lib/libspl/include/libgen.h:31,
+                 from cmd/zpool/zpool_util.c:28:
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/limits.h:40:9: note: this is the location of the previous definition
+   40 | #define PTHREAD_KEYS_MAX                        _POSIX_THREAD_KEYS_MAX
+      |         ^~~~~~~~~~~~~~~~
+/run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/exported-dependencies.jjAcgPAs/pthread-consistent.U8ZznVl2/source/pthread.h:58:9: warning: 'PTHREAD_STACK_MIN' redefined
+   58 | #define PTHREAD_STACK_MIN                     40960
+      |         ^~~~~~~~~~~~~~~~~
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/limits.h:41:9: note: this is the location of the previous definition
+   41 | #define PTHREAD_STACK_MIN                       0
+      |         ^~~~~~~~~~~~~~~~~
+/run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/exported-dependencies.jjAcgPAs/pthread-consistent.U8ZznVl2/source/pthread.h:59:9: warning: 'PTHREAD_THREADS_MAX' redefined
+   59 | #define PTHREAD_THREADS_MAX                   2019
+      |         ^~~~~~~~~~~~~~~~~~~
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/limits.h:42:9: note: this is the location of the previous definition
+   42 | #define PTHREAD_THREADS_MAX                     _POSIX_THREAD_THREADS_MAX
+      |         ^~~~~~~~~~~~~~~~~~~
+/run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/exported-dependencies.jjAcgPAs/pthread-consistent.U8ZznVl2/source/pthread.h:60:9: warning: 'PTHREAD_DESTRUCTOR_ITERATIONS' redefined
+   60 | #define PTHREAD_DESTRUCTOR_ITERATIONS         4
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/limits.h:39:9: note: this is the location of the previous definition
+   39 | #define PTHREAD_DESTRUCTOR_ITERATIONS           _POSIX_THREAD_DESTRUCTOR_ITERATIONS
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In file included from /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/source/openzfs/include/libzutil.h:31,
+                 from cmd/zpool/zpool_util.h:31,
+                 from cmd/zpool/zpool_util.c:40:
+/run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/exported-dependencies.jjAcgPAs/pthread-consistent.U8ZznVl2/source/pthread.h:57:9: warning: 'PTHREAD_KEYS_MAX' redefined
+   57 | #define PTHREAD_KEYS_MAX                      64
+      |         ^~~~~~~~~~~~~~~~
+In file included from /home/terminills/Documents/GitHub/aros-adt-crosstools/lib/gcc/x86_64-aros/15.2.0/include/limits.h:210,
+                 from /home/terminills/Documents/GitHub/aros-adt-crosstools/lib/gcc/x86_64-aros/15.2.0/include/syslimits.h:9,
+                 from /home/terminills/Documents/GitHub/aros-adt-crosstools/lib/gcc/x86_64-aros/15.2.0/include/limits.h:34,
+                 from /home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/sys/param.h:19,
+                 from /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/source/openzfs/lib/libspl/include/os/linux/sys/param.h:31,
+                 from /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/source/openzfs/lib/libspl/include/sys/types.h:55,
+                 from /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/source/openzfs/lib/libspl/include/libgen.h:31,
+                 from cmd/zpool/zpool_util.c:28:
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/limits.h:40:9: note: this is the location of the previous definition
+   40 | #define PTHREAD_KEYS_MAX                        _POSIX_THREAD_KEYS_MAX
+      |         ^~~~~~~~~~~~~~~~
+/run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/exported-dependencies.jjAcgPAs/pthread-consistent.U8ZznVl2/source/pthread.h:58:9: warning: 'PTHREAD_STACK_MIN' redefined
+   58 | #define PTHREAD_STACK_MIN                     40960
+      |         ^~~~~~~~~~~~~~~~~
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/limits.h:41:9: note: this is the location of the previous definition
+   41 | #define PTHREAD_STACK_MIN                       0
+      |         ^~~~~~~~~~~~~~~~~
+/run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/exported-dependencies.jjAcgPAs/pthread-consistent.U8ZznVl2/source/pthread.h:59:9: warning: 'PTHREAD_THREADS_MAX' redefined
+   59 | #define PTHREAD_THREADS_MAX                   2019
+      |         ^~~~~~~~~~~~~~~~~~~
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/limits.h:42:9: note: this is the location of the previous definition
+   42 | #define PTHREAD_THREADS_MAX                     _POSIX_THREAD_THREADS_MAX
+      |         ^~~~~~~~~~~~~~~~~~~
+/run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/exported-dependencies.jjAcgPAs/pthread-consistent.U8ZznVl2/source/pthread.h:60:9: warning: 'PTHREAD_DESTRUCTOR_ITERATIONS' redefined
+   60 | #define PTHREAD_DESTRUCTOR_ITERATIONS         4
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/terminills/Documents/GitHub/aros-adt-pc-x86_64-clean/bin/pc-x86_64-smp/AROS/Developer/include/aros/posixc/limits.h:39:9: note: this is the location of the previous definition
+   39 | #define PTHREAD_DESTRUCTOR_ITERATIONS           _POSIX_THREAD_DESTRUCTOR_ITERATIONS
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Linking    /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/stage/C/zpool...
+cd /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/gen/openzfs/cli && bash /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/source/openzfs/scripts/make_gitrev.sh zfs_gitrev.h
+Makedepend  openzfs/aros/cli/startup.c ...
+Makedepend  openzfs/aros/ui/startup-import.c ...
+Makedepend  openzfs/aros/ui/startup-settings.c ...
+Makedepend  openzfs/aros/ui/startup-settings-file.c ...
+Makedepend  openzfs/aros/ui/preferences.c ...
+Makedepend  openzfs/aros/ui/preferences-file.c ...
+cd /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/gen/openzfs/cli && bash /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/source/openzfs/scripts/make_gitrev.sh zfs_gitrev.h
+Compiling  openzfs/aros/cli/startup.c 
+Compiling  openzfs/aros/ui/startup-import.c 
+Compiling  openzfs/aros/ui/startup-settings.c 
+Compiling  openzfs/aros/ui/startup-settings-file.c 
+Compiling  openzfs/aros/ui/preferences.c 
+Compiling  openzfs/aros/ui/preferences-file.c 
+Compiling  openzfs/aros/cli/startup-mount.c 
+Linking    /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/stage/C/OpenZFSStartup...
+cd /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/gen/openzfs/cli && bash /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/source/openzfs/scripts/make_gitrev.sh zfs_gitrev.h
+Makedepend  openzfs/aros/cli/startup-mount.c ...
+cd /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/gen/openzfs/cli && bash /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/source/openzfs/scripts/make_gitrev.sh zfs_gitrev.h
+Compiling  openzfs/aros/cli/startup-mount.c 
+Linking    /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/stage/C/OpenZFSStartupMount...
+Makedepend  openzfs/aros/cli/exec-helper.c ...
+Compiling  openzfs/aros/cli/exec-helper.c 
+Linking    /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/stage/Tools/OpenZFS/ExecHelper...
+Makedepend  openzfs/aros/cli/process.c ...
+Makedepend  openzfs/aros/cli/runtime-check.c ...
+Makedepend  openzfs/aros/cli/output.c ...
+Makedepend  openzfs/aros/cli/arguments.c ...
+Compiling  openzfs/aros/cli/runtime-check.c 
+Compiling  openzfs/aros/cli/process.c 
+Compiling  openzfs/aros/cli/arguments.c 
+Compiling  openzfs/aros/cli/output.c 
+Linking    /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/stage/C/OpenZFSRuntimeCheck...
+Makedepend  openzfs/aros/ui/hostid-cli.c ...
+Makedepend  openzfs/aros/ui/hostid-settings.c ...
+Makedepend  openzfs/aros/engine/hostid-record.c ...
+Makedepend  openzfs/aros/ui/preferences.c ...
+Makedepend  openzfs/aros/ui/preferences-file.c ...
+Compiling  openzfs/aros/ui/hostid-cli.c 
+Compiling  openzfs/aros/ui/hostid-settings.c 
+Compiling  openzfs/aros/engine/hostid-record.c 
+Compiling  openzfs/aros/ui/preferences.c 
+Compiling  openzfs/aros/ui/preferences-file.c 
+Linking    /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/stage/C/OpenZFSHostIdentity...
+Makedepend  openzfs/aros/ui/api.c ...
+Makedepend  openzfs/aros/ui/admission-client.c ...
+Makedepend  openzfs/aros/ui/admission-worker.c ...
+Makedepend  openzfs/aros/ui/manager.c ...
+Makedepend  openzfs/aros/ui/project-worker.c ...
+Makedepend  openzfs/aros/cli/process.c ...
+Makedepend  openzfs/aros/cli/arguments.c ...
+Makedepend  openzfs/aros/cli/output.c ...
+Makedepend  openzfs/aros/ui/startup-settings.c ...
+Makedepend  openzfs/aros/ui/startup-settings-file.c ...
+Compiling  openzfs/aros/ui/api.c 
+Compiling  openzfs/aros/ui/admission-client.c 
+Compiling  openzfs/aros/ui/admission-worker.c 
+Compiling  openzfs/aros/ui/manager.c 
+Compiling  openzfs/aros/ui/project-worker.c 
+Compiling  openzfs/aros/cli/process.c 
+Compiling  openzfs/aros/cli/output.c 
+Compiling  openzfs/aros/cli/arguments.c 
+Compiling  openzfs/aros/ui/startup-settings.c 
+Compiling  openzfs/aros/ui/startup-settings-file.c 
+Linking    /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/stage/Tools/OpenZFSManagerNative...
+Makedepend  openzfs/aros/device/zvol-device.c ...
+Compiling  openzfs/aros/device/zvol-device.c 
+Linking    /run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/fresh-mmake-cli.yqLYANrY/stage/C/OpenZFSDevice...
