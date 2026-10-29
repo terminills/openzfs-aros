@@ -52,8 +52,7 @@ and platform libraries remained the previously qualified dependencies.
 
 Actual ISO runtime hashes and serial/host results are retained in
 `fresh-native/`. This does not yet qualify encrypted native discovery or the
-separate native debugger matrix; it does
-not silently replace the existing matched development bundle.
+separate native debugger matrix by itself; those follow-up results are below.
 
 ## Fresh Manager and Wanderer
 
@@ -69,4 +68,23 @@ Screenshots, serial log and input/actual-ISO hashes are in `fresh-gui/`.
 An earlier preparation attempt refused allocation because the short-term
 checkout filesystem was below the 100-GiB reserve. The successful run used
 the existing independent external checkout and external artifacts; the guard
-was not lowered. Fresh encrypted-device and debugger qualification remain.
+was not lowered.
+
+## Encrypted discovery, debugger and staged bundle
+
+`public-service-run.E1h4chWv` passed encrypted native roots, wrong-key rejection
+and recovery, unchanged conflicting-label refusal, and the full service suite.
+`zdb-label-run.068Hkwv9` passed GPT native pool traversal, label damage, shared
+library lifecycle, privileged/unprivileged device checks and L2ARC header/log,
+endian, corruption and bounds checks. Both native device overlays compared
+unchanged with their originals. Serial logs and identity/comparison evidence
+are in `fresh-discovery/` and `fresh-debugger/`.
+
+The staging validator matched all 20 selected artifacts to this candidate's
+four native runs. The new local development bundle is
+`Amiwest/openzfs-source-replay-20261028/build/mmake-bundle.1hwujvsn` (123 MiB).
+All 5,012 copied manifest entries pass and no symlinks remain. The recipe,
+qualification record, manifest and verification log are in `staged/`.
+The old bundle remains available and unchanged. This new bundle contains the
+fresh engine, Manager and debugger, but retains the previously qualified CLI,
+handler and platform prerequisites; it is not a fully bootstrapped SDK release.

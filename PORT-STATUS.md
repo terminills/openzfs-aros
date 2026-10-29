@@ -11,8 +11,11 @@ DOS readback, degraded import, beyond-parity refusal and deferred snapshot
 release with independent zdb checks. These use the selected patched platform
 libraries, not a stock nightly. The fresh Manager also passed actual health
 query/save and post-UI filesystem readback with Wanderer in native QEMU.
-Encrypted native discovery and the separate debugger matrix remain open for
-these binaries; the previously qualified bundle is unchanged.
+Encrypted native discovery and the separate GPT debugger matrix subsequently
+passed for these binaries. The matching new development bundle
+`mmake-bundle.1hwujvsn` passed all 5,012 copied manifest entries. It retains the
+previously qualified CLI, handler and explicit platform prerequisites; a fresh
+CLI build is separate. The previous development bundle remains unchanged.
 See `aros/tests/evidence/exported-dependency-rebuild-20261028` and the rebuild
 command in `BUILDING.md` for exact inputs and scope.
 

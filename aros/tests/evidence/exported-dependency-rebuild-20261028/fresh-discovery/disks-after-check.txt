@@ -1,0 +1,2 @@
+/run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/public-service-run.E1h4chWv/partition.raw: OK
+/run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/public-service-run.E1h4chWv/blank.raw: OK
