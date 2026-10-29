@@ -20,4 +20,11 @@ bash aros/handler/build.sh
 ```
 
 Current source/build identities and the new binary hash are retained here.
-Next steps are binary-difference inspection and owned native runtime testing.
+Binary-difference inspection subsequently isolated the mismatch: after removing
+debug sections from disposable copies with `objcopy --strip-debug`, both the
+`.rodata` version string and embedded `.text` library ID contain the build date
+26.10.2026 in the qualified binary versus 28.10.2026 in the fresh binary.
+Normalizing that exact date in a comparison stream makes the complete stripped
+files byte-identical (`cmp` exit 0). Originals were not changed. The comparison
+copies are in external `handler-compare.2O8EdzbH`. This is a reproducibility
+result, not a fresh native execution; the qualified bundle remains unchanged.
