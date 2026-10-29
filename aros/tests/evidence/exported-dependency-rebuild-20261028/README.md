@@ -127,3 +127,15 @@ assembly recipe are retained in `fresh-cli-staged/`. It selects the rebuilt
 MetaMake commands and Manager and the matching GUI, cold, discovery and
 debugger runs above. The previously qualified handler and platform libraries
 remain selected; this is not a fully bootstrapped SDK or a new hardware test.
+
+## Generated-import MetaMake replay
+
+`fresh-mmake-cli.wyvY8S5j` executed the updated build recipe end to end using
+`build-posix-import.py`, rather than a cached private import stub. Its fresh
+`posix-import.j_54zej7` validates pipe2 vector 799. All nine MetaMake targets
+built successfully with eight jobs and unchanged dependency hashes. All nine
+output SHA-256 values exactly match the previously QEMU-tested
+`fresh-mmake-cli.yqLYANrY` binaries (comparison normalizes only the stage path).
+Recipe, logs, configuration identities and binary hashes are retained in
+`generated-import-cli-replay/`. This closes that recipe replay gap; it does
+not claim a fresh QEMU boot or removal of the documented platform prerequisites.
