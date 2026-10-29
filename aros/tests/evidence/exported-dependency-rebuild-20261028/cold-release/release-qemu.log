@@ -1,0 +1,2 @@
+qemu-system-x86_64: -monitor unix:/run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/public-service-run.IiTq2LX2/release-monitor,server=on,wait=off: UNIX socket path '/run/media/terminills/Amiwest/openzfs-source-replay-20261028/build/public-service-run.IiTq2LX2/release-monitor' is too long
+Path must be less than 108 bytes

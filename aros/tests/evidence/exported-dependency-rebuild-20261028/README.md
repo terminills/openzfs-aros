@@ -17,10 +17,19 @@ claim that every executable in the image was freshly rebuilt.
 Persistent replay `public-service-run.IiTq2LX2` passed the writer and cold
 read stages, but the writable-release QEMU invocation failed before guest
 boot: its UNIX monitor socket path exceeded 107 bytes. That run remains
-partial, not a successful release test. The runner now uses shorter monitor
+partial as originally invoked. The runner now uses shorter monitor
 names and validates path byte lengths before ISO allocation. Boundary tests
 cover 107/108-byte paths and UTF-8 byte counts; they do not replace a native
 retest of the release phase.
+
+The retained release ISO and private disks were subsequently booted using
+`cold-release/resume-release.sh` and a shorter monitor path. This separate
+replay exited zero: deferred parent and child snapshots were released and
+remained absent after reimport, exact data and clean backing detach passed,
+FAT checks passed, the startup archive stayed unchanged, and independent
+host zdb reported no leaks and did not modify extracted members. Logs and a
+terminal screenshot are retained in `cold-release/`. The original failed
+QEMU invocation remains recorded, not rewritten as a successful full run.
 
 A separate full source build, `source-engine.3f4plKUL`, compiled all 248 source
 inventory entries and produced a fresh engine and management binaries. It was
