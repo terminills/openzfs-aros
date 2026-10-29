@@ -110,3 +110,11 @@ to `fresh-mmake-cli.yqLYANrY/pipe2.o` (SHA-256
 The generator does not implement or install pipe2. Three unit tests cover exact,
 missing/duplicate/invalid and mismatched vectors. The native evidence above
 covers the identical import object, not a changed runtime implementation.
+
+The later CLI/Manager set now also passed native GUI run
+`native-gui-run.8dKQw2DA` and encrypted-discovery run
+`public-service-run.mDaACflJ`. `fresh-cli-gui/` retains screenshots, serial
+output and binary identities: pool health, saved raw response and exact
+post-UI desktop readback passed. `fresh-cli-discovery/` retains encrypted-root
+and wrong-key recovery results, conflicting-label protection and disk checks.
+These are QEMU results, not physical-device qualification or full port completion.
